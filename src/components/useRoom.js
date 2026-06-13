@@ -189,11 +189,17 @@ export function usePlayerRoom(code) {
   const connRef = useRef(null);
   const id = useRef(deviceId());
 
+  // A room code is used as an MQTT topic segment — only allow the safe alphabet.
+  const validCode = typeof code === "string" && /^[A-Za-z0-9]{3,12}$/.test(code) ? code : null;
+
   useEffect(() => {
-    if (!code) return;
+    if (!validCode) {
+      setStatus("error");
+      return;
+    }
     const conn = connectRoom({
-      code,
-      subscribe: [roomTopics(code).state],
+      code: validCode,
+      subscribe: [roomTopics(validCode).state],
       onStatus: setStatus,
       // null = cleared retained state (host left) → fall back to the lobby screen.
       onMessage: (_topic, msg) =>
@@ -205,7 +211,7 @@ export function usePlayerRoom(code) {
     });
     connRef.current = conn;
     return () => conn.close();
-  }, [code]);
+  }, [validCode]);
 
   const send = useCallback((obj) => {
     const conn = connRef.current;
@@ -222,6 +228,7 @@ export function usePlayerRoom(code) {
   );
   const buzz = useCallback(() => send({ type: "buzz", name }), [send, name]);
   const sendPin = useCallback((lat, lng) => send({ type: "pin", lat, lng }), [send]);
+  const leave = useCallback(() => send({ type: "leave" }), [send]);
 
-  return { status, state, name, deviceId: id.current, join, buzz, sendPin };
+  return { status, state, name, deviceId: id.current, join, buzz, sendPin, leave };
 }

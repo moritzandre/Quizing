@@ -190,10 +190,11 @@ export function useTheme() {
 
 /** Sun/moon button that flips the app between light and dark. */
 export function ThemeToggle({ className = "" }) {
+  const { t } = useI18n();
   const [theme, toggle] = useTheme();
   const dark = theme === "dark";
   return (
-    <IconButton label={dark ? "Switch to light mode" : "Switch to dark mode"} onClick={toggle} className={className}>
+    <IconButton label={dark ? t("theme.toLight") : t("theme.toDark")} onClick={toggle} className={className}>
       {dark ? <Sun size={18} /> : <Moon size={18} />}
     </IconButton>
   );

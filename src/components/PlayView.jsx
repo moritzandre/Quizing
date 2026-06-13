@@ -214,8 +214,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* host keyboard shortcuts: R reveal · H hint · N/→ next · +/- sign · 1–9 award */
   useEffect(() => {
     const onKey = (e) => {
-      const t = e.target;
-      if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement) return;
+      const el = e.target;
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
       if (game.stage !== "question" || !round) return;
       const k = e.key.toLowerCase();
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
@@ -464,12 +464,17 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const Shortcuts = (
     <p className="mt-8 hidden text-center text-xs text-stone-300 dark:text-stone-600 md:block">
       {t("play.shortcuts", {
-        keys:
-          "R reveal" +
-          (round.type === "hints" ? " · H hint" : round.type === "morph" ? " · H demorph" : "") +
-          " · N next" +
-          (allowNegative ? " · +/- sign" : "") +
-          " · 1–9 award",
+        keys: [
+          t("play.scReveal"),
+          round.type === "hints" ? t("play.scHint") : null,
+          round.type === "morph" ? t("play.scDemorph") : null,
+          round.type === "fusion" ? t("play.scDefuse") : null,
+          t("play.scNext"),
+          allowNegative ? t("play.scSign") : null,
+          t("play.scAward"),
+        ]
+          .filter(Boolean)
+          .join(" · "),
       })}
     </p>
   );

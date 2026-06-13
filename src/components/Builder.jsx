@@ -218,7 +218,7 @@ function HintsField({ hints, onChange, t }) {
         return (
           <div key={i} className="rounded-lg border border-stone-200 p-2 dark:border-stone-700">
             <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-xs font-bold text-stone-400">{i + 1}</span>
+              <span className="text-xs font-bold text-stone-400 dark:text-stone-500">{i + 1}</span>
               <select
                 value={type}
                 onChange={(e) => set(i, makeHint(e.target.value))}
@@ -400,7 +400,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
-                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => (
                       <div className={panelCls}>
@@ -450,7 +450,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.categories}
                     getKey={(c) => c.id}
-                    onReorder={(f, t) => reorderCategories(r, f, t)}
+                    onReorder={(f, to) => reorderCategories(r, f, to)}
                     gap="space-y-4"
                   >
                     {(c, _ci, hp) => (
@@ -530,7 +530,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
-                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => (
                       <div className={panelCls}>
@@ -565,7 +565,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
-                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => {
                       const ok = ytId(item.url);
@@ -638,7 +638,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
-                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => (
                       <div className={panelCls}>
@@ -689,7 +689,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
-                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => (
                       <div className={panelCls}>
@@ -828,7 +828,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
-                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => (
                       <div className={panelCls}>

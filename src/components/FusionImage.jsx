@@ -6,6 +6,8 @@
    study each contributor; on reveal both are shown side by side.
    ==================================================================== */
 
+import { useI18n } from "../i18n/I18nProvider.jsx";
+
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 /** Blend weight of image B (0 = all A, 1 = all B) for a defuse step. */
@@ -25,13 +27,14 @@ function mixForStep(step, steps) {
  * @param {boolean} [props.revealed] Show both images side by side.
  */
 export default function FusionImage({ urlA, urlB, steps, step, revealed = false }) {
+  const { t } = useI18n();
   const frame =
     "overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 dark:border-stone-800 dark:bg-stone-800";
 
   if (!urlA || !urlB) {
     return (
       <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-        Two images needed
+        {t("play.twoImages")}
       </div>
     );
   }

@@ -2,7 +2,7 @@
    JOIN VIEW (phone) — buzz in and drop map pins from your own device
    ==================================================================== */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Radio, Wifi, WifiOff, Check, MapPin } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
 import { FOCUS, inputCls, Button } from "./ui.jsx";
@@ -31,6 +31,17 @@ export default function JoinView({ code }) {
     setMyPin(null);
     setPinSent(false);
   }, [qKey]);
+
+  // Tell the host we're gone when the tab/app closes, so the roster shrinks.
+  const leaveRef = useRef(room.leave);
+  leaveRef.current = room.leave;
+  useEffect(() => {
+    if (!joined) return;
+    const onHide = () => leaveRef.current?.();
+    window.addEventListener("pagehide", onHide);
+    return () => window.removeEventListener("pagehide", onHide);
+  }, [joined]);
+
   const iLocked = lockedBy && lockedBy === room.deviceId;
   const online = room.status === "connected";
 

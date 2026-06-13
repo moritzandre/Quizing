@@ -31,7 +31,7 @@ import Builder from "./components/Builder.jsx";
 import JoinView from "./components/JoinView.jsx";
 import LeaderboardView from "./components/LeaderboardView.jsx";
 import { useHostRoom } from "./components/useRoom.js";
-import { useI18n } from "./i18n/I18nProvider.jsx";
+import { useI18n, LanguageToggle } from "./i18n/I18nProvider.jsx";
 
 const APP_VERSION = "1.2.0";
 
@@ -204,7 +204,7 @@ function App() {
     const copy = deepClone(quiz);
     copy.id = uid();
     copy.sample = false;
-    copy.title = quiz.title + " (copy)";
+    copy.title = quiz.title + t("home.copySuffix");
     persistQuizzes([...quizzes, copy]);
   };
 
@@ -262,6 +262,7 @@ function App() {
               <IconButton label={t("home.leaderboard")} onClick={() => go({ name: "leaderboard" })}>
                 <Trophy size={18} />
               </IconButton>
+              <LanguageToggle />
               <ThemeToggle />
             </div>
           </div>

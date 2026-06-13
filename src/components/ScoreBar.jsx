@@ -9,6 +9,7 @@
 
 import { Check, Minus, Plus } from "lucide-react";
 import { FOCUS } from "./ui.jsx";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const fmtDelta = (n) => `${n < 0 ? "−" : "+"}${Math.abs(n)}`;
 
@@ -23,6 +24,7 @@ export default function ScoreBar({
   sign = 1,
   onSignChange,
 }) {
+  const { t } = useI18n();
   const signed = sign * value;
   return (
     <div className="fixed inset-x-0 bottom-0 z-20 border-t border-stone-200 bg-white/90 backdrop-blur transition-colors dark:border-stone-800 dark:bg-stone-900/90">
@@ -54,7 +56,7 @@ export default function ScoreBar({
                 signed < 0 ? "text-red-600 dark:text-red-400" : "text-indigo-600 dark:text-indigo-400"
               }`}
             >
-              Tap a player to score {fmtDelta(signed)}
+              {t("play.tapToScore", { delta: fmtDelta(signed) })}
             </p>
           </div>
         )}

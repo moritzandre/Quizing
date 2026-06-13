@@ -16,8 +16,11 @@ const STATUS_KEY = {
   error: "buzzer.error",
 };
 
-const isLocalhost = () =>
-  typeof window !== "undefined" && /^(localhost|127\.|0\.0\.0\.0|::1)/.test(window.location.hostname);
+const isLocalhost = () => {
+  if (typeof window === "undefined") return false;
+  const h = window.location.hostname.replace(/^\[|\]$/g, ""); // strip IPv6 brackets
+  return h === "" || h === "localhost" || h === "0.0.0.0" || h === "::1" || h.startsWith("127.");
+};
 
 /**
  * Host-side buzzer lobby: shows the join QR/code and who has joined.

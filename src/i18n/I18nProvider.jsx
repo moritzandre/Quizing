@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useMemo, useState } from "react";
 import { Languages } from "lucide-react";
-import { translate, LANGS } from "./strings.js";
+import { translate, LANGS, LANG_LABEL } from "./strings.js";
 
 const LANG_KEY = "quiznight.lang";
 
@@ -58,7 +58,7 @@ export function LanguageToggle({ className = "" }) {
       className={`inline-flex items-center gap-1 rounded-lg p-2 text-sm font-semibold text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-200 ${className}`}
     >
       <Languages size={18} />
-      {lang.toUpperCase()}
+      {LANG_LABEL[lang] || lang.toUpperCase()}
     </button>
   );
 }

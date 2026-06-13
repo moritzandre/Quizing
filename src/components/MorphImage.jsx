@@ -7,6 +7,7 @@
    ==================================================================== */
 
 import { useEffect, useMemo, useRef } from "react";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -38,6 +39,7 @@ const SLICES = 8;
  * @param {boolean} [props.revealed] Show the clean image.
  */
 export default function MorphImage({ url, effect, steps, step, revealed = false }) {
+  const { t: tr } = useI18n(); // `t` is the morph progress fraction below
   const canvasRef = useRef(null);
   const t = steps > 0 ? Math.min(1, step / steps) : 1;
   const clear = revealed || t >= 1;
@@ -78,7 +80,7 @@ export default function MorphImage({ url, effect, steps, step, revealed = false 
   if (!url) {
     return (
       <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-        No picture set
+        {tr("play.noPicture")}
       </div>
     );
   }
