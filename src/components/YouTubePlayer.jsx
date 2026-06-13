@@ -186,9 +186,9 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
             solid-to-fade band sized to the player reliably hides it. */}
         {!fullCover && (
           <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-[24%]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[24%] min-h-[64px]"
             style={{
-              background: "linear-gradient(to bottom, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.92) 62%, transparent 100%)",
+              background: "linear-gradient(to bottom, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.96) 70%, transparent 100%)",
             }}
           />
         )}
