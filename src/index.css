@@ -1,1 +1,69 @@
 @import "tailwindcss";
+
+/* Manual (class-based) dark mode: `dark:` applies under <html class="dark">
+   instead of following the OS preference, so the in-app toggle controls it. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Animations that pure utilities can't express. Kept here (not as extracted
+   utility classes) because they define keyframes Tailwind doesn't ship. */
+@keyframes qn-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes qn-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  60% {
+    transform: scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes qn-confetti {
+  0% {
+    opacity: 1;
+    transform: translateY(-10vh) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) rotate(720deg);
+  }
+}
+
+.qn-fade-up {
+  animation: qn-fade-up 0.32s cubic-bezier(0.21, 1, 0.4, 1) both;
+}
+
+.qn-pop {
+  animation: qn-pop 0.28s cubic-bezier(0.21, 1, 0.4, 1) both;
+}
+
+.qn-confetti-piece {
+  position: fixed;
+  top: 0;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  animation: qn-confetti linear forwards;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qn-fade-up,
+  .qn-pop,
+  .qn-confetti-piece {
+    animation: none;
+  }
+}

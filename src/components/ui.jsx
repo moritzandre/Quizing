@@ -1,9 +1,22 @@
 /* ====================================================================
-   UI PRIMITIVES & ROUND-TYPE METADATA
+   UI PRIMITIVES, THEME & ROUND-TYPE METADATA
+   --------------------------------------------------------------------
+   Multi-export module (the project's one default-export exception):
+   shared style constants, primitives, the theme toggle, and confetti.
    ==================================================================== */
 
 import { useState, useEffect } from "react";
-import { MessageSquare, LayoutGrid, Lightbulb, Video, MapPin, Trash2 } from "lucide-react";
+import {
+  MessageSquare,
+  LayoutGrid,
+  Lightbulb,
+  Video,
+  Image as ImageIcon,
+  MapPin,
+  Trash2,
+  Sun,
+  Moon,
+} from "lucide-react";
 
 /** Round-type metadata: label, icon, accent dot, and host instructions. Keys must match ROUND_TYPES in lib/model.js. */
 export const TYPES = {
@@ -17,7 +30,7 @@ export const TYPES = {
     label: "Jeopardy",
     icon: LayoutGrid,
     dot: "bg-indigo-500",
-    desc: "Players take turns picking tiles — higher value, harder question. Award the tile's points to whoever answers.",
+    desc: "Players take turns picking tiles — higher value, harder question. Award the tile's points to whoever answers, or dock them on a miss.",
   },
   hints: {
     label: "Hint Ladder",
@@ -29,34 +42,46 @@ export const TYPES = {
     label: "Video",
     icon: Video,
     dot: "bg-rose-500",
-    desc: "Watch the clip together, then reveal the answer and award the points.",
+    desc: "Play the clip together, then reveal the answer and award the points.",
+  },
+  image: {
+    label: "Picture",
+    icon: ImageIcon,
+    dot: "bg-sky-500",
+    desc: "Show the picture, let everyone study it, then reveal the answer and award the points.",
   },
   map: {
     label: "Map",
     icon: MapPin,
     dot: "bg-emerald-500",
-    desc: "Everyone guesses where in the world it is. Reveal the pin and award the closest guess.",
+    desc: "Everyone drops a pin where they think it is. Reveal the real spot and the closest guess wins.",
   },
 };
 
 /** Shared focus-visible ring classes for interactive elements. */
 export const FOCUS =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950";
 
 /** Shared text-input classes. */
-export const inputCls = `w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-400 focus:outline-none`;
+export const inputCls =
+  "w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder-stone-400 transition focus:border-stone-400 focus:outline-none dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder-stone-500 dark:focus:border-stone-500";
 
-/** Standard button with dark / accent / outline / ghost variants. */
+/** Shared card surface (border + background, both themes). */
+export const cardCls = "rounded-2xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900";
+
+/** Standard button with dark / accent / outline / ghost / danger variants. */
 export function Button({ variant = "dark", className = "", children, ...props }) {
   const variants = {
-    dark: "bg-stone-900 text-white hover:bg-stone-700",
-    accent: "bg-indigo-600 text-white hover:bg-indigo-500",
-    outline: "border border-stone-300 text-stone-900 hover:bg-stone-100",
-    ghost: "text-stone-500 hover:bg-stone-100 hover:text-stone-700",
+    dark: "bg-stone-900 text-white shadow-sm hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white",
+    accent: "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500",
+    outline:
+      "border border-stone-300 text-stone-900 hover:bg-stone-100 dark:border-stone-700 dark:text-stone-100 dark:hover:bg-stone-800",
+    ghost: "text-stone-500 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200",
+    danger: "bg-red-600 text-white shadow-sm hover:bg-red-500",
   };
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition disabled:pointer-events-none disabled:opacity-30 ${FOCUS} ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition active:scale-[.98] disabled:pointer-events-none disabled:opacity-30 ${FOCUS} ${variants[variant]} ${className}`}
       {...props}
     >
       {children}
@@ -70,7 +95,7 @@ export function IconButton({ label, className = "", children, ...props }) {
     <button
       aria-label={label}
       title={label}
-      className={`rounded-lg p-2 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 ${FOCUS} ${className}`}
+      className={`rounded-lg p-2 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 active:scale-95 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-200 ${FOCUS} ${className}`}
       {...props}
     >
       {children}
@@ -81,8 +106,9 @@ export function IconButton({ label, className = "", children, ...props }) {
 /** Pill badge showing a round type's accent dot and label. */
 export function TypeBadge({ type }) {
   const t = TYPES[type];
+  if (!t) return null;
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-600">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-600 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
       <span className={`h-1.5 w-1.5 rounded-full ${t.dot}`} />
       {t.label}
     </span>
@@ -102,12 +128,91 @@ export function ConfirmDelete({ onConfirm, label = "Delete" }) {
       aria-label={armed ? `Confirm: ${label}` : label}
       title={label}
       onClick={() => (armed ? (setArmed(false), onConfirm()) : setArmed(true))}
-      className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium transition ${FOCUS} ${
-        armed ? "bg-red-600 text-white" : "text-stone-400 hover:bg-stone-100 hover:text-red-600"
+      className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium transition active:scale-95 ${FOCUS} ${
+        armed
+          ? "bg-red-600 text-white"
+          : "text-stone-400 hover:bg-stone-100 hover:text-red-600 dark:text-stone-500 dark:hover:bg-stone-800"
       }`}
     >
       <Trash2 size={14} />
       {armed ? "Sure?" : ""}
     </button>
+  );
+}
+
+/* ---- theme ---- */
+
+const THEME_KEY = "quiznight.theme";
+
+/**
+ * Read/toggle the manual color theme. The initial class on <html> is set by a
+ * bootstrap script in index.html to avoid a flash; this hook stays in sync.
+ * @returns {[("dark"|"light"), () => void]} Current theme and a toggle.
+ */
+export function useTheme() {
+  const [theme, setTheme] = useState(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "dark" : "light",
+  );
+  const toggle = () =>
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      document.documentElement.classList.toggle("dark", next === "dark");
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch {
+        /* private mode / disabled storage — theme just won't persist */
+      }
+      return next;
+    });
+  return [theme, toggle];
+}
+
+/** Sun/moon button that flips the app between light and dark. */
+export function ThemeToggle({ className = "" }) {
+  const [theme, toggle] = useTheme();
+  const dark = theme === "dark";
+  return (
+    <IconButton label={dark ? "Switch to light mode" : "Switch to dark mode"} onClick={toggle} className={className}>
+      {dark ? <Sun size={18} /> : <Moon size={18} />}
+    </IconButton>
+  );
+}
+
+/* ---- confetti ---- */
+
+const CONFETTI_COLORS = ["#6366f1", "#f59e0b", "#10b981", "#f43f5e", "#0ea5e9", "#a855f7"];
+
+/**
+ * One-shot confetti burst. Renders `count` pieces with deterministic-enough
+ * spread; pieces fall once via CSS and fade out (no cleanup needed).
+ * @param {object} props
+ * @param {number} [props.count] Number of pieces.
+ */
+export function Confetti({ count = 90 }) {
+  const [pieces] = useState(() =>
+    Array.from({ length: count }, (_, i) => ({
+      left: (i / count) * 100 + (((i * 53) % 17) - 8),
+      delay: ((i * 37) % 100) / 100,
+      duration: 2.4 + ((i * 29) % 20) / 10,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      rotate: (i * 47) % 360,
+    })),
+  );
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      {pieces.map((p, i) => (
+        <span
+          key={i}
+          className="qn-confetti-piece"
+          style={{
+            left: `${p.left}%`,
+            backgroundColor: p.color,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+            transform: `rotate(${p.rotate}deg)`,
+          }}
+        />
+      ))}
+    </div>
   );
 }
