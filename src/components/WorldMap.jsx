@@ -3,7 +3,9 @@
    --------------------------------------------------------------------
    72×36 grid of 5° cells. LAND lists, per row, the column ranges that
    are land. Pin placement uses exact lat/lng. Pass onPick to make the
-   map clickable (used by the builder to place pins).
+   map clickable (builder pin placement + per-player guesses). Pass
+   `guesses` to plot colored markers, and `pin` for the answer location
+   (with optional connecting lines from each guess on reveal).
    ==================================================================== */
 
 import { useRef } from "react";
@@ -270,10 +272,15 @@ LAND.forEach(([row, ranges]) =>
 );
 
 /**
- * Dot-grid world map. Shows a pin at { lat, lng, label } when given;
- * pass onPick(lat, lng) to make the map clickable.
+ * Dot-grid world map (equirectangular).
+ * @param {object} props
+ * @param {{lat:number,lng:number,label?:string}} [props.pin] Answer/edit pin (indigo, pulsing, labelled).
+ * @param {Array<{lat:number,lng:number,label?:string,color?:string}>} [props.guesses] Player guess markers.
+ * @param {boolean} [props.showLines] Draw a line from each guess to the answer pin.
+ * @param {(lat:number,lng:number)=>void} [props.onPick] Makes the map clickable.
+ * @param {string} [props.className]
  */
-export default function WorldMap({ pin, onPick, className = "" }) {
+export default function WorldMap({ pin, guesses = [], showLines = false, onPick, className = "" }) {
   const ref = useRef(null);
   const CW = 1000 / 72;
   const CH = 500 / 36;
@@ -292,6 +299,10 @@ export default function WorldMap({ pin, onPick, className = "" }) {
   if (pin && pin.lat != null && pin.lng != null) [px, py] = toXY(pin.lat, pin.lng);
   const labelX = px == null ? 0 : Math.min(Math.max(px, 90), 910);
 
+  const plotted = guesses
+    .filter((g) => g && g.lat != null && g.lng != null)
+    .map((g) => ({ ...g, xy: toXY(g.lat, g.lng) }));
+
   return (
     <svg
       ref={ref}
@@ -299,11 +310,58 @@ export default function WorldMap({ pin, onPick, className = "" }) {
       role="img"
       aria-label={pin?.label ? `World map showing ${pin.label}` : "World map"}
       onClick={handleClick}
-      className={`w-full rounded-2xl border border-stone-200 bg-white ${onPick ? "cursor-crosshair" : ""} ${className}`}
+      className={`w-full rounded-2xl border border-stone-200 bg-white transition-colors dark:border-stone-800 dark:bg-stone-900 ${onPick ? "cursor-crosshair" : ""} ${className}`}
     >
       {DOTS.map(([c, r], i) => (
-        <circle key={i} cx={(c + 0.5) * CW} cy={(r + 0.5) * CH} r="4.6" className="fill-stone-300" />
+        <circle
+          key={i}
+          cx={(c + 0.5) * CW}
+          cy={(r + 0.5) * CH}
+          r="4.6"
+          className="fill-stone-300 dark:fill-stone-700"
+        />
       ))}
+
+      {/* connecting lines from each guess to the answer (on reveal) */}
+      {showLines &&
+        px != null &&
+        plotted.map((g, i) => (
+          <line
+            key={`l${i}`}
+            x1={g.xy[0]}
+            y1={g.xy[1]}
+            x2={px}
+            y2={py}
+            stroke={g.color || "#78716c"}
+            strokeWidth="2"
+            strokeDasharray="5 5"
+            opacity="0.5"
+          />
+        ))}
+
+      {/* player guess markers */}
+      {plotted.map((g, i) => (
+        <g key={`g${i}`}>
+          <circle cx={g.xy[0]} cy={g.xy[1]} r="8" fill={g.color || "#78716c"} stroke="white" strokeWidth="2.5" />
+          {g.label && (
+            <text
+              x={g.xy[0]}
+              y={Math.max(g.xy[1] - 12, 14)}
+              textAnchor="middle"
+              fontSize="15"
+              fontWeight="700"
+              fill={g.color || "#78716c"}
+              stroke="white"
+              strokeWidth="4"
+              paintOrder="stroke"
+            >
+              {g.label}
+            </text>
+          )}
+        </g>
+      ))}
+
+      {/* answer pin */}
       {px != null && (
         <g>
           <circle cx={px} cy={py} r="16" className="animate-pulse fill-indigo-500 opacity-20" />
@@ -316,10 +374,9 @@ export default function WorldMap({ pin, onPick, className = "" }) {
               textAnchor="middle"
               fontSize="20"
               fontWeight="700"
-              className="fill-stone-900"
-              stroke="white"
               strokeWidth="5"
               paintOrder="stroke"
+              className="fill-stone-900 stroke-white dark:fill-stone-100 dark:stroke-stone-950"
             >
               {pin.label}
             </text>
