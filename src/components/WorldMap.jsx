@@ -345,7 +345,7 @@ export default function WorldMap({ pin, guesses = [], showLines = false, onPick,
           <circle cx={g.xy[0]} cy={g.xy[1]} r="8" fill={g.color || "#78716c"} stroke="white" strokeWidth="2.5" />
           {g.label && (
             <text
-              x={g.xy[0]}
+              x={Math.min(Math.max(g.xy[0], 60), 940)}
               y={Math.max(g.xy[1] - 12, 14)}
               textAnchor="middle"
               fontSize="15"

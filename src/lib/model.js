@@ -82,12 +82,20 @@ export function fileToDataUrl(file, { maxDim = 1400, keepBelow = 300 * 1024, qua
       const img = new Image();
       img.onerror = () => reject(new Error("That file doesn't look like an image."));
       img.onload = () => {
-        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.max(1, Math.round(img.width * scale));
-        canvas.height = Math.max(1, Math.round(img.height * scale));
-        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
+        // This runs after the executor returned, so a throw here would not
+        // reach reject() — catch it explicitly so the promise always settles.
+        try {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          const ctx = canvas.getContext("2d");
+          if (!ctx) throw new Error("Couldn't process the image.");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        } catch (e) {
+          reject(e instanceof Error ? e : new Error("Couldn't process the image."));
+        }
       };
       img.src = raw;
     };

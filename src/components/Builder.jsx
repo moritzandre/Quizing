@@ -2,7 +2,7 @@
    BUILDER (create and edit quizzes)
    ==================================================================== */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, Plus, GripVertical, TimerReset, Upload, ImagePlus, Loader2 } from "lucide-react";
 import { uid, ytId, fileToDataUrl, makeQuestion, makeCategory, makeRound, moveItem } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete } from "./ui.jsx";
@@ -41,6 +41,20 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
     setOverIdx(null);
     setArmedIdx(null);
   };
+  // Disarm on any pointer release, even if it lands off the handle or no drag
+  // ever started — otherwise a row could stay permanently draggable.
+  useEffect(() => {
+    if (armedIdx === null) return;
+    const clear = () => setArmedIdx(null);
+    window.addEventListener("mouseup", clear);
+    window.addEventListener("touchend", clear);
+    window.addEventListener("touchcancel", clear);
+    return () => {
+      window.removeEventListener("mouseup", clear);
+      window.removeEventListener("touchend", clear);
+      window.removeEventListener("touchcancel", clear);
+    };
+  }, [armedIdx]);
   return (
     <div className={gap}>
       {items.map((item, i) => (
@@ -76,7 +90,6 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
             "aria-label": "Drag to reorder",
             title: "Drag to reorder",
             onMouseDown: () => setArmedIdx(i),
-            onMouseUp: () => setArmedIdx((cur) => (cur === i ? null : cur)),
             onTouchStart: () => setArmedIdx(i),
           })}
         </div>
@@ -410,7 +423,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                         />
                         <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
                           {item.hints.filter((h) => h.trim()).length || 0} hints · starts at{" "}
-                          {(item.hints.length || 1) * 10} pts, −10 per extra hint
+                          {(item.hints.filter((h) => h.trim()).length || 1) * 10} pts, −10 per extra hint
                         </p>
                       </div>
                     )}

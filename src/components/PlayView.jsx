@@ -38,6 +38,10 @@ const colorFor = (i) => PLAYER_COLORS[i % PLAYER_COLORS.length];
 
 const fmtClock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const fmtKm = (km) => (km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km).toLocaleString()} km`);
+// Blank lines in the hints textarea aren't real hint steps; ignore them so the
+// value math and the displayed ladder match the builder's hint count.
+const realHints = (hints) => (hints || []).filter((h) => h.trim());
+const ptsOr = (n, d) => (Number.isFinite(n) ? n : d);
 
 /** Host-facing game screen; drives a game object via setGame (persisted by the app shell). */
 export default function PlayView({ game, setGame, onExit }) {
@@ -55,12 +59,12 @@ export default function PlayView({ game, setGame, onExit }) {
     if (round.type === "jeopardy") {
       if (!game.tile) return 0;
       const q = round.categories[game.tile.ci]?.questions[game.tile.qi];
-      return q?.points || 100;
+      return ptsOr(q?.points, 100);
     }
     const q = round.questions[game.qi];
     if (!q) return 0;
-    if (round.type === "hints") return Math.max(1, q.hints.length - game.hintsShown + 1) * 10;
-    return q.points || 10;
+    if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
+    return ptsOr(q.points, 10);
   })();
 
   /* --- all hooks must run unconditionally, before any early return --- */
@@ -111,7 +115,7 @@ export default function PlayView({ game, setGame, onExit }) {
     const next =
       game.players.slice(idx + 1).find((p) => !guesses[p.id]) || game.players.find((p) => !guesses[p.id]) || null;
     upd({ guesses });
-    if (next) setGuessFor(next.id);
+    setGuessFor(next ? next.id : null); // null once everyone has guessed
   };
 
   const beginRound = () =>
@@ -156,7 +160,7 @@ export default function PlayView({ game, setGame, onExit }) {
       if (!q) return;
       if (k === "r" && !game.revealed) upd({ revealed: true });
       else if ((k === "n" || k === "arrowright") && game.revealed) advance();
-      else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < q.hints.length)
+      else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
       else if (allowNegative && game.revealed && (e.key === "+" || e.key === "=")) setSign(1);
@@ -190,7 +194,9 @@ export default function PlayView({ game, setGame, onExit }) {
   /* ---- final scores ---- */
   if (game.stage === "end") {
     const sorted = [...game.players].sort((a, b) => b.score - a.score);
-    const hasWinner = sorted.length > 0 && sorted[0].score > 0;
+    // A winner exists when scores aren't all tied — works for all-negative
+    // games too (least-negative leads); a flat all-equal board (e.g. all 0) gets none.
+    const hasWinner = sorted.length > 1 ? sorted[0].score > sorted[sorted.length - 1].score : sorted[0]?.score > 0;
     const playAgain = () =>
       setGame({
         ...game,
@@ -425,7 +431,8 @@ export default function PlayView({ game, setGame, onExit }) {
   }
 
   if (round.type === "hints") {
-    const shown = q.hints.slice(0, game.hintsShown);
+    const hints = realHints(q.hints);
+    const shown = hints.slice(0, game.hintsShown);
     body = (
       <div className="text-center">
         {Progress}
@@ -443,14 +450,12 @@ export default function PlayView({ game, setGame, onExit }) {
               className="qn-fade-up flex items-start gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900"
             >
               <span className="mt-0.5 text-xs font-bold text-stone-400">{i + 1}</span>
-              <p className="text-base md:text-lg">
-                {h || <span className="text-stone-300 dark:text-stone-600">…</span>}
-              </p>
+              <p className="text-base md:text-lg">{h}</p>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {!game.revealed && game.hintsShown < q.hints.length && (
+          {!game.revealed && game.hintsShown < hints.length && (
             <Button
               variant="outline"
               className="px-5 py-3 text-base"

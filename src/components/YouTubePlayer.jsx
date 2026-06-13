@@ -48,8 +48,7 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
   const playerRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [started, setStarted] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [state, setState] = useState("unstarted"); // unstarted | playing | paused | ended
   const [muted, setMuted] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
@@ -101,12 +100,13 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
             onStateChange: (e) => {
               if (cancelled) return;
               const YTP = window.YT.PlayerState;
-              if (e.data === YTP.PLAYING) {
-                setPlaying(true);
-                setStarted(true);
-              } else if (e.data === YTP.PAUSED || e.data === YTP.ENDED) {
-                setPlaying(false);
-              }
+              // Track the state so the cover logic can hide YouTube's title bar
+              // (while paused) and its end-screen related-videos grid (on ended)
+              // — both leak clip titles. BUFFERING keeps the previous state.
+              if (e.data === YTP.PLAYING) setState("playing");
+              else if (e.data === YTP.PAUSED) setState("paused");
+              else if (e.data === YTP.ENDED) setState("ended");
+              else if (e.data === YTP.UNSTARTED || e.data === YTP.CUED) setState("unstarted");
             },
             onError: () => !cancelled && setFailed(true),
           },
@@ -129,6 +129,8 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
       if (host) host.innerHTML = "";
     };
   }, [videoId]);
+
+  const playing = state === "playing";
 
   const togglePlay = () => {
     const p = playerRef.current;
@@ -169,44 +171,48 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
     );
   }
 
-  const coverVideo = audioOnly || !started;
+  // Fully cover the frame before first play and after it ends (both show
+  // YouTube thumbnails/related-videos with titles), and always in audio-only
+  // mode. While paused, the frame stays visible but the title bar is masked.
+  const fullCover = audioOnly || state === "unstarted" || state === "ended";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-stone-200 bg-black shadow-sm dark:border-stone-800">
       <div className="relative aspect-video w-full">
         <div ref={hostRef} className="absolute inset-0" />
 
-        {/* mask the title strip whenever the video frame is visible but not playing */}
-        {!coverVideo && !playing && (
-          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/80 to-transparent" />
+        {/* mask YouTube's title bar whenever the frame is visible (playing or paused) */}
+        {!fullCover && (
+          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black via-black/80 to-transparent" />
         )}
 
-        {/* full cover: pre-start poster (hides thumbnail + title) or audio-only mode */}
-        {coverVideo && (
+        {/* full cover: audio-only equalizer, or a play/replay poster that hides the thumbnail + title */}
+        {fullCover && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-stone-900 text-white">
             {audioOnly ? (
               <>
-                <div className="flex items-end gap-1.5" aria-hidden>
+                <div className="flex h-16 items-end gap-1.5" aria-hidden>
                   {[0, 1, 2, 3, 4].map((i) => (
                     <span
                       key={i}
-                      className={`w-2.5 rounded-full bg-rose-400 ${playing ? "animate-pulse" : ""}`}
-                      style={{ height: `${[28, 46, 64, 40, 24][i]}px`, animationDelay: `${i * 0.12}s` }}
+                      className={`w-2.5 rounded-full bg-rose-400 ${playing ? "qn-eq-bar" : ""}`}
+                      style={{ height: `${[28, 46, 64, 40, 24][i]}px`, animationDelay: `${i * 0.13}s` }}
                     />
                   ))}
                 </div>
                 <div className="flex items-center gap-2 text-sm font-medium text-stone-300">
-                  <Music size={16} /> Audio only — listen closely
+                  <Music size={16} /> Audio only
+                  {playing ? " — listen closely" : state === "ended" ? " — replay below" : ""}
                 </div>
               </>
             ) : (
               <button
                 onClick={togglePlay}
                 disabled={!ready}
-                aria-label="Play"
+                aria-label={state === "ended" ? "Replay" : "Play"}
                 className="flex h-20 w-20 items-center justify-center rounded-full bg-white/95 text-stone-900 shadow-lg transition hover:scale-105 active:scale-95 disabled:opacity-40"
               >
-                <Play size={34} className="ml-1" fill="currentColor" />
+                {state === "ended" ? <RotateCcw size={32} /> : <Play size={34} className="ml-1" fill="currentColor" />}
               </button>
             )}
           </div>

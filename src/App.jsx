@@ -68,8 +68,10 @@ function App() {
   /* refs so the hash resolver reads the latest data without re-subscribing */
   const gameRef = useRef(game);
   const quizzesRef = useRef(quizzes);
+  const viewRef = useRef(view);
   gameRef.current = game;
   quizzesRef.current = quizzes;
+  viewRef.current = view;
 
   /* navigate: update view state and mirror it to the hash */
   const go = (v) => {
@@ -83,15 +85,22 @@ function App() {
     if (!loaded) return;
     const resolve = () => {
       const { seg, arg } = parseHash();
-      setView((cur) => {
-        if (seg === "play") return gameRef.current ? { name: "play" } : { name: "home" };
-        if (seg === "setup") {
-          const quiz = [SAMPLE, ...quizzesRef.current].find((q) => q.id === arg);
-          return quiz ? { name: "setup", quiz } : { name: "home" };
-        }
-        if (seg === "builder") return cur.name === "builder" ? cur : { name: "home" };
-        return { name: "home" };
-      });
+      if (seg === "play") {
+        // An ended game is kept in state for the final-scores screen but is no
+        // longer "in progress" — match the home screen's resume gating.
+        setView(gameRef.current && gameRef.current.stage !== "end" ? { name: "play" } : { name: "home" });
+      } else if (seg === "setup") {
+        const quiz = [SAMPLE, ...quizzesRef.current].find((q) => q.id === arg);
+        setView(quiz ? { name: "setup", quiz } : { name: "home" });
+      } else if (seg === "builder") {
+        if (viewRef.current.name === "builder") return; // keep the live draft
+        // A draft can't be restored from the URL; normalize the hash to home so
+        // the address bar doesn't say #/builder while home is rendered.
+        if (window.location.hash !== "#/") window.history.replaceState(null, "", "#/");
+        setView({ name: "home" });
+      } else {
+        setView({ name: "home" });
+      }
     };
     resolve();
     window.addEventListener("hashchange", resolve);

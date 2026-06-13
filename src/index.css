@@ -42,6 +42,21 @@
   }
 }
 
+@keyframes qn-eq {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.qn-eq-bar {
+  transform-origin: bottom;
+  animation: qn-eq 0.8s ease-in-out infinite;
+}
+
 .qn-fade-up {
   animation: qn-fade-up 0.32s cubic-bezier(0.21, 1, 0.4, 1) both;
 }
@@ -63,7 +78,8 @@
 @media (prefers-reduced-motion: reduce) {
   .qn-fade-up,
   .qn-pop,
-  .qn-confetti-piece {
+  .qn-confetti-piece,
+  .qn-eq-bar {
     animation: none;
   }
 }

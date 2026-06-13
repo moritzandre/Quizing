@@ -89,8 +89,8 @@ export async function loadJSON(key, fallback) {
   try {
     const parsed = JSON.parse(raw);
     if (parsed && parsed.v === SCHEMA_VERSION) return parsed.data;
-    if (Array.isArray(parsed) || typeof parsed === "object") return parsed; // pre-versioned data
-    return fallback;
+    if (parsed && (Array.isArray(parsed) || typeof parsed === "object")) return parsed; // pre-versioned data
+    return fallback; // primitives and literal null fall back (typeof null === "object")
   } catch {
     return fallback;
   }
