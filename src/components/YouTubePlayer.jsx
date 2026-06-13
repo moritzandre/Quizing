@@ -57,14 +57,15 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
   useEffect(() => {
     let cancelled = false;
     let poll = null;
+    const host = hostRef.current;
     // YT.Player replaces its target element with an iframe, so give it a
     // disposable inner div (not the React-managed host) — this survives
     // StrictMode's mount→unmount→remount without detaching the host ref.
     loadYouTubeAPI()
       .then((YT) => {
-        if (cancelled || !hostRef.current) return;
+        if (cancelled || !host) return;
         const inner = document.createElement("div");
-        hostRef.current.appendChild(inner);
+        host.appendChild(inner);
         playerRef.current = new YT.Player(inner, {
           videoId,
           playerVars: {
@@ -125,7 +126,7 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
           /* player already torn down */
         }
       }
-      if (hostRef.current) hostRef.current.innerHTML = "";
+      if (host) host.innerHTML = "";
     };
   }, [videoId]);
 
