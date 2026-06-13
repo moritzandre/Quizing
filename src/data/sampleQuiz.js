@@ -12,6 +12,7 @@ export const SAMPLE = {
       id: "s1",
       type: "classic",
       title: "Warm-Up",
+      timer: 20,
       questions: [
         { id: "s1a", q: "What is the capital of Australia?", a: "Canberra", points: 10 },
         { id: "s1b", q: "Which chemical element has the symbol O?", a: "Oxygen", points: 10 },
@@ -23,6 +24,7 @@ export const SAMPLE = {
       id: "s2",
       type: "jeopardy",
       title: "The Board",
+      timer: null,
       categories: [
         {
           id: "c1",
@@ -57,6 +59,7 @@ export const SAMPLE = {
       id: "s3",
       type: "hints",
       title: "Who or What Am I?",
+      timer: null,
       questions: [
         {
           id: "h1",
@@ -85,7 +88,8 @@ export const SAMPLE = {
     {
       id: "s4",
       type: "video",
-      title: "Watch Closely",
+      title: "Watch & Listen",
+      timer: null,
       questions: [
         {
           id: "v1",
@@ -93,12 +97,43 @@ export const SAMPLE = {
           q: "Name the artist and the song.",
           a: "Rick Astley – Never Gonna Give You Up",
           points: 10,
+          audioOnly: false,
         },
         {
           id: "v2",
           url: "https://www.youtube.com/watch?v=9bZkp7q19f0",
-          q: "Which song (and artist) is this?",
+          q: "Audio only — which song (and artist) is this?",
           a: "PSY – Gangnam Style",
+          points: 10,
+          audioOnly: true,
+        },
+      ],
+    },
+    {
+      id: "s6",
+      type: "image",
+      title: "Guess the Flag",
+      timer: 15,
+      questions: [
+        {
+          id: "p1",
+          url: "https://flagcdn.com/w320/jp.png",
+          q: "Which country's flag is this?",
+          a: "Japan",
+          points: 10,
+        },
+        {
+          id: "p2",
+          url: "https://flagcdn.com/w320/br.png",
+          q: "Which country's flag is this?",
+          a: "Brazil",
+          points: 10,
+        },
+        {
+          id: "p3",
+          url: "https://flagcdn.com/w320/za.png",
+          q: "Which country's flag is this?",
+          a: "South Africa",
           points: 10,
         },
       ],
@@ -107,6 +142,7 @@ export const SAMPLE = {
       id: "s5",
       type: "map",
       title: "Where in the World?",
+      timer: null,
       questions: [
         { id: "m1", q: "Where is Machu Picchu?", name: "Machu Picchu, Peru", lat: -13.16, lng: -72.55, points: 10 },
         { id: "m2", q: "Where is the Great Pyramid of Giza?", name: "Giza, Egypt", lat: 29.98, lng: 31.13, points: 10 },

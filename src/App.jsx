@@ -1,5 +1,10 @@
 /* ====================================================================
    APP SHELL (routing, persistence, home screen)
+   --------------------------------------------------------------------
+   Coarse hash routing mirrors the current view to window.location.hash
+   (#/, #/play, #/setup/<id>, #/builder) so a refresh mid-game returns
+   to the right place. Transient state (a builder draft) isn't in the
+   URL, so refreshing on #/builder falls back home.
    ==================================================================== */
 
 import { useState, useEffect, useRef } from "react";
@@ -16,13 +21,25 @@ import {
   exportQuiz,
 } from "./lib/model.js";
 import { SAMPLE } from "./data/sampleQuiz.js";
-import { FOCUS, Button, IconButton, TypeBadge, ConfirmDelete } from "./components/ui.jsx";
+import { FOCUS, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, ThemeToggle } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import PlayView from "./components/PlayView.jsx";
 import SetupView from "./components/SetupView.jsx";
 import Builder from "./components/Builder.jsx";
 
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
+
+const hashFor = (v) => {
+  if (v.name === "play") return "#/play";
+  if (v.name === "setup") return `#/setup/${v.quiz.id}`;
+  if (v.name === "builder") return "#/builder";
+  return "#/";
+};
+
+const parseHash = () => {
+  const [seg, arg] = window.location.hash.replace(/^#\/?/, "").split("/");
+  return { seg, arg };
+};
 
 function App() {
   const [view, setView] = useState({ name: "home" });
@@ -46,6 +63,41 @@ function App() {
     })();
   }, []);
 
+  const allQuizzes = [SAMPLE, ...quizzes];
+
+  /* refs so the hash resolver reads the latest data without re-subscribing */
+  const gameRef = useRef(game);
+  const quizzesRef = useRef(quizzes);
+  gameRef.current = game;
+  quizzesRef.current = quizzes;
+
+  /* navigate: update view state and mirror it to the hash */
+  const go = (v) => {
+    setView(v);
+    const target = hashFor(v);
+    if (window.location.hash !== target) window.location.hash = target;
+  };
+
+  /* resolve the URL hash to a view (initial load + back/forward) */
+  useEffect(() => {
+    if (!loaded) return;
+    const resolve = () => {
+      const { seg, arg } = parseHash();
+      setView((cur) => {
+        if (seg === "play") return gameRef.current ? { name: "play" } : { name: "home" };
+        if (seg === "setup") {
+          const quiz = [SAMPLE, ...quizzesRef.current].find((q) => q.id === arg);
+          return quiz ? { name: "setup", quiz } : { name: "home" };
+        }
+        if (seg === "builder") return cur.name === "builder" ? cur : { name: "home" };
+        return { name: "home" };
+      });
+    };
+    resolve();
+    window.addEventListener("hashchange", resolve);
+    return () => window.removeEventListener("hashchange", resolve);
+  }, [loaded]);
+
   const persistQuizzes = (list) => {
     setQuizzes(list);
     saveJSON("quizzes", list);
@@ -55,8 +107,6 @@ function App() {
     if (g && g.stage !== "end") saveJSON("game", g);
     else removeKey("game");
   };
-
-  const allQuizzes = [SAMPLE, ...quizzes];
 
   const startGame = (quiz, names) => {
     setLastPlayers(names);
@@ -73,8 +123,9 @@ function App() {
       awarded: {},
       used: {},
       tile: null,
+      guesses: {},
     });
-    setView({ name: "play" });
+    go({ name: "play" });
   };
 
   const editQuiz = (quiz) => {
@@ -83,13 +134,13 @@ function App() {
       copy.id = uid();
       copy.sample = false;
       copy.title = quiz.title + " (copy)";
-      setView({
+      go({
         name: "builder",
         draft: copy,
         note: "The sample quiz is read-only — you're editing your own copy of it.",
       });
     } else {
-      setView({ name: "builder", draft: deepClone(quiz) });
+      go({ name: "builder", draft: deepClone(quiz) });
     }
   };
 
@@ -104,7 +155,7 @@ function App() {
   const saveQuiz = (q) => {
     const exists = quizzes.some((x) => x.id === q.id);
     persistQuizzes(exists ? quizzes.map((x) => (x.id === q.id ? q : x)) : [...quizzes, q]);
-    setView({ name: "home" });
+    go({ name: "home" });
   };
 
   const handleImportFile = (e) => {
@@ -131,31 +182,38 @@ function App() {
 
   if (!loaded) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400">Loading…</div>
+      <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400 dark:bg-stone-950 dark:text-stone-500">
+        Loading…
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased">
+    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased transition-colors dark:bg-stone-950 dark:text-stone-100">
       {view.name === "home" && (
         <div className="mx-auto max-w-2xl px-6 pb-16 pt-12">
-          <h1 className="text-5xl font-bold tracking-tight">
-            Quiz Night<span className="text-indigo-600">.</span>
-          </h1>
-          <p className="mt-2 text-stone-500">
-            One screen, one host, five round formats. You read, friends shout, you tap to score.
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-5xl font-bold tracking-tight">
+                Quiz Night<span className="text-indigo-600 dark:text-indigo-400">.</span>
+              </h1>
+              <p className="mt-2 text-stone-500 dark:text-stone-400">
+                One screen, one host, six round formats. You read, friends shout, you tap to score.
+              </p>
+            </div>
+            <ThemeToggle className="mt-1" />
+          </div>
 
           {game && game.stage !== "end" && (
-            <div className="mt-8 flex items-center justify-between rounded-2xl border border-indigo-200 bg-indigo-50 px-5 py-4">
+            <div className="mt-8 flex items-center justify-between rounded-2xl border border-indigo-200 bg-indigo-50 px-5 py-4 dark:border-indigo-500/30 dark:bg-indigo-500/10">
               <div>
-                <p className="text-sm font-semibold text-indigo-700">Game in progress</p>
-                <p className="text-sm text-indigo-900/70">
+                <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">Game in progress</p>
+                <p className="text-sm text-indigo-900/70 dark:text-indigo-200/70">
                   {game.quiz.title} · Round {game.ri + 1} of {game.quiz.rounds.length}
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="accent" className="px-4 py-2" onClick={() => setView({ name: "play" })}>
+                <Button variant="accent" className="px-4 py-2" onClick={() => go({ name: "play" })}>
                   <Play size={15} /> Resume
                 </Button>
                 <IconButton
@@ -170,10 +228,12 @@ function App() {
           )}
 
           <div className="mt-10 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-400">Quizzes</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-400 dark:text-stone-500">
+              Quizzes
+            </h2>
             <button
               onClick={() => fileRef.current?.click()}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 ${FOCUS}`}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
             >
               <Upload size={15} /> Import
             </button>
@@ -185,15 +245,19 @@ function App() {
               onChange={handleImportFile}
             />
           </div>
-          {importError && <p className="mt-2 rounded-xl bg-red-50 px-4 py-2 text-sm text-red-600">{importError}</p>}
+          {importError && (
+            <p className="mt-2 rounded-xl bg-red-50 px-4 py-2 text-sm text-red-600 dark:bg-red-500/10 dark:text-red-400">
+              {importError}
+            </p>
+          )}
 
           <div className="mt-3 space-y-3">
             {allQuizzes.map((q) => (
-              <div key={q.id} className="rounded-2xl border border-stone-200 bg-white p-5">
+              <div key={q.id} className={`${cardCls} p-5 shadow-sm`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <h3 className="truncate text-lg font-semibold">{q.title}</h3>
-                    <p className="mt-0.5 text-sm text-stone-400">
+                    <p className="mt-0.5 text-sm text-stone-400 dark:text-stone-500">
                       {q.rounds.length} rounds · {countQuestions(q)} questions{q.sample ? " · sample" : ""}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
@@ -220,20 +284,20 @@ function App() {
                     )}
                   </div>
                 </div>
-                <Button className="mt-4 px-5 py-2.5" onClick={() => setView({ name: "setup", quiz: q })}>
+                <Button className="mt-4 px-5 py-2.5" onClick={() => go({ name: "setup", quiz: q })}>
                   <Play size={15} /> Play
                 </Button>
               </div>
             ))}
             <button
-              onClick={() => setView({ name: "builder", draft: { id: uid(), title: "", rounds: [] } })}
-              className={`flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-300 px-4 py-5 font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 ${FOCUS}`}
+              onClick={() => go({ name: "builder", draft: { id: uid(), title: "", rounds: [] } })}
+              className={`flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-300 px-4 py-5 font-medium text-stone-500 transition hover:border-stone-400 hover:text-stone-700 dark:border-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-stone-200 ${FOCUS}`}
             >
               <Plus size={18} /> New quiz
             </button>
           </div>
 
-          <p className="mt-10 text-center text-xs text-stone-300">
+          <p className="mt-10 text-center text-xs text-stone-300 dark:text-stone-600">
             v{APP_VERSION} · {storage.name === "claude" && "saving to your Claude storage"}
             {storage.name === "local" && "saving to this browser"}
             {storage.name === "memory" && (
@@ -249,7 +313,7 @@ function App() {
         <SetupView
           quiz={view.quiz}
           defaults={lastPlayers}
-          onBack={() => setView({ name: "home" })}
+          onBack={() => go({ name: "home" })}
           onStart={(names) => startGame(view.quiz, names)}
         />
       )}
@@ -260,13 +324,13 @@ function App() {
           setGame={persistGame}
           onExit={() => {
             if (game.stage === "end") persistGame(null);
-            setView({ name: "home" });
+            go({ name: "home" });
           }}
         />
       )}
 
       {view.name === "builder" && (
-        <Builder initial={view.draft} note={view.note} onSave={saveQuiz} onCancel={() => setView({ name: "home" })} />
+        <Builder initial={view.draft} note={view.note} onSave={saveQuiz} onCancel={() => go({ name: "home" })} />
       )}
     </div>
   );

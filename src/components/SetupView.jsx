@@ -14,7 +14,7 @@ export default function SetupView({ quiz, defaults, onStart, onBack }) {
     <div className="mx-auto max-w-md px-6 pb-16 pt-6">
       <button
         onClick={onBack}
-        className={`mb-8 inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 hover:bg-stone-100 ${FOCUS}`}
+        className={`mb-8 inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
       >
         <ChevronLeft size={16} /> Back
       </button>
@@ -50,7 +50,7 @@ export default function SetupView({ quiz, defaults, onStart, onBack }) {
         ))}
         <button
           onClick={() => setNames([...names, ""])}
-          className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 ${FOCUS}`}
+          className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
         >
           <Plus size={15} /> Add player
         </button>
