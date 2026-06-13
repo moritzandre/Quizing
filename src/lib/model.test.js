@@ -10,6 +10,8 @@ import {
   morphValue,
   summarizeGame,
   aggregateLeaderboard,
+  makeHint,
+  hintHasContent,
 } from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
@@ -64,7 +66,19 @@ describe("normalizeQuiz", () => {
         timer: 30,
         categories: [{ id: "c1", name: "Cat", questions: [{ id: "j1", clue: "Clue", answer: "Ans", points: 100 }] }],
       },
-      { id: "r3", type: "hints", title: "H", timer: null, questions: [{ id: "h1", answer: "X", hints: ["a", "b"] }] },
+      {
+        id: "r3",
+        type: "hints",
+        title: "H",
+        timer: null,
+        questions: [
+          {
+            id: "h1",
+            answer: "X",
+            hints: ["a text hint", { type: "image", url: "https://e.com/p.jpg" }, { type: "map", lat: 1, lng: 2, name: "n" }],
+          },
+        ],
+      },
       {
         id: "r4",
         type: "video",
@@ -85,6 +99,13 @@ describe("normalizeQuiz", () => {
         title: "Mo",
         timer: null,
         questions: [{ id: "mo1", url: "https://example.com/x.jpg", a: "A", points: 30, effect: "pixelate", steps: 5 }],
+      },
+      {
+        id: "r8",
+        type: "fusion",
+        title: "Fu",
+        timer: null,
+        questions: [{ id: "fu1", urlA: "https://e.com/a.jpg", urlB: "https://e.com/b.jpg", a: "A + B", points: 40, steps: 4 }],
       },
       {
         id: "r5",
@@ -164,6 +185,57 @@ describe("normalizeQuiz", () => {
     });
     expect(q.rounds[0].questions[0]).toMatchObject({ url: "u", a: "A", effect: "blur", steps: 8 });
     expect(q.rounds[1].questions[0]).toMatchObject({ effect: "blur", steps: 4, points: 30 });
+  });
+
+  it("normalizes fusion rounds with defaults", () => {
+    const q = normalizeQuiz({ rounds: [{ type: "fusion", questions: [{ urlA: "a", urlB: "b", a: "X+Y" }] }] });
+    expect(q.rounds[0].questions[0]).toMatchObject({ urlA: "a", urlB: "b", a: "X+Y", points: 40, steps: 4 });
+  });
+
+  it("normalizes typed media hints; keeps text hints as strings; coerces junk", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "hints",
+          questions: [
+            {
+              answer: "Z",
+              hints: [
+                "plain",
+                { type: "image", url: 5 },
+                { type: "map", lat: "1.5", lng: "x", name: 9 },
+                { type: "bogus", text: "t" },
+                42,
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    const hints = q.rounds[0].questions[0].hints;
+    expect(hints[0]).toBe("plain");
+    expect(hints[1]).toEqual({ type: "image", url: "" });
+    expect(hints[2]).toEqual({ type: "map", lat: 1.5, lng: null, name: "" });
+    expect(hints[3]).toBe("t"); // unknown type → text → str(h.text)
+    expect(hints[4]).toBe(""); // non-string/object → ""
+  });
+});
+
+describe("makeHint / hintHasContent", () => {
+  it("makeHint returns a string for text, objects for media", () => {
+    expect(makeHint("text")).toBe("");
+    expect(makeHint("image")).toEqual({ type: "image", url: "" });
+    expect(makeHint("map")).toEqual({ type: "map", lat: null, lng: null, name: "" });
+  });
+
+  it("hintHasContent recognises filled text, media, and map hints", () => {
+    expect(hintHasContent("hi")).toBe(true);
+    expect(hintHasContent("   ")).toBe(false);
+    expect(hintHasContent({ type: "image", url: "u" })).toBe(true);
+    expect(hintHasContent({ type: "image", url: "" })).toBe(false);
+    expect(hintHasContent({ type: "map", lat: 1, lng: 2 })).toBe(true);
+    expect(hintHasContent({ type: "map", lat: null, lng: 2 })).toBe(false);
+    expect(hintHasContent(null)).toBe(false);
   });
 });
 

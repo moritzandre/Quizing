@@ -9,10 +9,51 @@
 import { SCHEMA_VERSION } from "./storage.js";
 
 /** Canonical round-type keys. Must stay in sync with TYPES in components/ui.jsx. */
-export const ROUND_TYPES = ["classic", "jeopardy", "hints", "video", "image", "morph", "map"];
+export const ROUND_TYPES = ["classic", "jeopardy", "hints", "video", "image", "morph", "fusion", "map"];
 
 /** Reveal effects for the morph round. */
-export const MORPH_EFFECTS = ["blur", "pixelate", "tiles"];
+export const MORPH_EFFECTS = ["blur", "pixelate", "tiles", "zoom", "slices"];
+
+/** Media kinds a hint-ladder hint can be. Plain text hints stay as strings. */
+export const HINT_TYPES = ["text", "image", "audio", "video", "map"];
+
+/**
+ * Create an empty hint of the given media type. Text hints are plain strings
+ * (back-compatible with the original string-array format); others are objects.
+ * @param {string} type One of HINT_TYPES.
+ */
+export function makeHint(type) {
+  switch (type) {
+    case "image":
+      return { type: "image", url: "" };
+    case "audio":
+      return { type: "audio", url: "" };
+    case "video":
+      return { type: "video", url: "" };
+    case "map":
+      return { type: "map", lat: null, lng: null, name: "" };
+    default:
+      return "";
+  }
+}
+
+/** Coerce one hint into a valid string (text) or typed media object. */
+function normalizeHint(h) {
+  if (typeof h === "string") return h;
+  if (!h || typeof h !== "object") return "";
+  const type = HINT_TYPES.includes(h.type) ? h.type : "text";
+  if (type === "text") return str(h.text);
+  if (type === "map") return { type: "map", lat: numOrNull(h.lat), lng: numOrNull(h.lng), name: str(h.name) };
+  return { type, url: str(h.url) };
+}
+
+/** True if a hint actually carries content (used for the value ladder + display). */
+export function hintHasContent(h) {
+  if (typeof h === "string") return h.trim() !== "";
+  if (!h || typeof h !== "object") return false;
+  if (h.type === "map") return h.lat != null && h.lng != null;
+  return str(h.url).trim() !== "";
+}
 
 /** Generate a short random id. */
 export const uid = () => Math.random().toString(36).slice(2, 9);
@@ -124,6 +165,8 @@ export function makeQuestion(type) {
       return { id: uid(), url: "", q: "What do you see?", a: "", points: 10 };
     case "morph":
       return { id: uid(), url: "", a: "", points: 30, effect: "blur", steps: 4 };
+    case "fusion":
+      return { id: uid(), urlA: "", urlB: "", a: "", points: 40, steps: 4 };
     case "map":
       return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10 };
     default:
@@ -181,7 +224,7 @@ export function normalizeQuiz(raw) {
           if (r.type === "hints")
             Object.assign(it, {
               answer: str(q?.answer),
-              hints: (Array.isArray(q?.hints) ? q.hints : [""]).map((h) => str(h)),
+              hints: (Array.isArray(q?.hints) ? q.hints : [""]).map(normalizeHint),
             });
           if (r.type === "video")
             Object.assign(it, {
@@ -199,6 +242,14 @@ export function normalizeQuiz(raw) {
               a: str(q?.a),
               points: num(q?.points, 30),
               effect: MORPH_EFFECTS.includes(q?.effect) ? q.effect : "blur",
+              steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
+            });
+          if (r.type === "fusion")
+            Object.assign(it, {
+              urlA: str(q?.urlA),
+              urlB: str(q?.urlB),
+              a: str(q?.a),
+              points: num(q?.points, 40),
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
             });
           if (r.type === "map")
