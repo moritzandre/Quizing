@@ -1,5 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { ytId, normalizeQuiz, normalizeGame, nextNonEmpty, countQuestions, moveItem, haversineKm } from "./model.js";
+import {
+  ytId,
+  normalizeQuiz,
+  normalizeGame,
+  nextNonEmpty,
+  countQuestions,
+  moveItem,
+  haversineKm,
+  morphValue,
+  summarizeGame,
+  aggregateLeaderboard,
+} from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
 
@@ -69,6 +80,13 @@ describe("normalizeQuiz", () => {
         questions: [{ id: "i1", url: "https://example.com/cat.jpg", q: "Q", a: "A", points: 10 }],
       },
       {
+        id: "r7",
+        type: "morph",
+        title: "Mo",
+        timer: null,
+        questions: [{ id: "mo1", url: "https://example.com/x.jpg", a: "A", points: 30, effect: "pixelate", steps: 5 }],
+      },
+      {
         id: "r5",
         type: "map",
         title: "M",
@@ -135,6 +153,17 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[0].questions[0].audioOnly).toBe(true);
     expect(q.rounds[1].questions[0]).toMatchObject({ url: "", q: "", a: "", points: 10 });
     expect(q.rounds[2].timer).toBe(null);
+  });
+
+  it("normalizes morph rounds: effect whitelist + steps clamp + defaults", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "morph", questions: [{ url: "u", a: "A", effect: "bogus", steps: 99 }] },
+        { type: "morph", questions: [{}] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ url: "u", a: "A", effect: "blur", steps: 8 });
+    expect(q.rounds[1].questions[0]).toMatchObject({ effect: "blur", steps: 4, points: 30 });
   });
 });
 
@@ -243,5 +272,66 @@ describe("haversineKm", () => {
     const a = haversineKm(-33.87, 151.21, 35.68, 139.69);
     const b = haversineKm(35.68, 139.69, -33.87, 151.21);
     expect(Math.abs(a - b)).toBeLessThan(1e-6);
+  });
+});
+
+describe("morphValue", () => {
+  it("is full value when fully morphed and declines per demorph step", () => {
+    expect(morphValue(30, 4, 0)).toBe(30);
+    expect(morphValue(30, 4, 4)).toBe(6); // floor = points/(steps+1)
+    const seq = [0, 1, 2, 3, 4].map((s) => morphValue(30, 4, s));
+    for (let i = 1; i < seq.length; i++) expect(seq[i]).toBeLessThanOrEqual(seq[i - 1]);
+  });
+
+  it("never drops below 1", () => {
+    expect(morphValue(2, 8, 8)).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("summarizeGame", () => {
+  const mk = (scores) => ({
+    quiz: { title: "Q" },
+    players: scores.map((s, i) => ({ id: `p${i}`, name: `P${i}`, score: s })),
+  });
+
+  it("marks the top scorer as winner when the board isn't tied", () => {
+    const s = summarizeGame(mk([10, 30, 20]));
+    expect(s.players.map((p) => p.won)).toEqual([false, true, false]);
+    expect(s.quizTitle).toBe("Q");
+  });
+
+  it("awards a win to the least-negative player in an all-negative game", () => {
+    const s = summarizeGame(mk([-100, -500]));
+    expect(s.players.find((p) => p.score === -100).won).toBe(true);
+  });
+
+  it("declares no winner when everyone is tied", () => {
+    const s = summarizeGame(mk([0, 0]));
+    expect(s.players.every((p) => !p.won)).toBe(true);
+  });
+});
+
+describe("aggregateLeaderboard", () => {
+  it("tallies games, wins, totals and best score by case-insensitive name", () => {
+    const results = [
+      { players: [{ name: "Ann", score: 30, won: true }, { name: "bob", score: 10, won: false }] },
+      { players: [{ name: "ann", score: 20, won: false }, { name: "Bob", score: 40, won: true }] },
+    ];
+    const board = aggregateLeaderboard(results);
+    const ann = board.find((e) => e.name.toLowerCase() === "ann");
+    const bob = board.find((e) => e.name.toLowerCase() === "bob");
+    expect(ann).toMatchObject({ games: 2, wins: 1, totalScore: 50, bestScore: 30 });
+    expect(bob).toMatchObject({ games: 2, wins: 1, totalScore: 50, bestScore: 40 });
+  });
+
+  it("sorts by wins, then total score; tolerates junk", () => {
+    const board = aggregateLeaderboard([
+      { players: [{ name: "A", score: 5, won: false }] },
+      { players: [{ name: "B", score: 5, won: true }] },
+      null,
+      { players: "nope" },
+    ]);
+    expect(board[0].name).toBe("B");
+    expect(board).toHaveLength(2);
   });
 });

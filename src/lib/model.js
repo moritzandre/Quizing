@@ -9,7 +9,10 @@
 import { SCHEMA_VERSION } from "./storage.js";
 
 /** Canonical round-type keys. Must stay in sync with TYPES in components/ui.jsx. */
-export const ROUND_TYPES = ["classic", "jeopardy", "hints", "video", "image", "map"];
+export const ROUND_TYPES = ["classic", "jeopardy", "hints", "video", "image", "morph", "map"];
+
+/** Reveal effects for the morph round. */
+export const MORPH_EFFECTS = ["blur", "pixelate", "tiles"];
 
 /** Generate a short random id. */
 export const uid = () => Math.random().toString(36).slice(2, 9);
@@ -119,6 +122,8 @@ export function makeQuestion(type) {
       return { id: uid(), url: "", q: "Name what you see or hear.", a: "", points: 10, audioOnly: false };
     case "image":
       return { id: uid(), url: "", q: "What do you see?", a: "", points: 10 };
+    case "morph":
+      return { id: uid(), url: "", a: "", points: 30, effect: "blur", steps: 4 };
     case "map":
       return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10 };
     default:
@@ -188,6 +193,14 @@ export function normalizeQuiz(raw) {
             });
           if (r.type === "image")
             Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
+          if (r.type === "morph")
+            Object.assign(it, {
+              url: str(q?.url),
+              a: str(q?.a),
+              points: num(q?.points, 30),
+              effect: MORPH_EFFECTS.includes(q?.effect) ? q.effect : "blur",
+              steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
+            });
           if (r.type === "map")
             Object.assign(it, {
               q: str(q?.q),
@@ -216,11 +229,11 @@ export function normalizeGame(raw) {
   if (!quiz || !Array.isArray(raw.players) || raw.players.length === 0) return null;
   return {
     quiz,
-    players: raw.players.map((p) => ({
-      id: str(p?.id) || uid(),
-      name: str(p?.name) || "Player",
-      score: num(p?.score, 0),
-    })),
+    players: raw.players.map((p) => {
+      const player = { id: str(p?.id) || uid(), name: str(p?.name) || "Player", score: num(p?.score, 0) };
+      if (p?.deviceId) player.deviceId = str(p.deviceId); // links a player to a phone in the buzzer room
+      return player;
+    }),
     ri: num(raw.ri, 0),
     qi: num(raw.qi, 0),
     stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",
@@ -274,6 +287,58 @@ export const countQuestions = (quiz) =>
         : (r.questions || []).length),
     0,
   );
+
+/**
+ * Points still at stake on a morph question at the current reveal step.
+ * Full value when fully obscured (step 0), declining toward a floor as the
+ * host demorphs (mirrors the hint ladder, but visual).
+ * @param {number} points Full point value.
+ * @param {number} steps Number of demorph steps.
+ * @param {number} step Current step (0 = fully morphed).
+ */
+export const morphValue = (points, steps, step) =>
+  Math.max(1, Math.round((num(points, 10) * (steps - step + 1)) / (steps + 1)));
+
+/* ---- persistent leaderboard ---- */
+
+/**
+ * Summarise a finished game into a leaderboard record (no timestamp — the
+ * caller stamps it). A win goes to the top scorer(s) only when the board
+ * isn't fully tied.
+ * @param {object} game A finished game.
+ */
+export function summarizeGame(game) {
+  const players = game.players.map((p) => ({ name: p.name, score: num(p.score, 0) }));
+  const max = players.reduce((m, p) => Math.max(m, p.score), -Infinity);
+  const min = players.reduce((m, p) => Math.min(m, p.score), Infinity);
+  const decided = players.length > 1 && max > min;
+  return {
+    quizTitle: str(game.quiz?.title) || "Untitled quiz",
+    players: players.map((p) => ({ ...p, won: decided && p.score === max })),
+  };
+}
+
+/**
+ * Aggregate stored game records into per-player standings, sorted by wins
+ * then total score. Names are matched case-insensitively.
+ * @param {Array} results Stored leaderboard records.
+ */
+export function aggregateLeaderboard(results) {
+  const map = new Map();
+  for (const r of Array.isArray(results) ? results : []) {
+    for (const p of Array.isArray(r?.players) ? r.players : []) {
+      const key = str(p?.name).trim().toLowerCase();
+      if (!key) continue;
+      const e = map.get(key) || { name: str(p.name).trim(), games: 0, wins: 0, totalScore: 0, bestScore: -Infinity };
+      e.games += 1;
+      e.wins += p.won ? 1 : 0;
+      e.totalScore += num(p.score, 0);
+      e.bestScore = Math.max(e.bestScore, num(p.score, 0));
+      map.set(key, e);
+    }
+  }
+  return [...map.values()].sort((a, b) => b.wins - a.wins || b.totalScore - a.totalScore || b.bestScore - a.bestScore);
+}
 
 /* ---- export / import (.quiz.json) ---- */
 

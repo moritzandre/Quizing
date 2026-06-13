@@ -12,7 +12,10 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.18.0",
+    "mqtt": "^5.15.1",
+    "qrcode": "^1.5.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
