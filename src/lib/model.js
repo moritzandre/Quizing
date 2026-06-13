@@ -208,7 +208,11 @@ export function normalizeGame(raw) {
   if (!quiz || !Array.isArray(raw.players) || raw.players.length === 0) return null;
   return {
     quiz,
-    players: raw.players.map((p) => ({ id: str(p?.id) || uid(), name: str(p?.name) || "Player", score: num(p?.score, 0) })),
+    players: raw.players.map((p) => ({
+      id: str(p?.id) || uid(),
+      name: str(p?.name) || "Player",
+      score: num(p?.score, 0),
+    })),
     ri: num(raw.ri, 0),
     qi: num(raw.qi, 0),
     stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",
@@ -216,13 +220,16 @@ export function normalizeGame(raw) {
     hintsShown: Math.max(1, num(raw.hintsShown, 1)),
     awarded: raw.awarded && typeof raw.awarded === "object" ? raw.awarded : {},
     used: raw.used && typeof raw.used === "object" ? raw.used : {},
-    tile: raw.tile && Number.isFinite(+raw.tile.ci) && Number.isFinite(+raw.tile.qi) ? { ci: +raw.tile.ci, qi: +raw.tile.qi } : null,
+    tile:
+      raw.tile && Number.isFinite(+raw.tile.ci) && Number.isFinite(+raw.tile.qi)
+        ? { ci: +raw.tile.ci, qi: +raw.tile.qi }
+        : null,
     guesses:
       raw.guesses && typeof raw.guesses === "object"
         ? Object.fromEntries(
             Object.entries(raw.guesses)
               .filter(([, g]) => g && numOrNull(g.lat) != null && numOrNull(g.lng) != null)
-              .map(([pid, g]) => [pid, { lat: +g.lat, lng: +g.lng }])
+              .map(([pid, g]) => [pid, { lat: +g.lat, lng: +g.lng }]),
           )
         : {},
   };
@@ -257,7 +264,7 @@ export const countQuestions = (quiz) =>
       (r.type === "jeopardy"
         ? (r.categories || []).reduce((m, c) => m + (c.questions || []).length, 0)
         : (r.questions || []).length),
-    0
+    0,
   );
 
 /* ---- export / import (.quiz.json) ---- */
@@ -272,10 +279,12 @@ export function exportQuiz(quiz) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(quiz.title || "quiz")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "") || "quiz"}.quiz.json`;
+  a.download = `${
+    (quiz.title || "quiz")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "quiz"
+  }.quiz.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();

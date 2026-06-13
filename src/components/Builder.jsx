@@ -33,20 +33,22 @@ function DragHandle(props) {
 function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassName = "", children }) {
   const [dragIdx, setDragIdx] = useState(null);
   const [overIdx, setOverIdx] = useState(null);
-  const armed = useRef(false);
+  // A row is only draggable while its handle is held, so inputs inside the
+  // row keep normal text selection the rest of the time.
+  const [armedIdx, setArmedIdx] = useState(null);
   const reset = () => {
     setDragIdx(null);
     setOverIdx(null);
-    armed.current = false;
+    setArmedIdx(null);
   };
   return (
     <div className={gap}>
       {items.map((item, i) => (
         <div
           key={getKey(item)}
-          draggable
+          draggable={armedIdx === i}
           onDragStart={(e) => {
-            if (!armed.current) return e.preventDefault();
+            if (armedIdx !== i) return e.preventDefault();
             setDragIdx(i);
             e.dataTransfer.effectAllowed = "move";
             try {
@@ -73,9 +75,9 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
           {children(item, i, {
             "aria-label": "Drag to reorder",
             title: "Drag to reorder",
-            onMouseDown: () => (armed.current = true),
-            onMouseUp: () => (armed.current = false),
-            onTouchStart: () => (armed.current = true),
+            onMouseDown: () => setArmedIdx(i),
+            onMouseUp: () => setArmedIdx((cur) => (cur === i ? null : cur)),
+            onTouchStart: () => setArmedIdx(i),
           })}
         </div>
       ))}
