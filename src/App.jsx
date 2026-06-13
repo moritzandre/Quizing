@@ -139,6 +139,7 @@ function App() {
   const recordedRef = useRef(null);
   useEffect(() => {
     if (!game || game.stage !== "end" || recordedRef.current === game.id) return;
+    if (nextNonEmpty(game.quiz, 0) === -1) return; // content-less quiz ended at start — not a real game
     recordedRef.current = game.id;
     const rec = { id: game.id, date: new Date().toISOString(), ...summarizeGame(game) };
     setLeaderboard((prev) => {
@@ -158,9 +159,11 @@ function App() {
    * players keep deviceId as their player id so buzz/pin events map directly.
    */
   const startGame = (quiz, players) => {
-    const names = players.map((p) => p.name);
-    setLastPlayers(names);
-    saveJSON("players", names);
+    // Only remember manually-typed names — phone players rejoin via the room,
+    // so persisting them would seed duplicates into the next game's setup.
+    const manualNames = players.filter((p) => !p.deviceId).map((p) => p.name);
+    setLastPlayers(manualNames);
+    saveJSON("players", manualNames);
     const ri = nextNonEmpty(quiz, 0);
     persistGame({
       id: uid(),

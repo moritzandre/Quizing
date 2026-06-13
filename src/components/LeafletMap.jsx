@@ -47,6 +47,7 @@ export default function LeafletMap({ answer, guesses = [], showLines = false, on
   const tileRef = useRef(null);
   const onPickRef = useRef(onPick);
   onPickRef.current = onPick;
+  const didCenterRef = useRef(false); // center once on mount; don't yank the view while picking
 
   // init once
   useEffect(() => {
@@ -135,14 +136,19 @@ export default function LeafletMap({ answer, guesses = [], showLines = false, on
 
     if (ans) {
       pts.push(ans);
-      const m = L.marker(ans, { icon: answerIcon(), interactive: !!answer.label }).addTo(layer);
+      // Non-interactive while picking, so tapping the pin itself relocates it.
+      const m = L.marker(ans, { icon: answerIcon(), interactive: !onPickRef.current && !!answer.label }).addTo(layer);
       if (answer.label) m.bindTooltip(answer.label, { permanent: true, direction: "top", offset: [0, -10] });
     }
 
-    if (pts.length > 1) {
+    // On reveal, frame all the points. Otherwise only center once (initial load)
+    // so the view doesn't jump while the user pans or places pins.
+    if (showLines && pts.length) {
       map.fitBounds(L.latLngBounds(pts).pad(0.3), { maxZoom: 6 });
-    } else if (pts.length === 1) {
+      didCenterRef.current = true;
+    } else if (!didCenterRef.current && pts.length) {
       map.setView(pts[0], Math.max(map.getZoom(), 4));
+      didCenterRef.current = true;
     }
   }, [answer, guesses, showLines]);
 

@@ -34,7 +34,7 @@ export function newRoomCode() {
  * to onMessage(topic, obj); connection lifecycle to onStatus(status).
  * @returns {{ topics: object, publish: Function, clearRetained: Function, close: Function }}
  */
-export function connectRoom({ code, subscribe = [], onMessage, onStatus }) {
+export function connectRoom({ code, subscribe = [], onMessage, onStatus, will }) {
   const topics = roomTopics(code);
   const clientId = `qn_${code}_${Math.random().toString(36).slice(2, 10)}`;
   const client = mqtt.connect(BROKER_URL, {
@@ -43,6 +43,9 @@ export function connectRoom({ code, subscribe = [], onMessage, onStatus }) {
     connectTimeout: 8000,
     reconnectPeriod: 3000,
     keepalive: 30,
+    // The broker publishes this on an ungraceful disconnect (tab closed/crash),
+    // so a stranded retained state self-heals to "cleared".
+    ...(will ? { will: { topic: will.topic, payload: will.payload ?? "", qos: 0, retain: true } } : {}),
   });
 
   client.on("connect", () => {
@@ -54,7 +57,7 @@ export function connectRoom({ code, subscribe = [], onMessage, onStatus }) {
   client.on("error", () => onStatus?.("error"));
   client.on("message", (topic, payload) => {
     const text = payload.toString();
-    if (!text) return; // empty body = cleared retained message
+    if (!text) return onMessage?.(topic, null); // empty body = cleared retained message (reset signal)
     let obj;
     try {
       obj = JSON.parse(text);

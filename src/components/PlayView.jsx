@@ -19,7 +19,7 @@ import {
   Radio,
   Bell,
 } from "lucide-react";
-import { ytId, nextNonEmpty, haversineKm, morphValue } from "../lib/model.js";
+import { uid, ytId, nextNonEmpty, haversineKm, morphValue } from "../lib/model.js";
 import { TYPES, FOCUS, Button, Confetti } from "./ui.jsx";
 import ScoreBar from "./ScoreBar.jsx";
 import LeafletMap from "./LeafletMap.jsx";
@@ -131,8 +131,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
     }
   }, [buzzerOn, game.stage, game.revealed, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Beep + a fresh re-arm signal whenever someone buzzes in first.
-  const lastBuzzId = useRef(null);
+  // Beep whenever someone buzzes in first (init from current so a remount with an
+  // already-locked buzz doesn't replay the sound).
+  const lastBuzzId = useRef(room?.buzz?.deviceId || null);
   useEffect(() => {
     const id = room?.buzz?.deviceId || null;
     if (id && id !== lastBuzzId.current) beep();
@@ -163,14 +164,17 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const placeGuess = (lat, lng) => {
     if (!guessFor) return;
     const guesses = { ...(game.guesses || {}), [guessFor]: { lat, lng } };
+    // Skip players who already have a pin from either the host or their phone.
+    const placed = { ...(buzzerOn ? room.pins : {}), ...guesses };
     const idx = game.players.findIndex((p) => p.id === guessFor);
     const next =
-      game.players.slice(idx + 1).find((p) => !guesses[p.id]) || game.players.find((p) => !guesses[p.id]) || null;
+      game.players.slice(idx + 1).find((p) => !placed[p.id]) || game.players.find((p) => !placed[p.id]) || null;
     upd({ guesses });
     setGuessFor(next ? next.id : null); // null once everyone has guessed
   };
 
-  const beginRound = () =>
+  const beginRound = () => {
+    setMorphStep(0); // reset now so a morph question never flashes the previous (clear) step
     upd({
       stage: round.type === "jeopardy" ? "board" : "question",
       qi: 0,
@@ -180,6 +184,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       tile: null,
       guesses: {},
     });
+  };
 
   const goNextRound = () => {
     const j = nextNonEmpty(quiz, game.ri + 1);
@@ -188,9 +193,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
   };
 
   const nextQuestion = () => {
-    if (game.qi + 1 < round.questions.length)
+    if (game.qi + 1 < round.questions.length) {
+      setMorphStep(0);
       upd({ qi: game.qi + 1, revealed: false, hintsShown: 1, awarded: {}, guesses: {} });
-    else goNextRound();
+    } else goNextRound();
   };
 
   const backToBoard = () => {
@@ -253,6 +259,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const playAgain = () =>
       setGame({
         ...game,
+        id: uid(), // a replay is a new game so the leaderboard records it again
         players: game.players.map((p) => ({ ...p, score: 0 })),
         ri: Math.max(nextNonEmpty(quiz, 0), 0),
         qi: 0,
@@ -682,7 +689,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           <div className="mx-auto mt-5 max-w-2xl">
             {buzzerOn && (
               <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
-                <Radio size={14} /> {markers.length} of {game.players.length} pins in from phones
+                <Radio size={14} /> {Object.keys(room.pins).length} of {game.players.length} pins in from phones
               </p>
             )}
             <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">

@@ -65,6 +65,9 @@ export function useHostRoom() {
     connRef.current = connectRoom({
       code: c,
       subscribe: [roomTopics(c).up],
+      // If the host tab closes ungracefully, the broker clears the retained
+      // state so late/returning phones don't see a dead question.
+      will: { topic: roomTopics(c).state, payload: "" },
       onStatus: (s) => {
         setStatus(s);
         if (s === "connected") pushStateRef.current(); // (re)assert retained state once connected
@@ -88,8 +91,14 @@ export function useHostRoom() {
             setBuzz({ deviceId: msg.deviceId, name });
             pushStateRef.current();
           }
-        } else if (msg.type === "pin" && Number.isFinite(+msg.lat) && Number.isFinite(+msg.lng)) {
-          setPins((p) => ({ ...p, [msg.deviceId]: { lat: +msg.lat, lng: +msg.lng } }));
+        } else if (
+          msg.type === "pin" &&
+          typeof msg.lat === "number" &&
+          typeof msg.lng === "number" &&
+          Number.isFinite(msg.lat) &&
+          Number.isFinite(msg.lng)
+        ) {
+          setPins((p) => ({ ...p, [msg.deviceId]: { lat: msg.lat, lng: msg.lng } }));
         }
       },
     });
@@ -112,8 +121,17 @@ export function useHostRoom() {
     setPins({});
   }, []);
 
-  // Tear down on unmount.
-  useEffect(() => () => connRef.current?.close(), []);
+  // Tear down on unmount — clear the retained state first so it doesn't strand phones.
+  useEffect(
+    () => () => {
+      const c = connRef.current;
+      if (c) {
+        c.clearRetained(c.topics.state);
+        c.close();
+      }
+    },
+    [],
+  );
 
   const arm = useCallback(
     (qKey) => {
@@ -177,7 +195,13 @@ export function usePlayerRoom(code) {
       code,
       subscribe: [roomTopics(code).state],
       onStatus: setStatus,
-      onMessage: (_topic, msg) => setState(msg),
+      // null = cleared retained state (host left) → fall back to the lobby screen.
+      onMessage: (_topic, msg) =>
+        setState(
+          msg && typeof msg === "object" && !Array.isArray(msg)
+            ? { phase: str(msg.phase) || "idle", qKey: msg.qKey ?? null, lockedBy: msg.lockedBy ?? null }
+            : null,
+        ),
     });
     connRef.current = conn;
     return () => conn.close();
