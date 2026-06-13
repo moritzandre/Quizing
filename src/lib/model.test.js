@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ytId, normalizeQuiz, nextNonEmpty, countQuestions } from "./model.js";
+import { ytId, normalizeQuiz, normalizeGame, nextNonEmpty, countQuestions, moveItem, haversineKm } from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
 
@@ -45,24 +45,34 @@ describe("normalizeQuiz", () => {
     title: "Test Quiz",
     sample: false,
     rounds: [
-      { id: "r1", type: "classic", title: "C", questions: [{ id: "q1", q: "Q?", a: "A", points: 10 }] },
+      { id: "r1", type: "classic", title: "C", timer: null, questions: [{ id: "q1", q: "Q?", a: "A", points: 10 }] },
       {
         id: "r2",
         type: "jeopardy",
         title: "J",
+        timer: 30,
         categories: [{ id: "c1", name: "Cat", questions: [{ id: "j1", clue: "Clue", answer: "Ans", points: 100 }] }],
       },
-      { id: "r3", type: "hints", title: "H", questions: [{ id: "h1", answer: "X", hints: ["a", "b"] }] },
+      { id: "r3", type: "hints", title: "H", timer: null, questions: [{ id: "h1", answer: "X", hints: ["a", "b"] }] },
       {
         id: "r4",
         type: "video",
         title: "V",
-        questions: [{ id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10 }],
+        timer: null,
+        questions: [{ id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10, audioOnly: true }],
+      },
+      {
+        id: "r6",
+        type: "image",
+        title: "I",
+        timer: null,
+        questions: [{ id: "i1", url: "https://example.com/cat.jpg", q: "Q", a: "A", points: 10 }],
       },
       {
         id: "r5",
         type: "map",
         title: "M",
+        timer: null,
         questions: [{ id: "m1", q: "Where?", name: "Spot", lat: 1.5, lng: -2.25, points: 10 }],
       },
     ],
@@ -91,6 +101,7 @@ describe("normalizeQuiz", () => {
     expect(q.title).toBe("Untitled quiz");
     expect(q.sample).toBe(false);
     expect(q.id).toBeTruthy();
+    expect(q.rounds[0].timer).toBe(null);
     const item = q.rounds[0].questions[0];
     expect(item.id).toBeTruthy();
     expect(item).toMatchObject({ q: "", a: "", points: 10 });
@@ -110,6 +121,50 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[2].questions[0]).toMatchObject({ lat: 12.5, lng: null, points: 10 });
     expect(q.rounds[3].categories[0].name).toBe("");
     expect(q.rounds[3].categories[0].questions[0].points).toBe(100);
+  });
+
+  it("normalizes new fields: timer, audioOnly, image type", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "video", timer: "45", questions: [{ url: "x", audioOnly: "yes" }] },
+        { type: "image", questions: [{ url: 9, q: null }] },
+        { type: "classic", timer: "not-a-number", questions: [] },
+      ],
+    });
+    expect(q.rounds[0].timer).toBe(45);
+    expect(q.rounds[0].questions[0].audioOnly).toBe(true);
+    expect(q.rounds[1].questions[0]).toMatchObject({ url: "", q: "", a: "", points: 10 });
+    expect(q.rounds[2].timer).toBe(null);
+  });
+});
+
+describe("normalizeGame", () => {
+  const baseQuiz = { rounds: [{ type: "classic", questions: [{ id: "q1", q: "Q", a: "A", points: 10 }] }] };
+
+  it("keeps valid per-player map guesses", () => {
+    const g = normalizeGame({
+      quiz: baseQuiz,
+      players: [{ id: "p1", name: "A", score: 0 }],
+      guesses: { p1: { lat: 10, lng: 20 } },
+    });
+    expect(g.guesses).toEqual({ p1: { lat: 10, lng: 20 } });
+  });
+
+  it("drops malformed guesses and defaults to an empty object", () => {
+    const g = normalizeGame({
+      quiz: baseQuiz,
+      players: [{ id: "p1", name: "A", score: 0 }],
+      guesses: { p1: { lat: "x", lng: 20 }, p2: null, p3: { lat: 5, lng: 6 } },
+    });
+    expect(g.guesses).toEqual({ p3: { lat: 5, lng: 6 } });
+    const g2 = normalizeGame({ quiz: baseQuiz, players: [{ id: "p1", name: "A", score: 0 }] });
+    expect(g2.guesses).toEqual({});
+  });
+
+  it("rejects games without a valid quiz or players", () => {
+    expect(normalizeGame(null)).toBe(null);
+    expect(normalizeGame({ quiz: baseQuiz, players: [] })).toBe(null);
+    expect(normalizeGame({ quiz: { rounds: "no" }, players: [{ id: "p1" }] })).toBe(null);
   });
 });
 
@@ -154,5 +209,39 @@ describe("countQuestions", () => {
   it("returns 0 for an empty quiz", () => {
     expect(countQuestions({ rounds: [] })).toBe(0);
     expect(countQuestions({ rounds: [{ type: "jeopardy", categories: [] }] })).toBe(0);
+  });
+});
+
+describe("moveItem", () => {
+  it("moves an element forward without mutating the source", () => {
+    const src = ["a", "b", "c", "d"];
+    expect(moveItem(src, 0, 2)).toEqual(["b", "c", "a", "d"]);
+    expect(src).toEqual(["a", "b", "c", "d"]);
+  });
+
+  it("moves an element backward", () => {
+    expect(moveItem(["a", "b", "c", "d"], 3, 1)).toEqual(["a", "d", "b", "c"]);
+  });
+
+  it("is a no-op when from === to", () => {
+    expect(moveItem(["a", "b", "c"], 1, 1)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("haversineKm", () => {
+  it("returns 0 for identical points", () => {
+    expect(haversineKm(48.8566, 2.3522, 48.8566, 2.3522)).toBe(0);
+  });
+
+  it("approximates the Paris–London distance (~344 km)", () => {
+    const d = haversineKm(48.8566, 2.3522, 51.5074, -0.1278);
+    expect(d).toBeGreaterThan(330);
+    expect(d).toBeLessThan(360);
+  });
+
+  it("is symmetric", () => {
+    const a = haversineKm(-33.87, 151.21, 35.68, 139.69);
+    const b = haversineKm(35.68, 139.69, -33.87, 151.21);
+    expect(Math.abs(a - b)).toBeLessThan(1e-6);
   });
 });
