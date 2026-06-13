@@ -12,6 +12,7 @@ import {
   Lightbulb,
   Video,
   Image as ImageIcon,
+  Sparkles,
   MapPin,
   Trash2,
   Sun,
@@ -49,6 +50,12 @@ export const TYPES = {
     icon: ImageIcon,
     dot: "bg-sky-500",
     desc: "Show the picture, let everyone study it, then reveal the answer and award the points.",
+  },
+  morph: {
+    label: "Morph",
+    icon: Sparkles,
+    dot: "bg-fuchsia-500",
+    desc: "The picture starts obscured and worth the most. Demorph it step by step — the longer it takes, the fewer points it's worth.",
   },
   map: {
     label: "Map",

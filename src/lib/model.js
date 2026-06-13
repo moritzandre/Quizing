@@ -228,6 +228,7 @@ export function normalizeGame(raw) {
   const quiz = normalizeQuiz(raw.quiz);
   if (!quiz || !Array.isArray(raw.players) || raw.players.length === 0) return null;
   return {
+    id: str(raw.id) || uid(),
     quiz,
     players: raw.players.map((p) => {
       const player = { id: str(p?.id) || uid(), name: str(p?.name) || "Player", score: num(p?.score, 0) };

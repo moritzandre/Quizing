@@ -2,13 +2,13 @@
    APP SHELL (routing, persistence, home screen)
    --------------------------------------------------------------------
    Coarse hash routing mirrors the current view to window.location.hash
-   (#/, #/play, #/setup/<id>, #/builder) so a refresh mid-game returns
-   to the right place. Transient state (a builder draft) isn't in the
-   URL, so refreshing on #/builder falls back home.
+   (#/, #/play, #/setup/<id>, #/builder, #/leaderboard, #/join/<code>) so
+   a refresh returns to the right place. The host buzzer room lives here
+   so both setup and play can drive it; phones land directly on #/join.
    ==================================================================== */
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Plus, X, Pencil, Copy, Download, Upload } from "lucide-react";
+import { Play, Plus, X, Pencil, Copy, Download, Upload, Trophy } from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
 import {
   uid,
@@ -19,6 +19,7 @@ import {
   nextNonEmpty,
   countQuestions,
   exportQuiz,
+  summarizeGame,
 } from "./lib/model.js";
 import { SAMPLE } from "./data/sampleQuiz.js";
 import { FOCUS, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, ThemeToggle } from "./components/ui.jsx";
@@ -26,13 +27,18 @@ import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import PlayView from "./components/PlayView.jsx";
 import SetupView from "./components/SetupView.jsx";
 import Builder from "./components/Builder.jsx";
+import JoinView from "./components/JoinView.jsx";
+import LeaderboardView from "./components/LeaderboardView.jsx";
+import { useHostRoom } from "./components/useRoom.js";
 
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.2.0";
 
 const hashFor = (v) => {
   if (v.name === "play") return "#/play";
   if (v.name === "setup") return `#/setup/${v.quiz.id}`;
   if (v.name === "builder") return "#/builder";
+  if (v.name === "leaderboard") return "#/leaderboard";
+  if (v.name === "join") return `#/join/${v.code}`;
   return "#/";
 };
 
@@ -42,13 +48,20 @@ const parseHash = () => {
 };
 
 function App() {
-  const [view, setView] = useState({ name: "home" });
+  // Initialise from the hash so a phone hitting #/join/<code> renders instantly.
+  const [view, setView] = useState(() => {
+    const { seg, arg } = parseHash();
+    return seg === "join" && arg ? { name: "join", code: arg } : { name: "home" };
+  });
   const [quizzes, setQuizzes] = useState([]);
   const [game, setGame] = useState(null);
   const [lastPlayers, setLastPlayers] = useState(["", ""]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [importError, setImportError] = useState("");
   const fileRef = useRef(null);
+
+  const room = useHostRoom();
 
   /* initial load (with migration from the first artifact version's keys) */
   useEffect(() => {
@@ -59,6 +72,8 @@ function App() {
       setGame(normalizeGame(g));
       const p = await loadWithLegacy("players", "quiznight-players", ["", ""]);
       if (Array.isArray(p) && p.length) setLastPlayers(p.map((x) => str(x)));
+      const lb = await loadJSON("leaderboard", []);
+      setLeaderboard(Array.isArray(lb) ? lb : []);
       setLoaded(true);
     })();
   }, []);
@@ -85,17 +100,19 @@ function App() {
     if (!loaded) return;
     const resolve = () => {
       const { seg, arg } = parseHash();
-      if (seg === "play") {
+      if (seg === "join" && arg) {
+        setView({ name: "join", code: arg });
+      } else if (seg === "play") {
         // An ended game is kept in state for the final-scores screen but is no
         // longer "in progress" — match the home screen's resume gating.
         setView(gameRef.current && gameRef.current.stage !== "end" ? { name: "play" } : { name: "home" });
       } else if (seg === "setup") {
         const quiz = [SAMPLE, ...quizzesRef.current].find((q) => q.id === arg);
         setView(quiz ? { name: "setup", quiz } : { name: "home" });
+      } else if (seg === "leaderboard") {
+        setView({ name: "leaderboard" });
       } else if (seg === "builder") {
         if (viewRef.current.name === "builder") return; // keep the live draft
-        // A draft can't be restored from the URL; normalize the hash to home so
-        // the address bar doesn't say #/builder while home is rendered.
         if (window.location.hash !== "#/") window.history.replaceState(null, "", "#/");
         setView({ name: "home" });
       } else {
@@ -117,13 +134,41 @@ function App() {
     else removeKey("game");
   };
 
-  const startGame = (quiz, names) => {
+  /* record finished games into the persistent leaderboard, once each */
+  const recordedRef = useRef(null);
+  useEffect(() => {
+    if (!game || game.stage !== "end" || recordedRef.current === game.id) return;
+    recordedRef.current = game.id;
+    const rec = { id: game.id, date: new Date().toISOString(), ...summarizeGame(game) };
+    setLeaderboard((prev) => {
+      const next = [...prev, rec].slice(-200);
+      saveJSON("leaderboard", next);
+      return next;
+    });
+  }, [game]);
+
+  const clearLeaderboard = () => {
+    setLeaderboard([]);
+    removeKey("leaderboard");
+  };
+
+  /**
+   * Start a game. `players` is a list of { name, deviceId? }; phone-linked
+   * players keep deviceId as their player id so buzz/pin events map directly.
+   */
+  const startGame = (quiz, players) => {
+    const names = players.map((p) => p.name);
     setLastPlayers(names);
     saveJSON("players", names);
     const ri = nextNonEmpty(quiz, 0);
     persistGame({
+      id: uid(),
       quiz: deepClone(quiz),
-      players: names.map((n) => ({ id: uid(), name: n, score: 0 })),
+      players: players.map((p) => {
+        const base = { id: p.deviceId || uid(), name: p.name, score: 0 };
+        if (p.deviceId) base.deviceId = p.deviceId;
+        return base;
+      }),
       ri: Math.max(ri, 0),
       qi: 0,
       stage: ri === -1 ? "end" : "intro",
@@ -143,11 +188,7 @@ function App() {
       copy.id = uid();
       copy.sample = false;
       copy.title = quiz.title + " (copy)";
-      go({
-        name: "builder",
-        draft: copy,
-        note: "The sample quiz is read-only — you're editing your own copy of it.",
-      });
+      go({ name: "builder", draft: copy, note: "The sample quiz is read-only — you're editing your own copy of it." });
     } else {
       go({ name: "builder", draft: deepClone(quiz) });
     }
@@ -189,6 +230,9 @@ function App() {
     reader.readAsText(file);
   };
 
+  // Phone join page — standalone, renders before the data-load gate.
+  if (view.name === "join") return <JoinView code={view.code} />;
+
   if (!loaded) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400 dark:bg-stone-950 dark:text-stone-500">
@@ -207,10 +251,15 @@ function App() {
                 Quiz Night<span className="text-indigo-600 dark:text-indigo-400">.</span>
               </h1>
               <p className="mt-2 text-stone-500 dark:text-stone-400">
-                One screen, one host, six round formats. You read, friends shout, you tap to score.
+                One screen, one host, seven round formats. Phones can buzz in. You tap to score.
               </p>
             </div>
-            <ThemeToggle className="mt-1" />
+            <div className="flex items-center gap-1">
+              <IconButton label="Leaderboard" onClick={() => go({ name: "leaderboard" })}>
+                <Trophy size={18} />
+              </IconButton>
+              <ThemeToggle />
+            </div>
           </div>
 
           {game && game.stage !== "end" && (
@@ -322,8 +371,9 @@ function App() {
         <SetupView
           quiz={view.quiz}
           defaults={lastPlayers}
+          room={room}
           onBack={() => go({ name: "home" })}
-          onStart={(names) => startGame(view.quiz, names)}
+          onStart={(players) => startGame(view.quiz, players)}
         />
       )}
 
@@ -331,6 +381,7 @@ function App() {
         <PlayView
           game={game}
           setGame={persistGame}
+          room={room}
           onExit={() => {
             if (game.stage === "end") persistGame(null);
             go({ name: "home" });
@@ -340,6 +391,10 @@ function App() {
 
       {view.name === "builder" && (
         <Builder initial={view.draft} note={view.note} onSave={saveQuiz} onCancel={() => go({ name: "home" })} />
+      )}
+
+      {view.name === "leaderboard" && (
+        <LeaderboardView results={leaderboard} onBack={() => go({ name: "home" })} onClear={clearLeaderboard} />
       )}
     </div>
   );

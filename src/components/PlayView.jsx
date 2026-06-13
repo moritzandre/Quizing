@@ -2,7 +2,7 @@
    PLAY VIEW (round intro → questions/board → final scores)
    ==================================================================== */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronLeft,
   Trophy,
@@ -10,17 +10,43 @@ import {
   ArrowRight,
   Eye,
   Lightbulb,
+  Sparkles,
   MapPin,
   TimerReset,
   Pause,
   Play,
   Target,
+  Radio,
+  Bell,
 } from "lucide-react";
-import { ytId, nextNonEmpty, haversineKm } from "../lib/model.js";
+import { ytId, nextNonEmpty, haversineKm, morphValue } from "../lib/model.js";
 import { TYPES, FOCUS, Button, Confetti } from "./ui.jsx";
 import ScoreBar from "./ScoreBar.jsx";
-import WorldMap from "./WorldMap.jsx";
+import LeafletMap from "./LeafletMap.jsx";
 import YouTubePlayer from "./YouTubePlayer.jsx";
+import MorphImage from "./MorphImage.jsx";
+
+/** Short WebAudio beep when a player buzzes in (no asset needed). */
+function beep() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.34);
+    osc.onended = () => ctx.close();
+  } catch {
+    /* audio not available */
+  }
+}
 
 /** Distinct marker colors for player map guesses (cycled). */
 const PLAYER_COLORS = [
@@ -44,14 +70,31 @@ const realHints = (hints) => (hints || []).filter((h) => h.trim());
 const ptsOr = (n, d) => (Number.isFinite(n) ? n : d);
 
 /** Host-facing game screen; drives a game object via setGame (persisted by the app shell). */
-export default function PlayView({ game, setGame, onExit }) {
+export default function PlayView({ game, setGame, onExit, room }) {
   const quiz = game.quiz;
   const round = quiz.rounds[game.ri];
   const upd = (patch) => setGame({ ...game, ...patch });
+  const buzzerOn = !!room?.enabled;
 
   const isJeop = round?.type === "jeopardy";
   const timerSecs = round?.timer || 0;
   const qKey = isJeop ? `${game.ri}-${game.tile?.ci}-${game.tile?.qi}` : `${game.ri}-${game.qi}`;
+
+  /* --- all hooks must run unconditionally, before any early return --- */
+
+  /* award sign (+/-), reset per question; negative only offered for jeopardy */
+  const allowNegative = isJeop;
+  const [sign, setSign] = useState(1);
+
+  /* whose pin is being placed in a map round (host-side) */
+  const [guessFor, setGuessFor] = useState(null);
+
+  /* morph round reveal step (0 = fully obscured) */
+  const [morphStep, setMorphStep] = useState(0);
+
+  /* countdown timer (UI-only; not persisted) */
+  const [timeLeft, setTimeLeft] = useState(timerSecs);
+  const [paused, setPaused] = useState(false);
 
   /* current question value (points at stake) */
   const value = (() => {
@@ -64,28 +107,37 @@ export default function PlayView({ game, setGame, onExit }) {
     const q = round.questions[game.qi];
     if (!q) return 0;
     if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
+    if (round.type === "morph") return morphValue(q.points, q.steps, morphStep);
     return ptsOr(q.points, 10);
   })();
-
-  /* --- all hooks must run unconditionally, before any early return --- */
-
-  /* award sign (+/-), reset per question; negative only offered for jeopardy */
-  const allowNegative = isJeop;
-  const [sign, setSign] = useState(1);
-
-  /* whose pin is being placed in a map round */
-  const [guessFor, setGuessFor] = useState(null);
-
-  /* countdown timer (UI-only; not persisted) */
-  const [timeLeft, setTimeLeft] = useState(timerSecs);
-  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     setSign(1);
     setTimeLeft(timerSecs);
     setPaused(false);
+    setMorphStep(0);
     setGuessFor(game.players[0]?.id ?? null);
   }, [qKey, timerSecs]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Buzzer/pin orchestration: tell phones what to show for the current question.
+  useEffect(() => {
+    if (!buzzerOn) return;
+    if (game.stage !== "question" || game.revealed) {
+      room.idle();
+    } else if (round?.type === "map") {
+      room.collectPins(qKey);
+    } else {
+      room.arm(qKey);
+    }
+  }, [buzzerOn, game.stage, game.revealed, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Beep + a fresh re-arm signal whenever someone buzzes in first.
+  const lastBuzzId = useRef(null);
+  useEffect(() => {
+    const id = room?.buzz?.deviceId || null;
+    if (id && id !== lastBuzzId.current) beep();
+    lastBuzzId.current = id;
+  }, [room?.buzz]);
 
   useEffect(() => {
     if (game.stage !== "question" || game.revealed || paused || timerSecs <= 0 || timeLeft <= 0) return;
@@ -162,6 +214,7 @@ export default function PlayView({ game, setGame, onExit }) {
       else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
+      else if (k === "h" && !game.revealed && round.type === "morph") setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
       else if (allowNegative && game.revealed && (e.key === "+" || e.key === "=")) setSign(1);
       else if (game.revealed && /^[1-9]$/.test(e.key)) {
@@ -396,9 +449,31 @@ export default function PlayView({ game, setGame, onExit }) {
 
   const Shortcuts = (
     <p className="mt-8 hidden text-center text-xs text-stone-300 dark:text-stone-600 md:block">
-      Shortcuts: R reveal{round.type === "hints" ? " · H hint" : ""} · N next{allowNegative ? " · +/- sign" : ""} · 1–9
-      award
+      Shortcuts: R reveal
+      {round.type === "hints" ? " · H hint" : round.type === "morph" ? " · H demorph" : ""} · N next
+      {allowNegative ? " · +/- sign" : ""} · 1–9 award
     </p>
+  );
+
+  /* buzzer banner: who buzzed first, with re-arm/reset (only when phones are connected) */
+  const BuzzerBar = buzzerOn && !game.revealed && round.type !== "map" && (
+    <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
+      {room.buzz ? (
+        <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
+          <Bell size={15} /> {room.buzz.name} buzzed first!
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-1.5 text-sm font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-300">
+          <Radio size={14} /> Buzzers armed — phones can buzz
+        </span>
+      )}
+      <button
+        onClick={room.resetBuzz}
+        className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
+      >
+        <RotateCcw size={13} /> Re-arm
+      </button>
+    </div>
   );
 
   let body = null;
@@ -537,17 +612,61 @@ export default function PlayView({ game, setGame, onExit }) {
     );
   }
 
+  if (round.type === "morph") {
+    const atEnd = morphStep >= q.steps;
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <div className="mb-4 flex items-center justify-center gap-3">
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">What is this?</h2>
+          {!game.revealed && (
+            <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-sm font-bold text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300">
+              worth {value}
+            </span>
+          )}
+        </div>
+        <div className="mx-auto max-w-2xl">
+          <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={morphStep} revealed={game.revealed} />
+        </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          {!game.revealed && !atEnd && (
+            <Button
+              variant="outline"
+              className="px-5 py-3 text-base"
+              onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
+            >
+              <Sparkles size={18} /> Demorph{" "}
+              <span className="text-sm text-stone-400">
+                ({morphStep + 1}/{q.steps})
+              </span>
+            </Button>
+          )}
+          {!game.revealed && RevealBtn}
+        </div>
+        {game.revealed && (
+          <>
+            <p className="qn-pop mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">{q.a}</p>
+            <div className="mt-6">{NextBtn}</div>
+          </>
+        )}
+      </div>
+    );
+  }
+
   if (round.type === "map") {
     const hasAnswer = q.lat != null && q.lng != null;
+    // Merge host-placed guesses with pins submitted from phones (keyed by playerId === deviceId).
+    const combined = { ...(game.guesses || {}), ...(buzzerOn ? room.pins : {}) };
     const markers = game.players
       .map((p, i) => {
-        const g = (game.guesses || {})[p.id];
+        const g = combined[p.id];
         return g ? { lat: g.lat, lng: g.lng, color: colorFor(i), label: p.name } : null;
       })
       .filter(Boolean);
     const ranked = hasAnswer
       ? game.players
-          .map((p, i) => ({ p, i, g: (game.guesses || {})[p.id] }))
+          .map((p, i) => ({ p, i, g: combined[p.id] }))
           .filter((x) => x.g)
           .map((x) => ({ ...x, km: haversineKm(x.g.lat, x.g.lng, q.lat, q.lng) }))
           .sort((a, b) => a.km - b.km)
@@ -561,14 +680,19 @@ export default function PlayView({ game, setGame, onExit }) {
 
         {!game.revealed && (
           <div className="mx-auto mt-5 max-w-2xl">
+            {buzzerOn && (
+              <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+                <Radio size={14} /> {markers.length} of {game.players.length} pins in from phones
+              </p>
+            )}
             <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
               {guessFor
-                ? `Tap the map to drop ${game.players.find((p) => p.id === guessFor)?.name || "the player"}'s pin`
+                ? `Or tap the map to drop ${game.players.find((p) => p.id === guessFor)?.name || "the player"}'s pin`
                 : "Everyone has guessed — reveal when ready"}
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {game.players.map((p, i) => {
-                const has = !!(game.guesses || {})[p.id];
+                const has = !!combined[p.id];
                 const sel = guessFor === p.id;
                 return (
                   <button
@@ -594,12 +718,13 @@ export default function PlayView({ game, setGame, onExit }) {
           </div>
         )}
 
-        <div className="mx-auto mt-4 max-w-2xl">
-          <WorldMap
-            pin={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : null}
+        <div className="mx-auto mt-4 max-w-3xl">
+          <LeafletMap
+            answer={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : undefined}
             guesses={markers}
             showLines={game.revealed}
             onPick={game.revealed ? undefined : placeGuess}
+            className="h-[55vh]"
           />
         </div>
 
@@ -645,6 +770,7 @@ export default function PlayView({ game, setGame, onExit }) {
   return (
     <div className="mx-auto max-w-3xl px-6 pb-36 pt-6">
       {Header}
+      {BuzzerBar}
       <div key={qKey} className="qn-fade-up">
         {body}
       </div>

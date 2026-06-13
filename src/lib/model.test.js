@@ -314,8 +314,18 @@ describe("summarizeGame", () => {
 describe("aggregateLeaderboard", () => {
   it("tallies games, wins, totals and best score by case-insensitive name", () => {
     const results = [
-      { players: [{ name: "Ann", score: 30, won: true }, { name: "bob", score: 10, won: false }] },
-      { players: [{ name: "ann", score: 20, won: false }, { name: "Bob", score: 40, won: true }] },
+      {
+        players: [
+          { name: "Ann", score: 30, won: true },
+          { name: "bob", score: 10, won: false },
+        ],
+      },
+      {
+        players: [
+          { name: "ann", score: 20, won: false },
+          { name: "Bob", score: 40, won: true },
+        ],
+      },
     ];
     const board = aggregateLeaderboard(results);
     const ann = board.find((e) => e.name.toLowerCase() === "ann");

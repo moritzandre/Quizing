@@ -1,15 +1,25 @@
 /* ====================================================================
-   SETUP VIEW (enter players, then start the game)
+   SETUP VIEW (enter players, optionally open the phone buzzer room)
    ==================================================================== */
 
 import { useState } from "react";
 import { ChevronLeft, Users, X, Plus, Play } from "lucide-react";
 import { FOCUS, inputCls, Button, IconButton, TypeBadge } from "./ui.jsx";
+import BuzzerPanel from "./BuzzerPanel.jsx";
 
 /** Player-entry screen shown before a game starts. */
-export default function SetupView({ quiz, defaults, onStart, onBack }) {
+export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
   const [names, setNames] = useState(defaults.length ? defaults : ["", ""]);
-  const valid = names.some((n) => n.trim());
+
+  const phonePlayers = room?.enabled
+    ? Object.entries(room.participants).map(([deviceId, p]) => ({ name: p.name, deviceId }))
+    : [];
+  const manualPlayers = names
+    .map((n) => n.trim())
+    .filter(Boolean)
+    .map((name) => ({ name }));
+  const players = [...phonePlayers, ...manualPlayers];
+
   return (
     <div className="mx-auto max-w-md px-6 pb-16 pt-6">
       <button
@@ -28,7 +38,19 @@ export default function SetupView({ quiz, defaults, onStart, onBack }) {
           <TypeBadge key={r.id} type={r.type} />
         ))}
       </div>
-      <div className="mt-8 space-y-2">
+
+      {room && (
+        <div className="mt-6">
+          <BuzzerPanel room={room} />
+        </div>
+      )}
+
+      <div className="mt-6 space-y-2">
+        {phonePlayers.length > 0 && (
+          <p className="text-xs font-medium uppercase tracking-wide text-stone-400 dark:text-stone-500">
+            {phonePlayers.length} joined by phone · add anyone else below
+          </p>
+        )}
         {names.map((n, i) => (
           <div key={i} className="flex gap-2">
             <input
@@ -57,10 +79,10 @@ export default function SetupView({ quiz, defaults, onStart, onBack }) {
       </div>
       <Button
         className="mt-8 w-full px-6 py-3.5 text-base"
-        disabled={!valid}
-        onClick={() => onStart(names.map((n) => n.trim()).filter(Boolean))}
+        disabled={players.length === 0}
+        onClick={() => onStart(players)}
       >
-        <Play size={18} /> Start game
+        <Play size={18} /> Start game{players.length ? ` · ${players.length}` : ""}
       </Button>
     </div>
   );

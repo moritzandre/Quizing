@@ -83,3 +83,18 @@
     animation: none;
   }
 }
+
+/* Leaflet marker name labels — style the third-party tooltip DOM (can't reach
+   it with utility classes). Kept compact and legible on light and dark tiles. */
+.leaflet-tooltip.qn-map-label {
+  background: rgba(255, 255, 255, 0.92);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  font-weight: 700;
+  font-size: 12px;
+  color: #1c1917;
+  padding: 1px 6px;
+}
+.leaflet-tooltip.qn-map-label::before {
+  display: none;
+}

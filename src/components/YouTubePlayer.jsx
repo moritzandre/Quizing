@@ -181,9 +181,16 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
       <div className="relative aspect-video w-full">
         <div ref={hostRef} className="absolute inset-0" />
 
-        {/* mask YouTube's title bar whenever the frame is visible (playing or paused) */}
+        {/* Mask YouTube's title bar (top-left, shown for the first seconds of
+            playback and can't be disabled) whenever the frame is visible. A
+            solid-to-fade band sized to the player reliably hides it. */}
         {!fullCover && (
-          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black via-black/80 to-transparent" />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-[24%]"
+            style={{
+              background: "linear-gradient(to bottom, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.92) 62%, transparent 100%)",
+            }}
+          />
         )}
 
         {/* full cover: audio-only equalizer, or a play/replay poster that hides the thumbnail + title */}

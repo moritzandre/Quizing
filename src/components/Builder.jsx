@@ -4,9 +4,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, Plus, GripVertical, TimerReset, Upload, ImagePlus, Loader2 } from "lucide-react";
-import { uid, ytId, fileToDataUrl, makeQuestion, makeCategory, makeRound, moveItem } from "../lib/model.js";
+import {
+  uid,
+  ytId,
+  fileToDataUrl,
+  makeQuestion,
+  makeCategory,
+  makeRound,
+  moveItem,
+  MORPH_EFFECTS,
+} from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete } from "./ui.jsx";
-import WorldMap from "./WorldMap.jsx";
+import LeafletMap from "./LeafletMap.jsx";
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
 const panelCls = "rounded-xl bg-stone-50 p-3 dark:bg-stone-800/50";
@@ -565,6 +574,75 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 </>
               )}
 
+              {/* morph */}
+              {r.type === "morph" && (
+                <>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, t) => reorderQuestions(r, f, t)}
+                  >
+                    {(item, i, hp) => (
+                      <div className={panelCls}>
+                        <div className={rowLabelCls}>
+                          <span className="flex items-center gap-1">
+                            <DragHandle {...hp} /> Picture {i + 1}
+                          </span>
+                          <ConfirmDelete label="Delete picture" onConfirm={() => qDel(r, item)} />
+                        </div>
+                        <ImageField value={item.url} onChange={(url) => qRow(r, item, { url })} />
+                        <input
+                          className={`${inputCls} mt-2`}
+                          placeholder="Answer"
+                          value={item.a}
+                          onChange={(e) => qRow(r, item, { a: e.target.value })}
+                        />
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <select
+                            aria-label="Reveal effect"
+                            className={`${inputCls} w-32`}
+                            value={item.effect}
+                            onChange={(e) => qRow(r, item, { effect: e.target.value })}
+                          >
+                            {MORPH_EFFECTS.map((eff) => (
+                              <option key={eff} value={eff}>
+                                {eff === "blur" ? "De-blur" : eff === "pixelate" ? "Pixelate" : "Tiles"}
+                              </option>
+                            ))}
+                          </select>
+                          <label className="inline-flex items-center gap-1 rounded-xl border border-stone-200 px-2 text-xs text-stone-500 dark:border-stone-700 dark:text-stone-400">
+                            Steps
+                            <input
+                              type="number"
+                              min="1"
+                              max="8"
+                              aria-label="Demorph steps"
+                              className="w-12 bg-transparent py-2 text-center focus:outline-none"
+                              value={item.steps}
+                              onChange={(e) => qRow(r, item, { steps: Math.max(1, Math.min(8, +e.target.value || 4)) })}
+                            />
+                          </label>
+                          <input
+                            type="number"
+                            aria-label="Points"
+                            className={`${inputCls} w-24`}
+                            title="Full points (when most obscured)"
+                            value={item.points}
+                            onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("morph")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> Add picture
+                  </button>
+                </>
+              )}
+
               {/* map */}
               {r.type === "map" && (
                 <>
@@ -594,9 +672,10 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           onChange={(e) => qRow(r, item, { name: e.target.value })}
                         />
                         <div className="mt-2">
-                          <WorldMap
-                            pin={item.lat != null ? { lat: item.lat, lng: item.lng, label: item.name } : null}
+                          <LeafletMap
+                            answer={item.lat != null ? { lat: item.lat, lng: item.lng, label: item.name } : undefined}
                             onPick={(lat, lng) => qRow(r, item, { lat, lng })}
+                            className="h-72"
                           />
                           <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
                             {item.lat != null
