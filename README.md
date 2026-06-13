@@ -1,22 +1,24 @@
 # Quiz Night
 
-A host-led party quiz app. One host screen runs the show; players can buzz in and drop map pins from their own phones over a QR code. Seven round formats, light or dark.
+A host-led party quiz app. One host screen runs the show; players can buzz in and drop map pins from their own phones over a QR code. Eight round formats, English or German, light or dark.
 
 **Round formats**
 
-| Type        | How it plays                                                                                                                                     |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Classic     | Read the question, reveal the answer, tap whoever got it right.                                                                                  |
-| Jeopardy    | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                             |
-| Hint Ladder | The answer starts at full value; every extra hint lowers it by 10.                                                                               |
-| Video       | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode.            |
-| Picture     | Show an image (paste a URL or upload one), then reveal the answer.                                                                               |
-| Morph       | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, or tile reveal) — fewer points the longer it takes. |
-| Map         | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.   |
+| Type        | How it plays                                                                                                                                             |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Classic     | Read the question, reveal the answer, tap whoever got it right.                                                                                          |
+| Jeopardy    | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                                     |
+| Hint Ladder | The answer starts at full value; every extra hint lowers it. Hints can be **text, image, audio, video, or a map pin**.                                   |
+| Video       | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode.                    |
+| Picture     | Show an image (paste a URL or upload one), then reveal the answer.                                                                                       |
+| Morph       | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
+| Fusion      | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
+| Map         | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.           |
 
 Other features:
 
-- **Phone buzzers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), and place their own map pins.
+- **Phone buzzers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), and place their own map pins. Works on your local network — see below.
+- **English / German** — language toggle (top-right), remembered across sessions.
 - **Per-round countdown timer** — optional, set in the builder; pause/reset while playing.
 - **Persistent leaderboard** — every finished game is recorded on the device; standings aggregate wins, totals, and best scores across games.
 - **Dark mode** — toggle top-right; remembered and applied before first paint.
@@ -49,7 +51,9 @@ npm run dev
 
 Open a game's setup screen and **Enable phone buzzers**. A QR code and 4-letter room code appear; players scan it to open the join page (`#/join/<code>`) on their phones, enter a name, and they're in. During a question their phones show a big **Buzz** button (first to tap locks the others out, and the host screen beeps and names them); during a map round their phones show a mini-map to drop a pin.
 
-It works with **no backend**: phones and host talk over a free public MQTT-over-WebSocket broker, with the random room code as the only privacy boundary — fine for a living-room game, not for anything sensitive. The QR encodes your current URL, so for phones on other devices you need the **deployed** site (or a LAN/tunnel URL) — `localhost` won't be reachable from a phone. Map tiles and the buzzer both need internet.
+It works with **no backend**: phones and host talk over a free public MQTT-over-WebSocket broker, with the random room code as the only privacy boundary — fine for a living-room game, not for anything sensitive. Map tiles and the buzzer both need internet.
+
+**Using it on your home network (no deploy):** the QR encodes whatever URL the host opened, and `localhost` isn't reachable from a phone — so open the app via your machine's LAN address. `npm run dev` already binds to all interfaces and prints a **Network** URL (e.g. `http://192.168.1.23:5173/`); open _that_ on the host machine, and the QR will point phones to it. Phones must be on the same Wi-Fi. (BuzzerPanel shows a warning if you opened the app on `localhost`.) The deployed site works too.
 
 ## Deployment
 
@@ -73,19 +77,24 @@ src/
     storage.js              Storage adapter (Claude → localStorage → memory) + load/save helpers
     model.js                Pure logic: factories, normalize/validate, geo math, morph/leaderboard helpers, export
     realtime.js             MQTT room transport for the buzzer (framework-free)
+  i18n/
+    strings.js              English/German string catalogs + translate() (framework-free)
+    I18nProvider.jsx        Language context/provider, useI18n() (t), LanguageToggle
   data/
     sampleQuiz.js           "Friday Night Sampler" built-in
-    nerdQuiz.js             "Nexus Nights" built-in (League of Legends / nerdy; demos morph, picture, map)
+    nerdQuiz.js             "Nexus Nights" built-in (LoL / nerdy; demos morph, fusion, media hints, picture, map)
   components/
     ui.jsx                  Primitives, TYPES metadata, style constants, theme (useTheme/ThemeToggle), Confetti
     useRoom.js              React hooks over realtime: useHostRoom, usePlayerRoom
     LeafletMap.jsx          Real pan/zoom map; answer pin + guess markers + lines; light/dark tiles
-    MorphImage.jsx          Stepped image reveal (blur / pixelate / tiles)
+    MorphImage.jsx          Stepped image reveal (blur / pixelate / tiles / zoom / slices)
+    FusionImage.jsx         Two images cross-faded into one; defuse toward each; reveal side by side
+    HintMedia.jsx           Renders one hint by type (text / image / audio / video / map)
     YouTubePlayer.jsx       Chrome-free YouTube player (hides the title) + audio-only mode
     ScoreBar.jsx            Fixed scoreboard with +/− award toggle
     PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins
     SetupView.jsx           Player entry + buzzer lobby
-    Builder.jsx             Quiz editor for all seven round types; drag-and-drop; image upload
+    Builder.jsx             Quiz editor for all eight round types; drag-and-drop; image upload; typed hints
     BuzzerPanel.jsx         Host buzzer lobby: QR, room code, roster
     JoinView.jsx            Phone page: buzz + pin placement
     LeaderboardView.jsx     Persistent standings
@@ -129,7 +138,15 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "id": "r3",
         "type": "hints",
         "title": "Who Am I?",
-        "questions": [{ "id": "h1", "answer": "…", "hints": ["hardest…", "…easiest"] }],
+        // a hint is a plain string (text) OR a typed object:
+        //   { "type": "image"|"audio"|"video", "url": "…" }  or  { "type": "map", "lat": …, "lng": …, "name": "…" }
+        "questions": [
+          {
+            "id": "h1",
+            "answer": "…",
+            "hints": ["hardest…", { "type": "image", "url": "https://…/clue.jpg" }, "…easiest"],
+          },
+        ],
       },
       {
         "id": "r4",
@@ -151,9 +168,18 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "id": "r7",
         "type": "morph",
         "title": "Guess the Splash",
-        // effect: "blur" | "pixelate" | "tiles"; steps: 1–8 demorph stages
+        // effect: "blur" | "pixelate" | "tiles" | "zoom" | "slices"; steps: 1–8 demorph stages
         "questions": [
           { "id": "mo1", "url": "https://…/art.jpg", "a": "…", "points": 50, "effect": "blur", "steps": 5 },
+        ],
+      },
+      {
+        "id": "r8",
+        "type": "fusion",
+        "title": "Who Did We Blend?",
+        // two images cross-faded; the answer names both
+        "questions": [
+          { "id": "fu1", "urlA": "https://…/a.jpg", "urlB": "https://…/b.jpg", "a": "X + Y", "points": 40, "steps": 4 },
         ],
       },
       {
