@@ -75,7 +75,11 @@ describe("normalizeQuiz", () => {
           {
             id: "h1",
             answer: "X",
-            hints: ["a text hint", { type: "image", url: "https://e.com/p.jpg" }, { type: "map", lat: 1, lng: 2, name: "n" }],
+            hints: [
+              "a text hint",
+              { type: "image", url: "https://e.com/p.jpg" },
+              { type: "map", lat: 1, lng: 2, name: "n" },
+            ],
           },
         ],
       },
@@ -105,7 +109,9 @@ describe("normalizeQuiz", () => {
         type: "fusion",
         title: "Fu",
         timer: null,
-        questions: [{ id: "fu1", urlA: "https://e.com/a.jpg", urlB: "https://e.com/b.jpg", a: "A + B", points: 40, steps: 4 }],
+        questions: [
+          { id: "fu1", urlA: "https://e.com/a.jpg", urlB: "https://e.com/b.jpg", a: "A + B", points: 40, steps: 4 },
+        ],
       },
       {
         id: "r5",

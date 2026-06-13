@@ -3,7 +3,17 @@
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, Plus, GripVertical, TimerReset, Upload, ImagePlus, Loader2 } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronUp,
+  ChevronDown,
+  Plus,
+  GripVertical,
+  TimerReset,
+  Upload,
+  ImagePlus,
+  Loader2,
+} from "lucide-react";
 import {
   uid,
   ytId,
@@ -12,9 +22,13 @@ import {
   makeCategory,
   makeRound,
   moveItem,
+  makeHint,
+  hintHasContent,
   MORPH_EFFECTS,
+  HINT_TYPES,
 } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete } from "./ui.jsx";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -40,6 +54,7 @@ function DragHandle(props) {
  * handleProps onto a DragHandle so a drag only starts from there.
  */
 function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassName = "", children }) {
+  const { t } = useI18n();
   const [dragIdx, setDragIdx] = useState(null);
   const [overIdx, setOverIdx] = useState(null);
   // A row is only draggable while its handle is held, so inputs inside the
@@ -96,8 +111,8 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
           }`}
         >
           {children(item, i, {
-            "aria-label": "Drag to reorder",
-            title: "Drag to reorder",
+            "aria-label": t("builder.dragToReorder"),
+            title: t("builder.dragToReorder"),
             onMouseDown: () => setArmedIdx(i),
             onTouchStart: () => setArmedIdx(i),
           })}
@@ -109,6 +124,7 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
 
 /** Picture field: paste a URL or upload an image (downscaled to a data URL). */
 function ImageField({ value, onChange }) {
+  const { t } = useI18n();
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -122,7 +138,7 @@ function ImageField({ value, onChange }) {
     try {
       onChange(await fileToDataUrl(file));
     } catch (ex) {
-      setErr(ex?.message || "Couldn't load that image.");
+      setErr(ex?.message || t("builder.couldntProcess"));
     } finally {
       setBusy(false);
     }
@@ -132,7 +148,7 @@ function ImageField({ value, onChange }) {
       <div className="flex gap-2">
         <input
           className={inputCls}
-          placeholder="Image URL (https://…) or upload →"
+          placeholder={t("builder.imageUrl")}
           value={isData ? "" : value}
           onChange={(e) => onChange(e.target.value)}
           disabled={busy}
@@ -145,7 +161,7 @@ function ImageField({ value, onChange }) {
           disabled={busy}
         >
           {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-          Upload
+          {t("builder.upload")}
         </Button>
       </div>
       {err && <p className="mt-1 text-xs text-red-500">{err}</p>}
@@ -155,29 +171,137 @@ function ImageField({ value, onChange }) {
             src={value}
             alt="Preview"
             className="max-h-56 w-full rounded-xl border border-stone-200 bg-white object-contain dark:border-stone-700 dark:bg-stone-900"
-            onError={() => setErr("That image didn't load — check the URL.")}
+            onError={() => setErr(t("builder.imageLoadErr"))}
           />
           <button
             onClick={() => onChange("")}
             className={`absolute right-2 top-2 rounded-lg bg-white/90 px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-red-600 dark:bg-stone-900/90 dark:text-stone-300 ${FOCUS}`}
           >
-            Remove
+            {t("builder.remove")}
           </button>
-          {isData && (
-            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">Uploaded image (stored in the quiz)</p>
-          )}
+          {isData && <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("builder.uploadedImage")}</p>}
         </div>
       ) : (
         <div className="mt-2 flex aspect-[3/1] w-full items-center justify-center rounded-xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-          <ImagePlus size={20} className="mr-2" /> No picture yet
+          <ImagePlus size={20} className="mr-2" /> {t("builder.noPictureYet")}
         </div>
       )}
     </div>
   );
 }
 
+const HINT_TYPE_KEY = {
+  text: "builder.hintTypeText",
+  image: "builder.hintTypeImage",
+  audio: "builder.hintTypeAudio",
+  video: "builder.hintTypeVideo",
+  map: "builder.hintTypeMap",
+};
+const hintTypeOf = (h) => (typeof h === "string" ? "text" : HINT_TYPES.includes(h?.type) ? h.type : "text");
+
+/** Editor for one hint-ladder item's hints — each can be text or media. */
+function HintsField({ hints, onChange, t }) {
+  const set = (i, val) => onChange(hints.map((h, j) => (j === i ? val : h)));
+  const del = (i) => onChange(hints.filter((_, j) => j !== i));
+  const move = (i, dir) => {
+    const j = i + dir;
+    if (j < 0 || j >= hints.length) return;
+    const copy = [...hints];
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+    onChange(copy);
+  };
+  const count = hints.filter(hintHasContent).length;
+  return (
+    <div className="space-y-2">
+      {hints.map((h, i) => {
+        const type = hintTypeOf(h);
+        return (
+          <div key={i} className="rounded-lg border border-stone-200 p-2 dark:border-stone-700">
+            <div className="mb-1.5 flex items-center gap-2">
+              <span className="text-xs font-bold text-stone-400">{i + 1}</span>
+              <select
+                value={type}
+                onChange={(e) => set(i, makeHint(e.target.value))}
+                aria-label={t("builder.hintType")}
+                className={`${inputCls} w-28 py-1`}
+              >
+                {HINT_TYPES.map((ty) => (
+                  <option key={ty} value={ty}>
+                    {t(HINT_TYPE_KEY[ty])}
+                  </option>
+                ))}
+              </select>
+              <div className="ml-auto flex items-center">
+                <IconButton label={t("builder.moveUp")} onClick={() => move(i, -1)}>
+                  <ChevronUp size={14} />
+                </IconButton>
+                <IconButton label={t("builder.moveDown")} onClick={() => move(i, 1)}>
+                  <ChevronDown size={14} />
+                </IconButton>
+                <ConfirmDelete label={t("builder.deleteHint")} onConfirm={() => del(i)} />
+              </div>
+            </div>
+            {type === "text" && (
+              <input
+                className={inputCls}
+                placeholder={t("builder.hintText")}
+                value={typeof h === "string" ? h : ""}
+                onChange={(e) => set(i, e.target.value)}
+              />
+            )}
+            {type === "image" && <ImageField value={h.url || ""} onChange={(url) => set(i, { type: "image", url })} />}
+            {type === "audio" && (
+              <input
+                className={inputCls}
+                placeholder={t("builder.audioUrl")}
+                value={h.url || ""}
+                onChange={(e) => set(i, { type: "audio", url: e.target.value })}
+              />
+            )}
+            {type === "video" && (
+              <input
+                className={inputCls}
+                placeholder={t("builder.videoUrl")}
+                value={h.url || ""}
+                onChange={(e) => set(i, { type: "video", url: e.target.value })}
+              />
+            )}
+            {type === "map" && (
+              <div>
+                <input
+                  className={`${inputCls} mb-2`}
+                  placeholder={t("builder.locationLabel")}
+                  value={h.name || ""}
+                  onChange={(e) =>
+                    set(i, { type: "map", lat: h.lat ?? null, lng: h.lng ?? null, name: e.target.value })
+                  }
+                />
+                <LeafletMap
+                  answer={h.lat != null ? { lat: h.lat, lng: h.lng, label: h.name } : undefined}
+                  onPick={(lat, lng) => set(i, { type: "map", lat, lng, name: h.name || "" })}
+                  className="h-56"
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <button
+        onClick={() => onChange([...hints, makeHint("text")])}
+        className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+      >
+        <Plus size={13} /> {t("builder.addHint")}
+      </button>
+      <p className="text-xs text-stone-400 dark:text-stone-500">
+        {t("builder.hintsSummary", { count, pts: (count || 1) * 10 })}
+      </p>
+    </div>
+  );
+}
+
 /** Quiz editor; works on a draft copy and hands the result to onSave. */
 export default function Builder({ initial, note, onSave, onCancel }) {
+  const { t } = useI18n();
   const [quiz, setQuiz] = useState(initial);
   const [picker, setPicker] = useState(false);
 
@@ -209,13 +333,13 @@ export default function Builder({ initial, note, onSave, onCancel }) {
           onClick={onCancel}
           className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
         >
-          <ChevronLeft size={16} /> Cancel
+          <ChevronLeft size={16} /> {t("common.cancel")}
         </button>
         <Button
           className="px-5 py-2.5"
-          onClick={() => onSave({ ...quiz, title: quiz.title.trim() || "Untitled quiz" })}
+          onClick={() => onSave({ ...quiz, title: quiz.title.trim() || t("builder.untitledQuiz") })}
         >
-          Save quiz
+          {t("builder.saveQuiz")}
         </Button>
       </div>
       {note && (
@@ -225,14 +349,13 @@ export default function Builder({ initial, note, onSave, onCancel }) {
       )}
       <input
         className="w-full border-0 bg-transparent text-3xl font-bold tracking-tight placeholder-stone-300 focus:outline-none dark:placeholder-stone-600"
-        placeholder="Quiz title…"
+        placeholder={t("builder.quizTitle")}
         value={quiz.title}
         onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
       />
 
       <SortableList items={quiz.rounds} getKey={(r) => r.id} onReorder={reorderRounds} gap="mt-8 space-y-6">
         {(r, idx, handleProps) => {
-          const T = TYPES[r.type];
           const timed = r.timer != null;
           return (
             <div className={`${cardCls} p-4 shadow-sm md:p-5`}>
@@ -241,7 +364,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 <TypeBadge type={r.type} />
                 <input
                   className="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-2 py-1 font-semibold placeholder-stone-300 focus:outline-none dark:placeholder-stone-600"
-                  placeholder={`${T.label} round title…`}
+                  placeholder={t("builder.roundTitle", { label: t(`round.${r.type}.label`) })}
                   value={r.title}
                   onChange={(e) => setRound(r.id, { title: e.target.value })}
                 />
@@ -251,13 +374,13 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       ? "border-indigo-200 text-indigo-600 dark:border-indigo-500/40 dark:text-indigo-300"
                       : "border-stone-200 text-stone-400 dark:border-stone-700 dark:text-stone-500"
                   }`}
-                  title="Seconds per question (blank = no timer)"
+                  title={t("builder.secondsTitle")}
                 >
                   <TimerReset size={13} />
                   <input
                     type="number"
                     min="0"
-                    aria-label="Seconds per question"
+                    aria-label={t("builder.secondsTitle")}
                     className="w-9 bg-transparent text-center focus:outline-none"
                     placeholder="—"
                     value={r.timer ?? ""}
@@ -266,7 +389,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   s
                 </label>
                 <ConfirmDelete
-                  label="Delete round"
+                  label={t("builder.deleteRound")}
                   onConfirm={() => setQuiz({ ...quiz, rounds: quiz.rounds.filter((x) => x.id !== r.id) })}
                 />
               </div>
@@ -283,28 +406,28 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
                           <span className="flex items-center gap-1">
-                            <DragHandle {...hp} /> Question {i + 1}
+                            <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
                           </span>
-                          <ConfirmDelete label="Delete question" onConfirm={() => qDel(r, item)} />
+                          <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
                         </div>
                         <input
                           className={inputCls}
-                          placeholder="Question"
+                          placeholder={t("builder.question")}
                           value={item.q}
                           onChange={(e) => qRow(r, item, { q: e.target.value })}
                         />
                         <div className="mt-2 flex gap-2">
                           <input
                             className={inputCls}
-                            placeholder="Answer"
+                            placeholder={t("builder.answer")}
                             value={item.a}
                             onChange={(e) => qRow(r, item, { a: e.target.value })}
                           />
                           <input
                             type="number"
-                            aria-label="Points"
+                            aria-label={t("builder.points")}
                             className={`${inputCls} w-20`}
-                            title="Points"
+                            title={t("builder.points")}
                             value={item.points}
                             onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
                           />
@@ -316,7 +439,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("classic")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add question
+                    <Plus size={15} /> {t("builder.addQuestion")}
                   </button>
                 </>
               )}
@@ -336,12 +459,12 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           <DragHandle {...hp} />
                           <input
                             className={inputCls}
-                            placeholder="Category name"
+                            placeholder={t("builder.categoryName")}
                             value={c.name}
                             onChange={(e) => setCat(r, c.id, { name: e.target.value })}
                           />
                           <ConfirmDelete
-                            label="Delete category"
+                            label={t("builder.deleteCategory")}
                             onConfirm={() => setRound(r.id, { categories: r.categories.filter((x) => x.id !== c.id) })}
                           />
                         </div>
@@ -350,25 +473,25 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             <div key={item.id} className="flex flex-wrap items-center gap-2">
                               <input
                                 type="number"
-                                aria-label="Points"
+                                aria-label={t("builder.points")}
                                 className={`${inputCls} w-20`}
                                 value={item.points}
                                 onChange={(e) => setCatQ(r, c, item, { points: +e.target.value || 0 })}
                               />
                               <input
                                 className={`${inputCls} min-w-32 flex-1`}
-                                placeholder="Clue"
+                                placeholder={t("builder.clue")}
                                 value={item.clue}
                                 onChange={(e) => setCatQ(r, c, item, { clue: e.target.value })}
                               />
                               <input
                                 className={`${inputCls} min-w-28 flex-1`}
-                                placeholder="Answer"
+                                placeholder={t("builder.answer")}
                                 value={item.answer}
                                 onChange={(e) => setCatQ(r, c, item, { answer: e.target.value })}
                               />
                               <ConfirmDelete
-                                label="Delete clue"
+                                label={t("builder.deleteClue")}
                                 onConfirm={() =>
                                   setCat(r, c.id, { questions: c.questions.filter((y) => y.id !== item.id) })
                                 }
@@ -386,7 +509,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             }
                             className={`rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS} inline-flex items-center gap-1`}
                           >
-                            <Plus size={13} /> Add clue
+                            <Plus size={13} /> {t("builder.addClue")}
                           </button>
                         </div>
                       </div>
@@ -396,7 +519,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { categories: [...r.categories, makeCategory()] })}
                     className={`mt-4 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add category
+                    <Plus size={15} /> {t("builder.addCategory")}
                   </button>
                 </>
               )}
@@ -413,27 +536,17 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
                           <span className="flex items-center gap-1">
-                            <DragHandle {...hp} /> Item {i + 1}
+                            <DragHandle {...hp} /> {t("builder.itemN", { n: i + 1 })}
                           </span>
-                          <ConfirmDelete label="Delete item" onConfirm={() => qDel(r, item)} />
+                          <ConfirmDelete label={t("builder.deleteItem")} onConfirm={() => qDel(r, item)} />
                         </div>
                         <input
-                          className={inputCls}
-                          placeholder="The answer (who/what is it?)"
+                          className={`${inputCls} mb-2`}
+                          placeholder={t("builder.theAnswer")}
                           value={item.answer}
                           onChange={(e) => qRow(r, item, { answer: e.target.value })}
                         />
-                        <textarea
-                          rows={4}
-                          className={`${inputCls} mt-2`}
-                          placeholder={"One hint per line — hardest first…"}
-                          value={item.hints.join("\n")}
-                          onChange={(e) => qRow(r, item, { hints: e.target.value.split("\n") })}
-                        />
-                        <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
-                          {item.hints.filter((h) => h.trim()).length || 0} hints · starts at{" "}
-                          {(item.hints.filter((h) => h.trim()).length || 1) * 10} pts, −10 per extra hint
-                        </p>
+                        <HintsField hints={item.hints} onChange={(h) => qRow(r, item, { hints: h })} t={t} />
                       </div>
                     )}
                   </SortableList>
@@ -441,7 +554,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("hints")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add item
+                    <Plus size={15} /> {t("builder.addItem", {})}
                   </button>
                 </>
               )}
@@ -460,24 +573,20 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                         <div className={panelCls}>
                           <div className={rowLabelCls}>
                             <span className="flex items-center gap-1">
-                              <DragHandle {...hp} /> Clip {i + 1}
+                              <DragHandle {...hp} /> {t("builder.clipN", { n: i + 1 })}
                             </span>
-                            <ConfirmDelete label="Delete clip" onConfirm={() => qDel(r, item)} />
+                            <ConfirmDelete label={t("builder.deleteClip")} onConfirm={() => qDel(r, item)} />
                           </div>
                           <input
                             className={inputCls}
-                            placeholder="YouTube link (e.g. https://youtu.be/…)"
+                            placeholder={t("builder.ytLink")}
                             value={item.url}
                             onChange={(e) => qRow(r, item, { url: e.target.value })}
                           />
                           <p
                             className={`mt-1 text-xs ${item.url ? (ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-500") : "text-stone-400 dark:text-stone-500"}`}
                           >
-                            {item.url
-                              ? ok
-                                ? "✓ Video link recognised"
-                                : "Couldn't read a video ID from that link"
-                              : "Paste any YouTube URL"}
+                            {item.url ? (ok ? t("builder.ytOk") : t("builder.ytBad")) : t("builder.ytPaste")}
                           </p>
                           <label className="mt-2 inline-flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-stone-300">
                             <input
@@ -486,26 +595,26 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                               checked={!!item.audioOnly}
                               onChange={(e) => qRow(r, item, { audioOnly: e.target.checked })}
                             />
-                            Audio only — hide the video, play just the sound
+                            {t("builder.audioOnly")}
                           </label>
                           <input
                             className={`${inputCls} mt-2`}
-                            placeholder="Question (read after the clip)"
+                            placeholder={t("builder.afterClip")}
                             value={item.q}
                             onChange={(e) => qRow(r, item, { q: e.target.value })}
                           />
                           <div className="mt-2 flex gap-2">
                             <input
                               className={inputCls}
-                              placeholder="Answer"
+                              placeholder={t("builder.answer")}
                               value={item.a}
                               onChange={(e) => qRow(r, item, { a: e.target.value })}
                             />
                             <input
                               type="number"
-                              aria-label="Points"
+                              aria-label={t("builder.points")}
                               className={`${inputCls} w-20`}
-                              title="Points"
+                              title={t("builder.points")}
                               value={item.points}
                               onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
                             />
@@ -518,7 +627,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("video")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add clip
+                    <Plus size={15} /> {t("builder.addClip")}
                   </button>
                 </>
               )}
@@ -535,29 +644,29 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
                           <span className="flex items-center gap-1">
-                            <DragHandle {...hp} /> Picture {i + 1}
+                            <DragHandle {...hp} /> {t("builder.pictureN", { n: i + 1 })}
                           </span>
-                          <ConfirmDelete label="Delete picture" onConfirm={() => qDel(r, item)} />
+                          <ConfirmDelete label={t("builder.deletePicture")} onConfirm={() => qDel(r, item)} />
                         </div>
                         <ImageField value={item.url} onChange={(url) => qRow(r, item, { url })} />
                         <input
                           className={`${inputCls} mt-2`}
-                          placeholder="Question (e.g. What is this?)"
+                          placeholder={t("builder.imageQ")}
                           value={item.q}
                           onChange={(e) => qRow(r, item, { q: e.target.value })}
                         />
                         <div className="mt-2 flex gap-2">
                           <input
                             className={inputCls}
-                            placeholder="Answer"
+                            placeholder={t("builder.answer")}
                             value={item.a}
                             onChange={(e) => qRow(r, item, { a: e.target.value })}
                           />
                           <input
                             type="number"
-                            aria-label="Points"
+                            aria-label={t("builder.points")}
                             className={`${inputCls} w-20`}
-                            title="Points"
+                            title={t("builder.points")}
                             value={item.points}
                             onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
                           />
@@ -569,7 +678,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("image")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add picture
+                    <Plus size={15} /> {t("builder.addPicture")}
                   </button>
                 </>
               )}
@@ -586,37 +695,37 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
                           <span className="flex items-center gap-1">
-                            <DragHandle {...hp} /> Picture {i + 1}
+                            <DragHandle {...hp} /> {t("builder.pictureN", { n: i + 1 })}
                           </span>
-                          <ConfirmDelete label="Delete picture" onConfirm={() => qDel(r, item)} />
+                          <ConfirmDelete label={t("builder.deletePicture")} onConfirm={() => qDel(r, item)} />
                         </div>
                         <ImageField value={item.url} onChange={(url) => qRow(r, item, { url })} />
                         <input
                           className={`${inputCls} mt-2`}
-                          placeholder="Answer"
+                          placeholder={t("builder.answer")}
                           value={item.a}
                           onChange={(e) => qRow(r, item, { a: e.target.value })}
                         />
                         <div className="mt-2 flex flex-wrap gap-2">
                           <select
-                            aria-label="Reveal effect"
+                            aria-label={t("builder.effect")}
                             className={`${inputCls} w-32`}
                             value={item.effect}
                             onChange={(e) => qRow(r, item, { effect: e.target.value })}
                           >
                             {MORPH_EFFECTS.map((eff) => (
                               <option key={eff} value={eff}>
-                                {eff === "blur" ? "De-blur" : eff === "pixelate" ? "Pixelate" : "Tiles"}
+                                {t(`builder.effect${eff.charAt(0).toUpperCase()}${eff.slice(1)}`)}
                               </option>
                             ))}
                           </select>
                           <label className="inline-flex items-center gap-1 rounded-xl border border-stone-200 px-2 text-xs text-stone-500 dark:border-stone-700 dark:text-stone-400">
-                            Steps
+                            {t("builder.steps")}
                             <input
                               type="number"
                               min="1"
                               max="8"
-                              aria-label="Demorph steps"
+                              aria-label={t("builder.morphSteps")}
                               className="w-12 bg-transparent py-2 text-center focus:outline-none"
                               value={item.steps}
                               onChange={(e) => qRow(r, item, { steps: Math.max(1, Math.min(8, +e.target.value || 4)) })}
@@ -624,9 +733,9 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           </label>
                           <input
                             type="number"
-                            aria-label="Points"
+                            aria-label={t("builder.points")}
                             className={`${inputCls} w-24`}
-                            title="Full points (when most obscured)"
+                            title={t("builder.fullPoints")}
                             value={item.points}
                             onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
                           />
@@ -638,7 +747,77 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("morph")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add picture
+                    <Plus size={15} /> {t("builder.addPicture")}
+                  </button>
+                </>
+              )}
+
+              {/* fusion */}
+              {r.type === "fusion" && (
+                <>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
+                    {(item, i, hp) => (
+                      <div className={panelCls}>
+                        <div className={rowLabelCls}>
+                          <span className="flex items-center gap-1">
+                            <DragHandle {...hp} /> {t("builder.pictureN", { n: i + 1 })}
+                          </span>
+                          <ConfirmDelete label={t("builder.deletePicture")} onConfirm={() => qDel(r, item)} />
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          <div>
+                            <p className="mb-1 text-xs font-medium text-stone-400 dark:text-stone-500">
+                              {t("builder.imageA")}
+                            </p>
+                            <ImageField value={item.urlA} onChange={(url) => qRow(r, item, { urlA: url })} />
+                          </div>
+                          <div>
+                            <p className="mb-1 text-xs font-medium text-stone-400 dark:text-stone-500">
+                              {t("builder.imageB")}
+                            </p>
+                            <ImageField value={item.urlB} onChange={(url) => qRow(r, item, { urlB: url })} />
+                          </div>
+                        </div>
+                        <input
+                          className={`${inputCls} mt-2`}
+                          placeholder={t("builder.fusionAnswer")}
+                          value={item.a}
+                          onChange={(e) => qRow(r, item, { a: e.target.value })}
+                        />
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <label className="inline-flex items-center gap-1 rounded-xl border border-stone-200 px-2 text-xs text-stone-500 dark:border-stone-700 dark:text-stone-400">
+                            {t("builder.steps")}
+                            <input
+                              type="number"
+                              min="1"
+                              max="8"
+                              aria-label={t("builder.steps")}
+                              className="w-12 bg-transparent py-2 text-center focus:outline-none"
+                              value={item.steps}
+                              onChange={(e) => qRow(r, item, { steps: Math.max(1, Math.min(8, +e.target.value || 4)) })}
+                            />
+                          </label>
+                          <input
+                            type="number"
+                            aria-label={t("builder.points")}
+                            className={`${inputCls} w-24`}
+                            title={t("builder.fullPoints")}
+                            value={item.points}
+                            onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("fusion")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addPicture")}
                   </button>
                 </>
               )}
@@ -655,19 +834,19 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
                           <span className="flex items-center gap-1">
-                            <DragHandle {...hp} /> Place {i + 1}
+                            <DragHandle {...hp} /> {t("builder.placeN", { n: i + 1 })}
                           </span>
-                          <ConfirmDelete label="Delete place" onConfirm={() => qDel(r, item)} />
+                          <ConfirmDelete label={t("builder.deletePlace")} onConfirm={() => qDel(r, item)} />
                         </div>
                         <input
                           className={inputCls}
-                          placeholder="Question (e.g. Where is Machu Picchu?)"
+                          placeholder={t("builder.mapQ")}
                           value={item.q}
                           onChange={(e) => qRow(r, item, { q: e.target.value })}
                         />
                         <input
                           className={`${inputCls} mt-2`}
-                          placeholder="Location label shown on reveal"
+                          placeholder={t("builder.locationLabel")}
                           value={item.name}
                           onChange={(e) => qRow(r, item, { name: e.target.value })}
                         />
@@ -679,8 +858,8 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           />
                           <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
                             {item.lat != null
-                              ? `Pinned at ${item.lat}, ${item.lng} — click the map to move it`
-                              : "Click the map to place the pin"}
+                              ? t("builder.pinnedAt", { lat: item.lat, lng: item.lng })
+                              : t("builder.clickToPin")}
                           </p>
                         </div>
                       </div>
@@ -690,7 +869,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("map")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
-                    <Plus size={15} /> Add place
+                    <Plus size={15} /> {t("builder.addPlace")}
                   </button>
                 </>
               )}
@@ -702,17 +881,17 @@ export default function Builder({ initial, note, onSave, onCancel }) {
       <div className="mt-6">
         {picker ? (
           <div className={`${cardCls} p-4`}>
-            <p className="mb-3 text-sm font-medium text-stone-500 dark:text-stone-400">Choose a round format</p>
+            <p className="mb-3 text-sm font-medium text-stone-500 dark:text-stone-400">{t("builder.chooseFormat")}</p>
             <div className="flex flex-wrap gap-2">
-              {Object.entries(TYPES).map(([key, t]) => {
-                const Icon = t.icon;
+              {Object.entries(TYPES).map(([key, meta]) => {
+                const Icon = meta.icon;
                 return (
                   <button
                     key={key}
                     onClick={() => addRound(key)}
                     className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium transition hover:border-stone-400 hover:bg-stone-50 dark:border-stone-700 dark:hover:border-stone-500 dark:hover:bg-stone-800 ${FOCUS}`}
                   >
-                    <Icon size={16} className="text-stone-500 dark:text-stone-400" /> {t.label}
+                    <Icon size={16} className="text-stone-500 dark:text-stone-400" /> {t(`round.${key}.label`)}
                   </button>
                 );
               })}
@@ -720,7 +899,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 onClick={() => setPicker(false)}
                 className={`rounded-xl px-3 py-2.5 text-sm text-stone-400 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
               >
-                Cancel
+                {t("common.cancel")}
               </button>
             </div>
           </div>
@@ -729,7 +908,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
             onClick={() => setPicker(true)}
             className={`flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-300 px-4 py-4 font-medium text-stone-500 transition hover:border-stone-400 hover:text-stone-700 dark:border-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-stone-200 ${FOCUS}`}
           >
-            <Plus size={18} /> Add round
+            <Plus size={18} /> {t("builder.addRound")}
           </button>
         )}
       </div>

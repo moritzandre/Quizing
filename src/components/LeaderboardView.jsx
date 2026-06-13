@@ -5,6 +5,7 @@
 import { ChevronLeft, Trophy, Medal } from "lucide-react";
 import { aggregateLeaderboard } from "../lib/model.js";
 import { FOCUS, cardCls, Button, ConfirmDelete } from "./ui.jsx";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const rankColor = (i) =>
   i === 0
@@ -22,6 +23,7 @@ const rankColor = (i) =>
  * @param {() => void} props.onClear Wipe the stored history.
  */
 export default function LeaderboardView({ results, onBack, onClear }) {
+  const { t } = useI18n();
   const board = aggregateLeaderboard(results);
   const games = Array.isArray(results) ? results.length : 0;
 
@@ -31,15 +33,15 @@ export default function LeaderboardView({ results, onBack, onClear }) {
         onClick={onBack}
         className={`mb-8 inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
       >
-        <ChevronLeft size={16} /> Back
+        <ChevronLeft size={16} /> {t("common.back")}
       </button>
 
       <div className="flex items-center gap-3">
         <Trophy className="text-amber-500" size={28} />
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Leaderboard</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t("leaderboard.title")}</h2>
           <p className="text-sm text-stone-500 dark:text-stone-400">
-            {games} {games === 1 ? "game" : "games"} played on this device
+            {games === 1 ? t("leaderboard.gamePlayed", { n: games }) : t("leaderboard.gamesPlayed", { n: games })}
           </p>
         </div>
       </div>
@@ -47,7 +49,7 @@ export default function LeaderboardView({ results, onBack, onClear }) {
       {board.length === 0 ? (
         <div className={`${cardCls} mt-8 p-8 text-center text-stone-500 dark:text-stone-400`}>
           <Medal className="mx-auto mb-3 text-stone-300 dark:text-stone-600" size={32} />
-          No games finished yet. Play one and the standings will show up here.
+          {t("leaderboard.empty")}
         </div>
       ) : (
         <>
@@ -56,11 +58,11 @@ export default function LeaderboardView({ results, onBack, onClear }) {
               <thead className="bg-stone-50 text-xs uppercase tracking-wide text-stone-400 dark:bg-stone-900 dark:text-stone-500">
                 <tr>
                   <th className="px-4 py-2.5 text-left font-semibold">#</th>
-                  <th className="px-2 py-2.5 text-left font-semibold">Player</th>
-                  <th className="px-2 py-2.5 text-right font-semibold">Wins</th>
-                  <th className="px-2 py-2.5 text-right font-semibold">Games</th>
-                  <th className="px-2 py-2.5 text-right font-semibold">Best</th>
-                  <th className="px-4 py-2.5 text-right font-semibold">Total</th>
+                  <th className="px-2 py-2.5 text-left font-semibold">{t("leaderboard.player")}</th>
+                  <th className="px-2 py-2.5 text-right font-semibold">{t("leaderboard.wins")}</th>
+                  <th className="px-2 py-2.5 text-right font-semibold">{t("leaderboard.games")}</th>
+                  <th className="px-2 py-2.5 text-right font-semibold">{t("leaderboard.best")}</th>
+                  <th className="px-4 py-2.5 text-right font-semibold">{t("leaderboard.total")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -86,7 +88,7 @@ export default function LeaderboardView({ results, onBack, onClear }) {
           </div>
 
           <div className="mt-6 flex justify-end">
-            <ConfirmDelete label="Clear leaderboard history" onConfirm={onClear} />
+            <ConfirmDelete label={t("leaderboard.clear")} onConfirm={onClear} />
           </div>
         </>
       )}

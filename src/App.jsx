@@ -31,6 +31,7 @@ import Builder from "./components/Builder.jsx";
 import JoinView from "./components/JoinView.jsx";
 import LeaderboardView from "./components/LeaderboardView.jsx";
 import { useHostRoom } from "./components/useRoom.js";
+import { useI18n } from "./i18n/I18nProvider.jsx";
 
 const APP_VERSION = "1.2.0";
 
@@ -61,6 +62,7 @@ function App() {
   const [loaded, setLoaded] = useState(false);
   const [importError, setImportError] = useState("");
   const fileRef = useRef(null);
+  const { t } = useI18n();
 
   const room = useHostRoom();
 
@@ -191,8 +193,8 @@ function App() {
       const copy = deepClone(quiz);
       copy.id = uid();
       copy.sample = false;
-      copy.title = quiz.title + " (copy)";
-      go({ name: "builder", draft: copy, note: "The sample quiz is read-only — you're editing your own copy of it." });
+      copy.title = quiz.title + t("home.copySuffix");
+      go({ name: "builder", draft: copy, note: t("builder.sampleNote") });
     } else {
       go({ name: "builder", draft: deepClone(quiz) });
     }
@@ -227,7 +229,7 @@ function App() {
         persistQuizzes([...quizzes, quiz]);
         setImportError("");
       } catch {
-        setImportError("That file doesn't look like a Quiz Night export (.quiz.json).");
+        setImportError(t("home.importError"));
         setTimeout(() => setImportError(""), 5000);
       }
     };
@@ -240,7 +242,7 @@ function App() {
   if (!loaded) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400 dark:bg-stone-950 dark:text-stone-500">
-        Loading…
+        {t("home.loading")}
       </div>
     );
   }
@@ -254,12 +256,10 @@ function App() {
               <h1 className="text-5xl font-bold tracking-tight">
                 Quiz Night<span className="text-indigo-600 dark:text-indigo-400">.</span>
               </h1>
-              <p className="mt-2 text-stone-500 dark:text-stone-400">
-                One screen, one host, seven round formats. Phones can buzz in. You tap to score.
-              </p>
+              <p className="mt-2 text-stone-500 dark:text-stone-400">{t("home.tagline")}</p>
             </div>
             <div className="flex items-center gap-1">
-              <IconButton label="Leaderboard" onClick={() => go({ name: "leaderboard" })}>
+              <IconButton label={t("home.leaderboard")} onClick={() => go({ name: "leaderboard" })}>
                 <Trophy size={18} />
               </IconButton>
               <ThemeToggle />
@@ -269,17 +269,17 @@ function App() {
           {game && game.stage !== "end" && (
             <div className="mt-8 flex items-center justify-between rounded-2xl border border-indigo-200 bg-indigo-50 px-5 py-4 dark:border-indigo-500/30 dark:bg-indigo-500/10">
               <div>
-                <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">Game in progress</p>
+                <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">{t("home.gameInProgress")}</p>
                 <p className="text-sm text-indigo-900/70 dark:text-indigo-200/70">
-                  {game.quiz.title} · Round {game.ri + 1} of {game.quiz.rounds.length}
+                  {t("home.roundOf", { title: game.quiz.title, n: game.ri + 1, total: game.quiz.rounds.length })}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="accent" className="px-4 py-2" onClick={() => go({ name: "play" })}>
-                  <Play size={15} /> Resume
+                  <Play size={15} /> {t("home.resume")}
                 </Button>
                 <IconButton
-                  label="Discard game"
+                  label={t("home.discard")}
                   className="text-indigo-400 hover:text-red-600"
                   onClick={() => persistGame(null)}
                 >
@@ -291,13 +291,13 @@ function App() {
 
           <div className="mt-10 flex items-center justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-400 dark:text-stone-500">
-              Quizzes
+              {t("home.quizzes")}
             </h2>
             <button
               onClick={() => fileRef.current?.click()}
               className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
             >
-              <Upload size={15} /> Import
+              <Upload size={15} /> {t("home.import")}
             </button>
             <input
               ref={fileRef}
@@ -320,7 +320,8 @@ function App() {
                   <div className="min-w-0">
                     <h3 className="truncate text-lg font-semibold">{q.title}</h3>
                     <p className="mt-0.5 text-sm text-stone-400 dark:text-stone-500">
-                      {q.rounds.length} rounds · {countQuestions(q)} questions{q.sample ? " · sample" : ""}
+                      {t("home.roundsQuestions", { rounds: q.rounds.length, questions: countQuestions(q) })}
+                      {q.sample ? t("home.sampleSuffix") : ""}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {q.rounds.map((r) => (
@@ -329,25 +330,25 @@ function App() {
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
-                    <IconButton label="Edit quiz" onClick={() => editQuiz(q)}>
+                    <IconButton label={t("home.editQuiz")} onClick={() => editQuiz(q)}>
                       <Pencil size={15} />
                     </IconButton>
-                    <IconButton label="Duplicate quiz" onClick={() => duplicateQuiz(q)}>
+                    <IconButton label={t("home.duplicateQuiz")} onClick={() => duplicateQuiz(q)}>
                       <Copy size={15} />
                     </IconButton>
-                    <IconButton label="Export quiz as file" onClick={() => exportQuiz(q)}>
+                    <IconButton label={t("home.exportQuiz")} onClick={() => exportQuiz(q)}>
                       <Download size={15} />
                     </IconButton>
                     {!q.sample && (
                       <ConfirmDelete
-                        label="Delete quiz"
+                        label={t("home.deleteQuiz")}
                         onConfirm={() => persistQuizzes(quizzes.filter((x) => x.id !== q.id))}
                       />
                     )}
                   </div>
                 </div>
                 <Button className="mt-4 px-5 py-2.5" onClick={() => go({ name: "setup", quiz: q })}>
-                  <Play size={15} /> Play
+                  <Play size={15} /> {t("home.play")}
                 </Button>
               </div>
             ))}
@@ -355,18 +356,14 @@ function App() {
               onClick={() => go({ name: "builder", draft: { id: uid(), title: "", rounds: [] } })}
               className={`flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-300 px-4 py-5 font-medium text-stone-500 transition hover:border-stone-400 hover:text-stone-700 dark:border-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-stone-200 ${FOCUS}`}
             >
-              <Plus size={18} /> New quiz
+              <Plus size={18} /> {t("home.newQuiz")}
             </button>
           </div>
 
           <p className="mt-10 text-center text-xs text-stone-300 dark:text-stone-600">
-            v{APP_VERSION} · {storage.name === "claude" && "saving to your Claude storage"}
-            {storage.name === "local" && "saving to this browser"}
-            {storage.name === "memory" && (
-              <span className="font-medium text-amber-500">
-                no persistent storage available — changes last only for this session
-              </span>
-            )}
+            v{APP_VERSION} · {storage.name === "claude" && t("home.storageClaude")}
+            {storage.name === "local" && t("home.storageLocal")}
+            {storage.name === "memory" && <span className="font-medium text-amber-500">{t("home.storageMemory")}</span>}
           </p>
         </div>
       )}

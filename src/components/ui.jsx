@@ -13,13 +13,20 @@ import {
   Video,
   Image as ImageIcon,
   Sparkles,
+  Blend,
   MapPin,
   Trash2,
   Sun,
   Moon,
 } from "lucide-react";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
-/** Round-type metadata: label, icon, accent dot, and host instructions. Keys must match ROUND_TYPES in lib/model.js. */
+/**
+ * Round-type metadata: icon + accent dot. Keys must match ROUND_TYPES in
+ * lib/model.js. Labels and descriptions are localized via i18n keys
+ * `round.<type>.label` / `round.<type>.desc`; the English `label`/`desc` here
+ * are only a fallback for any non-localized consumer.
+ */
 export const TYPES = {
   classic: {
     label: "Classic",
@@ -56,6 +63,12 @@ export const TYPES = {
     icon: Sparkles,
     dot: "bg-fuchsia-500",
     desc: "The picture starts obscured and worth the most. Demorph it step by step — the longer it takes, the fewer points it's worth.",
+  },
+  fusion: {
+    label: "Fusion",
+    icon: Blend,
+    dot: "bg-purple-500",
+    desc: "Two images are blended into one. Guess both halves; defuse step by step to peek at each — fewer points the more you peek.",
   },
   map: {
     label: "Map",
@@ -110,14 +123,15 @@ export function IconButton({ label, className = "", children, ...props }) {
   );
 }
 
-/** Pill badge showing a round type's accent dot and label. */
+/** Pill badge showing a round type's accent dot and localized label. */
 export function TypeBadge({ type }) {
-  const t = TYPES[type];
-  if (!t) return null;
+  const { t } = useI18n();
+  const meta = TYPES[type];
+  if (!meta) return null;
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-600 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
-      <span className={`h-1.5 w-1.5 rounded-full ${t.dot}`} />
-      {t.label}
+      <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+      {t(`round.${type}.label`)}
     </span>
   );
 }

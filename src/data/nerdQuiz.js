@@ -129,6 +129,17 @@ export const NERD_QUIZ = {
             "The show Arcane made me a household name.",
           ],
         },
+        {
+          id: "nh3",
+          answer: "Lux",
+          // Mixed hints: text clues then a picture give-away (media hints).
+          hints: [
+            "I'm a noble from Demacia who hides a secret.",
+            "I command light itself.",
+            "My ultimate fires a giant beam across the lane.",
+            { type: "image", url: SPLASH("Lux") },
+          ],
+        },
       ],
     },
     {
@@ -151,6 +162,23 @@ export const NERD_QUIZ = {
         { id: "ni1", url: SPLASH("Lux"), q: "Which champion is this?", a: "Lux", points: 10 },
         { id: "ni2", url: SPLASH("Yasuo"), q: "Which champion is this?", a: "Yasuo", points: 10 },
         { id: "ni3", url: SPLASH("Ezreal"), q: "Which champion is this?", a: "Ezreal", points: 10 },
+      ],
+    },
+    {
+      id: "n7",
+      type: "fusion",
+      title: "Who Did We Blend?",
+      timer: null,
+      questions: [
+        { id: "nf1", urlA: SPLASH("Yasuo"), urlB: SPLASH("Yone"), a: "Yasuo + Yone", points: 40, steps: 4 },
+        {
+          id: "nf2",
+          urlA: SPLASH("Garen"),
+          urlB: SPLASH("Lux"),
+          a: "Garen + Lux (the Crownguards)",
+          points: 40,
+          steps: 4,
+        },
       ],
     },
     {

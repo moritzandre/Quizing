@@ -7,6 +7,7 @@ import { Radio, Wifi, WifiOff, Check, MapPin } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
 import { FOCUS, inputCls, Button } from "./ui.jsx";
 import LeafletMap from "./LeafletMap.jsx";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
 /**
  * Standalone phone page reached via #/join/<code> (the host's QR).
@@ -14,6 +15,7 @@ import LeafletMap from "./LeafletMap.jsx";
  * @param {string} props.code Room code from the URL.
  */
 export default function JoinView({ code }) {
+  const { t } = useI18n();
   const room = usePlayerRoom(code);
   const [draftName, setDraftName] = useState("");
   const [joined, setJoined] = useState(false);
@@ -53,7 +55,7 @@ export default function JoinView({ code }) {
             }`}
           >
             {online ? <Wifi size={12} /> : <WifiOff size={12} />}
-            {online ? "Connected" : "Connecting…"}
+            {online ? t("join.connected") : t("join.connecting")}
           </span>
         </div>
 
@@ -61,9 +63,9 @@ export default function JoinView({ code }) {
           <div className="flex flex-1 flex-col justify-center">
             <div className="mb-2 flex items-center gap-2 text-stone-400">
               <Radio size={18} />
-              <span className="text-sm font-medium uppercase tracking-wide">Join room {code}</span>
+              <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
             </div>
-            <h2 className="mb-4 text-3xl font-bold tracking-tight">What's your name?</h2>
+            <h2 className="mb-4 text-3xl font-bold tracking-tight">{t("join.whatsYourName")}</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -74,7 +76,7 @@ export default function JoinView({ code }) {
             >
               <input
                 className={`${inputCls} text-lg`}
-                placeholder="Your name or team"
+                placeholder={t("join.namePlaceholder")}
                 value={draftName}
                 autoFocus
                 maxLength={24}
@@ -86,14 +88,16 @@ export default function JoinView({ code }) {
                 className="mt-4 w-full px-6 py-3.5 text-base"
                 disabled={!draftName.trim()}
               >
-                Join the game
+                {t("join.joinGame")}
               </Button>
             </form>
           </div>
         ) : (
           <div className="flex flex-1 flex-col">
             <p className="mb-6 text-sm text-stone-500 dark:text-stone-400">
-              Playing as <span className="font-semibold text-stone-800 dark:text-stone-100">{room.name}</span>
+              <span className="font-semibold text-stone-800 dark:text-stone-100">
+                {t("join.playingAs", { name: room.name })}
+              </span>
             </p>
 
             {phase === "buzz" && (
@@ -103,20 +107,22 @@ export default function JoinView({ code }) {
                     <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg">
                       <Check size={56} />
                     </div>
-                    <p className="text-2xl font-bold">You're in first! 🎉</p>
-                    <p className="mt-1 text-stone-500 dark:text-stone-400">Answer out loud.</p>
+                    <p className="text-2xl font-bold">{t("join.youreInFirst")}</p>
+                    <p className="mt-1 text-stone-500 dark:text-stone-400">{t("join.answerOutLoud")}</p>
                   </div>
                 ) : lockedBy ? (
                   <div className="text-center">
-                    <p className="text-xl font-semibold text-stone-500 dark:text-stone-400">Someone buzzed first</p>
-                    <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">Wait for the next question…</p>
+                    <p className="text-xl font-semibold text-stone-500 dark:text-stone-400">
+                      {t("join.someoneBuzzed")}
+                    </p>
+                    <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">{t("join.waitNext")}</p>
                   </div>
                 ) : (
                   <button
                     onClick={room.buzz}
                     className={`flex h-56 w-56 items-center justify-center rounded-full bg-indigo-600 text-3xl font-bold uppercase tracking-widest text-white shadow-xl transition active:scale-95 hover:bg-indigo-500 ${FOCUS}`}
                   >
-                    Buzz
+                    {t("join.buzz")}
                   </button>
                 )}
               </div>
@@ -125,7 +131,7 @@ export default function JoinView({ code }) {
             {phase === "map" && (
               <div className="flex flex-1 flex-col">
                 <div className="mb-2 flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
-                  <MapPin size={16} /> Tap the map to drop your guess
+                  <MapPin size={16} /> {t("join.tapMap")}
                 </div>
                 <LeafletMap
                   answer={myPin ? { lat: myPin.lat, lng: myPin.lng, label: room.name } : undefined}
@@ -135,7 +141,7 @@ export default function JoinView({ code }) {
                 <p
                   className={`mt-3 text-center text-sm ${pinSent ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}
                 >
-                  {pinSent ? "Pin sent ✓ — tap again to move it" : "No pin yet"}
+                  {pinSent ? t("join.pinSent") : t("join.noPin")}
                 </p>
               </div>
             )}
@@ -145,10 +151,8 @@ export default function JoinView({ code }) {
                 <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
                   <Radio size={34} className="text-stone-400" />
                 </div>
-                <p className="text-lg font-semibold">You're in!</p>
-                <p className="mt-1 text-stone-500 dark:text-stone-400">
-                  Watch the main screen — buzzers light up here.
-                </p>
+                <p className="text-lg font-semibold">{t("join.youreIn")}</p>
+                <p className="mt-1 text-stone-500 dark:text-stone-400">{t("join.watchScreen")}</p>
               </div>
             )}
           </div>

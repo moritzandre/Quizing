@@ -30,9 +30,9 @@ export default [
       "no-empty": ["error", { allowEmptyCatch: true }],
     },
   },
-  // Hook-only modules legitimately export non-components; fast-refresh N/A.
+  // Hook/provider modules legitimately export non-components; fast-refresh N/A.
   {
-    files: ["**/useRoom.js"],
+    files: ["**/useRoom.js", "**/I18nProvider.jsx"],
     rules: { "react-refresh/only-export-components": "off" },
   },
   prettier,

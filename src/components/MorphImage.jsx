@@ -27,6 +27,7 @@ function shuffledOrder(n) {
 
 const COLS = 7;
 const ROWS = 5;
+const SLICES = 8;
 
 /**
  * @param {object} props
@@ -72,6 +73,7 @@ export default function MorphImage({ url, effect, steps, step, revealed = false 
   }, [effect, url, t, clear]);
 
   const tileOrder = useMemo(() => shuffledOrder(COLS * ROWS), []);
+  const sliceOrder = useMemo(() => shuffledOrder(SLICES), []);
 
   if (!url) {
     return (
@@ -115,6 +117,37 @@ export default function MorphImage({ url, effect, steps, step, revealed = false 
           style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)`, gridTemplateRows: `repeat(${ROWS}, 1fr)` }}
         >
           {Array.from({ length: COLS * ROWS }).map((_, i) => (
+            <div
+              key={i}
+              className={`transition-opacity duration-500 ${hidden.has(i) ? "bg-stone-300 opacity-100 dark:bg-stone-700" : "opacity-0"}`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (effect === "zoom") {
+    return (
+      <div className={frame}>
+        <img
+          src={url}
+          alt=""
+          className="mx-auto max-h-[58vh] w-full object-contain transition-transform duration-500"
+          style={{ transform: `scale(${lerp(3.2, 1, t)})` }}
+        />
+      </div>
+    );
+  }
+
+  if (effect === "slices") {
+    const revealedCount = Math.round(SLICES * t);
+    const hidden = new Set(sliceOrder.slice(revealedCount));
+    return (
+      <div className={`relative ${frame}`}>
+        <img src={url} alt="" className="mx-auto max-h-[58vh] w-full object-contain" />
+        <div className="absolute inset-0 grid" style={{ gridTemplateRows: `repeat(${SLICES}, 1fr)` }}>
+          {Array.from({ length: SLICES }).map((_, i) => (
             <div
               key={i}
               className={`transition-opacity duration-500 ${hidden.has(i) ? "bg-stone-300 opacity-100 dark:bg-stone-700" : "opacity-0"}`}

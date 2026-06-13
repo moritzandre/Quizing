@@ -19,12 +19,15 @@ import {
   Radio,
   Bell,
 } from "lucide-react";
-import { uid, ytId, nextNonEmpty, haversineKm, morphValue } from "../lib/model.js";
+import { uid, ytId, nextNonEmpty, haversineKm, morphValue, hintHasContent } from "../lib/model.js";
 import { TYPES, FOCUS, Button, Confetti } from "./ui.jsx";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 import ScoreBar from "./ScoreBar.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import YouTubePlayer from "./YouTubePlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
+import FusionImage from "./FusionImage.jsx";
+import HintMedia from "./HintMedia.jsx";
 
 /** Short WebAudio beep when a player buzzes in (no asset needed). */
 function beep() {
@@ -66,11 +69,12 @@ const fmtClock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")
 const fmtKm = (km) => (km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km).toLocaleString()} km`);
 // Blank lines in the hints textarea aren't real hint steps; ignore them so the
 // value math and the displayed ladder match the builder's hint count.
-const realHints = (hints) => (hints || []).filter((h) => h.trim());
+const realHints = (hints) => (hints || []).filter(hintHasContent);
 const ptsOr = (n, d) => (Number.isFinite(n) ? n : d);
 
 /** Host-facing game screen; drives a game object via setGame (persisted by the app shell). */
 export default function PlayView({ game, setGame, onExit, room }) {
+  const { t } = useI18n();
   const quiz = game.quiz;
   const round = quiz.rounds[game.ri];
   const upd = (patch) => setGame({ ...game, ...patch });
@@ -107,7 +111,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const q = round.questions[game.qi];
     if (!q) return 0;
     if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
-    if (round.type === "morph") return morphValue(q.points, q.steps, morphStep);
+    if (round.type === "morph" || round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
     return ptsOr(q.points, 10);
   })();
 
@@ -220,7 +224,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
-      else if (k === "h" && !game.revealed && round.type === "morph") setMorphStep((s) => Math.min(q.steps, s + 1));
+      else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
+        setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
       else if (allowNegative && game.revealed && (e.key === "+" || e.key === "=")) setSign(1);
       else if (game.revealed && /^[1-9]$/.test(e.key)) {
@@ -238,12 +243,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
         onClick={onExit}
         className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
       >
-        <ChevronLeft size={16} /> Exit
+        <ChevronLeft size={16} /> {t("play.exit")}
       </button>
       {round && game.stage !== "end" && (
         <p className="text-sm text-stone-500 dark:text-stone-400">
-          Round {game.ri + 1} / {quiz.rounds.length} ·{" "}
-          <span className="font-medium text-stone-700 dark:text-stone-200">{TYPES[round.type].label}</span>
+          {t("play.roundProgress", { n: game.ri + 1, total: quiz.rounds.length })} ·{" "}
+          <span className="font-medium text-stone-700 dark:text-stone-200">{t(`round.${round.type}.label`)}</span>
         </p>
       )}
       <span className="w-14" />
@@ -275,7 +280,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       <div className="mx-auto max-w-xl px-6 pb-16 pt-10 text-center">
         {hasWinner && <Confetti />}
         <Trophy className="mx-auto mb-4 text-amber-500" size={44} />
-        <h2 className="text-3xl font-bold tracking-tight">Final scores</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("play.finalScores")}</h2>
         <p className="mt-1 text-stone-500 dark:text-stone-400">{quiz.title}</p>
         <div className="mt-8 space-y-2">
           {sorted.map((p, i) => (
@@ -303,10 +308,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         <div className="mt-8 flex justify-center gap-3">
           <Button onClick={playAgain}>
-            <RotateCcw size={16} /> Play again
+            <RotateCcw size={16} /> {t("play.playAgain")}
           </Button>
           <Button variant="outline" onClick={onExit}>
-            Done
+            {t("common.done")}
           </Button>
         </div>
       </div>
@@ -326,17 +331,19 @@ export default function PlayView({ game, setGame, onExit, room }) {
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
             <Icon size={28} className="text-stone-700 dark:text-stone-200" />
           </div>
-          <p className="text-sm font-medium uppercase tracking-widest text-stone-400">Round {game.ri + 1}</p>
-          <h2 className="mt-2 text-4xl font-bold tracking-tight">{round.title || T.label}</h2>
-          <p className="mx-auto mt-4 max-w-md text-stone-500 dark:text-stone-400">{T.desc}</p>
+          <p className="text-sm font-medium uppercase tracking-widest text-stone-400">
+            {t("play.round", { n: game.ri + 1 })}
+          </p>
+          <h2 className="mt-2 text-4xl font-bold tracking-tight">{round.title || t(`round.${round.type}.label`)}</h2>
+          <p className="mx-auto mt-4 max-w-md text-stone-500 dark:text-stone-400">{t(`round.${round.type}.desc`)}</p>
           {timerSecs > 0 && (
             <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-300">
-              <TimerReset size={13} /> {timerSecs}s per question
+              <TimerReset size={13} /> {t("play.perQuestion", { n: timerSecs })}
             </p>
           )}
           <div>
             <Button className="mt-8 px-6 py-3.5 text-base" onClick={beginRound}>
-              Start round <ArrowRight size={18} />
+              {t("play.startRound")} <ArrowRight size={18} />
             </Button>
           </div>
         </div>
@@ -354,7 +361,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     return (
       <div className="mx-auto max-w-3xl px-6 pb-32 pt-6">
         {Header}
-        <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">{round.title || "Pick a tile"}</h2>
+        <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">{round.title || t("play.pickTile")}</h2>
         <div
           className="grid gap-2"
           style={{ gridTemplateColumns: `repeat(${round.categories.length}, minmax(0,1fr))` }}
@@ -392,7 +399,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {boardDone && (
           <div className="mt-8 text-center">
             <Button className="px-6 py-3.5 text-base" onClick={goNextRound}>
-              Continue <ArrowRight size={18} />
+              {t("play.continue")} <ArrowRight size={18} />
             </Button>
           </div>
         )}
@@ -406,17 +413,17 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   const RevealBtn = (
     <Button className="px-6 py-3.5 text-base" onClick={() => upd({ revealed: true })}>
-      <Eye size={18} /> Reveal answer
+      <Eye size={18} /> {t("play.revealAnswer")}
     </Button>
   );
   const NextBtn = (
     <Button className="px-6 py-3.5 text-base" onClick={advance}>
-      {isJeop ? "Back to board" : "Next"} <ArrowRight size={18} />
+      {isJeop ? t("play.backToBoard") : t("common.next")} <ArrowRight size={18} />
     </Button>
   );
   const Progress = !isJeop && (
     <p className="mb-3 text-center text-sm text-stone-400">
-      Question {game.qi + 1} / {round.questions.length}
+      {t("play.questionProgress", { n: game.qi + 1, total: round.questions.length })}
     </p>
   );
 
@@ -432,11 +439,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
               : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-200"
         }`}
       >
-        <TimerReset size={14} /> {timeLeft === 0 ? "Time's up!" : fmtClock(timeLeft)}
+        <TimerReset size={14} /> {timeLeft === 0 ? t("play.timesUp") : fmtClock(timeLeft)}
       </span>
       <button
         onClick={() => setPaused((p) => !p)}
-        aria-label={paused ? "Resume timer" : "Pause timer"}
+        aria-label={paused ? t("play.resumeTimer") : t("play.pauseTimer")}
         className={`rounded-md p-1 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
       >
         {paused ? <Play size={14} /> : <Pause size={14} />}
@@ -446,7 +453,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           setTimeLeft(timerSecs);
           setPaused(false);
         }}
-        aria-label="Reset timer"
+        aria-label={t("play.resetTimer")}
         className={`rounded-md p-1 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
       >
         <RotateCcw size={14} />
@@ -456,9 +463,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   const Shortcuts = (
     <p className="mt-8 hidden text-center text-xs text-stone-300 dark:text-stone-600 md:block">
-      Shortcuts: R reveal
-      {round.type === "hints" ? " · H hint" : round.type === "morph" ? " · H demorph" : ""} · N next
-      {allowNegative ? " · +/- sign" : ""} · 1–9 award
+      {t("play.shortcuts", {
+        keys:
+          "R reveal" +
+          (round.type === "hints" ? " · H hint" : round.type === "morph" ? " · H demorph" : "") +
+          " · N next" +
+          (allowNegative ? " · +/- sign" : "") +
+          " · 1–9 award",
+      })}
     </p>
   );
 
@@ -467,18 +479,18 @@ export default function PlayView({ game, setGame, onExit, room }) {
     <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
       {room.buzz ? (
         <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
-          <Bell size={15} /> {room.buzz.name} buzzed first!
+          <Bell size={15} /> {t("play.buzzedFirst", { name: room.buzz.name })}
         </span>
       ) : (
         <span className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-1.5 text-sm font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-300">
-          <Radio size={14} /> Buzzers armed — phones can buzz
+          <Radio size={14} /> {t("play.buzzArmed")}
         </span>
       )}
       <button
         onClick={room.resetBuzz}
         className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
       >
-        <RotateCcw size={13} /> Re-arm
+        <RotateCcw size={13} /> {t("play.rearm")}
       </button>
     </div>
   );
@@ -492,7 +504,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {TimerPill}
         {isJeop && (
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
-            {round.categories[game.tile.ci].name || "Category"} · {q.points}
+            {round.categories[game.tile.ci].name || t("play.category")} · {q.points}
           </p>
         )}
         <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-snug tracking-tight md:text-5xl">
@@ -520,9 +532,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <div className="mb-4 flex items-center justify-center gap-3">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Who or what is it?</h2>
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whoOrWhat")}</h2>
           <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
-            worth {value}
+            {t("play.worth", { value })}
           </span>
         </div>
         <div className="mx-auto max-w-xl space-y-2 text-left">
@@ -532,7 +544,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
               className="qn-fade-up flex items-start gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900"
             >
               <span className="mt-0.5 text-xs font-bold text-stone-400">{i + 1}</span>
-              <p className="text-base md:text-lg">{h}</p>
+              <div className="min-w-0 flex-1">
+                <HintMedia hint={h} />
+              </div>
             </div>
           ))}
         </div>
@@ -543,7 +557,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               className="px-5 py-3 text-base"
               onClick={() => upd({ hintsShown: game.hintsShown + 1 })}
             >
-              <Lightbulb size={18} /> Next hint <span className="text-sm text-stone-400">(−10)</span>
+              <Lightbulb size={18} /> {t("play.nextHint")} <span className="text-sm text-stone-400">(−10)</span>
             </Button>
           )}
           {!game.revealed && RevealBtn}
@@ -571,7 +585,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <YouTubePlayer key={qKey} videoId={vid} audioOnly={!!q.audioOnly} />
           ) : (
             <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-              No valid video link
+              {t("play.noVideo")}
             </div>
           )}
         </div>
@@ -602,7 +616,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             />
           ) : (
             <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-              No picture set
+              {t("play.noPicture")}
             </div>
           )}
         </div>
@@ -626,10 +640,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <div className="mb-4 flex items-center justify-center gap-3">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">What is this?</h2>
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whatIsThis")}</h2>
           {!game.revealed && (
             <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-sm font-bold text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300">
-              worth {value}
+              {t("play.worth", { value })}
             </span>
           )}
         </div>
@@ -643,7 +657,49 @@ export default function PlayView({ game, setGame, onExit, room }) {
               className="px-5 py-3 text-base"
               onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
             >
-              <Sparkles size={18} /> Demorph{" "}
+              <Sparkles size={18} /> {t("play.demorph")}{" "}
+              <span className="text-sm text-stone-400">
+                ({morphStep + 1}/{q.steps})
+              </span>
+            </Button>
+          )}
+          {!game.revealed && RevealBtn}
+        </div>
+        {game.revealed && (
+          <>
+            <p className="qn-pop mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">{q.a}</p>
+            <div className="mt-6">{NextBtn}</div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  if (round.type === "fusion") {
+    const atEnd = morphStep >= q.steps;
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <div className="mb-4 flex items-center justify-center gap-3">
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whoOrWhat")}</h2>
+          {!game.revealed && (
+            <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-sm font-bold text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300">
+              {t("play.worth", { value })}
+            </span>
+          )}
+        </div>
+        <div className="mx-auto max-w-2xl">
+          <FusionImage urlA={q.urlA} urlB={q.urlB} steps={q.steps} step={morphStep} revealed={game.revealed} />
+        </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          {!game.revealed && !atEnd && (
+            <Button
+              variant="outline"
+              className="px-5 py-3 text-base"
+              onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
+            >
+              <Sparkles size={18} /> {t("play.defuse")}{" "}
               <span className="text-sm text-stone-400">
                 ({morphStep + 1}/{q.steps})
               </span>
@@ -689,13 +745,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
           <div className="mx-auto mt-5 max-w-2xl">
             {buzzerOn && (
               <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
-                <Radio size={14} /> {Object.keys(room.pins).length} of {game.players.length} pins in from phones
+                <Radio size={14} /> {t("play.pinsIn", { n: Object.keys(room.pins).length, total: game.players.length })}
               </p>
             )}
             <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
               {guessFor
-                ? `Or tap the map to drop ${game.players.find((p) => p.id === guessFor)?.name || "the player"}'s pin`
-                : "Everyone has guessed — reveal when ready"}
+                ? t("play.dropPinFor", { name: game.players.find((p) => p.id === guessFor)?.name || "the player" })
+                : t("play.everyoneGuessed")}
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {game.players.map((p, i) => {
@@ -751,7 +807,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   {x.p.name}
                   {idx === 0 && (
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                      <Target size={12} /> closest
+                      <Target size={12} /> {t("play.closest")}
                     </span>
                   )}
                 </span>
@@ -766,7 +822,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             NextBtn
           ) : (
             <Button className="px-6 py-3.5 text-base" onClick={() => upd({ revealed: true })}>
-              <MapPin size={18} /> Reveal location
+              <MapPin size={18} /> {t("play.revealLocation")}
             </Button>
           )}
         </div>
