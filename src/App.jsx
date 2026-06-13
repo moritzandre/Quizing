@@ -137,16 +137,16 @@ function App() {
 
   /* record finished games into the persistent leaderboard, once each */
   const recordedRef = useRef(null);
+  const leaderboardRef = useRef(leaderboard);
+  leaderboardRef.current = leaderboard;
   useEffect(() => {
     if (!game || game.stage !== "end" || recordedRef.current === game.id) return;
     if (nextNonEmpty(game.quiz, 0) === -1) return; // content-less quiz ended at start — not a real game
     recordedRef.current = game.id;
     const rec = { id: game.id, date: new Date().toISOString(), ...summarizeGame(game) };
-    setLeaderboard((prev) => {
-      const next = [...prev, rec].slice(-200);
-      saveJSON("leaderboard", next);
-      return next;
-    });
+    const next = [...leaderboardRef.current, rec].slice(-200);
+    setLeaderboard(next);
+    saveJSON("leaderboard", next);
   }, [game]);
 
   const clearLeaderboard = () => {
