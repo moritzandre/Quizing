@@ -46,17 +46,26 @@ export function ytId(url = "") {
  */
 export function makeQuestion(type) {
   switch (type) {
-    case "classic": return { id: uid(), q: "", a: "", points: 10 };
-    case "hints":   return { id: uid(), answer: "", hints: ["", "", ""] };
-    case "video":   return { id: uid(), url: "", q: "Name what you see or hear.", a: "", points: 10 };
-    case "map":     return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10 };
-    default:        return { id: uid() };
+    case "classic":
+      return { id: uid(), q: "", a: "", points: 10 };
+    case "hints":
+      return { id: uid(), answer: "", hints: ["", "", ""] };
+    case "video":
+      return { id: uid(), url: "", q: "Name what you see or hear.", a: "", points: 10 };
+    case "map":
+      return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10 };
+    default:
+      return { id: uid() };
   }
 }
 
 /** Create an empty jeopardy category with three clues (100/200/300). */
 export function makeCategory() {
-  return { id: uid(), name: "", questions: [100, 200, 300].map((p) => ({ id: uid(), clue: "", answer: "", points: p })) };
+  return {
+    id: uid(),
+    name: "",
+    questions: [100, 200, 300].map((p) => ({ id: uid(), clue: "", answer: "", points: p })),
+  };
 }
 
 /**
@@ -87,16 +96,31 @@ export function normalizeQuiz(raw) {
           id: str(c?.id) || uid(),
           name: str(c?.name),
           questions: (Array.isArray(c?.questions) ? c.questions : []).map((q) => ({
-            id: str(q?.id) || uid(), clue: str(q?.clue), answer: str(q?.answer), points: num(q?.points, 100),
+            id: str(q?.id) || uid(),
+            clue: str(q?.clue),
+            answer: str(q?.answer),
+            points: num(q?.points, 100),
           })),
         }));
       } else {
         base.questions = (Array.isArray(r.questions) ? r.questions : []).map((q) => {
           const it = { id: str(q?.id) || uid() };
           if (r.type === "classic") Object.assign(it, { q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
-          if (r.type === "hints")   Object.assign(it, { answer: str(q?.answer), hints: (Array.isArray(q?.hints) ? q.hints : [""]).map((h) => str(h)) });
-          if (r.type === "video")   Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
-          if (r.type === "map")     Object.assign(it, { q: str(q?.q), name: str(q?.name), lat: numOrNull(q?.lat), lng: numOrNull(q?.lng), points: num(q?.points, 10) });
+          if (r.type === "hints")
+            Object.assign(it, {
+              answer: str(q?.answer),
+              hints: (Array.isArray(q?.hints) ? q.hints : [""]).map((h) => str(h)),
+            });
+          if (r.type === "video")
+            Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
+          if (r.type === "map")
+            Object.assign(it, {
+              q: str(q?.q),
+              name: str(q?.name),
+              lat: numOrNull(q?.lat),
+              lng: numOrNull(q?.lng),
+              points: num(q?.points, 10),
+            });
           return it;
         });
       }
@@ -117,7 +141,11 @@ export function normalizeGame(raw) {
   if (!quiz || !Array.isArray(raw.players) || raw.players.length === 0) return null;
   return {
     quiz,
-    players: raw.players.map((p) => ({ id: str(p?.id) || uid(), name: str(p?.name) || "Player", score: num(p?.score, 0) })),
+    players: raw.players.map((p) => ({
+      id: str(p?.id) || uid(),
+      name: str(p?.name) || "Player",
+      score: num(p?.score, 0),
+    })),
     ri: num(raw.ri, 0),
     qi: num(raw.qi, 0),
     stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",
@@ -125,7 +153,10 @@ export function normalizeGame(raw) {
     hintsShown: Math.max(1, num(raw.hintsShown, 1)),
     awarded: raw.awarded && typeof raw.awarded === "object" ? raw.awarded : {},
     used: raw.used && typeof raw.used === "object" ? raw.used : {},
-    tile: raw.tile && Number.isFinite(+raw.tile.ci) && Number.isFinite(+raw.tile.qi) ? { ci: +raw.tile.ci, qi: +raw.tile.qi } : null,
+    tile:
+      raw.tile && Number.isFinite(+raw.tile.ci) && Number.isFinite(+raw.tile.qi)
+        ? { ci: +raw.tile.ci, qi: +raw.tile.qi }
+        : null,
   };
 }
 
@@ -158,7 +189,7 @@ export const countQuestions = (quiz) =>
       (r.type === "jeopardy"
         ? (r.categories || []).reduce((m, c) => m + (c.questions || []).length, 0)
         : (r.questions || []).length),
-    0
+    0,
   );
 
 /* ---- export / import (.quiz.json) ---- */
@@ -173,7 +204,12 @@ export function exportQuiz(quiz) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(quiz.title || "quiz").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "quiz"}.quiz.json`;
+  a.download = `${
+    (quiz.title || "quiz")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "quiz"
+  }.quiz.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();

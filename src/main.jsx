@@ -6,5 +6,5 @@ import Root from "./App.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Root />
-  </StrictMode>
+  </StrictMode>,
 );

@@ -13,9 +13,24 @@ function detectBackend() {
   if (typeof window !== "undefined" && window.storage && typeof window.storage.get === "function") {
     return {
       name: "claude",
-      async get(k) { try { const r = await window.storage.get(k); return r?.value ?? null; } catch { return null; } },
-      async set(k, v) { try { await window.storage.set(k, v); } catch {} },
-      async del(k) { try { await window.storage.delete(k); } catch {} },
+      async get(k) {
+        try {
+          const r = await window.storage.get(k);
+          return r?.value ?? null;
+        } catch {
+          return null;
+        }
+      },
+      async set(k, v) {
+        try {
+          await window.storage.set(k, v);
+        } catch {}
+      },
+      async del(k) {
+        try {
+          await window.storage.delete(k);
+        } catch {}
+      },
     };
   }
   // 2) Browser localStorage (standalone build)
@@ -25,18 +40,38 @@ function detectBackend() {
     window.localStorage.removeItem(t);
     return {
       name: "local",
-      async get(k) { try { return window.localStorage.getItem(k); } catch { return null; } },
-      async set(k, v) { try { window.localStorage.setItem(k, v); } catch {} },
-      async del(k) { try { window.localStorage.removeItem(k); } catch {} },
+      async get(k) {
+        try {
+          return window.localStorage.getItem(k);
+        } catch {
+          return null;
+        }
+      },
+      async set(k, v) {
+        try {
+          window.localStorage.setItem(k, v);
+        } catch {}
+      },
+      async del(k) {
+        try {
+          window.localStorage.removeItem(k);
+        } catch {}
+      },
     };
   } catch {}
   // 3) In-memory fallback (no persistence)
   const mem = new Map();
   return {
     name: "memory",
-    async get(k) { return mem.has(k) ? mem.get(k) : null; },
-    async set(k, v) { mem.set(k, v); },
-    async del(k) { mem.delete(k); },
+    async get(k) {
+      return mem.has(k) ? mem.get(k) : null;
+    },
+    async set(k, v) {
+      mem.set(k, v);
+    },
+    async del(k) {
+      mem.delete(k);
+    },
   };
 }
 
@@ -89,7 +124,9 @@ export async function loadWithLegacy(key, legacyKey, fallback) {
   if (current != null) return current;
   const legacy = await storage.get(legacyKey);
   if (legacy != null) {
-    try { return JSON.parse(legacy); } catch {}
+    try {
+      return JSON.parse(legacy);
+    } catch {}
   }
   return fallback;
 }

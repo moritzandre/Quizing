@@ -5,7 +5,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Play, Plus, X, Pencil, Copy, Download, Upload } from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
-import { uid, deepClone, str, normalizeQuiz, normalizeGame, nextNonEmpty, countQuestions, exportQuiz } from "./lib/model.js";
+import {
+  uid,
+  deepClone,
+  str,
+  normalizeQuiz,
+  normalizeGame,
+  nextNonEmpty,
+  countQuestions,
+  exportQuiz,
+} from "./lib/model.js";
 import { SAMPLE } from "./data/sampleQuiz.js";
 import { FOCUS, Button, IconButton, TypeBadge, ConfirmDelete } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
@@ -37,7 +46,10 @@ function App() {
     })();
   }, []);
 
-  const persistQuizzes = (list) => { setQuizzes(list); saveJSON("quizzes", list); };
+  const persistQuizzes = (list) => {
+    setQuizzes(list);
+    saveJSON("quizzes", list);
+  };
   const persistGame = (g) => {
     setGame(g);
     if (g && g.stage !== "end") saveJSON("game", g);
@@ -56,7 +68,11 @@ function App() {
       ri: Math.max(ri, 0),
       qi: 0,
       stage: ri === -1 ? "end" : "intro",
-      revealed: false, hintsShown: 1, awarded: {}, used: {}, tile: null,
+      revealed: false,
+      hintsShown: 1,
+      awarded: {},
+      used: {},
+      tile: null,
     });
     setView({ name: "play" });
   };
@@ -64,8 +80,14 @@ function App() {
   const editQuiz = (quiz) => {
     if (quiz.sample) {
       const copy = deepClone(quiz);
-      copy.id = uid(); copy.sample = false; copy.title = quiz.title + " (copy)";
-      setView({ name: "builder", draft: copy, note: "The sample quiz is read-only — you're editing your own copy of it." });
+      copy.id = uid();
+      copy.sample = false;
+      copy.title = quiz.title + " (copy)";
+      setView({
+        name: "builder",
+        draft: copy,
+        note: "The sample quiz is read-only — you're editing your own copy of it.",
+      });
     } else {
       setView({ name: "builder", draft: deepClone(quiz) });
     }
@@ -73,7 +95,9 @@ function App() {
 
   const duplicateQuiz = (quiz) => {
     const copy = deepClone(quiz);
-    copy.id = uid(); copy.sample = false; copy.title = quiz.title + " (copy)";
+    copy.id = uid();
+    copy.sample = false;
+    copy.title = quiz.title + " (copy)";
     persistQuizzes([...quizzes, copy]);
   };
 
@@ -106,7 +130,9 @@ function App() {
   };
 
   if (!loaded) {
-    return <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400">Loading…</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400">Loading…</div>
+    );
   }
 
   return (
@@ -116,7 +142,9 @@ function App() {
           <h1 className="text-5xl font-bold tracking-tight">
             Quiz Night<span className="text-indigo-600">.</span>
           </h1>
-          <p className="mt-2 text-stone-500">One screen, one host, five round formats. You read, friends shout, you tap to score.</p>
+          <p className="mt-2 text-stone-500">
+            One screen, one host, five round formats. You read, friends shout, you tap to score.
+          </p>
 
           {game && game.stage !== "end" && (
             <div className="mt-8 flex items-center justify-between rounded-2xl border border-indigo-200 bg-indigo-50 px-5 py-4">
@@ -130,7 +158,11 @@ function App() {
                 <Button variant="accent" className="px-4 py-2" onClick={() => setView({ name: "play" })}>
                   <Play size={15} /> Resume
                 </Button>
-                <IconButton label="Discard game" className="text-indigo-400 hover:text-red-600" onClick={() => persistGame(null)}>
+                <IconButton
+                  label="Discard game"
+                  className="text-indigo-400 hover:text-red-600"
+                  onClick={() => persistGame(null)}
+                >
                   <X size={16} />
                 </IconButton>
               </div>
@@ -139,10 +171,19 @@ function App() {
 
           <div className="mt-10 flex items-center justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-400">Quizzes</h2>
-            <button onClick={() => fileRef.current?.click()} className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 ${FOCUS}`}>
+            <button
+              onClick={() => fileRef.current?.click()}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 ${FOCUS}`}
+            >
               <Upload size={15} /> Import
             </button>
-            <input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={handleImportFile} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={handleImportFile}
+            />
           </div>
           {importError && <p className="mt-2 rounded-xl bg-red-50 px-4 py-2 text-sm text-red-600">{importError}</p>}
 
@@ -156,14 +197,27 @@ function App() {
                       {q.rounds.length} rounds · {countQuestions(q)} questions{q.sample ? " · sample" : ""}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      {q.rounds.map((r) => <TypeBadge key={r.id} type={r.type} />)}
+                      {q.rounds.map((r) => (
+                        <TypeBadge key={r.id} type={r.type} />
+                      ))}
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
-                    <IconButton label="Edit quiz" onClick={() => editQuiz(q)}><Pencil size={15} /></IconButton>
-                    <IconButton label="Duplicate quiz" onClick={() => duplicateQuiz(q)}><Copy size={15} /></IconButton>
-                    <IconButton label="Export quiz as file" onClick={() => exportQuiz(q)}><Download size={15} /></IconButton>
-                    {!q.sample && <ConfirmDelete label="Delete quiz" onConfirm={() => persistQuizzes(quizzes.filter((x) => x.id !== q.id))} />}
+                    <IconButton label="Edit quiz" onClick={() => editQuiz(q)}>
+                      <Pencil size={15} />
+                    </IconButton>
+                    <IconButton label="Duplicate quiz" onClick={() => duplicateQuiz(q)}>
+                      <Copy size={15} />
+                    </IconButton>
+                    <IconButton label="Export quiz as file" onClick={() => exportQuiz(q)}>
+                      <Download size={15} />
+                    </IconButton>
+                    {!q.sample && (
+                      <ConfirmDelete
+                        label="Delete quiz"
+                        onConfirm={() => persistQuizzes(quizzes.filter((x) => x.id !== q.id))}
+                      />
+                    )}
                   </div>
                 </div>
                 <Button className="mt-4 px-5 py-2.5" onClick={() => setView({ name: "setup", quiz: q })}>
@@ -180,16 +234,24 @@ function App() {
           </div>
 
           <p className="mt-10 text-center text-xs text-stone-300">
-            v{APP_VERSION} ·{" "}
-            {storage.name === "claude" && "saving to your Claude storage"}
+            v{APP_VERSION} · {storage.name === "claude" && "saving to your Claude storage"}
             {storage.name === "local" && "saving to this browser"}
-            {storage.name === "memory" && <span className="font-medium text-amber-500">no persistent storage available — changes last only for this session</span>}
+            {storage.name === "memory" && (
+              <span className="font-medium text-amber-500">
+                no persistent storage available — changes last only for this session
+              </span>
+            )}
           </p>
         </div>
       )}
 
       {view.name === "setup" && (
-        <SetupView quiz={view.quiz} defaults={lastPlayers} onBack={() => setView({ name: "home" })} onStart={(names) => startGame(view.quiz, names)} />
+        <SetupView
+          quiz={view.quiz}
+          defaults={lastPlayers}
+          onBack={() => setView({ name: "home" })}
+          onStart={(names) => startGame(view.quiz, names)}
+        />
       )}
 
       {view.name === "play" && game && (

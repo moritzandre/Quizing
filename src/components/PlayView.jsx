@@ -43,7 +43,14 @@ export default function PlayView({ game, setGame, onExit }) {
   };
 
   const beginRound = () =>
-    upd({ stage: round.type === "jeopardy" ? "board" : "question", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null });
+    upd({
+      stage: round.type === "jeopardy" ? "board" : "question",
+      qi: 0,
+      revealed: false,
+      hintsShown: 1,
+      awarded: {},
+      tile: null,
+    });
 
   const goNextRound = () => {
     const j = nextNonEmpty(quiz, game.ri + 1);
@@ -89,12 +96,16 @@ export default function PlayView({ game, setGame, onExit }) {
 
   const Header = (
     <div className="mb-8 flex items-center justify-between">
-      <button onClick={onExit} className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 hover:bg-stone-100 ${FOCUS}`}>
+      <button
+        onClick={onExit}
+        className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 hover:bg-stone-100 ${FOCUS}`}
+      >
         <ChevronLeft size={16} /> Exit
       </button>
       {round && game.stage !== "end" && (
         <p className="text-sm text-stone-500">
-          Round {game.ri + 1} / {quiz.rounds.length} · <span className="font-medium text-stone-700">{TYPES[round.type].label}</span>
+          Round {game.ri + 1} / {quiz.rounds.length} ·{" "}
+          <span className="font-medium text-stone-700">{TYPES[round.type].label}</span>
         </p>
       )}
       <span className="w-14" />
@@ -109,7 +120,13 @@ export default function PlayView({ game, setGame, onExit }) {
         ...game,
         players: game.players.map((p) => ({ ...p, score: 0 })),
         ri: Math.max(nextNonEmpty(quiz, 0), 0),
-        qi: 0, stage: "intro", revealed: false, hintsShown: 1, awarded: {}, used: {}, tile: null,
+        qi: 0,
+        stage: "intro",
+        revealed: false,
+        hintsShown: 1,
+        awarded: {},
+        used: {},
+        tile: null,
       });
     return (
       <div className="mx-auto max-w-xl px-6 pb-16 pt-10 text-center">
@@ -132,8 +149,12 @@ export default function PlayView({ game, setGame, onExit }) {
           ))}
         </div>
         <div className="mt-8 flex justify-center gap-3">
-          <Button onClick={playAgain}><RotateCcw size={16} /> Play again</Button>
-          <Button variant="outline" onClick={onExit}>Done</Button>
+          <Button onClick={playAgain}>
+            <RotateCcw size={16} /> Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Done
+          </Button>
         </div>
       </div>
     );
@@ -166,15 +187,23 @@ export default function PlayView({ game, setGame, onExit }) {
 
   /* ---- jeopardy board ---- */
   if (game.stage === "board") {
-    const boardDone = round.categories.every((c, ci) => c.questions.every((_, qi) => game.used[`${game.ri}-${ci}-${qi}`]));
+    const boardDone = round.categories.every((c, ci) =>
+      c.questions.every((_, qi) => game.used[`${game.ri}-${ci}-${qi}`]),
+    );
     const maxRows = Math.max(...round.categories.map((c) => c.questions.length), 0);
     return (
       <div className="mx-auto max-w-3xl px-6 pb-32 pt-6">
         {Header}
         <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">{round.title || "Pick a tile"}</h2>
-        <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${round.categories.length}, minmax(0,1fr))` }}>
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: `repeat(${round.categories.length}, minmax(0,1fr))` }}
+        >
           {round.categories.map((c) => (
-            <div key={c.id} className="flex items-center justify-center rounded-xl bg-stone-900 px-2 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white md:text-sm">
+            <div
+              key={c.id}
+              className="flex items-center justify-center rounded-xl bg-stone-900 px-2 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white md:text-sm"
+            >
               {c.name || "—"}
             </div>
           ))}
@@ -197,7 +226,7 @@ export default function PlayView({ game, setGame, onExit }) {
                   {used ? "" : q.points}
                 </button>
               );
-            })
+            }),
           )}
         </div>
         {boardDone && (
@@ -247,9 +276,15 @@ export default function PlayView({ game, setGame, onExit }) {
             {round.categories[game.tile.ci].name || "Category"} · {q.points}
           </p>
         )}
-        <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-snug tracking-tight md:text-5xl">{isJeop ? q.clue : q.q}</h2>
+        <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-snug tracking-tight md:text-5xl">
+          {isJeop ? q.clue : q.q}
+        </h2>
         <div className="mt-10" style={{ minHeight: 80 }}>
-          {game.revealed ? <p className="text-2xl font-bold text-indigo-600 md:text-4xl">{isJeop ? q.answer : q.a}</p> : RevealBtn}
+          {game.revealed ? (
+            <p className="text-2xl font-bold text-indigo-600 md:text-4xl">{isJeop ? q.answer : q.a}</p>
+          ) : (
+            RevealBtn
+          )}
         </div>
         {game.revealed && <div className="mt-8">{NextBtn}</div>}
       </div>
@@ -275,7 +310,11 @@ export default function PlayView({ game, setGame, onExit }) {
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           {!game.revealed && game.hintsShown < q.hints.length && (
-            <Button variant="outline" className="px-5 py-3 text-base" onClick={() => upd({ hintsShown: game.hintsShown + 1 })}>
+            <Button
+              variant="outline"
+              className="px-5 py-3 text-base"
+              onClick={() => upd({ hintsShown: game.hintsShown + 1 })}
+            >
               <Lightbulb size={18} /> Next hint <span className="text-sm text-stone-400">(−10)</span>
             </Button>
           )}
@@ -348,7 +387,13 @@ export default function PlayView({ game, setGame, onExit }) {
       {Header}
       {body}
       {Shortcuts}
-      <ScoreBar players={game.players} active={scoreActive} value={value} awarded={game.awarded || {}} onAward={toggleAward} />
+      <ScoreBar
+        players={game.players}
+        active={scoreActive}
+        value={value}
+        awarded={game.awarded || {}}
+        onAward={toggleAward}
+      />
     </div>
   );
 }

@@ -7,15 +7,41 @@ import { MessageSquare, LayoutGrid, Lightbulb, Video, MapPin, Trash2 } from "luc
 
 /** Round-type metadata: label, icon, accent dot, and host instructions. Keys must match ROUND_TYPES in lib/model.js. */
 export const TYPES = {
-  classic:  { label: "Classic",     icon: MessageSquare, dot: "bg-stone-400",   desc: "Read the question aloud, reveal the answer, then tap whoever got it right to award the points." },
-  jeopardy: { label: "Jeopardy",    icon: LayoutGrid,    dot: "bg-indigo-500",  desc: "Players take turns picking tiles — higher value, harder question. Award the tile's points to whoever answers." },
-  hints:    { label: "Hint Ladder", icon: Lightbulb,     dot: "bg-amber-500",   desc: "The answer starts at full value. Every extra hint lowers it. Reveal when someone calls it out." },
-  video:    { label: "Video",       icon: Video,         dot: "bg-rose-500",    desc: "Watch the clip together, then reveal the answer and award the points." },
-  map:      { label: "Map",         icon: MapPin,        dot: "bg-emerald-500", desc: "Everyone guesses where in the world it is. Reveal the pin and award the closest guess." },
+  classic: {
+    label: "Classic",
+    icon: MessageSquare,
+    dot: "bg-stone-400",
+    desc: "Read the question aloud, reveal the answer, then tap whoever got it right to award the points.",
+  },
+  jeopardy: {
+    label: "Jeopardy",
+    icon: LayoutGrid,
+    dot: "bg-indigo-500",
+    desc: "Players take turns picking tiles — higher value, harder question. Award the tile's points to whoever answers.",
+  },
+  hints: {
+    label: "Hint Ladder",
+    icon: Lightbulb,
+    dot: "bg-amber-500",
+    desc: "The answer starts at full value. Every extra hint lowers it. Reveal when someone calls it out.",
+  },
+  video: {
+    label: "Video",
+    icon: Video,
+    dot: "bg-rose-500",
+    desc: "Watch the clip together, then reveal the answer and award the points.",
+  },
+  map: {
+    label: "Map",
+    icon: MapPin,
+    dot: "bg-emerald-500",
+    desc: "Everyone guesses where in the world it is. Reveal the pin and award the closest guess.",
+  },
 };
 
 /** Shared focus-visible ring classes for interactive elements. */
-export const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2";
+export const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2";
 
 /** Shared text-input classes. */
 export const inputCls = `w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-400 focus:outline-none`;

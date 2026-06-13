@@ -27,14 +27,17 @@ export default function ScoreBar({ players, active, value, awarded, onAward }) {
                   got
                     ? "border-indigo-600 bg-indigo-600 text-white"
                     : active
-                    ? "border-indigo-200 bg-indigo-50 text-stone-900 hover:border-indigo-400"
-                    : "border-stone-200 bg-white text-stone-900"
+                      ? "border-indigo-200 bg-indigo-50 text-stone-900 hover:border-indigo-400"
+                      : "border-stone-200 bg-white text-stone-900"
                 }`}
               >
-                {active && i < 9 && <span className={`text-xs font-bold ${got ? "text-indigo-200" : "text-stone-300"}`}>{i + 1}</span>}
+                {active && i < 9 && (
+                  <span className={`text-xs font-bold ${got ? "text-indigo-200" : "text-stone-300"}`}>{i + 1}</span>
+                )}
                 <span className="font-medium">{p.name}</span>
                 <span className={`font-bold tabular-nums ${got ? "text-white" : "text-stone-500"}`}>{p.score}</span>
-                {active && (got ? <Check size={14} /> : <span className="text-xs font-semibold text-indigo-600">+{value}</span>)}
+                {active &&
+                  (got ? <Check size={14} /> : <span className="text-xs font-semibold text-indigo-600">+{value}</span>)}
               </button>
             );
           })}
