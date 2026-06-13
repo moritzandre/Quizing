@@ -1,27 +1,29 @@
 # Quiz Night
 
-A host-led party quiz app. One screen, one host, six round formats: you read the questions aloud, friends shout answers, and you tap players on the scoreboard to award points. Light or dark.
+A host-led party quiz app. One host screen runs the show; players can buzz in and drop map pins from their own phones over a QR code. Seven round formats, light or dark.
 
 **Round formats**
 
-| Type        | How it plays                                                                                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Classic     | Read the question, reveal the answer, tap whoever got it right.                                                                                         |
-| Jeopardy    | Category board of point tiles — players pick tiles, higher value = harder question. Award **or dock** the tile's points (the +/− toggle).               |
-| Hint Ladder | The answer starts at full value; every extra hint lowers it by 10.                                                                                      |
-| Video       | Play a YouTube clip with custom controls — the **title is hidden** so it can't give the answer away. Optional **audio-only** mode plays just the sound. |
-| Picture     | Show an image (paste a URL or upload one), let everyone study it, then reveal the answer.                                                               |
-| Map         | Everyone drops a pin on a dot-grid world map; reveal the real spot and the ranked guesses, closest wins.                                                |
+| Type        | How it plays                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Classic     | Read the question, reveal the answer, tap whoever got it right.                                                                                  |
+| Jeopardy    | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                             |
+| Hint Ladder | The answer starts at full value; every extra hint lowers it by 10.                                                                               |
+| Video       | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode.            |
+| Picture     | Show an image (paste a URL or upload one), then reveal the answer.                                                                               |
+| Morph       | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, or tile reveal) — fewer points the longer it takes. |
+| Map         | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.   |
 
 Other features:
 
+- **Phone buzzers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), and place their own map pins.
 - **Per-round countdown timer** — optional, set in the builder; pause/reset while playing.
-- **Dark mode** — toggle in the top-right; remembered across sessions and applied before first paint.
-- **Quiz builder** with drag-and-drop reordering of rounds and questions, click-to-place map pins, and image upload.
-- **Export/import** quizzes as `.quiz.json` files (shareable with the Claude-artifact version of the app).
-- **Automatic game persistence** — close the tab mid-game and resume; the URL hash (`#/play`) restores the right view on refresh.
-- **Host keyboard shortcuts**: `R` reveal · `H` hint · `N`/`→` next · `+`/`−` award sign (jeopardy) · `1–9` award to player N.
-- **Confetti** on the final scores.
+- **Persistent leaderboard** — every finished game is recorded on the device; standings aggregate wins, totals, and best scores across games.
+- **Dark mode** — toggle top-right; remembered and applied before first paint.
+- **Quiz builder** with drag-and-drop reordering, click-to-place map pins, and image upload.
+- **Export/import** quizzes as `.quiz.json` (shareable with the Claude-artifact version of the app).
+- **Auto game persistence** — close the tab mid-game and resume; `#/play` restores on refresh.
+- **Host keyboard shortcuts**: `R` reveal · `H` hint/demorph · `N`/`→` next · `+`/`−` award sign (jeopardy) · `1–9` award to player N.
 
 ## Setup
 
@@ -43,52 +45,60 @@ npm run dev
 | `npm run lint`    | Lint with ESLint                   |
 | `npm run format`  | Format with Prettier               |
 
+## Phone buzzers
+
+Open a game's setup screen and **Enable phone buzzers**. A QR code and 4-letter room code appear; players scan it to open the join page (`#/join/<code>`) on their phones, enter a name, and they're in. During a question their phones show a big **Buzz** button (first to tap locks the others out, and the host screen beeps and names them); during a map round their phones show a mini-map to drop a pin.
+
+It works with **no backend**: phones and host talk over a free public MQTT-over-WebSocket broker, with the random room code as the only privacy boundary — fine for a living-room game, not for anything sensitive. The QR encodes your current URL, so for phones on other devices you need the **deployed** site (or a LAN/tunnel URL) — `localhost` won't be reachable from a phone. Map tiles and the buzzer both need internet.
+
+## Deployment
+
+A GitHub Actions workflow ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) builds and publishes to **GitHub Pages** on every push to `main`:
+
+1. Push this repo to GitHub.
+2. **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+3. Push to `main`; the site publishes at `https://<user>.github.io/<repo>/`.
+
+The Vite `base` is relative and routing is hash-based, so the build also works under a custom domain or `npm run preview`. For Netlify/Vercel, point them at the `dist` output of `npm run build`.
+
 ## Project structure
 
 ```
-index.html              Vite entry page (+ flash-free dark-theme bootstrap script)
+index.html                  Vite entry + pre-paint dark-theme script
 src/
-  main.jsx              React entry point
-  App.jsx               App shell: hash routing between views, persistence wiring, home screen
-  index.css             Tailwind v4 entry (@import "tailwindcss"), class-based dark variant, keyframe animations
+  main.jsx                  React entry point
+  App.jsx                   shell: hash routing, persistence, home, host buzzer room, leaderboard recording
+  index.css                 Tailwind v4, class-based dark variant, keyframes, Leaflet tooltip CSS
   lib/
-    storage.js          Storage adapter (Claude artifact storage → localStorage → in-memory) + load/save helpers
-    model.js            Pure data logic: factories, normalization/validation, quiz/game helpers, geo math, export
+    storage.js              Storage adapter (Claude → localStorage → memory) + load/save helpers
+    model.js                Pure logic: factories, normalize/validate, geo math, morph/leaderboard helpers, export
+    realtime.js             MQTT room transport for the buzzer (framework-free)
   data/
-    sampleQuiz.js       The built-in read-only sample quiz
+    sampleQuiz.js           "Friday Night Sampler" built-in
+    nerdQuiz.js             "Nexus Nights" built-in (League of Legends / nerdy; demos morph, picture, map)
   components/
-    ui.jsx              Shared primitives + TYPES metadata, style constants, theme (useTheme/ThemeToggle), Confetti
-    WorldMap.jsx        Dot-grid SVG world map; answer pin + per-player guess markers + distance lines
-    ScoreBar.jsx        Fixed bottom scoreboard; +/− award toggle; tappable when awarding
-    YouTubePlayer.jsx   Chrome-free YouTube IFrame player (hides the title) with custom controls + audio-only mode
-    PlayView.jsx        Game screen: round intro → questions/board → final scores; timer; keyboard shortcuts
-    SetupView.jsx       Player entry before a game
-    Builder.jsx         Quiz editor for all six round types; drag-and-drop; timer + image upload
-    ErrorBoundary.jsx   Render-error fallback with retry
+    ui.jsx                  Primitives, TYPES metadata, style constants, theme (useTheme/ThemeToggle), Confetti
+    useRoom.js              React hooks over realtime: useHostRoom, usePlayerRoom
+    LeafletMap.jsx          Real pan/zoom map; answer pin + guess markers + lines; light/dark tiles
+    MorphImage.jsx          Stepped image reveal (blur / pixelate / tiles)
+    YouTubePlayer.jsx       Chrome-free YouTube player (hides the title) + audio-only mode
+    ScoreBar.jsx            Fixed scoreboard with +/− award toggle
+    PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins
+    SetupView.jsx           Player entry + buzzer lobby
+    Builder.jsx             Quiz editor for all seven round types; drag-and-drop; image upload
+    BuzzerPanel.jsx         Host buzzer lobby: QR, room code, roster
+    JoinView.jsx            Phone page: buzz + pin placement
+    LeaderboardView.jsx     Persistent standings
+    ErrorBoundary.jsx       Render-error fallback
 ```
 
 ## Persistence
 
-The app runs in two environments through a storage adapter, auto-detected at startup:
-
-- **Claude artifact** — persists via `window.storage`
-- **Standalone build** — persists via browser `localStorage` (falls back to in-memory if unavailable)
-
-Quiz/game data is stored under the keys `quiznight.quizzes`, `quiznight.game`, and `quiznight.players`, each wrapped in a versioned envelope `{ "v": 1, "data": … }`. Legacy keys from the first artifact version (`quiznight-quizzes`, `quiznight-players`) are read once for migration. The dark-theme preference is stored separately under `quiznight.theme`.
-
-## Deployment
-
-A GitHub Actions workflow ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) builds and publishes to **GitHub Pages** on every push to `main`. To enable it:
-
-1. Push this repo to GitHub.
-2. In the repo, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
-3. Push to `main` (or run the workflow manually); the site publishes at `https://<user>.github.io/<repo>/`.
-
-The Vite `base` is relative (`./`) and routing is hash-based, so the build works under a project subpath, a custom domain, or `npm run preview` with no extra config. For Netlify/Vercel instead, point them at the `npm run build` output directory `dist`.
+The app runs in two environments through a storage adapter, auto-detected at startup: **Claude artifact** (`window.storage`) or **standalone** (`localStorage`, falling back to in-memory). Quiz/game data lives under `quiznight.quizzes` / `quiznight.game` / `quiznight.players`, each wrapped in `{ "v": 1, "data": … }`. Legacy first-artifact keys are migrated once. Separately: the theme is `quiznight.theme`, the leaderboard is `quiznight.leaderboard`, and a phone's identity is `quiznight.deviceId`.
 
 ## `.quiz.json` export format
 
-Quizzes exported from the home screen look like this (import accepts either this wrapper or a bare quiz object):
+Quizzes exported from the home screen look like this (import accepts this wrapper or a bare quiz object). Every round may carry an optional `"timer"` (seconds, or `null`).
 
 ```jsonc
 {
@@ -99,8 +109,6 @@ Quizzes exported from the home screen look like this (import accepts either this
     "title": "My Quiz",
     "sample": false,
     "rounds": [
-      // one entry per round; "type" decides the question shape.
-      // "timer" (seconds, or null) is optional on every round.
       {
         "id": "r1",
         "type": "classic",
@@ -114,11 +122,7 @@ Quizzes exported from the home screen look like this (import accepts either this
         "title": "The Board",
         "timer": null,
         "categories": [
-          {
-            "id": "c1",
-            "name": "Movies",
-            "questions": [{ "id": "j1", "clue": "…", "answer": "…", "points": 100 }],
-          },
+          { "id": "c1", "name": "Movies", "questions": [{ "id": "j1", "clue": "…", "answer": "…", "points": 100 }] },
         ],
       },
       {
@@ -140,8 +144,17 @@ Quizzes exported from the home screen look like this (import accepts either this
         "id": "r6",
         "type": "image",
         "title": "Guess the Picture",
-        // url is an image URL or an uploaded data: URL (downscaled on upload)
-        "questions": [{ "id": "p1", "url": "https://…/flag.png", "q": "…", "a": "…", "points": 10 }],
+        // url is an image URL or an uploaded data: URL
+        "questions": [{ "id": "p1", "url": "https://…/pic.jpg", "q": "…", "a": "…", "points": 10 }],
+      },
+      {
+        "id": "r7",
+        "type": "morph",
+        "title": "Guess the Splash",
+        // effect: "blur" | "pixelate" | "tiles"; steps: 1–8 demorph stages
+        "questions": [
+          { "id": "mo1", "url": "https://…/art.jpg", "a": "…", "points": 50, "effect": "blur", "steps": 5 },
+        ],
       },
       {
         "id": "r5",
@@ -154,4 +167,4 @@ Quizzes exported from the home screen look like this (import accepts either this
 }
 ```
 
-Imports are validated and coerced by `normalizeQuiz` in [src/lib/model.js](src/lib/model.js) — missing fields get defaults, rounds with unknown types are dropped, and files that don't contain a usable quiz are rejected.
+Imports are validated and coerced by `normalizeQuiz` in [src/lib/model.js](src/lib/model.js) — missing fields get defaults, unknown round types are dropped, and unusable files are rejected.
