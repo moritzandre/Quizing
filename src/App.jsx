@@ -45,6 +45,7 @@ const SetupView = lazy(() => import("./components/SetupView.jsx"));
 const Builder = lazy(() => import("./components/Builder.jsx"));
 const JoinView = lazy(() => import("./components/JoinView.jsx"));
 const PresenterView = lazy(() => import("./components/PresenterView.jsx"));
+const HostRemoteView = lazy(() => import("./components/HostRemoteView.jsx"));
 const LeaderboardView = lazy(() => import("./components/LeaderboardView.jsx"));
 import { useI18n, LanguageToggle } from "./i18n/I18nProvider.jsx";
 
@@ -57,6 +58,7 @@ const hashFor = (v) => {
   if (v.name === "leaderboard") return "#/leaderboard";
   if (v.name === "join") return `#/join/${v.code}`;
   if (v.name === "present") return `#/present/${v.code}`;
+  if (v.name === "host") return `#/host/${v.code}`;
   return "#/";
 };
 
@@ -106,13 +108,36 @@ function AiModal({ onClose, onImport, t }) {
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
   const [msg, setMsg] = useState(null);
+  // navigator.clipboard only exists in secure contexts (https/localhost); over a
+  // plain-http LAN address it's undefined, so fall back to execCommand("copy").
   const copy = async () => {
+    let ok = false;
     try {
-      await navigator.clipboard.writeText(AI_SCHEMA_HELP);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(AI_SCHEMA_HELP);
+        ok = true;
+      }
+    } catch {
+      ok = false;
+    }
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = AI_SCHEMA_HELP;
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch {
+        ok = false;
+      }
+    }
+    if (ok) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard blocked — the prompt is visible to copy manually */
     }
   };
   const doImport = () => {
@@ -132,12 +157,16 @@ function AiModal({ onClose, onImport, t }) {
         </div>
         <p className="text-sm text-stone-500 dark:text-stone-400">{t("ai.intro")}</p>
         <div className="relative mt-2">
-          <pre className="max-h-36 overflow-auto rounded-xl bg-stone-100 p-3 text-xs leading-relaxed text-stone-600 dark:bg-stone-800 dark:text-stone-300">
-            {AI_SCHEMA_HELP}
-          </pre>
+          <textarea
+            readOnly
+            value={AI_SCHEMA_HELP}
+            onFocus={(e) => e.target.select()}
+            rows={6}
+            className="w-full resize-none rounded-xl bg-stone-100 p-3 pr-20 font-mono text-xs leading-relaxed text-stone-600 focus:outline-none dark:bg-stone-800 dark:text-stone-300"
+          />
           <button
             onClick={copy}
-            className={`absolute right-2 top-2 rounded-lg bg-white/90 px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-indigo-600 dark:bg-stone-900/90 dark:text-stone-300 ${FOCUS}`}
+            className={`absolute right-2 top-2 rounded-lg bg-white px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-indigo-600 dark:bg-stone-900 dark:text-stone-300 ${FOCUS}`}
           >
             {copied ? t("ai.copied") : t("ai.copyPrompt")}
           </button>
@@ -175,6 +204,7 @@ function App() {
     const { seg, arg } = parseHash();
     if (seg === "join" && arg) return { name: "join", code: arg };
     if (seg === "present" && arg) return { name: "present", code: arg };
+    if (seg === "host" && arg) return { name: "host", code: arg };
     return { name: "home" };
   });
   const [quizzes, setQuizzes] = useState([]);
@@ -231,6 +261,8 @@ function App() {
         setView({ name: "join", code: arg });
       } else if (seg === "present" && arg) {
         setView({ name: "present", code: arg });
+      } else if (seg === "host" && arg) {
+        setView({ name: "host", code: arg });
       } else if (seg === "play") {
         // An ended game is kept in state for the final-scores screen but is no
         // longer "in progress" — match the home screen's resume gating.
@@ -420,6 +452,14 @@ function App() {
     return (
       <Suspense fallback={loadingFallback}>
         <PresenterView code={view.code} />
+      </Suspense>
+    );
+
+  // Host remote control page — standalone, renders before the data-load gate.
+  if (view.name === "host")
+    return (
+      <Suspense fallback={loadingFallback}>
+        <HostRemoteView code={view.code} />
       </Suspense>
     );
 

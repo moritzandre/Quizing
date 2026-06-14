@@ -1,0 +1,194 @@
+/* ====================================================================
+   HOST REMOTE (phone) — drive the game from a phone (#/host/<code>)
+   --------------------------------------------------------------------
+   A second device the HOST holds to reveal answers, advance, award
+   points, etc. — distinct from the read-only TV presenter. It reads the
+   same present/live payloads for context and sends `ctrl` commands up to
+   the laptop host, which applies them to the game. Whoever holds this URL
+   controls the game, so it's a host-only QR (same trust model as the room).
+   ==================================================================== */
+
+import { Eye, ArrowRight, Lightbulb, Play, Bell, BarChart3, Plus, Minus, Wifi, WifiOff, Gamepad2 } from "lucide-react";
+import { usePresenterRoom } from "./useRoom.js";
+import { TYPES, FOCUS, Button, Avatar } from "./ui.jsx";
+import { useI18n } from "../i18n/I18nProvider.jsx";
+
+/**
+ * @param {object} props
+ * @param {string} props.code Room code from the URL (#/host/<code>).
+ */
+export default function HostRemoteView({ code }) {
+  const { t } = useI18n();
+  const { status, present, live, alive, sendCtrl } = usePresenterRoom(code);
+  const online = status === "connected";
+  const stage = live?.stage || present?.stage || "idle";
+  const type = present?.roundType;
+  const revealed = !!live?.revealed;
+  const value = live?.value || 0;
+  const standings = live?.standings || [];
+
+  const btn =
+    "flex items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold transition active:scale-[.97] disabled:opacity-30";
+
+  const Shell = (children) => (
+    <div className="qn-app-bg flex min-h-screen flex-col px-5 py-6 text-stone-900 antialiased dark:text-stone-100">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
+        <div className="mb-5 flex items-center justify-between">
+          <h1 className="flex items-center gap-2 text-xl font-bold tracking-tight">
+            <Gamepad2 size={20} /> {t("host.title")}
+          </h1>
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${
+              online
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+            }`}
+          >
+            {online ? <Wifi size={12} /> : <WifiOff size={12} />}
+            {code}
+          </span>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+
+  if (!online || !alive || !present) {
+    return Shell(
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
+          <Gamepad2 size={34} className="text-stone-400" />
+        </div>
+        <p className="text-lg font-semibold">{online ? t("host.waiting") : t("present.connecting")}</p>
+        <p className="mt-1 text-stone-500 dark:text-stone-400">{t("present.roomCode", { code })}</p>
+      </div>,
+    );
+  }
+
+  const roundLabel = type ? t(`round.${type}.label`) : "";
+  const TypeIcon = type ? TYPES[type]?.icon : null;
+
+  return Shell(
+    <div className="flex flex-1 flex-col">
+      {/* context */}
+      <div className="mb-4 rounded-2xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-stone-900">
+        <div className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
+          {TypeIcon && <TypeIcon size={15} />}
+          <span className="font-medium text-stone-700 dark:text-stone-200">{roundLabel || t("host.title")}</span>
+          <span className="ml-auto">
+            {t("play.roundProgress", { n: (present.ri || 0) + 1, total: present.total || 1 })}
+          </span>
+        </div>
+        {present.q?.q && <p className="mt-1 truncate text-sm text-stone-500 dark:text-stone-400">{present.q.q}</p>}
+      </div>
+
+      {/* primary controls */}
+      <div className="grid grid-cols-2 gap-2">
+        {stage === "intro" && (
+          <button
+            onClick={() => sendCtrl("startRound")}
+            className={`col-span-2 bg-indigo-600 text-white ${btn} ${FOCUS}`}
+          >
+            <Play size={18} /> {t("play.startRound")}
+          </button>
+        )}
+        {stage === "question" && (
+          <>
+            {!revealed && (
+              <button
+                onClick={() => sendCtrl("reveal")}
+                className={`col-span-2 bg-indigo-600 text-white ${btn} ${FOCUS}`}
+              >
+                <Eye size={18} /> {t("play.revealAnswer")}
+              </button>
+            )}
+            {!revealed && (type === "hints" || type === "morph" || type === "fusion") && (
+              <button
+                onClick={() => sendCtrl("hint")}
+                className={`bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 ${btn} ${FOCUS}`}
+              >
+                <Lightbulb size={18} /> {t("host.hint")}
+              </button>
+            )}
+            <button
+              onClick={() => sendCtrl("advance")}
+              className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS} ${
+                !revealed && !(type === "hints" || type === "morph" || type === "fusion") ? "col-span-2" : ""
+              }`}
+            >
+              <ArrowRight size={18} /> {revealed ? t("host.next") : t("play.skipQuestion")}
+            </button>
+            <button
+              onClick={() => sendCtrl("resetBuzz")}
+              className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+            >
+              <Bell size={18} /> {t("host.resetBuzz")}
+            </button>
+          </>
+        )}
+        <button
+          onClick={() => sendCtrl("standings", { on: !live?.showStandings })}
+          className={`col-span-2 border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+        >
+          <BarChart3 size={18} /> {t("play.standings")}
+        </button>
+      </div>
+
+      {/* award + adjust */}
+      <div className="mt-5">
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-xs font-medium uppercase tracking-wide text-stone-400 dark:text-stone-500">
+            {t("host.award", { n: value })}
+          </p>
+          {live?.allowNegative && (
+            <div className="inline-flex overflow-hidden rounded-lg border border-stone-200 text-xs font-semibold dark:border-stone-700">
+              <button
+                onClick={() => sendCtrl("sign", { sign: 1 })}
+                className="px-2 py-1 text-emerald-600 dark:text-emerald-400"
+              >
+                +{value}
+              </button>
+              <button
+                onClick={() => sendCtrl("sign", { sign: -1 })}
+                className="px-2 py-1 text-red-600 dark:text-red-400"
+              >
+                −{value}
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          {[...standings]
+            .sort((a, b) => b.score - a.score)
+            .map((s) => (
+              <div
+                key={s.id}
+                className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 dark:border-stone-800 dark:bg-stone-900"
+              >
+                <Avatar color={s.color} emoji={s.emoji} name={s.name} size={26} />
+                <span className="min-w-0 flex-1 truncate text-sm font-medium">{s.name}</span>
+                <span className="w-8 text-center text-sm font-bold tabular-nums">{s.score}</span>
+                <button
+                  onClick={() => sendCtrl("adjust", { id: s.id, delta: -1 })}
+                  aria-label="-1"
+                  className={`rounded-lg border border-stone-200 p-1.5 text-stone-500 dark:border-stone-700 ${FOCUS}`}
+                >
+                  <Minus size={14} />
+                </button>
+                <button
+                  onClick={() => sendCtrl("adjust", { id: s.id, delta: 1 })}
+                  aria-label="+1"
+                  className={`rounded-lg border border-stone-200 p-1.5 text-stone-500 dark:border-stone-700 ${FOCUS}`}
+                >
+                  <Plus size={14} />
+                </button>
+                <Button className="px-3 py-1.5 text-xs" onClick={() => sendCtrl("award", { id: s.id })}>
+                  {t("host.give")}
+                </Button>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>,
+  );
+}

@@ -38,9 +38,11 @@ import {
   hintHasContent,
   buildPresentQ,
   buildLive,
+  mapillaryEmbedUrl,
 } from "../lib/model.js";
 import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, colorAt, SoundToggle } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+import MapillaryEmbed from "./MapillaryEmbed.jsx";
 import { playSound } from "../lib/sound.js";
 import QRCode from "qrcode";
 import ScoreBar from "./ScoreBar.jsx";
@@ -103,6 +105,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* morph round reveal step (0 = fully obscured) */
   const [morphStep, setMorphStep] = useState(0);
 
+  /* map round: show the Mapillary street view instead of the map (UI-only) */
+  const [streetOn, setStreetOn] = useState(false);
+
   /* host UI toggles (not persisted): projector layout + score/round panels */
   const [pres, setPres] = useState(false);
   const [editScores, setEditScores] = useState(false);
@@ -110,6 +115,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const [streamTv, setStreamTv] = useState(false); // "Stream to TV" modal
   const [showStandings, setShowStandings] = useState(false); // live podium overlay (host + TV)
   const [tvQr, setTvQr] = useState("");
+  const [hostQr, setHostQr] = useState("");
 
   /* countdown timer (UI-only; not persisted) */
   const [timeLeft, setTimeLeft] = useState(timerSecs);
@@ -135,6 +141,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setTimeLeft(timerSecs);
     setPaused(false);
     setMorphStep(0);
+    setStreetOn(false);
     setGuessFor(game.players[0]?.id ?? null);
   }, [qKey, timerSecs]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -164,24 +171,29 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const scoreSig = game.players.map((p) => `${p.id}:${p.score}:${p.name}:${p.color}:${p.emoji}`).join(",");
   useEffect(() => {
     if (!buzzerOn) return;
-    room.pushLive(buildLive(game, { step: morphStep, showStandings }));
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, qKey, scoreSig]); // eslint-disable-line react-hooks/exhaustive-deps
+    room.pushLive(buildLive(game, { step: morphStep, showStandings, value, allowNegative }));
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, value, qKey, scoreSig]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Build the TV join QR when the stream modal opens.
-  const presentUrl =
-    room?.code && typeof window !== "undefined"
-      ? `${window.location.origin}${window.location.pathname}#/present/${room.code}`
-      : "";
+  // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
+  const roomBase =
+    room?.code && typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "";
+  const presentUrl = roomBase ? `${roomBase}#/present/${room.code}` : "";
+  const hostUrl = roomBase ? `${roomBase}#/host/${room.code}` : "";
   useEffect(() => {
-    if (!streamTv || !presentUrl) return setTvQr("");
+    if (!streamTv) return;
     let alive = true;
-    QRCode.toDataURL(presentUrl, { margin: 1, width: 320 })
-      .then((u) => alive && setTvQr(u))
-      .catch(() => alive && setTvQr(""));
+    if (presentUrl)
+      QRCode.toDataURL(presentUrl, { margin: 1, width: 320 })
+        .then((u) => alive && setTvQr(u))
+        .catch(() => alive && setTvQr(""));
+    if (hostUrl)
+      QRCode.toDataURL(hostUrl, { margin: 1, width: 320 })
+        .then((u) => alive && setHostQr(u))
+        .catch(() => alive && setHostQr(""));
     return () => {
       alive = false;
     };
-  }, [streamTv, presentUrl]);
+  }, [streamTv, presentUrl, hostUrl]);
 
   // Beep whenever someone buzzes in first (init from current so a remount with an
   // already-locked buzz doesn't replay the sound).
@@ -282,6 +294,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
 
   const jumpToRound = (ri) => {
+    if (!Number.isInteger(ri) || ri < 0 || ri >= quiz.rounds.length) return; // guard untrusted ctrl/jump input
     setMorphStep(0);
     upd({ ri, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
     setNav(false);
@@ -344,6 +357,61 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   const advance = isJeop ? backToBoard : nextQuestion;
   const scoreActive = game.stage === "question" && game.revealed;
+
+  /* Apply a command sent from a host-remote phone (#/host/<code>). Re-derive the
+     current question here (the render-scope `q` only exists in the question path).
+     Seed from the buffered command so a host re-mount (navigate away & back)
+     doesn't replay the last command — the room outlives this component. */
+  const lastCmdRef = useRef(room?.command?.id ?? 0);
+  useEffect(() => {
+    const cmd = room?.command;
+    if (!cmd || cmd.id <= lastCmdRef.current) return;
+    lastCmdRef.current = cmd.id;
+    const a = cmd.args || {};
+    const cq = isJeop ? round?.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] : round?.questions?.[game.qi];
+    switch (cmd.action) {
+      case "reveal":
+        if (game.stage === "question" && !game.revealed && cq) {
+          if (round.type === "choice") revealChoice(cq);
+          else if (round.type === "number") revealNumber(cq);
+          else reveal();
+        }
+        break;
+      case "advance":
+        if (game.stage === "question") advance();
+        break;
+      case "hint":
+        if (game.stage === "question" && !game.revealed && cq) {
+          if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
+            upd({ hintsShown: game.hintsShown + 1 });
+          else if (round.type === "morph" || round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
+        }
+        break;
+      case "sign":
+        setSign(a.sign === -1 ? -1 : 1);
+        break;
+      case "award":
+        if (a.id && game.players.some((p) => p.id === a.id)) toggleAward(a.id);
+        break;
+      case "adjust":
+        if (a.id && Number.isFinite(+a.delta) && game.players.some((p) => p.id === a.id)) adjustScore(a.id, +a.delta);
+        break;
+      case "startRound":
+        if (game.stage === "intro") beginRound();
+        break;
+      case "jump":
+        if (Number.isFinite(+a.ri)) jumpToRound(+a.ri);
+        break;
+      case "standings":
+        setShowStandings(!!a.on);
+        break;
+      case "resetBuzz":
+        if (buzzerOn) room.resetBuzz();
+        break;
+      default:
+        break;
+    }
+  }, [room?.command]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* host keyboard shortcuts: R reveal · H hint · N/→ next · +/- sign · 1–9 award */
   useEffect(() => {
@@ -508,10 +576,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
           onClick={() => setStreamTv(false)}
         >
           <div
-            className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-5 text-center shadow-xl dark:border-stone-800 dark:bg-stone-900"
+            className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-2xl border border-stone-200 bg-white p-5 shadow-xl dark:border-stone-800 dark:bg-stone-900"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-3 flex items-center justify-between text-left">
+            <div className="mb-3 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-base font-semibold">
                 <Tv size={18} /> {t("play.streamToTv")}
               </h3>
@@ -520,21 +588,42 @@ export default function PlayView({ game, setGame, onExit, room }) {
               </IconButton>
             </div>
             {buzzerOn && presentUrl ? (
-              <>
-                {tvQr && (
-                  <img
-                    src={tvQr}
-                    alt=""
-                    className="mx-auto h-44 w-44 rounded-xl border border-stone-200 dark:border-stone-700"
-                  />
-                )}
-                <p className="mt-3 text-sm text-stone-500 dark:text-stone-400">{t("play.streamHint")}</p>
-                <p className="mt-2 break-all rounded-lg bg-stone-100 px-3 py-2 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-300">
-                  {presentUrl}
-                </p>
-              </>
+              <div className="space-y-5">
+                <div className="text-center">
+                  <p className="mb-1 text-sm font-semibold">{t("play.tvScreen")}</p>
+                  {tvQr && (
+                    <img
+                      src={tvQr}
+                      alt=""
+                      className="mx-auto h-40 w-40 rounded-xl border border-stone-200 dark:border-stone-700"
+                    />
+                  )}
+                  <p className="mt-2 break-all rounded-lg bg-stone-100 px-3 py-2 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+                    {presentUrl}
+                  </p>
+                  <p className="mt-2 text-left text-xs text-stone-500 dark:text-stone-400">{t("play.castTip")}</p>
+                </div>
+                <div className="border-t border-stone-200 pt-4 text-center dark:border-stone-800">
+                  <p className="mb-1 text-sm font-semibold">{t("play.hostRemote")}</p>
+                  {hostQr && (
+                    <img
+                      src={hostQr}
+                      alt=""
+                      className="mx-auto h-40 w-40 rounded-xl border border-stone-200 dark:border-stone-700"
+                    />
+                  )}
+                  <p className="mt-2 break-all rounded-lg bg-stone-100 px-3 py-2 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+                    {hostUrl}
+                  </p>
+                  <p className="mt-2 text-left text-xs text-amber-600 dark:text-amber-400">
+                    {t("play.hostRemoteHint")}
+                  </p>
+                </div>
+              </div>
             ) : (
-              <p className="py-4 text-sm text-stone-500 dark:text-stone-400">{t("play.streamEnableFirst")}</p>
+              <p className="py-4 text-center text-sm text-stone-500 dark:text-stone-400">
+                {t("play.streamEnableFirst")}
+              </p>
             )}
           </div>
         </div>
@@ -1268,15 +1357,40 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
 
+        {!game.revealed && mapillaryEmbedUrl(q.street) && (
+          <div className="mx-auto mt-4 inline-flex rounded-xl border border-stone-200 p-0.5 dark:border-stone-700">
+            {[
+              { k: false, label: t("play.mapView") },
+              { k: true, label: t("play.streetView") },
+            ].map(({ k, label }) => (
+              <button
+                key={String(k)}
+                onClick={() => setStreetOn(k)}
+                className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${FOCUS} ${
+                  streetOn === k
+                    ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
+                    : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="mx-auto mt-4 max-w-3xl">
-          <LeafletMap
-            answer={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : undefined}
-            guesses={markers}
-            showLines={game.revealed}
-            onPick={game.revealed ? undefined : placeGuess}
-            tileLayer={q.tileLayer}
-            className="h-[55vh]"
-          />
+          {streetOn && !game.revealed && mapillaryEmbedUrl(q.street) ? (
+            <MapillaryEmbed street={q.street} className="h-[55vh]" />
+          ) : (
+            <LeafletMap
+              answer={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : undefined}
+              guesses={markers}
+              showLines={game.revealed}
+              onPick={game.revealed ? undefined : placeGuess}
+              tileLayer={q.tileLayer}
+              className="h-[55vh]"
+            />
+          )}
         </div>
 
         {game.revealed && ranked.length > 0 && (

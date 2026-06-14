@@ -42,8 +42,10 @@ export function useHostRoom() {
   const [buzz, setBuzz] = useState(null); // { deviceId, name } | null
   const [pins, setPins] = useState({}); // deviceId -> { lat, lng }
   const [answers, setAnswers] = useState({}); // deviceId -> value (choice index / number)
+  const [command, setCommand] = useState(null); // { id, action, args } from a host-remote phone
 
   const connRef = useRef(null);
+  const cmdIdRef = useRef(0);
   const phaseRef = useRef({ phase: "idle", qKey: null });
   const lockedRef = useRef(null);
   const participantsRef = useRef({});
@@ -126,6 +128,15 @@ export function useHostRoom() {
           setPins((p) => ({ ...p, [msg.deviceId]: { lat: msg.lat, lng: msg.lng } }));
         } else if (msg.type === "answer" && typeof msg.value !== "undefined") {
           setAnswers((a) => ({ ...a, [msg.deviceId]: msg.value }));
+        } else if (msg.type === "ctrl" && typeof msg.action === "string") {
+          // A host-remote phone is driving the game; surface the command (with a
+          // bumped id so repeated identical actions still re-fire on the host).
+          cmdIdRef.current += 1;
+          setCommand({
+            id: cmdIdRef.current,
+            action: msg.action,
+            args: msg.args && typeof msg.args === "object" ? msg.args : {},
+          });
         }
       },
     });
@@ -149,6 +160,8 @@ export function useHostRoom() {
     setBuzz(null);
     setPins({});
     setAnswers({});
+    setCommand(null);
+    cmdIdRef.current = 0;
   }, []);
 
   // Tear down on unmount — clear retained topics first so they don't strand phones/TVs.
@@ -222,6 +235,7 @@ export function useHostRoom() {
     buzz,
     pins,
     answers,
+    command,
     enable,
     disable,
     arm,
@@ -248,6 +262,7 @@ export function usePresenterRoom(code) {
   const [live, setLive] = useState(null);
   const [alive, setAlive] = useState(true);
   const connRef = useRef(null);
+  const id = useRef(deviceId());
 
   const validCode = typeof code === "string" && /^[A-Za-z0-9]{3,12}$/.test(code) ? code : null;
 
@@ -271,7 +286,14 @@ export function usePresenterRoom(code) {
     return () => conn.close();
   }, [validCode]);
 
-  return { status, present, live, alive };
+  // Host-remote: send a control command up to the host (ignored by the TV view).
+  const sendCtrl = useCallback((action, args) => {
+    const conn = connRef.current;
+    if (conn && typeof action === "string")
+      conn.publish(conn.topics.up, { type: "ctrl", action, args: args || {}, deviceId: id.current });
+  }, []);
+
+  return { status, present, live, alive, sendCtrl };
 }
 
 /** Phone-side room: join, buzz, submit a pin; mirrors the host's state. */

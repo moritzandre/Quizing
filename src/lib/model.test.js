@@ -16,6 +16,7 @@ import {
   buildLive,
   normalizePresent,
   normalizeLive,
+  mapillaryEmbedUrl,
 } from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
@@ -138,7 +139,9 @@ describe("normalizeQuiz", () => {
         type: "map",
         title: "M",
         timer: null,
-        questions: [{ id: "m1", q: "Where?", name: "Spot", lat: 1.5, lng: -2.25, points: 10, tileLayer: "satellite" }],
+        questions: [
+          { id: "m1", q: "Where?", name: "Spot", lat: 1.5, lng: -2.25, points: 10, tileLayer: "satellite", street: "" },
+        ],
       },
     ],
   };
@@ -277,6 +280,23 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[1].questions[0].tileLayer).toBe("satellite");
     expect(q.rounds[1].questions[1].tileLayer).toBe("map"); // unknown → map
     expect(q.rounds[1].questions[2].tileLayer).toBe("map"); // missing → map
+  });
+
+  it("builds a Mapillary embed URL from a share link, embed link, raw id, or nothing", () => {
+    expect(mapillaryEmbedUrl("")).toBe(null);
+    expect(mapillaryEmbedUrl("   ")).toBe(null);
+    expect(mapillaryEmbedUrl("https://www.mapillary.com/app/?pKey=123&focus=photo")).toBe(
+      "https://www.mapillary.com/embed?image_key=123&style=photo",
+    );
+    expect(mapillaryEmbedUrl("https://www.mapillary.com/embed?image_key=abc-DEF_9")).toBe(
+      "https://www.mapillary.com/embed?image_key=abc-DEF_9&style=photo",
+    );
+    expect(mapillaryEmbedUrl("rawId123")).toBe("https://www.mapillary.com/embed?image_key=rawId123&style=photo");
+    expect(mapillaryEmbedUrl("a totally unrelated phrase")).toBe(null);
+    // a param ending in "id" must not be mistaken for the real key
+    expect(mapillaryEmbedUrl("https://m/?someid=999&pKey=REAL")).toBe(
+      "https://www.mapillary.com/embed?image_key=REAL&style=photo",
+    );
   });
 
   it("keeps an audio/video hint trim window; image hints carry no trim", () => {

@@ -9,7 +9,7 @@
    / LeafletMap). The host screen keeps its own interactive rendering.
    ==================================================================== */
 
-import { ytId, hintHasContent } from "../lib/model.js";
+import { ytId, hintHasContent, mapillaryEmbedUrl } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { Check, Target } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
@@ -17,6 +17,7 @@ import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
 import YouTubePlayer from "./YouTubePlayer.jsx";
 import LeafletMap from "./LeafletMap.jsx";
+import MapillaryEmbed from "./MapillaryEmbed.jsx";
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
 const answerCls = "qn-pop qn-answer mt-6 text-3xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl";
@@ -121,17 +122,24 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
 
   if (type === "map") {
     const ans = revealed ? reveal?.answer : null;
+    // Before reveal, show the street view (the puzzle) if the question has one;
+    // on reveal switch to the map so the answer location is shown.
+    const showStreet = !revealed && mapillaryEmbedUrl(q.street);
     return (
       <div className="mx-auto max-w-3xl text-center">
         {q.q && <Q>{q.q}</Q>}
         <div className="mt-5">
-          <LeafletMap
-            answer={
-              ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
-            }
-            tileLayer={q.tileLayer}
-            className="h-[55vh]"
-          />
+          {showStreet ? (
+            <MapillaryEmbed street={q.street} className="h-[55vh]" />
+          ) : (
+            <LeafletMap
+              answer={
+                ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
+              }
+              tileLayer={q.tileLayer}
+              className="h-[55vh]"
+            />
+          )}
         </div>
         {ans?.name && <p className={answerCls}>{ans.name}</p>}
       </div>

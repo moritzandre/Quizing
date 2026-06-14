@@ -22,9 +22,10 @@ Other features:
 - **Teams** — play solo (one entry per player) or split into teams. In team mode each team is one scoring entity and phones pick which team they're on when they join.
 - **Phone avatars** — players choose their own emoji + colour on their phone; it shows up on the scoreboard, podium and TV.
 - **Phone buzzers & answers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), drop map pins, pick multiple-choice answers, and submit number guesses. Works on your local network — see below.
-- **Stream to a TV** — open `#/present/<code>` on any second screen on the same Wi-Fi for a clean, enlarged, read-only mirror of the host with an animated **podium-climb** scoreboard. Map pins stay hidden until reveal. No HDMI, no backend (it rides the same room). See _Stream to a TV_ below.
-- **Quiz builder power tools** — drag-and-drop reordering, **image crop**, **video/audio trim** (start/end), a **satellite** map layer, **place search** to drop answer pins, and a **Mapillary** street-level link-out.
-- **Templates & AI authoring** — start a round or whole quiz from a template, or use **Create with AI**: copy the generated schema prompt into any AI, paste the JSON it returns, and it imports straight in.
+- **Stream to a TV** — open `#/present/<code>` on any second screen on the same Wi-Fi for a clean, enlarged, read-only mirror of the host with an animated **podium-climb** scoreboard. Map pins stay hidden until reveal. No HDMI, no backend (it rides the same room) — e.g. cast a Chrome tab to a Google TV. See _Stream to a TV_ below.
+- **Host remote** — open `#/host/<code>` on a phone to drive the whole game (reveal, advance, award/dock, hints, …) without standing at the laptop. Its QR sits next to the TV one in the Stream-to-TV panel; keep it to yourself (it controls the game).
+- **Quiz builder power tools** — drag-and-drop reordering, **image crop**, **video/audio trim** (start/end), a **satellite** map layer, **place search** to drop answer pins, and an embedded **Mapillary street view** on map questions.
+- **Templates & Creator Room** — start a round or whole quiz from a template, or open **Creator Room**: copy the generated schema prompt into any AI, paste the JSON it returns, and it imports straight in.
 - **English / German** — language toggle (top-right), remembered across sessions.
 - **Per-round countdown timer** — optional, set in the builder; pause/reset while playing.
 - **Persistent leaderboard** — every finished game is recorded on the device; standings aggregate wins, totals, and best scores across games.
@@ -63,15 +64,22 @@ It works with **no backend**: phones and host talk over a free public MQTT-over-
 
 ## Stream to a TV
 
-With phone buzzers enabled, the host's game screen has a **Stream to TV** button (the TV icon). It shows a URL/QR for `#/present/<code>`. Open that on any second screen on the same Wi-Fi — a smart-TV browser, or a laptop tab you cast/mirror to the TV — and it renders a clean, enlarged, **read-only** mirror of the current question, with the answer appearing only when the host reveals it and an animated **podium-climb** scoreboard. **Map pins are never shown on the TV** (the coordinates aren't even sent until reveal). It reuses the same MQTT room, so there's no extra setup and no HDMI cable — just open the app via the LAN IP (not `localhost`), same as the phones. The host can also press the **standings** button to throw the live podium up on both screens.
+With phone buzzers enabled, the host's game screen has a **Stream to TV** button (the TV icon). It opens a panel with two QR codes/links:
+
+- **TV screen** (`#/present/<code>`) — a clean, enlarged, **read-only** mirror of the current question; the answer appears only when the host reveals it, plus an animated **podium-climb** scoreboard. **Map pins are never shown on the TV** (the coordinates aren't even sent until reveal).
+- **Host remote** (`#/host/<code>`) — controls (reveal, advance, award, hints, …). Keep this one to yourself; anyone who opens it can drive the game.
+
+It reuses the same MQTT room, so there's no extra setup and no HDMI cable — just open the app via the LAN IP (not `localhost`), same as the phones.
+
+**Getting it onto a Google TV / Fire TV:** the easiest is to open `#/present/<code>` in **Chrome on your laptop** and use **⋮ → Cast… → your TV** (Google TV / any Chromecast) — nothing to type on the TV. Alternatively, open the link directly in the TV's own browser (the Fire TV's Silk browser works). The host can also press **standings** to throw the live podium up on both screens.
 
 ## Builder power tools
 
 - **Image crop** — on any picture field, click **Crop** to trim/zoom the image in place (output is downscaled for you).
 - **Video / audio trim** — give a YouTube clip or audio/video hint a **start** and **end** (seconds) so only the chosen segment plays.
-- **Richer maps** — switch a map question between **Map** and **Satellite** (keyless Esri imagery), or use **Search for a place** to drop the answer pin and fill in its name automatically (via OpenStreetMap Nominatim). A **Street view** button opens Mapillary at the map's centre.
+- **Richer maps** — switch a map question between **Map** and **Satellite** (keyless Esri imagery), or **Search for a place** to drop the answer pin and fill in its name automatically (via OpenStreetMap Nominatim). Paste a **Mapillary** link/ID to embed a **street view** on the question — the TV/host shows it as the prompt and reveals the map answer afterwards. (Use the **Street view** button to find a spot on Mapillary, then copy its link.)
 - **Templates** — the round picker offers per-type starters, and the home screen has **New from template** for whole-quiz starters.
-- **Create with AI** — copy the generated schema prompt into ChatGPT/Claude/any AI, paste the JSON it returns, and it imports straight into your library (validated and coerced).
+- **Creator Room** — copy the generated schema prompt into ChatGPT/Claude/any AI, paste the JSON it returns, and it imports straight into your library (validated and coerced).
 
 ## Deployment
 
@@ -104,8 +112,9 @@ src/
     templates.js            Round + quiz starter templates and the AI-authoring schema prompt
   components/
     ui.jsx                  Primitives, TYPES/accents, player palette + Avatar, style constants, theme, Confetti
-    useRoom.js              React hooks over realtime: useHostRoom, usePlayerRoom, usePresenterRoom (TV)
+    useRoom.js              React hooks over realtime: useHostRoom, usePlayerRoom, usePresenterRoom (TV + host remote)
     LeafletMap.jsx          Real pan/zoom map; answer pin + guess markers; light/dark + satellite tiles; place search; Mapillary
+    MapillaryEmbed.jsx      Embedded Mapillary street view for a map question
     MorphImage.jsx          Stepped image reveal (blur / pixelate / tiles / zoom / slices)
     FusionImage.jsx         Two images cross-faded into one; defuse toward each; reveal side by side
     HintMedia.jsx           Renders one hint by type (text / image / audio / video / map); audio/video trim
@@ -114,6 +123,7 @@ src/
     PodiumClimb.jsx         Animated live standings (host overlay + TV)
     RoundBody.jsx           Read-only per-round renderer for the TV presenter
     PresenterView.jsx       TV page (#/present/<code>): clean read-only mirror of the host
+    HostRemoteView.jsx      Phone host controller (#/host/<code>): reveal/advance/award/hints over a ctrl channel
     PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins/answers, auto-scoring, TV stream
     SetupView.jsx           Player/team entry (Solo/Teams toggle) + buzzer lobby
     Builder.jsx             Quiz editor for all ten round types; drag-and-drop; image crop; media trim; map satellite/search; templates
@@ -218,7 +228,7 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "id": "r5",
         "type": "map",
         "title": "Where in the World?",
-        // tileLayer: "map" (default) | "satellite"
+        // tileLayer: "map" (default) | "satellite"; street: optional Mapillary link/ID for a street-view prompt
         "questions": [
           {
             "id": "m1",
@@ -228,6 +238,7 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
             "lng": -72.55,
             "points": 10,
             "tileLayer": "map",
+            "street": "",
           },
         ],
       },

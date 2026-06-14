@@ -89,7 +89,9 @@ export default function LeafletMap({
     const map = mapRef.current;
     if (!map) return;
     const key = tileLayerRef.current === "satellite" ? "satellite" : isDark() ? "dark" : "light";
-    if (tileRef.current?._qnKey === key) return;
+    // Re-add even when the key matches if the tile isn't actually on THIS map
+    // (StrictMode/remount leaves a stale ref pointing at a removed map's layer).
+    if (tileRef.current && tileRef.current._qnKey === key && map.hasLayer(tileRef.current)) return;
     if (tileRef.current) tileRef.current.remove();
     const layer = L.tileLayer(TILES[key].url, { attribution: TILES[key].attribution, maxZoom: TILES[key].maxZoom });
     layer._qnKey = key;
@@ -119,6 +121,7 @@ export default function LeafletMap({
       clearTimeout(tm);
       map.remove();
       mapRef.current = null;
+      tileRef.current = null; // so a remount re-adds the base layer instead of skipping it
     };
   }, []);
 

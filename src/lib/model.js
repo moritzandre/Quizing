@@ -84,6 +84,21 @@ export const num = (v, d) => (Number.isFinite(+v) ? +v : d);
 export const numOrNull = (v) => (v === null || v === undefined || v === "" || !Number.isFinite(+v) ? null : +v);
 
 /**
+ * Build an embeddable Mapillary street-view URL from whatever the author pastes
+ * (a /app share URL with pKey, an /embed URL with image_key, or a raw id). The
+ * /embed endpoint is the only Mapillary page that allows iframing.
+ * @param {string} street Mapillary URL or image id.
+ * @returns {string|null} An https://www.mapillary.com/embed?... URL, or null.
+ */
+export function mapillaryEmbedUrl(street) {
+  const s = str(street).trim();
+  if (!s) return null;
+  const m = s.match(/(?:^|[?&])(?:image_key|image_id|pKey|id)=([^&\s]+)/i);
+  const key = m ? m[1] : /^[\w-]+$/.test(s) ? s : null;
+  return key ? `https://www.mapillary.com/embed?image_key=${encodeURIComponent(key)}&style=photo` : null;
+}
+
+/**
  * Extract a YouTube video ID from any common URL shape (or a raw ID).
  * @param {string} url YouTube URL or bare 11-character ID.
  * @returns {string|null} The video ID, or null if none found.
@@ -194,7 +209,7 @@ export function makeQuestion(type) {
     case "number":
       return { id: uid(), q: "", answer: null, unit: "", points: 10 };
     case "map":
-      return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10, tileLayer: "map" };
+      return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10, tileLayer: "map", street: "" };
     default:
       return { id: uid() };
   }
@@ -304,6 +319,7 @@ export function normalizeQuiz(raw) {
               lng: numOrNull(q?.lng),
               points: num(q?.points, 10),
               tileLayer: q?.tileLayer === "satellite" ? "satellite" : "map",
+              street: str(q?.street),
             });
           return it;
         });
@@ -476,7 +492,7 @@ function presentQ(type, q) {
     case "fusion":
       return { urlA: str(q.urlA), urlB: str(q.urlB), steps: num(q.steps, 4) };
     case "map":
-      return { q: str(q.q), tileLayer: q.tileLayer === "satellite" ? "satellite" : "map" };
+      return { q: str(q.q), tileLayer: q.tileLayer === "satellite" ? "satellite" : "map", street: str(q.street) };
     case "choice":
       return { q: str(q.q), options: (Array.isArray(q.options) ? q.options : []).map(str) };
     case "number":
@@ -545,7 +561,7 @@ export function buildPresentQ(game) {
 /**
  * Build the light, frequently-changing presenter payload (topic: live).
  * @param {object} game A valid game.
- * @param {{step?:number, showStandings?:boolean}} [opts]
+ * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean}} [opts]
  */
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
@@ -558,10 +574,13 @@ export function buildLive(game, opts = {}) {
   }));
   const live = {
     v: 1,
+    stage: ["intro", "question", "board", "end"].includes(game.stage) ? game.stage : "intro",
     revealed: !!game.revealed,
     hintsShown: Math.max(1, num(game.hintsShown, 1)),
     step: Math.max(0, num(opts.step, 0)),
     showStandings: !!opts.showStandings,
+    value: num(opts.value, 0),
+    allowNegative: !!opts.allowNegative,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -586,7 +605,7 @@ export function normalizePresent(raw) {
   if (raw.q && typeof raw.q === "object" && !Array.isArray(raw.q)) {
     const q = raw.q;
     const o = { audioOnly: !!q.audioOnly };
-    for (const k of ["q", "clue", "url", "urlA", "urlB", "unit"]) if (typeof q[k] === "string") o[k] = q[k];
+    for (const k of ["q", "clue", "url", "urlA", "urlB", "unit", "street"]) if (typeof q[k] === "string") o[k] = q[k];
     if (typeof q.effect === "string") o.effect = MORPH_EFFECTS.includes(q.effect) ? q.effect : "blur";
     if (typeof q.tileLayer === "string") o.tileLayer = q.tileLayer === "satellite" ? "satellite" : "map";
     if (q.steps != null) o.steps = num(q.steps, 4);
@@ -615,10 +634,13 @@ export function normalizeLive(raw) {
     if (typeof r.unit === "string") reveal.unit = r.unit;
   }
   return {
+    stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",
     revealed: !!raw.revealed,
     hintsShown: Math.max(1, num(raw.hintsShown, 1)),
     step: Math.max(0, num(raw.step, 0)),
     showStandings: !!raw.showStandings,
+    value: num(raw.value, 0),
+    allowNegative: !!raw.allowNegative,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",

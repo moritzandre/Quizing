@@ -34,6 +34,7 @@ import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, Confirm
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { ROUND_TEMPLATES } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
+import MapillaryEmbed from "./MapillaryEmbed.jsx";
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
 const panelCls = "rounded-xl bg-stone-50 p-3 dark:bg-stone-800/50";
@@ -1179,6 +1180,16 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                               : t("builder.clickToPin")}
                           </p>
                         </div>
+                        <input
+                          className={`${inputCls} mt-2`}
+                          placeholder={t("builder.streetUrl")}
+                          value={item.street || ""}
+                          onChange={(e) => qRow(r, item, { street: e.target.value })}
+                        />
+                        <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("builder.streetHint")}</p>
+                        {item.street && (
+                          <MapillaryEmbed street={item.street} className="mt-2 h-56" empty={t("builder.streetBad")} />
+                        )}
                       </div>
                     )}
                   </SortableList>
