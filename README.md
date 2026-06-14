@@ -1,6 +1,6 @@
 # Quiz Night
 
-A host-led party quiz app. One host screen runs the show; players can buzz in, drop map pins, pick answers and guess numbers from their own phones over a QR code. Ten round formats, solo or in teams, English or German, light or dark.
+A host-led party quiz app. One host screen runs the show; players can buzz in, drop map pins, pick answers and guess numbers from their own phones over a QR code. Ten round formats, solo or in teams, English or German, light or dark — plus a TV presenter mode that mirrors a clean view to a second screen over Wi-Fi (no HDMI).
 
 **Round formats**
 
@@ -20,12 +20,15 @@ A host-led party quiz app. One host screen runs the show; players can buzz in, d
 Other features:
 
 - **Teams** — play solo (one entry per player) or split into teams. In team mode each team is one scoring entity and phones pick which team they're on when they join.
+- **Phone avatars** — players choose their own emoji + colour on their phone; it shows up on the scoreboard, podium and TV.
 - **Phone buzzers & answers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), drop map pins, pick multiple-choice answers, and submit number guesses. Works on your local network — see below.
+- **Stream to a TV** — open `#/present/<code>` on any second screen on the same Wi-Fi for a clean, enlarged, read-only mirror of the host with an animated **podium-climb** scoreboard. Map pins stay hidden until reveal. No HDMI, no backend (it rides the same room). See _Stream to a TV_ below.
+- **Quiz builder power tools** — drag-and-drop reordering, **image crop**, **video/audio trim** (start/end), a **satellite** map layer, **place search** to drop answer pins, and a **Mapillary** street-level link-out.
+- **Templates & AI authoring** — start a round or whole quiz from a template, or use **Create with AI**: copy the generated schema prompt into any AI, paste the JSON it returns, and it imports straight in.
 - **English / German** — language toggle (top-right), remembered across sessions.
 - **Per-round countdown timer** — optional, set in the builder; pause/reset while playing.
 - **Persistent leaderboard** — every finished game is recorded on the device; standings aggregate wins, totals, and best scores across games.
-- **Dark mode** — toggle top-right; remembered and applied before first paint.
-- **Quiz builder** with drag-and-drop reordering, click-to-place map pins, and image upload.
+- **Light / dark theme** — playful, colourful styling in both; toggle top-right, applied before first paint.
 - **Export/import** quizzes as `.quiz.json` (shareable with the Claude-artifact version of the app).
 - **Auto game persistence** — close the tab mid-game and resume; `#/play` restores on refresh.
 - **Host keyboard shortcuts**: `R` reveal · `H` hint/demorph · `N`/`→` next · `+`/`−` award sign (jeopardy) · `1–9` award to player N.
@@ -58,6 +61,18 @@ It works with **no backend**: phones and host talk over a free public MQTT-over-
 
 **Using it on your home network (no deploy):** the QR encodes whatever URL the host opened, and `localhost` isn't reachable from a phone — so open the app via your machine's LAN address. `npm run dev` already binds to all interfaces and prints a **Network** URL (e.g. `http://192.168.1.23:5173/`); open _that_ on the host machine, and the QR will point phones to it. Phones must be on the same Wi-Fi. (BuzzerPanel shows a warning if you opened the app on `localhost`.) The deployed site works too.
 
+## Stream to a TV
+
+With phone buzzers enabled, the host's game screen has a **Stream to TV** button (the TV icon). It shows a URL/QR for `#/present/<code>`. Open that on any second screen on the same Wi-Fi — a smart-TV browser, or a laptop tab you cast/mirror to the TV — and it renders a clean, enlarged, **read-only** mirror of the current question, with the answer appearing only when the host reveals it and an animated **podium-climb** scoreboard. **Map pins are never shown on the TV** (the coordinates aren't even sent until reveal). It reuses the same MQTT room, so there's no extra setup and no HDMI cable — just open the app via the LAN IP (not `localhost`), same as the phones. The host can also press the **standings** button to throw the live podium up on both screens.
+
+## Builder power tools
+
+- **Image crop** — on any picture field, click **Crop** to trim/zoom the image in place (output is downscaled for you).
+- **Video / audio trim** — give a YouTube clip or audio/video hint a **start** and **end** (seconds) so only the chosen segment plays.
+- **Richer maps** — switch a map question between **Map** and **Satellite** (keyless Esri imagery), or use **Search for a place** to drop the answer pin and fill in its name automatically (via OpenStreetMap Nominatim). A **Street view** button opens Mapillary at the map's centre.
+- **Templates** — the round picker offers per-type starters, and the home screen has **New from template** for whole-quiz starters.
+- **Create with AI** — copy the generated schema prompt into ChatGPT/Claude/any AI, paste the JSON it returns, and it imports straight into your library (validated and coerced).
+
 ## Deployment
 
 A GitHub Actions workflow ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) builds and publishes to **GitHub Pages** on every push to `main`:
@@ -78,28 +93,32 @@ src/
   index.css                 Tailwind v4, class-based dark variant, keyframes, Leaflet tooltip CSS
   lib/
     storage.js              Storage adapter (Claude → localStorage → memory) + load/save helpers
-    model.js                Pure logic: factories, normalize/validate, geo math, morph/leaderboard helpers, export
-    realtime.js             MQTT room transport for the buzzer (framework-free)
+    model.js                Pure logic: factories, normalize/validate, geo math, morph/leaderboard + TV-payload helpers, export
+    realtime.js             MQTT room transport for the buzzer + TV (framework-free)
   i18n/
     strings.js              English/German string catalogs + translate() (framework-free)
     I18nProvider.jsx        Language context/provider, useI18n() (t), LanguageToggle
   data/
     sampleQuiz.js           "Friday Night Sampler" built-in
     nerdQuiz.js             "Nexus Nights" built-in (LoL / nerdy; demos morph, fusion, media hints, picture, map)
+    templates.js            Round + quiz starter templates and the AI-authoring schema prompt
   components/
-    ui.jsx                  Primitives, TYPES metadata, style constants, theme (useTheme/ThemeToggle), Confetti
-    useRoom.js              React hooks over realtime: useHostRoom, usePlayerRoom
-    LeafletMap.jsx          Real pan/zoom map; answer pin + guess markers + lines; light/dark tiles
+    ui.jsx                  Primitives, TYPES/accents, player palette + Avatar, style constants, theme, Confetti
+    useRoom.js              React hooks over realtime: useHostRoom, usePlayerRoom, usePresenterRoom (TV)
+    LeafletMap.jsx          Real pan/zoom map; answer pin + guess markers; light/dark + satellite tiles; place search; Mapillary
     MorphImage.jsx          Stepped image reveal (blur / pixelate / tiles / zoom / slices)
     FusionImage.jsx         Two images cross-faded into one; defuse toward each; reveal side by side
-    HintMedia.jsx           Renders one hint by type (text / image / audio / video / map)
-    YouTubePlayer.jsx       Chrome-free YouTube player (hides the title) + audio-only mode
+    HintMedia.jsx           Renders one hint by type (text / image / audio / video / map); audio/video trim
+    YouTubePlayer.jsx       Chrome-free YouTube player (hides the title) + audio-only mode + start/end trim
     ScoreBar.jsx            Fixed scoreboard with +/− award toggle
-    PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins/answers, auto-scoring
+    PodiumClimb.jsx         Animated live standings (host overlay + TV)
+    RoundBody.jsx           Read-only per-round renderer for the TV presenter
+    PresenterView.jsx       TV page (#/present/<code>): clean read-only mirror of the host
+    PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins/answers, auto-scoring, TV stream
     SetupView.jsx           Player/team entry (Solo/Teams toggle) + buzzer lobby
-    Builder.jsx             Quiz editor for all ten round types; drag-and-drop; image upload; typed hints
+    Builder.jsx             Quiz editor for all ten round types; drag-and-drop; image crop; media trim; map satellite/search; templates
     BuzzerPanel.jsx         Host buzzer lobby: QR, room code, roster
-    JoinView.jsx            Phone page: team picker, buzz, pin, choice tap, number guess
+    JoinView.jsx            Phone page: avatar + team picker, buzz, pin, choice tap, number guess
     LeaderboardView.jsx     Persistent standings
     ErrorBoundary.jsx       Render-error fallback
 ```
@@ -142,7 +161,8 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "type": "hints",
         "title": "Who Am I?",
         // a hint is a plain string (text) OR a typed object:
-        //   { "type": "image"|"audio"|"video", "url": "…" }  or  { "type": "map", "lat": …, "lng": …, "name": "…" }
+        //   { "type": "image", "url": "…" }, { "type": "audio"|"video", "url": "…", "start": 5, "end": 20 },
+        //   or { "type": "map", "lat": …, "lng": …, "name": "…" }
         "questions": [
           {
             "id": "h1",
@@ -155,9 +175,18 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "id": "r4",
         "type": "video",
         "title": "Watch & Listen",
-        // audioOnly: true hides the video and plays just the sound
+        // audioOnly: true hides the video and plays just the sound; start/end (seconds) trim the clip
         "questions": [
-          { "id": "v1", "url": "https://youtu.be/…", "q": "…", "a": "…", "points": 10, "audioOnly": false },
+          {
+            "id": "v1",
+            "url": "https://youtu.be/…",
+            "q": "…",
+            "a": "…",
+            "points": 10,
+            "audioOnly": false,
+            "start": null,
+            "end": null,
+          },
         ],
       },
       {
@@ -189,7 +218,18 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "id": "r5",
         "type": "map",
         "title": "Where in the World?",
-        "questions": [{ "id": "m1", "q": "…", "name": "Label on reveal", "lat": -13.16, "lng": -72.55, "points": 10 }],
+        // tileLayer: "map" (default) | "satellite"
+        "questions": [
+          {
+            "id": "m1",
+            "q": "…",
+            "name": "Label on reveal",
+            "lat": -13.16,
+            "lng": -72.55,
+            "points": 10,
+            "tileLayer": "map",
+          },
+        ],
       },
       {
         "id": "r9",
