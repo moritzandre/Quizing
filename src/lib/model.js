@@ -9,7 +9,18 @@
 import { SCHEMA_VERSION } from "./storage.js";
 
 /** Canonical round-type keys. Must stay in sync with TYPES in components/ui.jsx. */
-export const ROUND_TYPES = ["classic", "jeopardy", "hints", "video", "image", "morph", "fusion", "map"];
+export const ROUND_TYPES = [
+  "classic",
+  "jeopardy",
+  "hints",
+  "video",
+  "image",
+  "morph",
+  "fusion",
+  "map",
+  "choice",
+  "number",
+];
 
 /** Reveal effects for the morph round. */
 export const MORPH_EFFECTS = ["blur", "pixelate", "tiles", "zoom", "slices"];
@@ -167,6 +178,10 @@ export function makeQuestion(type) {
       return { id: uid(), url: "", a: "", points: 30, effect: "blur", steps: 4 };
     case "fusion":
       return { id: uid(), urlA: "", urlB: "", a: "", points: 40, steps: 4 };
+    case "choice":
+      return { id: uid(), q: "", options: ["", "", "", ""], correct: 0, points: 10 };
+    case "number":
+      return { id: uid(), q: "", answer: null, unit: "", points: 10 };
     case "map":
       return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10 };
     default:
@@ -252,6 +267,22 @@ export function normalizeQuiz(raw) {
               points: num(q?.points, 40),
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
             });
+          if (r.type === "choice") {
+            const options = (Array.isArray(q?.options) ? q.options : ["", "", "", ""]).map((o) => str(o));
+            Object.assign(it, {
+              q: str(q?.q),
+              options,
+              correct: Math.max(0, Math.min(options.length - 1, num(q?.correct, 0))),
+              points: num(q?.points, 10),
+            });
+          }
+          if (r.type === "number")
+            Object.assign(it, {
+              q: str(q?.q),
+              answer: numOrNull(q?.answer),
+              unit: str(q?.unit),
+              points: num(q?.points, 10),
+            });
           if (r.type === "map")
             Object.assign(it, {
               q: str(q?.q),
@@ -280,10 +311,15 @@ export function normalizeGame(raw) {
   if (!quiz || !Array.isArray(raw.players) || raw.players.length === 0) return null;
   return {
     id: str(raw.id) || uid(),
+    mode: raw.mode === "teams" ? "teams" : "solo",
     quiz,
     players: raw.players.map((p) => {
       const player = { id: str(p?.id) || uid(), name: str(p?.name) || "Player", score: num(p?.score, 0) };
-      if (p?.deviceId) player.deviceId = str(p.deviceId); // links a player to a phone in the buzzer room
+      // deviceIds links a scoring entity (solo player or team) to phone(s) in the room.
+      const ids = Array.isArray(p?.deviceIds) ? p.deviceIds.map((d) => str(d)).filter(Boolean) : [];
+      if (!ids.length && p?.deviceId) ids.push(str(p.deviceId)); // migrate single-device players
+      if (ids.length) player.deviceIds = ids;
+      if (Array.isArray(p?.members)) player.members = p.members.map((m) => ({ name: str(m?.name) || "Player" }));
       if (p?.color) player.color = str(p.color);
       if (p?.emoji) player.emoji = str(p.emoji);
       return player;

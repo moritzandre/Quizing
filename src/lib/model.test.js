@@ -114,6 +114,20 @@ describe("normalizeQuiz", () => {
         ],
       },
       {
+        id: "r9",
+        type: "choice",
+        title: "MC",
+        timer: null,
+        questions: [{ id: "mc1", q: "Q?", options: ["A", "B", "C", "D"], correct: 2, points: 10 }],
+      },
+      {
+        id: "r10",
+        type: "number",
+        title: "Num",
+        timer: null,
+        questions: [{ id: "nu1", q: "How many?", answer: 42, unit: "kg", points: 10 }],
+      },
+      {
         id: "r5",
         type: "map",
         title: "M",
@@ -198,6 +212,25 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[0].questions[0]).toMatchObject({ urlA: "a", urlB: "b", a: "X+Y", points: 40, steps: 4 });
   });
 
+  it("normalizes choice rounds: clamps correct, coerces options, defaults", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "choice", questions: [{ q: "Q", options: ["a", 7, "c"], correct: 9 }] },
+        { type: "choice", questions: [{}] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ q: "Q", options: ["a", "", "c"], correct: 2, points: 10 });
+    expect(q.rounds[1].questions[0]).toMatchObject({ options: ["", "", "", ""], correct: 0, points: 10 });
+  });
+
+  it("normalizes number rounds: numeric answer or null", () => {
+    const q = normalizeQuiz({
+      rounds: [{ type: "number", questions: [{ q: "How many?", answer: "42", unit: "kg" }, { answer: "" }] }],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ q: "How many?", answer: 42, unit: "kg", points: 10 });
+    expect(q.rounds[0].questions[1].answer).toBe(null);
+  });
+
   it("normalizes typed media hints; keeps text hints as strings; coerces junk", () => {
     const q = normalizeQuiz({
       rounds: [
@@ -272,6 +305,26 @@ describe("normalizeGame", () => {
     expect(normalizeGame(null)).toBe(null);
     expect(normalizeGame({ quiz: baseQuiz, players: [] })).toBe(null);
     expect(normalizeGame({ quiz: { rounds: "no" }, players: [{ id: "p1" }] })).toBe(null);
+  });
+
+  it("normalizes team mode: deviceIds array + members; migrates single deviceId", () => {
+    const g = normalizeGame({
+      quiz: baseQuiz,
+      mode: "teams",
+      players: [
+        { id: "t1", name: "Reds", deviceIds: ["d1", "d2"], members: [{ name: "Ann" }, { name: "Bo" }] },
+        { id: "p2", name: "Solo", deviceId: "d3" },
+      ],
+    });
+    expect(g.mode).toBe("teams");
+    expect(g.players[0].deviceIds).toEqual(["d1", "d2"]);
+    expect(g.players[0].members).toEqual([{ name: "Ann" }, { name: "Bo" }]);
+    expect(g.players[1].deviceIds).toEqual(["d3"]); // migrated from deviceId
+  });
+
+  it("defaults mode to solo", () => {
+    const g = normalizeGame({ quiz: baseQuiz, players: [{ id: "p1", name: "A", score: 0 }] });
+    expect(g.mode).toBe("solo");
   });
 });
 
