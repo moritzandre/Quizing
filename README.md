@@ -1,6 +1,6 @@
 # Quiz Night
 
-A host-led party quiz app. One host screen runs the show; players can buzz in and drop map pins from their own phones over a QR code. Eight round formats, English or German, light or dark.
+A host-led party quiz app. One host screen runs the show; players can buzz in, drop map pins, pick answers and guess numbers from their own phones over a QR code. Ten round formats, solo or in teams, English or German, light or dark.
 
 **Round formats**
 
@@ -14,10 +14,13 @@ A host-led party quiz app. One host screen runs the show; players can buzz in an
 | Morph       | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
 | Fusion      | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
 | Map         | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.           |
+| Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.          |
+| Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                       |
 
 Other features:
 
-- **Phone buzzers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), and place their own map pins. Works on your local network — see below.
+- **Teams** — play solo (one entry per player) or split into teams. In team mode each team is one scoring entity and phones pick which team they're on when they join.
+- **Phone buzzers & answers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), drop map pins, pick multiple-choice answers, and submit number guesses. Works on your local network — see below.
 - **English / German** — language toggle (top-right), remembered across sessions.
 - **Per-round countdown timer** — optional, set in the builder; pause/reset while playing.
 - **Persistent leaderboard** — every finished game is recorded on the device; standings aggregate wins, totals, and best scores across games.
@@ -49,7 +52,7 @@ npm run dev
 
 ## Phone buzzers
 
-Open a game's setup screen and **Enable phone buzzers**. A QR code and 4-letter room code appear; players scan it to open the join page (`#/join/<code>`) on their phones, enter a name, and they're in. During a question their phones show a big **Buzz** button (first to tap locks the others out, and the host screen beeps and names them); during a map round their phones show a mini-map to drop a pin.
+Open a game's setup screen and **Enable phone buzzers**. A QR code and 4-letter room code appear; players scan it to open the join page (`#/join/<code>`) on their phones, enter a name (and pick a team, in team mode), and they're in. Each question type drives the right phone screen: a big **Buzz** button on most rounds (first to tap locks the others out, and the host screen beeps and names them); a mini-map to drop a pin on map rounds; A/B/C/D buttons on multiple-choice rounds; a number pad on closest-number rounds.
 
 It works with **no backend**: phones and host talk over a free public MQTT-over-WebSocket broker, with the random room code as the only privacy boundary — fine for a living-room game, not for anything sensitive. Map tiles and the buzzer both need internet.
 
@@ -92,11 +95,11 @@ src/
     HintMedia.jsx           Renders one hint by type (text / image / audio / video / map)
     YouTubePlayer.jsx       Chrome-free YouTube player (hides the title) + audio-only mode
     ScoreBar.jsx            Fixed scoreboard with +/− award toggle
-    PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins
-    SetupView.jsx           Player entry + buzzer lobby
-    Builder.jsx             Quiz editor for all eight round types; drag-and-drop; image upload; typed hints
+    PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins/answers, auto-scoring
+    SetupView.jsx           Player/team entry (Solo/Teams toggle) + buzzer lobby
+    Builder.jsx             Quiz editor for all ten round types; drag-and-drop; image upload; typed hints
     BuzzerPanel.jsx         Host buzzer lobby: QR, room code, roster
-    JoinView.jsx            Phone page: buzz + pin placement
+    JoinView.jsx            Phone page: team picker, buzz, pin, choice tap, number guess
     LeaderboardView.jsx     Persistent standings
     ErrorBoundary.jsx       Render-error fallback
 ```
@@ -187,6 +190,22 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "type": "map",
         "title": "Where in the World?",
         "questions": [{ "id": "m1", "q": "…", "name": "Label on reveal", "lat": -13.16, "lng": -72.55, "points": 10 }],
+      },
+      {
+        "id": "r9",
+        "type": "choice",
+        "title": "Multiple Choice",
+        // correct is the 0-based index into options (2–6 options); auto-scored on reveal
+        "questions": [
+          { "id": "ch1", "q": "…?", "options": ["A", "B", "C", "D"], "correct": 2, "points": 10 },
+        ],
+      },
+      {
+        "id": "r10",
+        "type": "number",
+        "title": "Closest Guess",
+        // answer is the target number; unit is an optional label; closest phone guess auto-wins
+        "questions": [{ "id": "nu1", "q": "How many…?", "answer": 168, "unit": "items", "points": 15 }],
       },
     ],
   },
