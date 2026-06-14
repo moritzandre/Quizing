@@ -33,9 +33,10 @@ export function useHostRoom() {
   const [enabled, setEnabled] = useState(false);
   const [code, setCode] = useState(null);
   const [status, setStatus] = useState("idle");
-  const [participants, setParticipants] = useState({}); // deviceId -> { name }
+  const [participants, setParticipants] = useState({}); // deviceId -> { name, teamId }
   const [buzz, setBuzz] = useState(null); // { deviceId, name } | null
   const [pins, setPins] = useState({}); // deviceId -> { lat, lng }
+  const [answers, setAnswers] = useState({}); // deviceId -> value (choice index / number)
 
   const connRef = useRef(null);
   const phaseRef = useRef({ phase: "idle", qKey: null });
@@ -62,6 +63,7 @@ export function useHostRoom() {
     setParticipants({});
     setBuzz(null);
     setPins({});
+    setAnswers({});
     connRef.current = connectRoom({
       code: c,
       subscribe: [roomTopics(c).up],
@@ -75,7 +77,10 @@ export function useHostRoom() {
       onMessage: (_topic, msg) => {
         if (!msg || !msg.deviceId) return;
         if (msg.type === "join") {
-          setParticipants((p) => ({ ...p, [msg.deviceId]: { name: str(msg.name) || "Player" } }));
+          setParticipants((p) => ({
+            ...p,
+            [msg.deviceId]: { name: str(msg.name) || "Player", teamId: msg.teamId ? str(msg.teamId) : null },
+          }));
           pushStateRef.current();
         } else if (msg.type === "leave") {
           setParticipants((p) => {
@@ -99,6 +104,8 @@ export function useHostRoom() {
           Number.isFinite(msg.lng)
         ) {
           setPins((p) => ({ ...p, [msg.deviceId]: { lat: msg.lat, lng: msg.lng } }));
+        } else if (msg.type === "answer" && typeof msg.value !== "undefined") {
+          setAnswers((a) => ({ ...a, [msg.deviceId]: msg.value }));
         }
       },
     });
@@ -119,6 +126,7 @@ export function useHostRoom() {
     setParticipants({});
     setBuzz(null);
     setPins({});
+    setAnswers({});
   }, []);
 
   // Tear down on unmount — clear the retained state first so it doesn't strand phones.
@@ -156,8 +164,26 @@ export function useHostRoom() {
     [pushState],
   );
   const clearPins = useCallback(() => setPins({}), []);
+  // Collect typed phone answers (choice index / number); `opts` may carry the
+  // phase ("choice"|"number") and the option labels phones should render.
+  const collectAnswers = useCallback(
+    (qKey, opts = {}) => {
+      phaseRef.current = { phase: opts.phase || "choice", qKey, options: opts.options || null };
+      setAnswers({});
+      pushState();
+    },
+    [pushState],
+  );
+  // Publish the lobby (optionally with a team list phones can pick from).
+  const lobby = useCallback(
+    (teams) => {
+      phaseRef.current = { phase: "idle", qKey: null, teams: teams || null };
+      pushState();
+    },
+    [pushState],
+  );
   const idle = useCallback(() => {
-    phaseRef.current = { phase: "idle", qKey: null };
+    phaseRef.current = { phase: "idle", qKey: null, teams: phaseRef.current.teams || null };
     lockedRef.current = null;
     setBuzz(null);
     pushState();
@@ -171,12 +197,15 @@ export function useHostRoom() {
     participants,
     buzz,
     pins,
+    answers,
     enable,
     disable,
     arm,
     resetBuzz,
     collectPins,
     clearPins,
+    collectAnswers,
+    lobby,
     idle,
   };
 }
@@ -205,7 +234,13 @@ export function usePlayerRoom(code) {
       onMessage: (_topic, msg) =>
         setState(
           msg && typeof msg === "object" && !Array.isArray(msg)
-            ? { phase: str(msg.phase) || "idle", qKey: msg.qKey ?? null, lockedBy: msg.lockedBy ?? null }
+            ? {
+                phase: str(msg.phase) || "idle",
+                qKey: msg.qKey ?? null,
+                lockedBy: msg.lockedBy ?? null,
+                teams: Array.isArray(msg.teams) ? msg.teams : null,
+                options: Array.isArray(msg.options) ? msg.options : null,
+              }
             : null,
         ),
     });
@@ -219,16 +254,17 @@ export function usePlayerRoom(code) {
   }, []);
 
   const join = useCallback(
-    (n) => {
+    (n, teamId) => {
       const clean = str(n).trim() || "Player";
       setName(clean);
-      send({ type: "join", name: clean });
+      send({ type: "join", name: clean, teamId: teamId || null });
     },
     [send],
   );
   const buzz = useCallback(() => send({ type: "buzz", name }), [send, name]);
   const sendPin = useCallback((lat, lng) => send({ type: "pin", lat, lng }), [send]);
+  const sendAnswer = useCallback((value) => send({ type: "answer", value }), [send]);
   const leave = useCallback(() => send({ type: "leave" }), [send]);
 
-  return { status, state, name, deviceId: id.current, join, buzz, sendPin, leave };
+  return { status, state, name, deviceId: id.current, join, buzz, sendPin, sendAnswer, leave };
 }

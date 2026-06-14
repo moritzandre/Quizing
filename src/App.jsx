@@ -170,22 +170,39 @@ function App() {
   };
 
   /**
-   * Start a game. `players` is a list of { name, deviceId? }; phone-linked
-   * players keep deviceId as their player id so buzz/pin events map directly.
+   * Start a game. In solo mode `players` is a list of { name, deviceId? } and
+   * each entry is one scoring entity; phone-linked players keep deviceId so
+   * buzz/pin/answer events map directly. In team mode each entry is a team
+   * { id, name, deviceIds[], members[] } — the team is the scoring entity and
+   * every linked phone routes its events to that team.
+   *
+   * @param {object} quiz
+   * @param {Array<object>} players solo players or team descriptors
+   * @param {"solo"|"teams"} [mode="solo"]
    */
-  const startGame = (quiz, players) => {
-    // Only remember manually-typed names — phone players rejoin via the room,
-    // so persisting them would seed duplicates into the next game's setup.
-    const manualNames = players.filter((p) => !p.deviceId).map((p) => p.name);
+  const startGame = (quiz, players, mode = "solo") => {
+    const teams = mode === "teams";
+    // Only remember manually-typed solo names — phone players rejoin via the
+    // room and teams are session-specific, so persisting them seeds dupes.
+    const manualNames = teams ? [] : players.filter((p) => !p.deviceId).map((p) => p.name);
     setLastPlayers(manualNames);
     saveJSON("players", manualNames);
     const ri = nextNonEmpty(quiz, 0);
     persistGame({
       id: uid(),
       quiz: deepClone(quiz),
+      mode: teams ? "teams" : "solo",
       players: players.map((p, i) => {
-        const base = { id: p.deviceId || uid(), name: p.name, score: 0, color: colorAt(i), emoji: emojiAt(i) };
-        if (p.deviceId) base.deviceId = p.deviceId;
+        const deviceIds = p.deviceIds || (p.deviceId ? [p.deviceId] : []);
+        const base = {
+          id: p.id || p.deviceId || uid(),
+          name: p.name,
+          score: 0,
+          color: colorAt(i),
+          emoji: emojiAt(i),
+        };
+        if (deviceIds.length) base.deviceIds = deviceIds;
+        if (p.members) base.members = p.members;
         return base;
       }),
       ri: Math.max(ri, 0),
@@ -395,7 +412,7 @@ function App() {
               defaults={lastPlayers}
               room={room}
               onBack={() => go({ name: "home" })}
-              onStart={(players) => startGame(view.quiz, players)}
+              onStart={(players, mode) => startGame(view.quiz, players, mode)}
             />
           )}
 

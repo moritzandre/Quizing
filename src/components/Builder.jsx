@@ -822,6 +822,140 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 </>
               )}
 
+              {/* choice (multiple choice) */}
+              {r.type === "choice" && (
+                <>
+                  <SortableList items={r.questions} getKey={(x) => x.id} onReorder={(f, to) => reorderQuestions(r, f, to)}>
+                    {(item, i, hp) => (
+                      <div className={panelCls}>
+                        <div className={rowLabelCls}>
+                          <span className="flex items-center gap-1">
+                            <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                          </span>
+                          <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                        </div>
+                        <input
+                          className={inputCls}
+                          placeholder={t("builder.question")}
+                          value={item.q}
+                          onChange={(e) => qRow(r, item, { q: e.target.value })}
+                        />
+                        <div className="mt-2 space-y-1.5">
+                          {item.options.map((opt, oi) => (
+                            <div key={oi} className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name={`correct-${item.id}`}
+                                checked={item.correct === oi}
+                                onChange={() => qRow(r, item, { correct: oi })}
+                                title={t("builder.markCorrect")}
+                                className="h-4 w-4 shrink-0 accent-emerald-600"
+                              />
+                              <input
+                                className={`${inputCls} flex-1`}
+                                placeholder={t("builder.optionN", { n: oi + 1 })}
+                                value={opt}
+                                onChange={(e) =>
+                                  qRow(r, item, { options: item.options.map((o, j) => (j === oi ? e.target.value : o)) })
+                                }
+                              />
+                              {item.options.length > 2 && (
+                                <ConfirmDelete
+                                  label={t("builder.deleteOption")}
+                                  onConfirm={() => {
+                                    const options = item.options.filter((_, j) => j !== oi);
+                                    qRow(r, item, { options, correct: Math.min(item.correct, options.length - 1) });
+                                  }}
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          {item.options.length < 6 ? (
+                            <button
+                              onClick={() => qRow(r, item, { options: [...item.options, ""] })}
+                              className={`rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS} inline-flex items-center gap-1`}
+                            >
+                              <Plus size={13} /> {t("builder.addOption")}
+                            </button>
+                          ) : (
+                            <span />
+                          )}
+                          <input
+                            type="number"
+                            aria-label={t("builder.points")}
+                            className={`${inputCls} w-20`}
+                            title={t("builder.points")}
+                            value={item.points}
+                            onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("choice")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addQuestion")}
+                  </button>
+                </>
+              )}
+
+              {/* number (closest guess) */}
+              {r.type === "number" && (
+                <>
+                  <SortableList items={r.questions} getKey={(x) => x.id} onReorder={(f, to) => reorderQuestions(r, f, to)}>
+                    {(item, i, hp) => (
+                      <div className={panelCls}>
+                        <div className={rowLabelCls}>
+                          <span className="flex items-center gap-1">
+                            <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                          </span>
+                          <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                        </div>
+                        <input
+                          className={inputCls}
+                          placeholder={t("builder.question")}
+                          value={item.q}
+                          onChange={(e) => qRow(r, item, { q: e.target.value })}
+                        />
+                        <div className="mt-2 flex gap-2">
+                          <input
+                            type="number"
+                            className={`${inputCls} flex-1`}
+                            placeholder={t("builder.numberAnswer")}
+                            value={item.answer ?? ""}
+                            onChange={(e) => qRow(r, item, { answer: e.target.value === "" ? null : +e.target.value })}
+                          />
+                          <input
+                            className={`${inputCls} w-28`}
+                            placeholder={t("builder.unit")}
+                            value={item.unit}
+                            onChange={(e) => qRow(r, item, { unit: e.target.value })}
+                          />
+                          <input
+                            type="number"
+                            aria-label={t("builder.points")}
+                            className={`${inputCls} w-20`}
+                            title={t("builder.points")}
+                            value={item.points}
+                            onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("number")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addQuestion")}
+                  </button>
+                </>
+              )}
+
               {/* map */}
               {r.type === "map" && (
                 <>

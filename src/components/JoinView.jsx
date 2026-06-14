@@ -1,9 +1,9 @@
 /* ====================================================================
-   JOIN VIEW (phone) — buzz in and drop map pins from your own device
+   JOIN VIEW (phone) — buzz, drop map pins, pick answers, guess numbers
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
-import { Radio, Wifi, WifiOff, Check, MapPin } from "lucide-react";
+import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
 import { FOCUS, inputCls, Button } from "./ui.jsx";
 import LeafletMap from "./LeafletMap.jsx";
@@ -18,18 +18,25 @@ export default function JoinView({ code }) {
   const { t } = useI18n();
   const room = usePlayerRoom(code);
   const [draftName, setDraftName] = useState("");
+  const [teamId, setTeamId] = useState(null);
   const [joined, setJoined] = useState(false);
   const [myPin, setMyPin] = useState(null);
   const [pinSent, setPinSent] = useState(false);
+  const [answer, setAnswer] = useState(null);
+  const [answerSent, setAnswerSent] = useState(false);
 
   const phase = room.state?.phase || "idle";
   const qKey = room.state?.qKey;
   const lockedBy = room.state?.lockedBy || null;
+  const teams = room.state?.teams || null;
+  const options = room.state?.options || [];
 
-  // New question/round → clear our previously dropped pin.
+  // New question/round → clear our previous pin and answer.
   useEffect(() => {
     setMyPin(null);
     setPinSent(false);
+    setAnswer(null);
+    setAnswerSent(false);
   }, [qKey]);
 
   // Tell the host we're gone when the tab/app closes, so the roster shrinks.
@@ -44,12 +51,21 @@ export default function JoinView({ code }) {
 
   const iLocked = lockedBy && lockedBy === room.deviceId;
   const online = room.status === "connected";
+  const needsTeam = !!teams;
+  const canJoin = draftName.trim() && (!needsTeam || teamId);
 
   const placePin = (lat, lng) => {
     setMyPin({ lat, lng });
     setPinSent(true);
     room.sendPin(lat, lng);
   };
+  const pick = (value) => {
+    setAnswer(value);
+    setAnswerSent(true);
+    room.sendAnswer(value);
+  };
+
+  const letters = ["A", "B", "C", "D", "E", "F"];
 
   return (
     <div className="qn-app-bg flex min-h-screen flex-col px-5 py-6 font-sans text-stone-900 antialiased dark:text-stone-100">
@@ -80,8 +96,8 @@ export default function JoinView({ code }) {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                if (!draftName.trim()) return;
-                room.join(draftName);
+                if (!canJoin) return;
+                room.join(draftName, teamId);
                 setJoined(true);
               }}
             >
@@ -93,12 +109,33 @@ export default function JoinView({ code }) {
                 maxLength={24}
                 onChange={(e) => setDraftName(e.target.value)}
               />
-              <Button
-                type="submit"
-                variant="accent"
-                className="mt-4 w-full px-6 py-3.5 text-base"
-                disabled={!draftName.trim()}
-              >
+              {needsTeam && (
+                <div className="mt-4">
+                  <p className="mb-2 text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickTeam")}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {teams.map((tm) => (
+                      <button
+                        type="button"
+                        key={tm.id}
+                        onClick={() => setTeamId(tm.id)}
+                        className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-semibold transition ${FOCUS} ${
+                          teamId === tm.id
+                            ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-500/10 dark:text-indigo-300"
+                            : "border-stone-200 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200"
+                        }`}
+                      >
+                        <span
+                          className="h-3 w-3 shrink-0 rounded-full"
+                          style={{ backgroundColor: tm.color || "#6366f1" }}
+                        />
+                        <span className="min-w-0 truncate">{tm.name}</span>
+                        {teamId === tm.id && <Check size={15} className="ml-auto shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <Button type="submit" variant="accent" className="mt-4 w-full px-6 py-3.5 text-base" disabled={!canJoin}>
                 {t("join.joinGame")}
               </Button>
             </form>
@@ -157,7 +194,85 @@ export default function JoinView({ code }) {
               </div>
             )}
 
-            {phase !== "buzz" && phase !== "map" && (
+            {phase === "choice" && (
+              <div className="flex flex-1 flex-col justify-center">
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
+                  <ListChecks size={16} /> {t("join.tapAnswer")}
+                </div>
+                <div className="grid gap-2.5">
+                  {options.map((opt, oi) => {
+                    const selected = answer === oi;
+                    return (
+                      <button
+                        key={oi}
+                        onClick={() => pick(oi)}
+                        className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-left text-lg font-medium transition active:scale-[0.99] ${FOCUS} ${
+                          selected
+                            ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-500/10 dark:text-indigo-200"
+                            : "border-stone-200 bg-white text-stone-800 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+                        }`}
+                      >
+                        <span
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                            selected
+                              ? "bg-indigo-600 text-white"
+                              : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                          }`}
+                        >
+                          {letters[oi]}
+                        </span>
+                        <span className="min-w-0 flex-1">{opt}</span>
+                        {selected && <Check size={18} className="shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p
+                  className={`mt-4 text-center text-sm ${answerSent ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}
+                >
+                  {answerSent ? t("join.submitted") : t("join.tapAnswer")}
+                </p>
+              </div>
+            )}
+
+            {phase === "number" && (
+              <div className="flex flex-1 flex-col justify-center">
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
+                  <Hash size={16} /> {t("join.enterNumber")}
+                </div>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const v = +answer;
+                    if (answer === null || answer === "" || !Number.isFinite(v)) return;
+                    pick(v);
+                  }}
+                >
+                  <input
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    className={`${inputCls} text-center text-2xl font-bold`}
+                    placeholder="0"
+                    value={answer ?? ""}
+                    onChange={(e) => {
+                      setAnswer(e.target.value);
+                      setAnswerSent(false);
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    variant="accent"
+                    className="mt-4 w-full px-6 py-3.5 text-base"
+                    disabled={answer === null || answer === "" || answerSent}
+                  >
+                    {answerSent ? t("join.submitted") : t("join.submit")}
+                  </Button>
+                </form>
+              </div>
+            )}
+
+            {phase !== "buzz" && phase !== "map" && phase !== "choice" && phase !== "number" && (
               <div className="flex flex-1 flex-col items-center justify-center text-center">
                 <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
                   <Radio size={34} className="text-stone-400" />

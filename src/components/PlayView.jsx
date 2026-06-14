@@ -25,6 +25,7 @@ import {
   Plus,
   Minus,
   X,
+  Check,
 } from "lucide-react";
 import { uid, ytId, nextNonEmpty, haversineKm, morphValue, hintHasContent } from "../lib/model.js";
 import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, colorAt, SoundToggle } from "./ui.jsx";
@@ -60,6 +61,18 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const round = quiz.rounds[game.ri];
   const upd = (patch) => setGame({ ...game, ...patch });
   const buzzerOn = !!room?.enabled;
+
+  // Map a phone deviceId to its scoring entity (a solo player or a team).
+  const entityForDevice = (deviceId) => game.players.find((p) => (p.deviceIds || []).includes(deviceId));
+  // Re-key a {deviceId: value} map (room.pins / room.answers) by entity id.
+  const mapByEntity = (deviceMap) => {
+    const out = {};
+    for (const [d, v] of Object.entries(deviceMap || {})) {
+      const e = entityForDevice(d);
+      if (e) out[e.id] = v;
+    }
+    return out;
+  };
 
   const isJeop = round?.type === "jeopardy";
   const timerSecs = round?.timer || 0;
@@ -116,6 +129,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.idle();
     } else if (round?.type === "map") {
       room.collectPins(qKey);
+    } else if (round?.type === "choice") {
+      room.collectAnswers(qKey, { phase: "choice", options: round.questions[game.qi]?.options || [] });
+    } else if (round?.type === "number") {
+      room.collectAnswers(qKey, { phase: "number" });
     } else {
       room.arm(qKey);
     }
@@ -179,6 +196,41 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const reveal = () => {
     playSound("reveal");
     upd({ revealed: true });
+  };
+
+  // Multiple-choice reveal: auto-award everyone who picked the correct option.
+  const revealChoice = (q) => {
+    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const awarded = {};
+    const players = game.players.map((p) => {
+      if (ans[p.id] === q.correct) {
+        awarded[p.id] = q.points;
+        return { ...p, score: p.score + q.points };
+      }
+      return p;
+    });
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
+  };
+
+  // Closest-number reveal: auto-award the nearest guess to the answer.
+  const revealNumber = (q) => {
+    let awarded = {};
+    let players = game.players;
+    if (q.answer != null) {
+      const ans = mapByEntity(buzzerOn ? room.answers : {});
+      const ranked = game.players
+        .map((p) => ({ p, g: +ans[p.id] }))
+        .filter((x) => Number.isFinite(x.g))
+        .sort((a, b) => Math.abs(a.g - q.answer) - Math.abs(b.g - q.answer));
+      if (ranked.length) {
+        const winnerId = ranked[0].p.id;
+        awarded = { [winnerId]: q.points };
+        players = game.players.map((p) => (p.id === winnerId ? { ...p, score: p.score + q.points } : p));
+      }
+    }
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
   };
 
   const adjustScore = (pid, delta) =>
@@ -662,12 +714,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
     </p>
   );
 
-  /* buzzer banner: who buzzed first, with re-arm/reset (only when phones are connected) */
-  const BuzzerBar = buzzerOn && !game.revealed && round.type !== "map" && (
+  /* buzzer banner: who buzzed first, with re-arm/reset (only for buzz rounds) */
+  const buzzName = room?.buzz ? entityForDevice(room.buzz.deviceId)?.name || room.buzz.name : "";
+  const BuzzerBar = buzzerOn && !game.revealed && !["map", "choice", "number"].includes(round.type) && (
     <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
       {room.buzz ? (
         <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
-          <Bell size={15} /> {t("play.buzzedFirst", { name: room.buzz.name })}
+          <Bell size={15} /> {t("play.buzzedFirst", { name: buzzName })}
         </span>
       ) : (
         <span className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-1.5 text-sm font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-300">
@@ -913,10 +966,131 @@ export default function PlayView({ game, setGame, onExit, room }) {
     );
   }
 
+  if (round.type === "choice") {
+    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const counts = q.options.map((_, oi) => Object.values(answersByEntity).filter((v) => v === oi).length);
+    const answered = Object.keys(answersByEntity).length;
+    const letters = ["A", "B", "C", "D", "E", "F"];
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+        {buzzerOn && !game.revealed && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-sm text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">
+            <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
+          </p>
+        )}
+        <div className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-2">
+          {q.options.map((opt, oi) => {
+            const isCorrect = game.revealed && oi === q.correct;
+            return (
+              <div
+                key={oi}
+                className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                  isCorrect
+                    ? "border-emerald-400 bg-emerald-50 dark:border-emerald-500/50 dark:bg-emerald-500/10"
+                    : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                }`}
+              >
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                    isCorrect ? "bg-emerald-500 text-white" : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                  }`}
+                >
+                  {letters[oi]}
+                </span>
+                <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
+                {buzzerOn && <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>}
+                {isCorrect && <Check size={18} className="text-emerald-600 dark:text-emerald-400" />}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-6">
+          {game.revealed ? (
+            NextBtn
+          ) : (
+            <Button className="px-6 py-3.5 text-base" onClick={() => revealChoice(q)}>
+              <Eye size={18} /> {t("play.revealAnswer")}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (round.type === "number") {
+    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answered = Object.values(answersByEntity).filter((v) => Number.isFinite(+v)).length;
+    const ranked =
+      q.answer != null
+        ? game.players
+            .map((p, i) => ({ p, i, g: +answersByEntity[p.id] }))
+            .filter((x) => Number.isFinite(x.g))
+            .map((x) => ({ ...x, diff: Math.abs(x.g - q.answer) }))
+            .sort((a, b) => a.diff - b.diff)
+        : [];
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+        {buzzerOn && !game.revealed && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1 text-sm text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">
+            <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
+          </p>
+        )}
+        <div className="mt-8" style={{ minHeight: 72 }}>
+          {game.revealed ? (
+            <p className="qn-pop qn-answer text-3xl font-bold text-indigo-600 dark:text-indigo-400 md:text-5xl">
+              {q.answer != null ? `${q.answer}${q.unit ? ` ${q.unit}` : ""}` : "—"}
+            </p>
+          ) : (
+            <Button className="px-6 py-3.5 text-base" onClick={() => revealNumber(q)}>
+              <Eye size={18} /> {t("play.revealAnswer")}
+            </Button>
+          )}
+        </div>
+        {game.revealed && ranked.length > 0 && (
+          <div className="mx-auto mt-5 max-w-md space-y-1.5 text-left">
+            {ranked.map((x, idx) => (
+              <div
+                key={x.p.id}
+                className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-sm ${
+                  idx === 0
+                    ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                    : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                }`}
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
+                  {x.p.name}
+                  <span className="text-stone-400">
+                    {x.g}
+                    {q.unit ? ` ${q.unit}` : ""}
+                  </span>
+                  {idx === 0 && (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <Target size={12} /> {t("play.closest")}
+                    </span>
+                  )}
+                </span>
+                <span className="tabular-nums text-stone-500 dark:text-stone-400">Δ {Math.round(x.diff * 100) / 100}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {game.revealed && <div className="mt-6">{NextBtn}</div>}
+      </div>
+    );
+  }
+
   if (round.type === "map") {
     const hasAnswer = q.lat != null && q.lng != null;
-    // Merge host-placed guesses with pins submitted from phones (keyed by playerId === deviceId).
-    const combined = { ...(game.guesses || {}), ...(buzzerOn ? room.pins : {}) };
+    // Merge host-placed guesses with phone-submitted pins (re-keyed by entity).
+    const phonePins = buzzerOn ? mapByEntity(room.pins) : {};
+    const combined = { ...(game.guesses || {}), ...phonePins };
     const markers = game.players
       .map((p, i) => {
         const g = combined[p.id];
@@ -941,7 +1115,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           <div className="mx-auto mt-5 max-w-2xl">
             {buzzerOn && (
               <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
-                <Radio size={14} /> {t("play.pinsIn", { n: Object.keys(room.pins).length, total: game.players.length })}
+                <Radio size={14} /> {t("play.pinsIn", { n: Object.keys(phonePins).length, total: game.players.length })}
               </p>
             )}
             <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
