@@ -9,7 +9,7 @@
    / LeafletMap). The host screen keeps its own interactive rendering.
    ==================================================================== */
 
-import { ytId, hintHasContent, mapillaryEmbedUrl } from "../lib/model.js";
+import { ytId, hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { Check, Target } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
@@ -33,10 +33,19 @@ const Q = ({ children }) => (
  * @param {object} props.q Static display fields (present.q).
  * @param {boolean} props.revealed
  * @param {number} props.hintsShown
- * @param {number} props.step Morph/fusion reveal step.
+ * @param {number} props.step Morph/fusion reveal step (also the video clip-ladder step).
  * @param {object|null} props.reveal Answer data (live.reveal), present once revealed.
+ * @param {boolean} [props.buzzed] Someone has buzzed — pause the video clip.
  */
-export default function RoundBody({ type, q = {}, revealed = false, hintsShown = 1, step = 0, reveal = null }) {
+export default function RoundBody({
+  type,
+  q = {},
+  revealed = false,
+  hintsShown = 1,
+  step = 0,
+  reveal = null,
+  buzzed = false,
+}) {
   const { t } = useI18n();
 
   if (type === "classic" || type === "jeopardy") {
@@ -74,7 +83,13 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
         {q.q && <Q>{q.q}</Q>}
         <div className="mx-auto mt-5 max-w-5xl">
           {vid ? (
-            <YouTubePlayer videoId={vid} audioOnly={!!q.audioOnly} start={q.start} end={q.end} />
+            <YouTubePlayer
+              videoId={vid}
+              audioOnly={!!q.audioOnly}
+              start={q.start}
+              end={clipEnd(q, step)}
+              pauseSignal={buzzed ? "buzzed" : null}
+            />
           ) : (
             <p className="text-stone-400">{t("play.noVideo")}</p>
           )}

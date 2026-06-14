@@ -15,6 +15,7 @@ import {
   TimerReset,
   Pause,
   Play,
+  FastForward,
   Target,
   Radio,
   Bell,
@@ -35,6 +36,8 @@ import {
   nextNonEmpty,
   haversineKm,
   morphValue,
+  clipLadderActive,
+  clipEnd,
   hintHasContent,
   buildPresentQ,
   buildLive,
@@ -135,6 +138,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (!q) return 0;
     if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
     if (round.type === "morph" || round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
+    if (round.type === "video" && clipLadderActive(q)) return morphValue(q.points, q.steps, morphStep);
     return ptsOr(q.points, 10);
   })();
 
@@ -182,9 +186,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
         allowNegative,
         recap,
         recapFrom: game.roundStartScores,
+        buzzed: !!room?.buzz,
       }),
     );
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, room?.buzz?.deviceId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
@@ -436,6 +441,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
             upd({ hintsShown: game.hintsShown + 1 });
           else if (round.type === "morph" || round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
+          else if (round.type === "video" && clipLadderActive(cq)) setMorphStep((s) => Math.min(cq.steps, s + 1));
         }
         break;
       case "sign":
@@ -487,6 +493,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
+        setMorphStep((s) => Math.min(q.steps, s + 1));
+      else if (k === "h" && !game.revealed && round.type === "video" && clipLadderActive(q))
         setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
       else if (allowNegative && game.revealed && (e.key === "+" || e.key === "=")) setSign(1);
@@ -1106,13 +1114,29 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   if (round.type === "video") {
     const vid = ytId(q.url);
+    const ladder = clipLadderActive(q);
+    const atEnd = morphStep >= q.steps;
     body = (
       <div className="text-center">
         {Progress}
         {TimerPill}
+        {ladder && !game.revealed && (
+          <div className="mb-4 flex items-center justify-center">
+            <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
+              {t("play.worth", { value })}
+            </span>
+          </div>
+        )}
         <div className="mx-auto max-w-2xl">
           {vid ? (
-            <YouTubePlayer key={qKey} videoId={vid} audioOnly={!!q.audioOnly} start={q.start} end={q.end} />
+            <YouTubePlayer
+              key={qKey}
+              videoId={vid}
+              audioOnly={!!q.audioOnly}
+              start={q.start}
+              end={clipEnd(q, morphStep)}
+              pauseSignal={room?.buzz?.deviceId || null}
+            />
           ) : (
             <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
               {t("play.noVideo")}
@@ -1120,13 +1144,27 @@ export default function PlayView({ game, setGame, onExit, room }) {
           )}
         </div>
         <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
-        <div className="mt-6" style={{ minHeight: 64 }}>
+        <div className="mt-6 flex flex-wrap justify-center gap-3" style={{ minHeight: 64 }}>
           {game.revealed ? (
             <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
               {q.a}
             </p>
           ) : (
-            RevealBtn
+            <>
+              {ladder && !atEnd && (
+                <Button
+                  variant="outline"
+                  className="px-5 py-3 text-base"
+                  onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
+                >
+                  <FastForward size={18} /> {t("play.extendClip")}{" "}
+                  <span className="text-sm text-stone-400">
+                    ({morphStep + 1}/{q.steps + 1})
+                  </span>
+                </Button>
+              )}
+              {RevealBtn}
+            </>
           )}
         </div>
         {game.revealed && <div className="mt-6">{NextBtn}</div>}

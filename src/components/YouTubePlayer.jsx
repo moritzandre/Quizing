@@ -44,8 +44,9 @@ const fmt = (s) => {
  * @param {boolean} [props.audioOnly] Hide the video behind a cover; play sound only.
  * @param {number|null} [props.start] Trim: start playback at this second.
  * @param {number|null} [props.end] Trim: pause when playback reaches this second.
+ * @param {*} [props.pauseSignal] When this changes to a truthy value, pause playback (e.g. on first buzz).
  */
-export default function YouTubePlayer({ videoId, audioOnly = false, start = null, end = null }) {
+export default function YouTubePlayer({ videoId, audioOnly = false, start = null, end = null, pauseSignal = null }) {
   const hostRef = useRef(null);
   const playerRef = useRef(null);
   const startRef = useRef(start);
@@ -153,6 +154,19 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
       if (host) host.innerHTML = "";
     };
   }, [videoId, start]);
+
+  // Pause playback when the signal changes to a truthy value (e.g. first buzz).
+  useEffect(() => {
+    if (!pauseSignal) return;
+    const p = playerRef.current;
+    if (p && typeof p.pauseVideo === "function") {
+      try {
+        p.pauseVideo();
+      } catch {
+        /* player not ready */
+      }
+    }
+  }, [pauseSignal]);
 
   const playing = state === "playing";
   // Seek-bar bounds: honor a trim window only when end is past start.

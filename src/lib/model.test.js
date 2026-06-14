@@ -8,6 +8,8 @@ import {
   moveItem,
   haversineKm,
   morphValue,
+  clipLadderActive,
+  clipEnd,
   summarizeGame,
   aggregateLeaderboard,
   makeHint,
@@ -95,7 +97,17 @@ describe("normalizeQuiz", () => {
         title: "V",
         timer: null,
         questions: [
-          { id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10, audioOnly: true, start: 5, end: 20 },
+          {
+            id: "v1",
+            url: `https://youtu.be/${ID}`,
+            q: "Q",
+            a: "A",
+            points: 10,
+            audioOnly: true,
+            start: 5,
+            end: 20,
+            steps: 0,
+          },
         ],
       },
       {
@@ -220,6 +232,19 @@ describe("normalizeQuiz", () => {
   it("normalizes fusion rounds with defaults", () => {
     const q = normalizeQuiz({ rounds: [{ type: "fusion", questions: [{ urlA: "a", urlB: "b", a: "X+Y" }] }] });
     expect(q.rounds[0].questions[0]).toMatchObject({ urlA: "a", urlB: "b", a: "X+Y", points: 40, steps: 4 });
+  });
+
+  it("normalizes video rounds: trim window + clip-ladder steps clamp + defaults", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "video", questions: [{ url: "u", a: "A", start: 10, end: 40, steps: 99 }] },
+        { type: "video", questions: [{ url: "u", a: "A", steps: -3 }] },
+        { type: "video", questions: [{}] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ start: 10, end: 40, steps: 8 }); // clamped to 8
+    expect(q.rounds[1].questions[0].steps).toBe(0); // negative → 0
+    expect(q.rounds[2].questions[0]).toMatchObject({ steps: 0, audioOnly: false, points: 10 });
   });
 
   it("normalizes choice rounds: clamps correct, coerces options, defaults", () => {
@@ -482,6 +507,36 @@ describe("morphValue", () => {
   });
 });
 
+describe("clip ladder (video/audio)", () => {
+  it("is active only with steps>0 and a real trim window", () => {
+    expect(clipLadderActive({ steps: 2, start: 10, end: 40 })).toBe(true);
+    expect(clipLadderActive({ steps: 0, start: 10, end: 40 })).toBe(false); // no ladder
+    expect(clipLadderActive({ steps: 2, start: 10, end: 10 })).toBe(false); // empty window
+    expect(clipLadderActive({ steps: 2, start: 10 })).toBe(false); // no end
+    expect(clipLadderActive({ steps: "2", start: 0, end: 30 })).toBe(true); // coerces
+    expect(clipLadderActive(null)).toBe(false);
+  });
+
+  it("grows the out-point from the first slice to the full end across steps", () => {
+    const q = { steps: 2, start: 0, end: 30 }; // 3 slices: 10, 20, 30
+    expect(clipEnd(q, 0)).toBeCloseTo(10);
+    expect(clipEnd(q, 1)).toBeCloseTo(20);
+    expect(clipEnd(q, 2)).toBeCloseTo(30);
+    expect(clipEnd(q, 99)).toBeCloseTo(30); // clamps to the full window
+  });
+
+  it("honors a non-zero start offset", () => {
+    const q = { steps: 1, start: 60, end: 120 }; // 2 slices over a 60s window
+    expect(clipEnd(q, 0)).toBeCloseTo(90);
+    expect(clipEnd(q, 1)).toBeCloseTo(120);
+  });
+
+  it("returns the plain end (or null) when the ladder is inactive", () => {
+    expect(clipEnd({ steps: 0, start: 5, end: 25 }, 0)).toBe(25);
+    expect(clipEnd({ steps: 2, start: 5 }, 0)).toBe(null);
+  });
+});
+
 describe("summarizeGame", () => {
   const mk = (scores) => ({
     quiz: { title: "Q" },
@@ -595,6 +650,35 @@ describe("presenter payloads", () => {
     const r = buildLive(game(), { recap: true, recapFrom: { a: 10, b: 5, junk: "x" } });
     expect(r.showRecap).toBe(true);
     expect(r.recapFrom).toEqual({ a: 10, b: 5 }); // non-numeric entries dropped
+  });
+
+  it("buildLive carries the buzzed flag (so the TV pauses the clip)", () => {
+    expect(buildLive(game()).buzzed).toBe(false);
+    expect(buildLive(game(), { buzzed: true }).buzzed).toBe(true);
+    expect(normalizeLive({ buzzed: 1 }).buzzed).toBe(true);
+    expect(normalizeLive({}).buzzed).toBe(false);
+  });
+
+  it("buildPresentQ → normalizePresent round-trips a video clip ladder", () => {
+    const g = game({
+      quiz: {
+        title: "Q",
+        rounds: [
+          {
+            id: "r",
+            type: "video",
+            title: "V",
+            questions: [
+              { id: "v1", url: "https://youtu.be/x", q: "?", a: "A", points: 10, start: 10, end: 40, steps: 2 },
+            ],
+          },
+        ],
+      },
+    });
+    const n = normalizePresent(buildPresentQ(g));
+    expect(n.roundType).toBe("video");
+    expect(n.q).toMatchObject({ start: 10, end: 40, steps: 2 });
+    expect(clipEnd(n.q, 0)).toBeCloseTo(20); // (40-10)/3 + 10
   });
 
   it("buildPresentQ has no q when not in the question stage", () => {

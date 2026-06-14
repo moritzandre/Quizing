@@ -148,6 +148,7 @@ export default function PresenterView({ code }) {
       hintsShown={live?.hintsShown || 1}
       step={live?.step || 0}
       reveal={live?.reveal || null}
+      buzzed={!!live?.buzzed}
     />,
   );
 }

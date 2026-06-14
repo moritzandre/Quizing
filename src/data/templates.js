@@ -76,7 +76,9 @@ export const ROUND_TEMPLATES = [
     round: {
       type: "video",
       title: "Name That Clip",
-      questions: [{ url: "", q: "What is this from?", a: "", points: 10, audioOnly: false, start: null, end: null }],
+      questions: [
+        { url: "", q: "What is this from?", a: "", points: 10, audioOnly: false, start: null, end: null, steps: 0 },
+      ],
     },
   },
   {
@@ -198,7 +200,7 @@ const ROUND_SHAPES = {
   hints:
     'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
   video:
-    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]',
+    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null, "steps": 0 }]   // start/end trim the clip; steps>0 reveals it in chunks (fewer points each), like the hint ladder',
   image: 'questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]',
   morph:
     'questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]',
@@ -238,7 +240,7 @@ Round types and their question shapes:
 - "classic":  questions: [{ "q": string, "a": string, "points": number }]
 - "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]
 - "hints":    questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder
-- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]
+- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null, "steps": 0 }]   // steps>0: reveal the [start,end] clip in chunks, fewer points each
 - "image":    questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]
 - "morph":    questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]
 - "fusion":   questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]

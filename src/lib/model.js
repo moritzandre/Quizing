@@ -197,6 +197,7 @@ export function makeQuestion(type) {
         audioOnly: false,
         start: null,
         end: null,
+        steps: 0,
       };
     case "image":
       return { id: uid(), url: "", q: "What do you see?", a: "", points: 10 };
@@ -276,6 +277,7 @@ export function normalizeQuiz(raw) {
               audioOnly: !!q?.audioOnly,
               start: numOrNull(q?.start),
               end: numOrNull(q?.end),
+              steps: Math.max(0, Math.min(8, num(q?.steps, 0))),
             });
           if (r.type === "image")
             Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
@@ -453,6 +455,30 @@ export const countQuestions = (quiz) =>
 export const morphValue = (points, steps, step) =>
   Math.max(1, Math.round((num(points, 10) * (steps - step + 1)) / (steps + 1)));
 
+/**
+ * Video/audio "clip ladder": the host plays a short slice of the trimmed
+ * [start,end] window and extends it step by step (like the hint ladder),
+ * awarding fewer points each extension. Active only when `steps` > 0 and the
+ * trim window is real (end past start).
+ * @param {object} q A video question.
+ */
+export const clipLadderActive = (q) => num(q?.steps, 0) > 0 && q?.end != null && q.end > num(q?.start, 0);
+
+/**
+ * Out-point (in seconds) of the clip for the current ladder step. Step 0 plays
+ * the first 1/(steps+1) of the window; the final step plays to `end`. Returns
+ * the question's plain `end` when the ladder isn't active.
+ * @param {object} q A video question.
+ * @param {number} step Current ladder step (0-based).
+ */
+export const clipEnd = (q, step) => {
+  if (!clipLadderActive(q)) return q?.end ?? null;
+  const lo = num(q.start, 0);
+  const steps = num(q.steps, 0);
+  const span = q.end - lo;
+  return lo + (span * Math.min(num(step, 0) + 1, steps + 1)) / (steps + 1);
+};
+
 /* ---- persistent leaderboard ---- */
 
 /**
@@ -518,6 +544,7 @@ function presentQ(type, q) {
         audioOnly: !!q.audioOnly,
         start: numOrNull(q.start),
         end: numOrNull(q.end),
+        steps: num(q.steps, 0),
       };
     case "image":
       return { q: str(q.q), url: str(q.url), points: num(q.points, 10) };
@@ -622,6 +649,7 @@ export function buildLive(game, opts = {}) {
     allowNegative: !!opts.allowNegative,
     showRecap: !!opts.recap,
     recapFrom: opts.recap ? scoreMap(opts.recapFrom) : null,
+    buzzed: !!opts.buzzed,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -690,6 +718,7 @@ export function normalizeLive(raw) {
     allowNegative: !!raw.allowNegative,
     showRecap: !!raw.showRecap,
     recapFrom: raw.showRecap ? scoreMap(raw.recapFrom) : null,
+    buzzed: !!raw.buzzed,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",

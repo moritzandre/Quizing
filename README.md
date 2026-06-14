@@ -9,7 +9,7 @@ A host-led party quiz app. One host screen runs the show; players can buzz in, d
 | Classic         | Read the question, reveal the answer, tap whoever got it right.                                                                                          |
 | Jeopardy        | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                                     |
 | Hint Ladder     | The answer starts at full value; every extra hint lowers it. Hints can be **text, image, audio, video, or a map pin**.                                   |
-| Video           | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode.                    |
+| Video           | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode. The clip **auto-pauses when a player buzzes in**, and an optional **clip ladder** plays a short slice you extend step by step for fewer points. |
 | Picture         | Show an image (paste a URL or upload one), then reveal the answer.                                                                                       |
 | Morph           | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
 | Fusion          | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
@@ -78,6 +78,7 @@ It reuses the same MQTT room, so there's no extra setup and no HDMI cable — ju
 
 - **Image crop** — on any picture field, click **Crop** to trim/zoom the image in place (output is downscaled for you).
 - **Video / audio trim** — give a YouTube clip or audio/video hint a **start** and **end** (seconds) so only the chosen segment plays.
+- **Clip ladder** — on a video question, set **Clip ladder** above 0 (needs a start/end trim window) so the host plays a short slice and extends it step by step (the **Extend clip** button, the **H** key, or the host remote), awarding fewer points the more it's extended — like the hint ladder. The clip also **auto-pauses when a player buzzes in**.
 - **Richer maps** — switch a map question between **Map** and **Satellite** (keyless Esri imagery), or **Search for a place** to drop the answer pin and fill in its name automatically (via OpenStreetMap Nominatim). Paste a **Mapillary** link/ID to embed a **street view** on the question — the TV/host shows it as the prompt and reveals the map answer afterwards. (Use the **Street view** button to find a spot on Mapillary, then copy its link.)
 - **Templates** — the round picker offers per-type starters, and the home screen has **New from template** for whole-quiz starters.
 - **Import round(s) from JSON** — the round picker's **Import round(s)** button takes pasted JSON or a `.quiz.json` file (a single round, an array, or a whole quiz) and appends the rounds to the quiz you're editing (validated and re-id'd).
@@ -188,7 +189,9 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "id": "r4",
         "type": "video",
         "title": "Watch & Listen",
-        // audioOnly: true hides the video and plays just the sound; start/end (seconds) trim the clip
+        // audioOnly: true hides the video and plays just the sound; start/end (seconds) trim the clip.
+        // steps > 0 turns on the clip ladder: the host plays a short slice and extends it step by step
+        // (needs a start/end trim window), awarding fewer points each extension — like the hint ladder.
         "questions": [
           {
             "id": "v1",
@@ -199,6 +202,7 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
             "audioOnly": false,
             "start": null,
             "end": null,
+            "steps": 0,
           },
         ],
       },
