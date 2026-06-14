@@ -273,6 +273,12 @@ const en = {
     "Two images are blended into one. Guess both halves; defuse step by step to peek at each — fewer points the more you peek.",
   "round.map.label": "Map",
   "round.map.desc": "Everyone drops a pin where they think it is. Reveal the real spot and the closest guess wins.",
+  "round.choice.label": "Multiple Choice",
+  "round.choice.desc":
+    "Players tap an answer on their phones. Reveal the correct option — everyone who picked it scores automatically.",
+  "round.number.label": "Closest Guess",
+  "round.number.desc":
+    "Everyone submits a number from their phone. Reveal the answer — the closest guess wins automatically.",
 };
 
 const de = {
@@ -540,6 +546,12 @@ const de = {
     "Zwei Bilder werden zu einem vermischt. Errate beide Hälften; entmische schrittweise, um zu spähen — je mehr Spähen, desto weniger Punkte.",
   "round.map.label": "Karte",
   "round.map.desc": "Alle setzen einen Pin, wo sie es vermuten. Decke den echten Ort auf — der näheste Tipp gewinnt.",
+  "round.choice.label": "Multiple Choice",
+  "round.choice.desc":
+    "Spieler tippen die Antwort auf ihren Handys. Decke die richtige Option auf — wer sie gewählt hat, punktet automatisch.",
+  "round.number.label": "Näheste Schätzung",
+  "round.number.desc":
+    "Alle senden eine Zahl von ihrem Handy. Decke die Antwort auf — der näheste Tipp gewinnt automatisch.",
 };
 
 export const STRINGS = { en, de };
