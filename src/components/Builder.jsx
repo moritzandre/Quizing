@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import {
   uid,
-  ytId,
+  mediaSource,
   fileToDataUrl,
   makeQuestion,
   makeCategory,
@@ -936,7 +936,8 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
                     {(item, i, hp) => {
-                      const ok = ytId(item.url);
+                      const src = mediaSource(item.url);
+                      const ok = !!src;
                       return (
                         <div className={panelCls}>
                           <div className={rowLabelCls}>
@@ -956,6 +957,9 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           >
                             {item.url ? (ok ? t("builder.ytOk") : t("builder.ytBad")) : t("builder.ytPaste")}
                           </p>
+                          {src?.kind === "spotify" && (
+                            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("builder.spotifyNote")}</p>
+                          )}
                           <label className="mt-2 inline-flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-stone-300">
                             <input
                               type="checkbox"

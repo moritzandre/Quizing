@@ -32,7 +32,6 @@ import {
 } from "lucide-react";
 import {
   uid,
-  ytId,
   nextNonEmpty,
   haversineKm,
   morphValue,
@@ -52,7 +51,7 @@ import ScoreBar from "./ScoreBar.jsx";
 import PodiumClimb from "./PodiumClimb.jsx";
 import RoundRecap from "./RoundRecap.jsx";
 import LeafletMap from "./LeafletMap.jsx";
-import YouTubePlayer from "./YouTubePlayer.jsx";
+import MediaPlayer from "./MediaPlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
@@ -1116,7 +1115,6 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   if (round.type === "video" || round.type === "clip") {
-    const vid = ytId(q.url);
     const ladder = clipLadderActive(q);
     const atEnd = morphStep >= q.steps;
     body = (
@@ -1131,20 +1129,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
         <div className="mx-auto max-w-2xl">
-          {vid ? (
-            <YouTubePlayer
-              key={qKey}
-              videoId={vid}
-              audioOnly={!!q.audioOnly}
-              start={q.start}
-              end={clipEnd(q, morphStep)}
-              pauseSignal={room?.buzz?.deviceId || null}
-            />
-          ) : (
-            <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-              {t("play.noVideo")}
-            </div>
-          )}
+          <MediaPlayer
+            key={qKey}
+            url={q.url}
+            audioOnly={!!q.audioOnly}
+            start={q.start}
+            end={clipEnd(q, morphStep)}
+            pauseSignal={room?.buzz?.deviceId || null}
+          />
         </div>
         <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
         <div className="mt-6 flex flex-wrap justify-center gap-3" style={{ minHeight: 64 }}>

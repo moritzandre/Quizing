@@ -212,9 +212,9 @@ const ROUND_SHAPES = {
   hints:
     'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
   video:
-    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // start/end (seconds) optionally trim the clip; pauses automatically when a player buzzes',
+    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // url may be YouTube, a Spotify track (open.spotify.com/track/…), or a direct .mp3/.mp4 link; start/end (seconds) optionally trim it; pauses automatically when a player buzzes',
   clip:
-    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // the clip ladder: start/end is the FULL window; the host plays the first 1/(steps+1) of it and extends step by step, awarding fewer points each extension (like the hint ladder)',
+    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // the clip ladder: url may be YouTube, Spotify (great for music — dodges YouTube embed blocks), or a direct .mp3/.mp4; start/end is the FULL window; the host plays the first 1/(steps+1) of it and extends step by step for fewer points (like the hint ladder)',
   image: 'questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]',
   morph:
     'questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]',
@@ -254,8 +254,8 @@ Round types and their question shapes:
 - "classic":  questions: [{ "q": string, "a": string, "points": number }]
 - "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]
 - "hints":    questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder
-- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // start/end (seconds) optionally trim the clip
-- "clip":     questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // clip ladder: host plays the first 1/(steps+1) of [start,end] and extends step by step for fewer points
+- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // url: YouTube, Spotify track, or direct .mp3/.mp4; start/end (seconds) optionally trim the clip
+- "clip":     questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // clip ladder; url: YouTube, Spotify (best for music), or direct .mp3/.mp4; host plays the first 1/(steps+1) of [start,end] and extends for fewer points
 - "image":    questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]
 - "morph":    questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]
 - "fusion":   questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]

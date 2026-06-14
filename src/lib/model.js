@@ -111,6 +111,42 @@ export function ytId(url = "") {
   return /^[\w-]{11}$/.test(t) ? t : null;
 }
 
+/** Video file extensions played via a native <video> element. */
+const VIDEO_EXTS = ["mp4", "m4v", "mov", "webm", "ogv"];
+/** Audio file extensions played via a native <audio> element. */
+const AUDIO_EXTS = ["mp3", "m4a", "aac", "ogg", "oga", "opus", "wav", "flac"];
+
+/**
+ * Classify a clip/video URL into a playable media source. Lets a clip play from
+ * YouTube, Spotify, or a direct audio/video file — Spotify and direct files
+ * dodge YouTube's "embedding disabled" wall (common for music). The source is
+ * derived purely from the URL string, so nothing new has to be stored.
+ * @param {string} url A URL (or bare YouTube id).
+ * @returns {{kind:"youtube",id:string}|{kind:"spotify",id:string,spType:string,uri:string,embedUrl:string}|{kind:"file",url:string,media:"audio"|"video"}|null}
+ */
+export function mediaSource(url = "") {
+  const s = String(url).trim();
+  if (!s) return null;
+  // Spotify track/episode: open.spotify.com/(intl-xx/)track/ID, or spotify:track:ID
+  const sp = s.match(/(?:open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|episode)\/|spotify:(track|episode):)([A-Za-z0-9]+)/);
+  if (sp) {
+    const spType = sp[1] || sp[2];
+    const id = sp[3];
+    return { kind: "spotify", id, spType, uri: `spotify:${spType}:${id}`, embedUrl: `https://open.spotify.com/embed/${spType}/${id}` };
+  }
+  // Direct media file by extension (allowing a trailing ?query/#hash) or data: URL
+  const ext = s.match(/\.([a-z0-9]+)(?:[?#]|$)/i);
+  const isData = /^data:(audio|video)\//i.test(s);
+  if (isData || (ext && [...VIDEO_EXTS, ...AUDIO_EXTS].includes(ext[1].toLowerCase()))) {
+    const e = isData ? (/^data:video/i.test(s) ? "mp4" : "mp3") : ext[1].toLowerCase();
+    return { kind: "file", url: s, media: VIDEO_EXTS.includes(e) ? "video" : "audio" };
+  }
+  // Fall back to YouTube (the most permissive matcher) last.
+  const yt = ytId(s);
+  if (yt) return { kind: "youtube", id: yt };
+  return null;
+}
+
 /**
  * Move an array element from one index to another (returns a new array).
  * @param {Array} arr Source array (not mutated).

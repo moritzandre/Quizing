@@ -9,13 +9,12 @@
    / LeafletMap). The host screen keeps its own interactive rendering.
    ==================================================================== */
 
-import { ytId, hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
-import { useI18n } from "../i18n/I18nProvider.jsx";
+import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { Check, Target } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
-import YouTubePlayer from "./YouTubePlayer.jsx";
+import MediaPlayer from "./MediaPlayer.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import MapillaryEmbed from "./MapillaryEmbed.jsx";
 
@@ -48,7 +47,6 @@ export default function RoundBody({
   buzzed = false,
   compact = false,
 }) {
-  const { t } = useI18n();
   const mapH = compact ? "h-[42vh]" : "h-[70vh]";
 
   if (type === "classic" || type === "jeopardy") {
@@ -80,22 +78,18 @@ export default function RoundBody({
   }
 
   if (type === "video" || type === "clip") {
-    const vid = ytId(q.url);
     return (
       <div className="text-center">
         {q.q && <Q>{q.q}</Q>}
         <div className="mx-auto mt-5 max-w-5xl">
-          {vid ? (
-            <YouTubePlayer
-              videoId={vid}
-              audioOnly={!!q.audioOnly}
-              start={q.start}
-              end={clipEnd(q, step)}
-              pauseSignal={buzzed ? "buzzed" : null}
-            />
-          ) : (
-            <p className="text-stone-400">{t("play.noVideo")}</p>
-          )}
+          <MediaPlayer
+            key={q.url || "none"}
+            url={q.url}
+            audioOnly={!!q.audioOnly}
+            start={q.start}
+            end={clipEnd(q, step)}
+            pauseSignal={buzzed ? "buzzed" : null}
+          />
         </div>
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
       </div>

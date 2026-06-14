@@ -1,0 +1,229 @@
+/* ====================================================================
+   SPOTIFY PLAYER (embed iFrame API, masked)
+   --------------------------------------------------------------------
+   Plays a Spotify track/episode for clips that YouTube blocks from
+   embedding (common for music). The Spotify embed always loads, but it
+   shows the title + cover — which would spoil the answer — so we cover it
+   completely and drive playback through Spotify's iFrame API (play/pause/
+   seek), rendering our own equalizer + controls on top. Note: without a
+   Spotify Premium session in the browser only the ~30s preview plays, so
+   the clip ladder runs over that preview.
+   ==================================================================== */
+
+import { useEffect, useRef, useState } from "react";
+import { Play, Pause, RotateCcw, Music } from "lucide-react";
+import { useI18n } from "../i18n/I18nProvider.jsx";
+
+const fmt = (s) => {
+  if (!Number.isFinite(s)) return "0:00";
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2, "0")}`;
+};
+
+/** Load the Spotify iFrame API once and resolve with the IFrameAPI namespace. */
+let spotifyApiPromise = null;
+function loadSpotifyAPI() {
+  if (spotifyApiPromise) return spotifyApiPromise;
+  spotifyApiPromise = new Promise((resolve, reject) => {
+    if (window.SpotifyIframeApi) return resolve(window.SpotifyIframeApi);
+    const prev = window.onSpotifyIframeApiReady;
+    window.onSpotifyIframeApiReady = (IFrameAPI) => {
+      window.SpotifyIframeApi = IFrameAPI;
+      if (typeof prev === "function") prev(IFrameAPI);
+      resolve(IFrameAPI);
+    };
+    const tag = document.createElement("script");
+    tag.src = "https://open.spotify.com/embed/iframe-api/v1";
+    tag.async = true;
+    tag.onerror = () => reject(new Error("Could not load the Spotify player."));
+    document.head.appendChild(tag);
+  });
+  return spotifyApiPromise;
+}
+
+/**
+ * @param {object} props
+ * @param {string} props.uri Spotify URI (spotify:track:ID / spotify:episode:ID).
+ * @param {number|null} [props.start] Trim: seek here on first play (seconds).
+ * @param {number|null} [props.end] Trim: pause when playback reaches this second.
+ * @param {*} [props.pauseSignal] When this changes to a truthy value, pause (e.g. first buzz).
+ */
+export default function SpotifyPlayer({ uri, start = null, end = null, pauseSignal = null }) {
+  const { t } = useI18n();
+  const hostRef = useRef(null);
+  const ctrlRef = useRef(null);
+  const startedRef = useRef(false);
+  const startRef = useRef(start);
+  startRef.current = start;
+  const endRef = useRef(end);
+  endRef.current = end;
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [cur, setCur] = useState(0);
+  const [dur, setDur] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    const host = hostRef.current;
+    startedRef.current = false;
+    loadSpotifyAPI()
+      .then((IFrameAPI) => {
+        if (cancelled || !host) return;
+        const inner = document.createElement("div");
+        host.appendChild(inner);
+        IFrameAPI.createController(inner, { uri, width: "100%", height: "100%" }, (ctrl) => {
+          if (cancelled) {
+            try {
+              ctrl.destroy();
+            } catch {
+              /* already gone */
+            }
+            return;
+          }
+          ctrlRef.current = ctrl;
+          setReady(true);
+          ctrl.addListener("playback_update", (e) => {
+            const d = (e && e.data) || {};
+            setPlaying(!d.isPaused);
+            setCur((d.position || 0) / 1000);
+            setDur((d.duration || 0) / 1000);
+            // Trim: stop at the out-point (only when end is a real point past start).
+            const out = endRef.current;
+            if (out != null && out > (startRef.current || 0) && !d.isPaused && (d.position || 0) / 1000 >= out) {
+              try {
+                ctrl.pause();
+              } catch {
+                /* ignore */
+              }
+            }
+          });
+        });
+      })
+      .catch(() => !cancelled && setFailed(true));
+
+    return () => {
+      cancelled = true;
+      const c = ctrlRef.current;
+      ctrlRef.current = null;
+      if (c) {
+        try {
+          c.destroy();
+        } catch {
+          /* already gone */
+        }
+      }
+      if (host) host.innerHTML = "";
+    };
+  }, [uri]);
+
+  // Pause when the signal flips truthy (e.g. someone buzzed).
+  useEffect(() => {
+    if (!pauseSignal) return;
+    const c = ctrlRef.current;
+    if (c) {
+      try {
+        c.pause();
+      } catch {
+        /* not ready */
+      }
+    }
+  }, [pauseSignal]);
+
+  const togglePlay = () => {
+    const c = ctrlRef.current;
+    if (!c) return;
+    // On the very first play, jump to the clip's start point, then toggle.
+    if (!playing && !startedRef.current) {
+      startedRef.current = true;
+      if (startRef.current) {
+        try {
+          c.seek(startRef.current);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    try {
+      c.togglePlay();
+    } catch {
+      /* ignore */
+    }
+  };
+  const restart = () => {
+    const c = ctrlRef.current;
+    if (!c) return;
+    try {
+      c.seek(startRef.current || 0);
+      if (!playing) c.togglePlay();
+    } catch {
+      /* ignore */
+    }
+  };
+
+  if (failed) {
+    return (
+      <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 px-6 text-center text-sm font-medium text-stone-500 dark:border-stone-700 dark:text-stone-400">
+        {t("play.spotifyFailed")}
+      </div>
+    );
+  }
+
+  const trimLo = start || 0;
+  const trimHi = end && end > trimLo ? end : dur || 0;
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-stone-200 bg-black shadow-sm dark:border-stone-800">
+      <div className="relative aspect-video w-full">
+        {/* The real Spotify embed lives here but is fully covered by the opaque
+            cover below (it shows the title/cover, which would give the answer
+            away). It stays rendered — never display:none — so audio keeps
+            playing; opacity-0 + pointer-events-none + the cover hide it. */}
+        <div ref={hostRef} className="absolute inset-0 opacity-0 pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-stone-900 text-white">
+          <div className="flex h-16 items-end gap-1.5" aria-hidden>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <span
+                key={i}
+                className={`w-2.5 rounded-full bg-emerald-400 ${playing ? "qn-eq-bar" : ""}`}
+                style={{ height: `${[28, 46, 64, 40, 24][i]}px`, animationDelay: `${i * 0.13}s` }}
+              />
+            ))}
+          </div>
+          <div className="flex items-center gap-2 text-sm font-medium text-stone-300">
+            <Music size={16} /> {t("play.spotifyClip")}
+          </div>
+        </div>
+      </div>
+
+      {/* custom control bar (Spotify chrome stays hidden behind the cover) */}
+      <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
+        <button
+          onClick={togglePlay}
+          disabled={!ready}
+          aria-label={playing ? "Pause" : "Play"}
+          className="text-white/90 transition hover:text-white disabled:opacity-40"
+        >
+          {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+        </button>
+        <button
+          onClick={restart}
+          disabled={!ready}
+          aria-label="Restart"
+          className="text-white/70 transition hover:text-white disabled:opacity-40"
+        >
+          <RotateCcw size={17} />
+        </button>
+        <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
+        <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/20">
+          <div
+            className="h-full rounded-full bg-emerald-500"
+            style={{ width: `${trimHi > 0 ? Math.min(100, (Math.max(0, cur - trimLo) / Math.max(0.01, trimHi - trimLo)) * 100) : 0}%` }}
+          />
+        </div>
+        <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
+      </div>
+    </div>
+  );
+}

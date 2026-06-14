@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   ytId,
+  mediaSource,
   normalizeQuiz,
   normalizeGame,
   nextNonEmpty,
@@ -57,6 +58,50 @@ describe("ytId", () => {
     expect(ytId("https://example.com/watch")).toBe(null);
     expect(ytId("tooShort")).toBe(null);
     expect(ytId("definitelyMoreThanElevenChars")).toBe(null);
+  });
+});
+
+describe("mediaSource", () => {
+  it("detects YouTube (and a bare id) last", () => {
+    expect(mediaSource(`https://youtu.be/${ID}`)).toEqual({ kind: "youtube", id: ID });
+    expect(mediaSource(ID)).toEqual({ kind: "youtube", id: ID });
+  });
+
+  it("detects a Spotify track from a share URL (and strips the ?si query)", () => {
+    const m = mediaSource("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=abc123");
+    expect(m).toMatchObject({ kind: "spotify", spType: "track", id: "4cOdK2wGLETKBW3PvgPWqT" });
+    expect(m.uri).toBe("spotify:track:4cOdK2wGLETKBW3PvgPWqT");
+    expect(m.embedUrl).toBe("https://open.spotify.com/embed/track/4cOdK2wGLETKBW3PvgPWqT");
+  });
+
+  it("detects a localized Spotify URL, a spotify: URI, and an episode", () => {
+    expect(mediaSource("https://open.spotify.com/intl-de/track/4cOdK2wGLETKBW3PvgPWqT")).toMatchObject({
+      kind: "spotify",
+      spType: "track",
+      id: "4cOdK2wGLETKBW3PvgPWqT",
+    });
+    expect(mediaSource("spotify:track:4cOdK2wGLETKBW3PvgPWqT")).toMatchObject({ kind: "spotify", id: "4cOdK2wGLETKBW3PvgPWqT" });
+    expect(mediaSource("https://open.spotify.com/episode/512ojhOuo1ktJprKbVcKyQ")).toMatchObject({
+      kind: "spotify",
+      spType: "episode",
+    });
+  });
+
+  it("detects direct audio/video files by extension (incl. a trailing query)", () => {
+    expect(mediaSource("https://cdn.example.com/song.mp3")).toEqual({
+      kind: "file",
+      url: "https://cdn.example.com/song.mp3",
+      media: "audio",
+    });
+    expect(mediaSource("https://cdn.example.com/clip.mp4?token=xyz")).toMatchObject({ kind: "file", media: "video" });
+    expect(mediaSource("https://cdn.example.com/a.webm")).toMatchObject({ kind: "file", media: "video" });
+    expect(mediaSource("data:audio/mpeg;base64,AAAA")).toMatchObject({ kind: "file", media: "audio" });
+  });
+
+  it("returns null for empty or unrecognized input", () => {
+    expect(mediaSource("")).toBe(null);
+    expect(mediaSource()).toBe(null);
+    expect(mediaSource("https://example.com/page.html")).toBe(null);
   });
 });
 
