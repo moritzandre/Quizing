@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Lightbulb,
   Video,
+  FastForward,
   Image as ImageIcon,
   Sparkles,
   Blend,
@@ -56,6 +57,12 @@ export const TYPES = {
     icon: Video,
     dot: "bg-rose-500",
     desc: "Play the clip together, then reveal the answer and award the points.",
+  },
+  clip: {
+    label: "Clip Ladder",
+    icon: FastForward,
+    dot: "bg-red-500",
+    desc: "Play a short slice of a clip and extend it step by step — fewer points the longer it runs. Pauses when someone buzzes.",
   },
   image: {
     label: "Picture",
@@ -104,6 +111,7 @@ const ACCENT = {
   },
   hints: { soft: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", solid: "bg-amber-500" },
   video: { soft: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", solid: "bg-rose-500" },
+  clip: { soft: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300", solid: "bg-red-500" },
   image: { soft: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", solid: "bg-sky-500" },
   morph: {
     soft: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300",

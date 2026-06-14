@@ -927,8 +927,8 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 </>
               )}
 
-              {/* video */}
-              {r.type === "video" && (
+              {/* video + clip ladder (clip adds the step count below) */}
+              {(r.type === "video" || r.type === "clip") && (
                 <>
                   <SortableList
                     items={r.questions}
@@ -966,22 +966,26 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             {t("builder.audioOnly")}
                           </label>
                           <TrimInputs start={item.start} end={item.end} onChange={(p) => qRow(r, item, p)} t={t} />
-                          <div className="mt-2 flex items-center gap-2">
-                            <span className="text-xs text-stone-400 dark:text-stone-500">{t("builder.clipSteps")}</span>
-                            <input
-                              type="number"
-                              min="0"
-                              max="8"
-                              className={`${inputCls} w-20 py-1`}
-                              value={item.steps ?? 0}
-                              onChange={(e) =>
-                                qRow(r, item, { steps: Math.max(0, Math.min(8, Math.floor(+e.target.value || 0))) })
-                              }
-                            />
-                            <span className="text-xs text-stone-400 dark:text-stone-500">
-                              {t("builder.clipStepsHint")}
-                            </span>
-                          </div>
+                          {r.type === "clip" && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <span className="text-xs text-stone-400 dark:text-stone-500">
+                                {t("builder.clipSteps")}
+                              </span>
+                              <input
+                                type="number"
+                                min="1"
+                                max="8"
+                                className={`${inputCls} w-20 py-1`}
+                                value={item.steps ?? 4}
+                                onChange={(e) =>
+                                  qRow(r, item, { steps: Math.max(1, Math.min(8, Math.floor(+e.target.value || 1))) })
+                                }
+                              />
+                              <span className="text-xs text-stone-400 dark:text-stone-500">
+                                {t("builder.clipStepsHint")}
+                              </span>
+                            </div>
+                          )}
                           <input
                             className={`${inputCls} mt-2`}
                             placeholder={t("builder.afterClip")}
@@ -1009,7 +1013,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     }}
                   </SortableList>
                   <button
-                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("video")] })}
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion(r.type)] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
                     <Plus size={15} /> {t("builder.addClip")}

@@ -97,17 +97,7 @@ describe("normalizeQuiz", () => {
         title: "V",
         timer: null,
         questions: [
-          {
-            id: "v1",
-            url: `https://youtu.be/${ID}`,
-            q: "Q",
-            a: "A",
-            points: 10,
-            audioOnly: true,
-            start: 5,
-            end: 20,
-            steps: 0,
-          },
+          { id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10, audioOnly: true, start: 5, end: 20 },
         ],
       },
       {
@@ -234,17 +224,29 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[0].questions[0]).toMatchObject({ urlA: "a", urlB: "b", a: "X+Y", points: 40, steps: 4 });
   });
 
-  it("normalizes video rounds: trim window + clip-ladder steps clamp + defaults", () => {
+  it("normalizes video rounds: trim window + defaults, and carries no clip-ladder steps", () => {
     const q = normalizeQuiz({
       rounds: [
-        { type: "video", questions: [{ url: "u", a: "A", start: 10, end: 40, steps: 99 }] },
-        { type: "video", questions: [{ url: "u", a: "A", steps: -3 }] },
+        { type: "video", questions: [{ url: "u", a: "A", start: 10, end: 40, steps: 5 }] },
         { type: "video", questions: [{}] },
       ],
     });
-    expect(q.rounds[0].questions[0]).toMatchObject({ start: 10, end: 40, steps: 8 }); // clamped to 8
-    expect(q.rounds[1].questions[0].steps).toBe(0); // negative → 0
-    expect(q.rounds[2].questions[0]).toMatchObject({ steps: 0, audioOnly: false, points: 10 });
+    expect(q.rounds[0].questions[0]).toMatchObject({ url: "u", a: "A", start: 10, end: 40 });
+    expect(q.rounds[0].questions[0].steps).toBeUndefined(); // plain video has no ladder
+    expect(q.rounds[1].questions[0]).toMatchObject({ audioOnly: false, points: 10, start: null, end: null });
+  });
+
+  it("normalizes clip rounds: trim window + clip-ladder steps clamp (min 1) + defaults", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "clip", questions: [{ url: "u", a: "A", start: 10, end: 40, steps: 99 }] },
+        { type: "clip", questions: [{ url: "u", a: "A", steps: 0 }] },
+        { type: "clip", questions: [{}] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ url: "u", a: "A", start: 10, end: 40, steps: 8 }); // clamped to 8
+    expect(q.rounds[1].questions[0].steps).toBe(1); // a ladder needs at least one extension
+    expect(q.rounds[2].questions[0]).toMatchObject({ steps: 4, audioOnly: false, points: 10 }); // defaults
   });
 
   it("normalizes choice rounds: clamps correct, coerces options, defaults", () => {
@@ -659,7 +661,30 @@ describe("presenter payloads", () => {
     expect(normalizeLive({}).buzzed).toBe(false);
   });
 
-  it("buildPresentQ → normalizePresent round-trips a video clip ladder", () => {
+  it("buildPresentQ → normalizePresent round-trips a clip ladder (steps + window survive)", () => {
+    const g = game({
+      quiz: {
+        title: "Q",
+        rounds: [
+          {
+            id: "r",
+            type: "clip",
+            title: "V",
+            questions: [
+              { id: "c1", url: "https://youtu.be/x", q: "?", a: "A", points: 10, start: 10, end: 40, steps: 2 },
+            ],
+          },
+        ],
+      },
+    });
+    const n = normalizePresent(buildPresentQ(g));
+    expect(n.roundType).toBe("clip");
+    expect(n.q).toMatchObject({ start: 10, end: 40, steps: 2 });
+    expect(n.q.url).toBe("https://youtu.be/x");
+    expect(clipEnd(n.q, 0)).toBeCloseTo(20); // (40-10)/3 + 10
+  });
+
+  it("plain video present payload carries no clip-ladder steps", () => {
     const g = game({
       quiz: {
         title: "Q",
@@ -668,17 +693,15 @@ describe("presenter payloads", () => {
             id: "r",
             type: "video",
             title: "V",
-            questions: [
-              { id: "v1", url: "https://youtu.be/x", q: "?", a: "A", points: 10, start: 10, end: 40, steps: 2 },
-            ],
+            questions: [{ id: "v1", url: "https://youtu.be/x", q: "?", a: "A", points: 10, start: 10, end: 40 }],
           },
         ],
       },
     });
     const n = normalizePresent(buildPresentQ(g));
     expect(n.roundType).toBe("video");
-    expect(n.q).toMatchObject({ start: 10, end: 40, steps: 2 });
-    expect(clipEnd(n.q, 0)).toBeCloseTo(20); // (40-10)/3 + 10
+    expect(n.q).toMatchObject({ start: 10, end: 40, audioOnly: false });
+    expect(n.q.steps).toBeUndefined();
   });
 
   it("buildPresentQ has no q when not in the question stage", () => {

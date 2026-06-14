@@ -138,7 +138,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (!q) return 0;
     if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
     if (round.type === "morph" || round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
-    if (round.type === "video" && clipLadderActive(q)) return morphValue(q.points, q.steps, morphStep);
+    if ((round.type === "video" || round.type === "clip") && clipLadderActive(q))
+      return morphValue(q.points, q.steps, morphStep);
     return ptsOr(q.points, 10);
   })();
 
@@ -441,7 +442,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
           if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
             upd({ hintsShown: game.hintsShown + 1 });
           else if (round.type === "morph" || round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
-          else if (round.type === "video" && clipLadderActive(cq)) setMorphStep((s) => Math.min(cq.steps, s + 1));
+          else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq))
+            setMorphStep((s) => Math.min(cq.steps, s + 1));
         }
         break;
       case "sign":
@@ -494,7 +496,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
         setMorphStep((s) => Math.min(q.steps, s + 1));
-      else if (k === "h" && !game.revealed && round.type === "video" && clipLadderActive(q))
+      else if (k === "h" && !game.revealed && (round.type === "video" || round.type === "clip") && clipLadderActive(q))
         setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
       else if (allowNegative && game.revealed && (e.key === "+" || e.key === "=")) setSign(1);
@@ -1001,6 +1003,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           round.type === "hints" ? t("play.scHint") : null,
           round.type === "morph" ? t("play.scDemorph") : null,
           round.type === "fusion" ? t("play.scDefuse") : null,
+          round.type === "clip" && clipLadderActive(q) ? t("play.scExtend") : null,
           t("play.scNext"),
           allowNegative ? t("play.scSign") : null,
           t("play.scAward"),
@@ -1112,7 +1115,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     );
   }
 
-  if (round.type === "video") {
+  if (round.type === "video" || round.type === "clip") {
     const vid = ytId(q.url);
     const ladder = clipLadderActive(q);
     const atEnd = morphStep >= q.steps;

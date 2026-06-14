@@ -76,7 +76,7 @@ export default function RoundBody({
     );
   }
 
-  if (type === "video") {
+  if (type === "video" || type === "clip") {
     const vid = ytId(q.url);
     return (
       <div className="text-center">

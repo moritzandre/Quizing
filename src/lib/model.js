@@ -14,6 +14,7 @@ export const ROUND_TYPES = [
   "jeopardy",
   "hints",
   "video",
+  "clip",
   "image",
   "morph",
   "fusion",
@@ -197,7 +198,21 @@ export function makeQuestion(type) {
         audioOnly: false,
         start: null,
         end: null,
-        steps: 0,
+      };
+    case "clip":
+      // Clip ladder: a short slice the host extends step by step for fewer
+      // points. Defaults to a working 0–30s window so the ladder is live out
+      // of the box (the author trims it to the real clip).
+      return {
+        id: uid(),
+        url: "",
+        q: "Name what you see or hear.",
+        a: "",
+        points: 10,
+        audioOnly: false,
+        start: 0,
+        end: 30,
+        steps: 4,
       };
     case "image":
       return { id: uid(), url: "", q: "What do you see?", a: "", points: 10 };
@@ -277,7 +292,17 @@ export function normalizeQuiz(raw) {
               audioOnly: !!q?.audioOnly,
               start: numOrNull(q?.start),
               end: numOrNull(q?.end),
-              steps: Math.max(0, Math.min(8, num(q?.steps, 0))),
+            });
+          if (r.type === "clip")
+            Object.assign(it, {
+              url: str(q?.url),
+              q: str(q?.q),
+              a: str(q?.a),
+              points: num(q?.points, 10),
+              audioOnly: !!q?.audioOnly,
+              start: numOrNull(q?.start),
+              end: numOrNull(q?.end),
+              steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
             });
           if (r.type === "image")
             Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
@@ -544,7 +569,15 @@ function presentQ(type, q) {
         audioOnly: !!q.audioOnly,
         start: numOrNull(q.start),
         end: numOrNull(q.end),
-        steps: num(q.steps, 0),
+      };
+    case "clip":
+      return {
+        q: str(q.q),
+        url: str(q.url),
+        audioOnly: !!q.audioOnly,
+        start: numOrNull(q.start),
+        end: numOrNull(q.end),
+        steps: num(q.steps, 4),
       };
     case "image":
       return { q: str(q.q), url: str(q.url), points: num(q.points, 10) };
@@ -572,6 +605,7 @@ function revealData(type, q) {
     case "classic":
     case "image":
     case "video":
+    case "clip":
     case "morph":
     case "fusion":
       return { answer: str(q.a) };

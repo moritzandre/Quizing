@@ -76,8 +76,17 @@ export const ROUND_TEMPLATES = [
     round: {
       type: "video",
       title: "Name That Clip",
+      questions: [{ url: "", q: "What is this from?", a: "", points: 10, audioOnly: false, start: null, end: null }],
+    },
+  },
+  {
+    key: "clip-ladder",
+    type: "clip",
+    round: {
+      type: "clip",
+      title: "Guess It Early",
       questions: [
-        { url: "", q: "What is this from?", a: "", points: 10, audioOnly: false, start: null, end: null, steps: 0 },
+        { url: "", q: "What is this from?", a: "", points: 10, audioOnly: false, start: 0, end: 30, steps: 4 },
       ],
     },
   },
@@ -173,6 +182,9 @@ export const ROUND_TEMPLATES = [
   },
 ];
 
+/** The starter round for a given ROUND_TEMPLATES key (by key so order can change freely). */
+const roundTpl = (key) => ROUND_TEMPLATES.find((tpl) => tpl.key === key).round;
+
 /** Whole-quiz starters for "New from template". Pickers show `title` + round count. */
 export const QUIZ_TEMPLATES = [
   {
@@ -180,7 +192,7 @@ export const QUIZ_TEMPLATES = [
     title: "Mixed Night (Starter)",
     quiz: {
       title: "Mixed Night",
-      rounds: [ROUND_TEMPLATES[0].round, ROUND_TEMPLATES[8].round, ROUND_TEMPLATES[7].round, ROUND_TEMPLATES[9].round],
+      rounds: [roundTpl("classic-trivia"), roundTpl("choice-quiz"), roundTpl("map-geography"), roundTpl("number-guess")],
     },
   },
   {
@@ -188,7 +200,7 @@ export const QUIZ_TEMPLATES = [
     title: "Pub Classic (Starter)",
     quiz: {
       title: "Pub Classic",
-      rounds: [ROUND_TEMPLATES[0].round, ROUND_TEMPLATES[2].round, ROUND_TEMPLATES[4].round, ROUND_TEMPLATES[1].round],
+      rounds: [roundTpl("classic-trivia"), roundTpl("hints-ladder"), roundTpl("clip-ladder"), roundTpl("jeopardy-board")],
     },
   },
 ];
@@ -200,7 +212,9 @@ const ROUND_SHAPES = {
   hints:
     'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
   video:
-    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null, "steps": 0 }]   // start/end trim the clip; steps>0 reveals it in chunks (fewer points each), like the hint ladder',
+    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // start/end (seconds) optionally trim the clip; pauses automatically when a player buzzes',
+  clip:
+    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // the clip ladder: start/end is the FULL window; the host plays the first 1/(steps+1) of it and extends step by step, awarding fewer points each extension (like the hint ladder)',
   image: 'questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]',
   morph:
     'questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]',
@@ -240,7 +254,8 @@ Round types and their question shapes:
 - "classic":  questions: [{ "q": string, "a": string, "points": number }]
 - "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]
 - "hints":    questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder
-- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null, "steps": 0 }]   // steps>0: reveal the [start,end] clip in chunks, fewer points each
+- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // start/end (seconds) optionally trim the clip
+- "clip":     questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // clip ladder: host plays the first 1/(steps+1) of [start,end] and extends step by step for fewer points
 - "image":    questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]
 - "morph":    questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]
 - "fusion":   questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]

@@ -11,6 +11,7 @@
 import { Eye, ArrowRight, Lightbulb, Play, Bell, BarChart3, Plus, Minus, Wifi, WifiOff, Gamepad2 } from "lucide-react";
 import { usePresenterRoom } from "./useRoom.js";
 import { TYPES, FOCUS, Button, Avatar } from "./ui.jsx";
+import { clipLadderActive } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
 /**
@@ -25,6 +26,10 @@ export default function HostRemoteView({ code }) {
   const type = present?.roundType;
   const revealed = !!live?.revealed;
   const value = live?.value || 0;
+  // Rounds with a ladder to advance via the "hint" ctrl: hint/morph/fusion always,
+  // and clip only while its ladder is live (steps + a real trim window).
+  const hasLadder =
+    type === "hints" || type === "morph" || type === "fusion" || (type === "clip" && clipLadderActive(present?.q));
   // Photos ride the heavy present channel; merge them into the light live standings.
   const photos = present?.photos || {};
   const standings = (live?.standings || []).map((s) => (photos[s.id] ? { ...s, photo: photos[s.id] } : s));
@@ -104,18 +109,18 @@ export default function HostRemoteView({ code }) {
                 <Eye size={18} /> {t("play.revealAnswer")}
               </button>
             )}
-            {!revealed && (type === "hints" || type === "morph" || type === "fusion") && (
+            {!revealed && hasLadder && (
               <button
                 onClick={() => sendCtrl("hint")}
                 className={`bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 ${btn} ${FOCUS}`}
               >
-                <Lightbulb size={18} /> {t("host.hint")}
+                <Lightbulb size={18} /> {type === "clip" ? t("play.extendClip") : t("host.hint")}
               </button>
             )}
             <button
               onClick={() => sendCtrl("advance")}
               className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS} ${
-                !revealed && !(type === "hints" || type === "morph" || type === "fusion") ? "col-span-2" : ""
+                !revealed && !hasLadder ? "col-span-2" : ""
               }`}
             >
               <ArrowRight size={18} /> {revealed ? t("host.next") : t("play.skipQuestion")}
