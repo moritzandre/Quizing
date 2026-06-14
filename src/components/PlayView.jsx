@@ -26,12 +26,25 @@ import {
   Minus,
   X,
   Check,
+  Tv,
+  BarChart3,
 } from "lucide-react";
-import { uid, ytId, nextNonEmpty, haversineKm, morphValue, hintHasContent } from "../lib/model.js";
+import {
+  uid,
+  ytId,
+  nextNonEmpty,
+  haversineKm,
+  morphValue,
+  hintHasContent,
+  buildPresentQ,
+  buildLive,
+} from "../lib/model.js";
 import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, colorAt, SoundToggle } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { playSound } from "../lib/sound.js";
+import QRCode from "qrcode";
 import ScoreBar from "./ScoreBar.jsx";
+import PodiumClimb from "./PodiumClimb.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import YouTubePlayer from "./YouTubePlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
@@ -94,6 +107,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const [pres, setPres] = useState(false);
   const [editScores, setEditScores] = useState(false);
   const [nav, setNav] = useState(false);
+  const [streamTv, setStreamTv] = useState(false); // "Stream to TV" modal
+  const [showStandings, setShowStandings] = useState(false); // live podium overlay (host + TV)
+  const [tvQr, setTvQr] = useState("");
 
   /* countdown timer (UI-only; not persisted) */
   const [timeLeft, setTimeLeft] = useState(timerSecs);
@@ -137,6 +153,35 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.arm(qKey);
     }
   }, [buzzerOn, game.stage, game.revealed, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Stream the heavy, per-question presenter payload (media + text) to any TV.
+  useEffect(() => {
+    if (!buzzerOn) return;
+    room.pushPresent(buildPresentQ(game));
+  }, [buzzerOn, game.stage, qKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Stream the light, frequently-changing presenter payload (reveal/step/scores).
+  const scoreSig = game.players.map((p) => `${p.id}:${p.score}:${p.name}:${p.color}:${p.emoji}`).join(",");
+  useEffect(() => {
+    if (!buzzerOn) return;
+    room.pushLive(buildLive(game, { step: morphStep, showStandings }));
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, qKey, scoreSig]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Build the TV join QR when the stream modal opens.
+  const presentUrl =
+    room?.code && typeof window !== "undefined"
+      ? `${window.location.origin}${window.location.pathname}#/present/${room.code}`
+      : "";
+  useEffect(() => {
+    if (!streamTv || !presentUrl) return setTvQr("");
+    let alive = true;
+    QRCode.toDataURL(presentUrl, { margin: 1, width: 320 })
+      .then((u) => alive && setTvQr(u))
+      .catch(() => alive && setTvQr(""));
+    return () => {
+      alive = false;
+    };
+  }, [streamTv, presentUrl]);
 
   // Beep whenever someone buzzes in first (init from current so a remount with an
   // already-locked buzz doesn't replay the sound).
@@ -313,8 +358,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         if (round.type === "choice") revealChoice(q);
         else if (round.type === "number") revealNumber(q);
         else reveal();
-      }
-      else if ((k === "n" || k === "arrowright") && game.revealed) advance();
+      } else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
@@ -352,6 +396,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </IconButton>
           <IconButton label={t("play.editScores")} onClick={() => setEditScores(true)}>
             <SlidersHorizontal size={18} />
+          </IconButton>
+          <IconButton
+            label={t("play.standings")}
+            onClick={() => setShowStandings((s) => !s)}
+            className={showStandings ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300" : ""}
+          >
+            <BarChart3 size={18} />
+          </IconButton>
+          <IconButton label={t("play.streamToTv")} onClick={() => setStreamTv(true)}>
+            <Tv size={18} />
           </IconButton>
           <IconButton label={pres ? t("play.exitPresentation") : t("play.presentation")} onClick={togglePres}>
             {pres ? <Minimize size={18} /> : <Maximize size={18} />}
@@ -444,6 +498,61 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {streamTv && (
+        <div
+          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-4 backdrop-blur-sm sm:items-center"
+          onClick={() => setStreamTv(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-5 text-center shadow-xl dark:border-stone-800 dark:bg-stone-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between text-left">
+              <h3 className="flex items-center gap-2 text-base font-semibold">
+                <Tv size={18} /> {t("play.streamToTv")}
+              </h3>
+              <IconButton label={t("common.done")} onClick={() => setStreamTv(false)}>
+                <X size={16} />
+              </IconButton>
+            </div>
+            {buzzerOn && presentUrl ? (
+              <>
+                {tvQr && (
+                  <img
+                    src={tvQr}
+                    alt=""
+                    className="mx-auto h-44 w-44 rounded-xl border border-stone-200 dark:border-stone-700"
+                  />
+                )}
+                <p className="mt-3 text-sm text-stone-500 dark:text-stone-400">{t("play.streamHint")}</p>
+                <p className="mt-2 break-all rounded-lg bg-stone-100 px-3 py-2 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+                  {presentUrl}
+                </p>
+              </>
+            ) : (
+              <p className="py-4 text-sm text-stone-500 dark:text-stone-400">{t("play.streamEnableFirst")}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showStandings && (
+        <div
+          className="qn-app-bg fixed inset-0 z-40 overflow-y-auto px-6 py-10"
+          onClick={() => setShowStandings(false)}
+        >
+          <div className="mx-auto max-w-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold tracking-tight">{t("play.standings")}</h2>
+              <IconButton label={t("common.done")} onClick={() => setShowStandings(false)}>
+                <X size={18} />
+              </IconButton>
+            </div>
+            <PodiumClimb standings={game.players} />
           </div>
         </div>
       )}
@@ -999,7 +1108,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
               >
                 <span
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                    isCorrect ? "bg-emerald-500 text-white" : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                    isCorrect
+                      ? "bg-emerald-500 text-white"
+                      : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
                   }`}
                 >
                   {letters[oi]}
@@ -1080,7 +1191,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
                     </span>
                   )}
                 </span>
-                <span className="tabular-nums text-stone-500 dark:text-stone-400">Δ {Math.round(x.diff * 100) / 100}</span>
+                <span className="tabular-nums text-stone-500 dark:text-stone-400">
+                  Δ {Math.round(x.diff * 100) / 100}
+                </span>
               </div>
             ))}
           </div>

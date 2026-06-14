@@ -86,6 +86,25 @@ h2 {
   }
 }
 
+/* Bouncy hop — an avatar that just gained points on the live podium. */
+@keyframes qn-hop {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-32%);
+  }
+  60% {
+    transform: translateY(0);
+  }
+  80% {
+    transform: translateY(-12%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .qn-eq-bar {
   transform-origin: bottom;
   animation: qn-eq 0.8s ease-in-out infinite;
@@ -97,6 +116,15 @@ h2 {
 
 .qn-pop {
   animation: qn-pop 0.28s cubic-bezier(0.21, 1, 0.4, 1) both;
+}
+
+.qn-hop {
+  animation: qn-hop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Live podium rows slide to their new rank as scores change (FLIP-lite). */
+.qn-climb-row {
+  transition: top 0.6s cubic-bezier(0.34, 1.3, 0.5, 1);
 }
 
 .qn-confetti-piece {
@@ -113,8 +141,12 @@ h2 {
   .qn-fade-up,
   .qn-pop,
   .qn-confetti-piece,
-  .qn-eq-bar {
+  .qn-eq-bar,
+  .qn-hop {
     animation: none;
+  }
+  .qn-climb-row {
+    transition: none;
   }
 }
 

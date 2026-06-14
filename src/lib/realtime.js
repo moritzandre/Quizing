@@ -15,9 +15,20 @@
 export const BROKER_URL = "wss://broker.emqx.io:8084/mqtt";
 const TOPIC_ROOT = "quiznight";
 
-/** Topic pair for a room code. */
+/**
+ * Topics for a room code.
+ * - state:   host → phones (lean lobby/question phase; retained)
+ * - up:      phones → host (join / buzz / pin / answer / leave)
+ * - present: host → TV (heavy per-question display payload; retained)
+ * - live:    host → TV (light frequently-changing state: reveal/step/standings; retained)
+ */
 export function roomTopics(code) {
-  return { state: `${TOPIC_ROOT}/${code}/state`, up: `${TOPIC_ROOT}/${code}/up` };
+  return {
+    state: `${TOPIC_ROOT}/${code}/state`,
+    up: `${TOPIC_ROOT}/${code}/up`,
+    present: `${TOPIC_ROOT}/${code}/present`,
+    live: `${TOPIC_ROOT}/${code}/live`,
+  };
 }
 
 /** Generate a short, unambiguous room code (no 0/O/1/I/L). */

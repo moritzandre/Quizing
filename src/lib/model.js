@@ -430,6 +430,191 @@ export function aggregateLeaderboard(results) {
   return [...map.values()].sort((a, b) => b.wins - a.wins || b.totalScore - a.totalScore || b.bestScore - a.bestScore);
 }
 
+/* ---- presenter (TV) payloads ----
+   The host streams a clean, read-only mirror of the game to a TV opened at
+   #/present/<code> over two retained MQTT topics:
+     present  heavy + static-per-question (media, question text, options)
+     live     light + frequently-changing (reveal, step, timer, standings)
+   Answers and map coordinates live in `live` and are only sent once revealed,
+   so the TV can never leak them (and map pins stay hidden until reveal). */
+
+/** Static, per-question display fields for the TV (never includes the answer). */
+function presentQ(type, q) {
+  switch (type) {
+    case "classic":
+      return { q: str(q.q), points: num(q.points, 10) };
+    case "jeopardy":
+      return { clue: str(q.clue), points: num(q.points, 100) };
+    case "hints":
+      return { hints: (Array.isArray(q.hints) ? q.hints : []).map(normalizeHint) };
+    case "video":
+      return {
+        q: str(q.q),
+        url: str(q.url),
+        audioOnly: !!q.audioOnly,
+        start: numOrNull(q.start),
+        end: numOrNull(q.end),
+      };
+    case "image":
+      return { q: str(q.q), url: str(q.url), points: num(q.points, 10) };
+    case "morph":
+      return { url: str(q.url), effect: MORPH_EFFECTS.includes(q.effect) ? q.effect : "blur", steps: num(q.steps, 4) };
+    case "fusion":
+      return { urlA: str(q.urlA), urlB: str(q.urlB), steps: num(q.steps, 4) };
+    case "map":
+      return { q: str(q.q) };
+    case "choice":
+      return { q: str(q.q), options: (Array.isArray(q.options) ? q.options : []).map(str) };
+    case "number":
+      return { q: str(q.q), unit: str(q.unit) };
+    default:
+      return {};
+  }
+}
+
+/** The answer/reveal fields for the TV (only emitted once the host reveals). */
+function revealData(type, q) {
+  switch (type) {
+    case "hints":
+    case "jeopardy":
+      return { answer: str(q.answer) };
+    case "classic":
+    case "image":
+    case "video":
+    case "morph":
+    case "fusion":
+      return { answer: str(q.a) };
+    case "map":
+      return { answer: { lat: numOrNull(q.lat), lng: numOrNull(q.lng), name: str(q.name) } };
+    case "choice":
+      return { correct: num(q.correct, 0), options: (Array.isArray(q.options) ? q.options : []).map(str) };
+    case "number":
+      return { answer: numOrNull(q.answer), unit: str(q.unit) };
+    default:
+      return {};
+  }
+}
+
+/** Current question for a game (jeopardy via the open tile), or null. */
+function currentQuestion(game) {
+  const round = game.quiz?.rounds?.[game.ri];
+  if (!round) return null;
+  return round.type === "jeopardy"
+    ? round.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] || null
+    : round.questions?.[game.qi] || null;
+}
+
+/**
+ * Build the heavy, static-per-question presenter payload (topic: present).
+ * @param {object} game A valid game.
+ */
+export function buildPresentQ(game) {
+  const quiz = game.quiz;
+  const round = quiz?.rounds?.[game.ri];
+  const base = {
+    v: 1,
+    stage: ["intro", "question", "board", "end"].includes(game.stage) ? game.stage : "intro",
+    ri: num(game.ri, 0),
+    qi: num(game.qi, 0),
+    total: Array.isArray(quiz?.rounds) ? quiz.rounds.length : 0,
+    quizTitle: str(quiz?.title),
+    roundType: round ? str(round.type) : null,
+    roundTitle: round ? str(round.title) : "",
+  };
+  if (game.stage === "question" && round) {
+    const q = currentQuestion(game);
+    if (q) base.q = presentQ(round.type, q);
+  }
+  return base;
+}
+
+/**
+ * Build the light, frequently-changing presenter payload (topic: live).
+ * @param {object} game A valid game.
+ * @param {{step?:number, showStandings?:boolean}} [opts]
+ */
+export function buildLive(game, opts = {}) {
+  const round = game.quiz?.rounds?.[game.ri];
+  const standings = (Array.isArray(game.players) ? game.players : []).map((p) => ({
+    id: str(p.id) || str(p.name) || "p",
+    name: str(p.name) || "Player",
+    score: num(p.score, 0),
+    color: typeof p.color === "string" ? p.color : null,
+    emoji: typeof p.emoji === "string" ? p.emoji : null,
+  }));
+  const live = {
+    v: 1,
+    revealed: !!game.revealed,
+    hintsShown: Math.max(1, num(game.hintsShown, 1)),
+    step: Math.max(0, num(opts.step, 0)),
+    showStandings: !!opts.showStandings,
+    standings,
+  };
+  if (game.revealed && game.stage === "question" && round) {
+    const q = currentQuestion(game);
+    if (q) live.reveal = revealData(round.type, q);
+  }
+  return live;
+}
+
+/** Validate an incoming present payload from the broker (untrusted). */
+export function normalizePresent(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const out = {
+    stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",
+    ri: num(raw.ri, 0),
+    qi: num(raw.qi, 0),
+    total: num(raw.total, 0),
+    quizTitle: str(raw.quizTitle),
+    roundType: ROUND_TYPES.includes(raw.roundType) ? raw.roundType : null,
+    roundTitle: str(raw.roundTitle),
+  };
+  if (raw.q && typeof raw.q === "object" && !Array.isArray(raw.q)) {
+    const q = raw.q;
+    const o = { audioOnly: !!q.audioOnly };
+    for (const k of ["q", "clue", "url", "urlA", "urlB", "unit"]) if (typeof q[k] === "string") o[k] = q[k];
+    if (typeof q.effect === "string") o.effect = MORPH_EFFECTS.includes(q.effect) ? q.effect : "blur";
+    if (q.steps != null) o.steps = num(q.steps, 4);
+    if (q.points != null) o.points = num(q.points, 10);
+    if (q.start != null) o.start = numOrNull(q.start);
+    if (q.end != null) o.end = numOrNull(q.end);
+    if (Array.isArray(q.options)) o.options = q.options.map(str).slice(0, 8);
+    if (Array.isArray(q.hints)) o.hints = q.hints.map(normalizeHint);
+    out.q = o;
+  }
+  return out;
+}
+
+/** Validate an incoming live payload from the broker (untrusted). */
+export function normalizeLive(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  let reveal = null;
+  if (raw.reveal && typeof raw.reveal === "object" && !Array.isArray(raw.reveal)) {
+    const r = raw.reveal;
+    reveal = {};
+    if (typeof r.answer === "string" || typeof r.answer === "number") reveal.answer = r.answer;
+    else if (r.answer && typeof r.answer === "object" && !Array.isArray(r.answer))
+      reveal.answer = { lat: numOrNull(r.answer.lat), lng: numOrNull(r.answer.lng), name: str(r.answer.name) };
+    if (r.correct != null) reveal.correct = num(r.correct, 0);
+    if (Array.isArray(r.options)) reveal.options = r.options.map(str).slice(0, 8);
+    if (typeof r.unit === "string") reveal.unit = r.unit;
+  }
+  return {
+    revealed: !!raw.revealed,
+    hintsShown: Math.max(1, num(raw.hintsShown, 1)),
+    step: Math.max(0, num(raw.step, 0)),
+    showStandings: !!raw.showStandings,
+    standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
+      id: str(p?.id) || str(p?.name) || "p",
+      name: str(p?.name) || "Player",
+      score: num(p?.score, 0),
+      color: typeof p?.color === "string" ? p.color : null,
+      emoji: typeof p?.emoji === "string" ? p.emoji : null,
+    })),
+    reveal,
+  };
+}
+
 /* ---- export / import (.quiz.json) ---- */
 
 /**

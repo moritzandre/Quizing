@@ -825,7 +825,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               {/* choice (multiple choice) */}
               {r.type === "choice" && (
                 <>
-                  <SortableList items={r.questions} getKey={(x) => x.id} onReorder={(f, to) => reorderQuestions(r, f, to)}>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
                     {(item, i, hp) => (
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
@@ -856,7 +860,9 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                 placeholder={t("builder.optionN", { n: oi + 1 })}
                                 value={opt}
                                 onChange={(e) =>
-                                  qRow(r, item, { options: item.options.map((o, j) => (j === oi ? e.target.value : o)) })
+                                  qRow(r, item, {
+                                    options: item.options.map((o, j) => (j === oi ? e.target.value : o)),
+                                  })
                                 }
                               />
                               {item.options.length > 2 && (
@@ -906,7 +912,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               {/* number (closest guess) */}
               {r.type === "number" && (
                 <>
-                  <SortableList items={r.questions} getKey={(x) => x.id} onReorder={(f, to) => reorderQuestions(r, f, to)}>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
                     {(item, i, hp) => (
                       <div className={panelCls}>
                         <div className={rowLabelCls}>

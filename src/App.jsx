@@ -43,6 +43,7 @@ const PlayView = lazy(() => import("./components/PlayView.jsx"));
 const SetupView = lazy(() => import("./components/SetupView.jsx"));
 const Builder = lazy(() => import("./components/Builder.jsx"));
 const JoinView = lazy(() => import("./components/JoinView.jsx"));
+const PresenterView = lazy(() => import("./components/PresenterView.jsx"));
 const LeaderboardView = lazy(() => import("./components/LeaderboardView.jsx"));
 import { useI18n, LanguageToggle } from "./i18n/I18nProvider.jsx";
 
@@ -54,6 +55,7 @@ const hashFor = (v) => {
   if (v.name === "builder") return "#/builder";
   if (v.name === "leaderboard") return "#/leaderboard";
   if (v.name === "join") return `#/join/${v.code}`;
+  if (v.name === "present") return `#/present/${v.code}`;
   return "#/";
 };
 
@@ -66,7 +68,9 @@ function App() {
   // Initialise from the hash so a phone hitting #/join/<code> renders instantly.
   const [view, setView] = useState(() => {
     const { seg, arg } = parseHash();
-    return seg === "join" && arg ? { name: "join", code: arg } : { name: "home" };
+    if (seg === "join" && arg) return { name: "join", code: arg };
+    if (seg === "present" && arg) return { name: "present", code: arg };
+    return { name: "home" };
   });
   const [quizzes, setQuizzes] = useState([]);
   const [game, setGame] = useState(null);
@@ -118,6 +122,8 @@ function App() {
       const { seg, arg } = parseHash();
       if (seg === "join" && arg) {
         setView({ name: "join", code: arg });
+      } else if (seg === "present" && arg) {
+        setView({ name: "present", code: arg });
       } else if (seg === "play") {
         // An ended game is kept in state for the final-scores screen but is no
         // longer "in progress" — match the home screen's resume gating.
@@ -277,6 +283,14 @@ function App() {
     return (
       <Suspense fallback={loadingFallback}>
         <JoinView code={view.code} />
+      </Suspense>
+    );
+
+  // TV presenter page — standalone, read-only, renders before the data-load gate.
+  if (view.name === "present")
+    return (
+      <Suspense fallback={loadingFallback}>
+        <PresenterView code={view.code} />
       </Suspense>
     );
 

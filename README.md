@@ -4,18 +4,18 @@ A host-led party quiz app. One host screen runs the show; players can buzz in, d
 
 **Round formats**
 
-| Type        | How it plays                                                                                                                                             |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Classic     | Read the question, reveal the answer, tap whoever got it right.                                                                                          |
-| Jeopardy    | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                                     |
-| Hint Ladder | The answer starts at full value; every extra hint lowers it. Hints can be **text, image, audio, video, or a map pin**.                                   |
-| Video       | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode.                    |
-| Picture     | Show an image (paste a URL or upload one), then reveal the answer.                                                                                       |
-| Morph       | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
-| Fusion      | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
-| Map         | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.           |
-| Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.          |
-| Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                       |
+| Type            | How it plays                                                                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Classic         | Read the question, reveal the answer, tap whoever got it right.                                                                                          |
+| Jeopardy        | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                                     |
+| Hint Ladder     | The answer starts at full value; every extra hint lowers it. Hints can be **text, image, audio, video, or a map pin**.                                   |
+| Video           | Plays a YouTube clip with custom controls — the **title stays hidden** (it would give the answer away). Optional **audio-only** mode.                    |
+| Picture         | Show an image (paste a URL or upload one), then reveal the answer.                                                                                       |
+| Morph           | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
+| Fusion          | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
+| Map             | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.           |
+| Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.            |
+| Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                         |
 
 Other features:
 
@@ -196,9 +196,7 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "type": "choice",
         "title": "Multiple Choice",
         // correct is the 0-based index into options (2–6 options); auto-scored on reveal
-        "questions": [
-          { "id": "ch1", "q": "…?", "options": ["A", "B", "C", "D"], "correct": 2, "points": 10 },
-        ],
+        "questions": [{ "id": "ch1", "q": "…?", "options": ["A", "B", "C", "D"], "correct": 2, "points": 10 }],
       },
       {
         "id": "r10",

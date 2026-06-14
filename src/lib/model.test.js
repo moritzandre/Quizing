@@ -12,6 +12,10 @@ import {
   aggregateLeaderboard,
   makeHint,
   hintHasContent,
+  buildPresentQ,
+  buildLive,
+  normalizePresent,
+  normalizeLive,
 } from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
@@ -474,5 +478,106 @@ describe("aggregateLeaderboard", () => {
     ]);
     expect(board[0].name).toBe("B");
     expect(board).toHaveLength(2);
+  });
+});
+
+describe("presenter payloads", () => {
+  const game = (over = {}) => ({
+    stage: "question",
+    ri: 0,
+    qi: 0,
+    revealed: false,
+    hintsShown: 1,
+    players: [
+      { id: "a", name: "Ann", score: 30, color: "#6366f1", emoji: "🦊", deviceIds: ["d1"] },
+      { id: "b", name: "Bob", score: 10 },
+    ],
+    quiz: {
+      title: "Q",
+      rounds: [
+        {
+          id: "r1",
+          type: "map",
+          title: "Where?",
+          questions: [{ id: "m1", q: "Where is it?", name: "Paris", lat: 48.85, lng: 2.35, points: 10 }],
+        },
+      ],
+    },
+    ...over,
+  });
+
+  it("buildPresentQ omits map coordinates (pins stay hidden until reveal)", () => {
+    const p = buildPresentQ(game());
+    expect(p.stage).toBe("question");
+    expect(p.roundType).toBe("map");
+    expect(p.q).toMatchObject({ q: "Where is it?" });
+    expect(p.q.lat).toBeUndefined();
+    expect(p.q.lng).toBeUndefined();
+    expect(p.q.name).toBeUndefined();
+  });
+
+  it("buildLive omits the answer until revealed, then includes it", () => {
+    expect(buildLive(game()).reveal).toBeUndefined();
+    const revealed = buildLive(game({ revealed: true }));
+    expect(revealed.reveal.answer).toEqual({ lat: 48.85, lng: 2.35, name: "Paris" });
+  });
+
+  it("buildLive strips standings to id/name/score/color/emoji", () => {
+    const live = buildLive(game());
+    expect(live.standings).toEqual([
+      { id: "a", name: "Ann", score: 30, color: "#6366f1", emoji: "🦊" },
+      { id: "b", name: "Bob", score: 10, color: null, emoji: null },
+    ]);
+  });
+
+  it("buildPresentQ has no q when not in the question stage", () => {
+    expect(buildPresentQ(game({ stage: "intro" })).q).toBeUndefined();
+  });
+
+  it("normalizePresent rejects hostile input and coerces fields", () => {
+    expect(normalizePresent(null)).toBeNull();
+    expect(normalizePresent([1, 2, 3])).toBeNull();
+    const n = normalizePresent({
+      stage: "haxx",
+      roundType: "evil",
+      q: { q: "Hi", effect: "nope", steps: "3" },
+    });
+    expect(n.stage).toBe("intro"); // unknown stage → default
+    expect(n.roundType).toBeNull(); // unknown type dropped
+    expect(n.q).toMatchObject({ q: "Hi", effect: "blur", steps: 3 });
+  });
+
+  it("normalizeLive coerces and defends against junk", () => {
+    expect(normalizeLive("nope")).toBeNull();
+    const n = normalizeLive({
+      revealed: 1,
+      hintsShown: 0,
+      standings: [{ name: "X", score: "5" }, "junk"],
+      reveal: { answer: { lat: "1", lng: "2", name: 5 } },
+    });
+    expect(n.revealed).toBe(true);
+    expect(n.hintsShown).toBe(1); // clamped to >= 1
+    expect(n.standings[0]).toMatchObject({ name: "X", score: 5, color: null, emoji: null });
+    expect(n.reveal.answer).toEqual({ lat: 1, lng: 2, name: "" });
+  });
+
+  it("buildPresentQ → normalizePresent round-trips a choice question", () => {
+    const g = game({
+      quiz: {
+        title: "Q",
+        rounds: [
+          {
+            id: "r",
+            type: "choice",
+            title: "C",
+            questions: [{ id: "c1", q: "Pick", options: ["A", "B"], correct: 1, points: 10 }],
+          },
+        ],
+      },
+    });
+    const n = normalizePresent(buildPresentQ(g));
+    expect(n.roundType).toBe("choice");
+    expect(n.q.options).toEqual(["A", "B"]);
+    expect(n.q.correct).toBeUndefined(); // the correct index is never in the present payload
   });
 });

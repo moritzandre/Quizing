@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connectRoom, roomTopics, newRoomCode } from "../lib/realtime.js";
-import { uid, str } from "../lib/model.js";
+import { uid, str, normalizePresent, normalizeLive } from "../lib/model.js";
 import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 
 /** Keep only a palette emoji/color from an (untrusted) phone join message. */
@@ -56,6 +56,16 @@ export function useHostRoom() {
   }, []);
   const pushStateRef = useRef(pushState);
   pushStateRef.current = pushState;
+
+  // Stream the clean TV mirror: present = heavy/per-question, live = light/frequent.
+  const pushPresent = useCallback((payload) => {
+    const conn = connRef.current;
+    if (conn) conn.publish(conn.topics.present, payload, { retain: true });
+  }, []);
+  const pushLive = useCallback((payload) => {
+    const conn = connRef.current;
+    if (conn) conn.publish(conn.topics.live, payload, { retain: true });
+  }, []);
 
   const enable = useCallback(() => {
     if (connRef.current) return;
@@ -125,6 +135,8 @@ export function useHostRoom() {
     const conn = connRef.current;
     if (conn) {
       conn.clearRetained(conn.topics.state);
+      conn.clearRetained(conn.topics.present);
+      conn.clearRetained(conn.topics.live);
       conn.close();
     }
     connRef.current = null;
@@ -139,12 +151,14 @@ export function useHostRoom() {
     setAnswers({});
   }, []);
 
-  // Tear down on unmount — clear the retained state first so it doesn't strand phones.
+  // Tear down on unmount — clear retained topics first so they don't strand phones/TVs.
   useEffect(
     () => () => {
       const c = connRef.current;
       if (c) {
         c.clearRetained(c.topics.state);
+        c.clearRetained(c.topics.present);
+        c.clearRetained(c.topics.live);
         c.close();
       }
     },
@@ -217,7 +231,47 @@ export function useHostRoom() {
     collectAnswers,
     lobby,
     idle,
+    pushPresent,
+    pushLive,
   };
+}
+
+/**
+ * TV-side room: read-only mirror of the host for #/present/<code>. Subscribes to
+ * the present (heavy) + live (light) topics and the lean state topic — the
+ * latter clearing (empty body) signals the host left, so the TV can wait.
+ * All payloads are validated; the broker is never trusted.
+ */
+export function usePresenterRoom(code) {
+  const [status, setStatus] = useState("connecting");
+  const [present, setPresent] = useState(null);
+  const [live, setLive] = useState(null);
+  const [alive, setAlive] = useState(true);
+  const connRef = useRef(null);
+
+  const validCode = typeof code === "string" && /^[A-Za-z0-9]{3,12}$/.test(code) ? code : null;
+
+  useEffect(() => {
+    if (!validCode) {
+      setStatus("error");
+      return;
+    }
+    const topics = roomTopics(validCode);
+    const conn = connectRoom({
+      code: validCode,
+      subscribe: [topics.present, topics.live, topics.state],
+      onStatus: setStatus,
+      onMessage: (topic, msg) => {
+        if (topic === topics.present) setPresent(msg ? normalizePresent(msg) : null);
+        else if (topic === topics.live) setLive(msg ? normalizeLive(msg) : null);
+        else if (topic === topics.state) setAlive(!!msg); // empty retained body = host gone
+      },
+    });
+    connRef.current = conn;
+    return () => conn.close();
+  }, [validCode]);
+
+  return { status, present, live, alive };
 }
 
 /** Phone-side room: join, buzz, submit a pin; mirrors the host's state. */
