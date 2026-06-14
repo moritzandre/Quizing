@@ -7,10 +7,9 @@
      quiznight/<code>/state  host → phones, RETAINED (late joiners catch up)
      quiznight/<code>/up      phones → host (join / buzz / pin / leave)
    A short random room code in the topic is the only privacy boundary —
-   fine for a living-room game, not for anything sensitive.
+   fine for a living-room game, not for anything sensitive. mqtt is loaded
+   dynamically so it stays out of the initial bundle until a room opens.
    ==================================================================== */
-
-import mqtt from "mqtt";
 
 /** Public broker (WSS). No account; uptime/privacy are best-effort. */
 export const BROKER_URL = "wss://broker.emqx.io:8084/mqtt";
@@ -37,55 +36,70 @@ export function newRoomCode() {
 export function connectRoom({ code, subscribe = [], onMessage, onStatus, will }) {
   const topics = roomTopics(code);
   const clientId = `qn_${code}_${Math.random().toString(36).slice(2, 10)}`;
-  const client = mqtt.connect(BROKER_URL, {
-    clientId,
-    clean: true,
-    connectTimeout: 8000,
-    reconnectPeriod: 3000,
-    keepalive: 30,
-    // The broker publishes this on an ungraceful disconnect (tab closed/crash),
-    // so a stranded retained state self-heals to "cleared".
-    ...(will ? { will: { topic: will.topic, payload: will.payload ?? "", qos: 0, retain: true } } : {}),
-  });
+  let client = null;
+  let closed = false;
+  const queue = []; // publishes requested before mqtt finished loading/connecting
 
-  client.on("connect", () => {
-    onStatus?.("connected");
-    if (subscribe.length) client.subscribe(subscribe, { qos: 0 });
-  });
-  client.on("reconnect", () => onStatus?.("connecting"));
-  client.on("offline", () => onStatus?.("offline"));
-  client.on("error", () => onStatus?.("error"));
-  client.on("message", (topic, payload) => {
-    const text = payload.toString();
-    if (!text) return onMessage?.(topic, null); // empty body = cleared retained message (reset signal)
-    let obj;
+  const doPublish = (topic, payload, retain) => {
     try {
-      obj = JSON.parse(text);
+      client.publish(topic, payload, { qos: 0, retain });
     } catch {
-      return; // ignore non-JSON
+      /* transient — ignore */
     }
-    onMessage?.(topic, obj);
-  });
+  };
+
+  import("mqtt")
+    .then(({ default: mqtt }) => {
+      if (closed) return;
+      client = mqtt.connect(BROKER_URL, {
+        clientId,
+        clean: true,
+        connectTimeout: 8000,
+        reconnectPeriod: 3000,
+        keepalive: 30,
+        // The broker publishes this on an ungraceful disconnect (tab closed/crash),
+        // so a stranded retained state self-heals to "cleared".
+        ...(will ? { will: { topic: will.topic, payload: will.payload ?? "", qos: 0, retain: true } } : {}),
+      });
+      client.on("connect", () => {
+        onStatus?.("connected");
+        if (subscribe.length) client.subscribe(subscribe, { qos: 0 });
+        while (queue.length) {
+          const [topic, payload, retain] = queue.shift();
+          doPublish(topic, payload, retain);
+        }
+      });
+      client.on("reconnect", () => onStatus?.("connecting"));
+      client.on("offline", () => onStatus?.("offline"));
+      client.on("error", () => onStatus?.("error"));
+      client.on("message", (topic, payload) => {
+        const text = payload.toString();
+        if (!text) return onMessage?.(topic, null); // empty body = cleared retained message (reset signal)
+        let obj;
+        try {
+          obj = JSON.parse(text);
+        } catch {
+          return; // ignore non-JSON
+        }
+        onMessage?.(topic, obj);
+      });
+    })
+    .catch(() => onStatus?.("error"));
 
   return {
     topics,
     publish(topic, obj, opts = {}) {
-      try {
-        client.publish(topic, JSON.stringify(obj), { qos: 0, retain: !!opts.retain });
-      } catch {
-        /* not connected yet — caller will re-publish on next state change */
-      }
+      const payload = JSON.stringify(obj);
+      if (client && client.connected) doPublish(topic, payload, !!opts.retain);
+      else queue.push([topic, payload, !!opts.retain]);
     },
     clearRetained(topic) {
-      try {
-        client.publish(topic, "", { qos: 0, retain: true });
-      } catch {
-        /* ignore */
-      }
+      if (client) doPublish(topic, "", true);
     },
     close() {
+      closed = true;
       try {
-        client.end(true);
+        client?.end(true);
       } catch {
         /* already closed */
       }

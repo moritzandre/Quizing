@@ -7,7 +7,7 @@
    so both setup and play can drive it; phones land directly on #/join.
    ==================================================================== */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Play, Plus, X, Pencil, Copy, Download, Upload, Trophy } from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
 import {
@@ -35,12 +35,15 @@ import {
   emojiAt,
 } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
-import PlayView from "./components/PlayView.jsx";
-import SetupView from "./components/SetupView.jsx";
-import Builder from "./components/Builder.jsx";
-import JoinView from "./components/JoinView.jsx";
-import LeaderboardView from "./components/LeaderboardView.jsx";
 import { useHostRoom } from "./components/useRoom.js";
+
+// Lazy-loaded so the heavy libraries they pull in (Leaflet, the YouTube/canvas
+// players, mqtt, qrcode, the builder) aren't in the initial home-screen bundle.
+const PlayView = lazy(() => import("./components/PlayView.jsx"));
+const SetupView = lazy(() => import("./components/SetupView.jsx"));
+const Builder = lazy(() => import("./components/Builder.jsx"));
+const JoinView = lazy(() => import("./components/JoinView.jsx"));
+const LeaderboardView = lazy(() => import("./components/LeaderboardView.jsx"));
 import { useI18n, LanguageToggle } from "./i18n/I18nProvider.jsx";
 
 const APP_VERSION = "1.2.0";
@@ -246,16 +249,21 @@ function App() {
     reader.readAsText(file);
   };
 
-  // Phone join page — standalone, renders before the data-load gate.
-  if (view.name === "join") return <JoinView code={view.code} />;
+  const loadingFallback = (
+    <div className="qn-app-bg flex min-h-screen items-center justify-center font-sans text-stone-400 dark:text-stone-500">
+      {t("home.loading")}
+    </div>
+  );
 
-  if (!loaded) {
+  // Phone join page — standalone, renders before the data-load gate.
+  if (view.name === "join")
     return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-50 font-sans text-stone-400 dark:bg-stone-950 dark:text-stone-500">
-        {t("home.loading")}
-      </div>
+      <Suspense fallback={loadingFallback}>
+        <JoinView code={view.code} />
+      </Suspense>
     );
-  }
+
+  if (!loaded) return loadingFallback;
 
   return (
     <div className="qn-app-bg min-h-screen font-sans text-stone-900 antialiased transition-colors dark:text-stone-100">
@@ -379,34 +387,38 @@ function App() {
         </div>
       )}
 
-      {view.name === "setup" && (
-        <SetupView
-          quiz={view.quiz}
-          defaults={lastPlayers}
-          room={room}
-          onBack={() => go({ name: "home" })}
-          onStart={(players) => startGame(view.quiz, players)}
-        />
-      )}
+      {view.name !== "home" && (
+        <Suspense fallback={loadingFallback}>
+          {view.name === "setup" && (
+            <SetupView
+              quiz={view.quiz}
+              defaults={lastPlayers}
+              room={room}
+              onBack={() => go({ name: "home" })}
+              onStart={(players) => startGame(view.quiz, players)}
+            />
+          )}
 
-      {view.name === "play" && game && (
-        <PlayView
-          game={game}
-          setGame={persistGame}
-          room={room}
-          onExit={() => {
-            if (game.stage === "end") persistGame(null);
-            go({ name: "home" });
-          }}
-        />
-      )}
+          {view.name === "play" && game && (
+            <PlayView
+              game={game}
+              setGame={persistGame}
+              room={room}
+              onExit={() => {
+                if (game.stage === "end") persistGame(null);
+                go({ name: "home" });
+              }}
+            />
+          )}
 
-      {view.name === "builder" && (
-        <Builder initial={view.draft} note={view.note} onSave={saveQuiz} onCancel={() => go({ name: "home" })} />
-      )}
+          {view.name === "builder" && (
+            <Builder initial={view.draft} note={view.note} onSave={saveQuiz} onCancel={() => go({ name: "home" })} />
+          )}
 
-      {view.name === "leaderboard" && (
-        <LeaderboardView results={leaderboard} onBack={() => go({ name: "home" })} onClear={clearLeaderboard} />
+          {view.name === "leaderboard" && (
+            <LeaderboardView results={leaderboard} onBack={() => go({ name: "home" })} onClear={clearLeaderboard} />
+          )}
+        </Suspense>
       )}
     </div>
   );
