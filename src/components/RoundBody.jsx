@@ -47,7 +47,10 @@ export default function RoundBody({
   buzzed = false,
   compact = false,
 }) {
-  const mapH = compact ? "h-[42vh]" : "h-[70vh]";
+  // Heights are capped so the question + media + answer fit one screen without
+  // scrolling (compact = the host phone; otherwise the TV).
+  const mapH = compact ? "h-[42vh]" : "h-[58vh]";
+  const mediaW = compact ? "max-w-5xl" : "max-w-3xl";
 
   if (type === "classic" || type === "jeopardy") {
     return (
@@ -81,7 +84,7 @@ export default function RoundBody({
     return (
       <div className="text-center">
         {q.q && <Q>{q.q}</Q>}
-        <div className="mx-auto mt-5 max-w-5xl">
+        <div className={`mx-auto mt-5 ${mediaW}`}>
           <MediaPlayer
             key={q.url || "none"}
             url={q.url}
@@ -100,12 +103,12 @@ export default function RoundBody({
     return (
       <div className="text-center">
         {q.q && <Q>{q.q}</Q>}
-        <div className="mx-auto mt-5 max-w-5xl">
+        <div className={`mx-auto mt-5 ${mediaW}`}>
           {q.url ? (
             <img
               src={q.url}
               alt=""
-              className={`${compact ? "max-h-[42vh]" : "max-h-[74vh]"} w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900`}
+              className={`${compact ? "max-h-[42vh]" : "max-h-[58vh]"} w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900`}
             />
           ) : null}
         </div>

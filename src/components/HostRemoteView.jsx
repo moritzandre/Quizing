@@ -8,9 +8,22 @@
    controls the game, so it's a host-only QR (same trust model as the room).
    ==================================================================== */
 
-import { Eye, ArrowRight, Lightbulb, Play, Bell, BarChart3, Plus, Minus, Wifi, WifiOff, Gamepad2 } from "lucide-react";
+import {
+  Eye,
+  ArrowRight,
+  Lightbulb,
+  Play,
+  Bell,
+  BarChart3,
+  Plus,
+  Minus,
+  SkipForward,
+  Wifi,
+  WifiOff,
+  Gamepad2,
+} from "lucide-react";
 import { usePresenterRoom } from "./useRoom.js";
-import { TYPES, FOCUS, Button, Avatar } from "./ui.jsx";
+import { TYPES, FOCUS, Avatar } from "./ui.jsx";
 import { clipLadderActive } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import RoundBody from "./RoundBody.jsx";
@@ -111,12 +124,20 @@ export default function HostRemoteView({ code }) {
       {/* primary controls */}
       <div className="grid grid-cols-2 gap-2">
         {stage === "intro" && (
-          <button
-            onClick={() => sendCtrl("startRound")}
-            className={`col-span-2 bg-indigo-600 text-white ${btn} ${FOCUS}`}
-          >
-            <Play size={18} /> {t("play.startRound")}
-          </button>
+          <>
+            <button
+              onClick={() => sendCtrl("startRound")}
+              className={`col-span-2 bg-indigo-600 text-white ${btn} ${FOCUS}`}
+            >
+              <Play size={18} /> {t("play.startRound")}
+            </button>
+            <button
+              onClick={() => sendCtrl("skipRound")}
+              className={`col-span-2 border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+            >
+              <SkipForward size={18} /> {t("host.skipRound")}
+            </button>
+          </>
         )}
         {stage === "question" && (
           <>
@@ -149,6 +170,12 @@ export default function HostRemoteView({ code }) {
               className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
             >
               <Bell size={18} /> {t("host.resetBuzz")}
+            </button>
+            <button
+              onClick={() => sendCtrl("skipRound")}
+              className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+            >
+              <SkipForward size={18} /> {t("host.skipRound")}
             </button>
           </>
         )}
@@ -189,28 +216,45 @@ export default function HostRemoteView({ code }) {
             .map((s) => (
               <div
                 key={s.id}
-                className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 dark:border-stone-800 dark:bg-stone-900"
+                className="flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-2.5 py-2 dark:border-stone-800 dark:bg-stone-900"
               >
-                <Avatar color={s.color} emoji={s.emoji} photo={s.photo} name={s.name} size={26} />
+                <Avatar color={s.color} emoji={s.emoji} photo={s.photo} name={s.name} size={24} />
                 <span className="min-w-0 flex-1 truncate text-sm font-medium">{s.name}</span>
-                <span className="w-8 text-center text-sm font-bold tabular-nums">{s.score}</span>
+                <span className="w-7 shrink-0 text-center text-sm font-bold tabular-nums">{s.score}</span>
+                {/* fine tweak ±1 */}
                 <button
                   onClick={() => sendCtrl("adjust", { id: s.id, delta: -1 })}
                   aria-label="-1"
-                  className={`rounded-lg border border-stone-200 p-1.5 text-stone-500 dark:border-stone-700 ${FOCUS}`}
+                  className={`shrink-0 rounded-md border border-stone-200 p-1.5 text-stone-500 dark:border-stone-700 ${FOCUS}`}
                 >
-                  <Minus size={14} />
+                  <Minus size={13} />
                 </button>
                 <button
                   onClick={() => sendCtrl("adjust", { id: s.id, delta: 1 })}
                   aria-label="+1"
-                  className={`rounded-lg border border-stone-200 p-1.5 text-stone-500 dark:border-stone-700 ${FOCUS}`}
+                  className={`shrink-0 rounded-md border border-stone-200 p-1.5 text-stone-500 dark:border-stone-700 ${FOCUS}`}
                 >
-                  <Plus size={14} />
+                  <Plus size={13} />
                 </button>
-                <Button className="px-3 py-1.5 text-xs" onClick={() => sendCtrl("award", { id: s.id })}>
-                  {t("host.give")}
-                </Button>
+                {/* take / give the round's points */}
+                {value > 0 && (
+                  <>
+                    <button
+                      onClick={() => sendCtrl("adjust", { id: s.id, delta: -value })}
+                      aria-label={`-${value}`}
+                      className={`shrink-0 rounded-md bg-red-600 px-2 py-1 text-xs font-bold text-white ${FOCUS}`}
+                    >
+                      −{value}
+                    </button>
+                    <button
+                      onClick={() => sendCtrl("adjust", { id: s.id, delta: value })}
+                      aria-label={`+${value}`}
+                      className={`shrink-0 rounded-md bg-emerald-600 px-2 py-1 text-xs font-bold text-white ${FOCUS}`}
+                    >
+                      +{value}
+                    </button>
+                  </>
+                )}
               </div>
             ))}
         </div>

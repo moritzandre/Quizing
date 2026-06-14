@@ -460,6 +460,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
       case "jump":
         if (Number.isFinite(+a.ri)) jumpToRound(+a.ri);
         break;
+      case "skipRound":
+        goNextRound(); // jump straight to the next round (or the end)
+        break;
       case "standings":
         setShowStandings(!!a.on);
         break;
