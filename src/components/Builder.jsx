@@ -13,6 +13,8 @@ import {
   Upload,
   ImagePlus,
   Loader2,
+  Crop as CropIcon,
+  Sparkles,
 } from "lucide-react";
 import {
   uid,
@@ -24,11 +26,13 @@ import {
   moveItem,
   makeHint,
   hintHasContent,
+  normalizeQuiz,
   MORPH_EFFECTS,
   HINT_TYPES,
 } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+import { ROUND_TEMPLATES } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -122,12 +126,93 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
   );
 }
 
+/** Crop an image in a modal (cropperjs is lazy-loaded so it stays out of the home bundle). */
+function CropModal({ src, onApply, onClose, t }) {
+  const imgRef = useRef(null);
+  const cropperRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+  const [loading, setLoading] = useState(true);
+
+  // Key only on the image source so an unrelated parent re-render can't tear
+  // down and re-init the live cropper (which would reset the user's selection).
+  useEffect(() => {
+    let alive = true;
+    let cropper = null;
+    (async () => {
+      try {
+        const [{ default: Cropper }] = await Promise.all([import("cropperjs"), import("cropperjs/dist/cropper.css")]);
+        if (!alive || !imgRef.current) return;
+        cropper = new Cropper(imgRef.current, {
+          viewMode: 1,
+          autoCropArea: 1,
+          background: false,
+          ready: () => alive && setLoading(false),
+        });
+        cropperRef.current = cropper;
+      } catch {
+        if (alive) onCloseRef.current();
+      }
+    })();
+    return () => {
+      alive = false;
+      cropper?.destroy?.();
+      cropperRef.current = null;
+    };
+  }, [src]);
+
+  const apply = () => {
+    const c = cropperRef.current;
+    if (!c) return;
+    const canvas = c.getCroppedCanvas({ maxWidth: 1400, maxHeight: 1400, imageSmoothingQuality: "high" });
+    if (canvas) onApply(canvas.toDataURL("image/jpeg", 0.82));
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-2xl rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-800 dark:bg-stone-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <CropIcon size={18} /> {t("builder.cropImage")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <ChevronLeft size={16} />
+          </IconButton>
+        </div>
+        <div className="relative max-h-[60vh] overflow-hidden rounded-xl bg-stone-100 dark:bg-stone-800">
+          <img ref={imgRef} src={src} alt="" className="block max-w-full" style={{ maxHeight: "60vh" }} />
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center text-stone-400">
+              <Loader2 size={22} className="animate-spin" />
+            </div>
+          )}
+        </div>
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={apply} disabled={loading}>
+            <CropIcon size={16} /> {t("builder.applyCrop")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Picture field: paste a URL or upload an image (downscaled to a data URL). */
 function ImageField({ value, onChange }) {
   const { t } = useI18n();
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [cropping, setCropping] = useState(false);
   const isData = value.startsWith("data:");
   const onFile = async (e) => {
     const file = e.target.files?.[0];
@@ -173,18 +258,37 @@ function ImageField({ value, onChange }) {
             className="max-h-56 w-full rounded-xl border border-stone-200 bg-white object-contain dark:border-stone-700 dark:bg-stone-900"
             onError={() => setErr(t("builder.imageLoadErr"))}
           />
-          <button
-            onClick={() => onChange("")}
-            className={`absolute right-2 top-2 rounded-lg bg-white/90 px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-red-600 dark:bg-stone-900/90 dark:text-stone-300 ${FOCUS}`}
-          >
-            {t("builder.remove")}
-          </button>
+          <div className="absolute right-2 top-2 flex gap-1.5">
+            <button
+              onClick={() => setCropping(true)}
+              className={`inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-indigo-600 dark:bg-stone-900/90 dark:text-stone-300 ${FOCUS}`}
+            >
+              <CropIcon size={12} /> {t("builder.crop")}
+            </button>
+            <button
+              onClick={() => onChange("")}
+              className={`rounded-lg bg-white/90 px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-red-600 dark:bg-stone-900/90 dark:text-stone-300 ${FOCUS}`}
+            >
+              {t("builder.remove")}
+            </button>
+          </div>
           {isData && <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("builder.uploadedImage")}</p>}
         </div>
       ) : (
         <div className="mt-2 flex aspect-[3/1] w-full items-center justify-center rounded-xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
           <ImagePlus size={20} className="mr-2" /> {t("builder.noPictureYet")}
         </div>
+      )}
+      {cropping && (
+        <CropModal
+          src={value}
+          onApply={(url) => {
+            onChange(url);
+            setCropping(false);
+          }}
+          onClose={() => setCropping(false)}
+          t={t}
+        />
       )}
     </div>
   );
@@ -199,7 +303,32 @@ const HINT_TYPE_KEY = {
 };
 const hintTypeOf = (h) => (typeof h === "string" ? "text" : HINT_TYPES.includes(h?.type) ? h.type : "text");
 
-/** Editor for one hint-ladder item's hints — each can be text or media. */
+/** Start/end (seconds) trim inputs for audio/video; null = no bound. */
+function TrimInputs({ start, end, onChange, t }) {
+  const toSec = (v) => (v === "" ? null : Math.max(0, +v || 0));
+  return (
+    <div className="mt-2 flex items-center gap-2">
+      <span className="text-xs text-stone-400 dark:text-stone-500">{t("builder.trim")}</span>
+      <input
+        type="number"
+        min="0"
+        placeholder={t("builder.startSec")}
+        className={`${inputCls} w-24 py-1`}
+        value={start ?? ""}
+        onChange={(e) => onChange({ start: toSec(e.target.value) })}
+      />
+      <input
+        type="number"
+        min="0"
+        placeholder={t("builder.endSec")}
+        className={`${inputCls} w-24 py-1`}
+        value={end ?? ""}
+        onChange={(e) => onChange({ end: toSec(e.target.value) })}
+      />
+    </div>
+  );
+}
+
 function HintsField({ hints, onChange, t }) {
   const set = (i, val) => onChange(hints.map((h, j) => (j === i ? val : h)));
   const del = (i) => onChange(hints.filter((_, j) => j !== i));
@@ -251,20 +380,26 @@ function HintsField({ hints, onChange, t }) {
             )}
             {type === "image" && <ImageField value={h.url || ""} onChange={(url) => set(i, { type: "image", url })} />}
             {type === "audio" && (
-              <input
-                className={inputCls}
-                placeholder={t("builder.audioUrl")}
-                value={h.url || ""}
-                onChange={(e) => set(i, { type: "audio", url: e.target.value })}
-              />
+              <>
+                <input
+                  className={inputCls}
+                  placeholder={t("builder.audioUrl")}
+                  value={h.url || ""}
+                  onChange={(e) => set(i, { ...h, type: "audio", url: e.target.value })}
+                />
+                <TrimInputs start={h.start} end={h.end} onChange={(p) => set(i, { ...h, type: "audio", ...p })} t={t} />
+              </>
             )}
             {type === "video" && (
-              <input
-                className={inputCls}
-                placeholder={t("builder.videoUrl")}
-                value={h.url || ""}
-                onChange={(e) => set(i, { type: "video", url: e.target.value })}
-              />
+              <>
+                <input
+                  className={inputCls}
+                  placeholder={t("builder.videoUrl")}
+                  value={h.url || ""}
+                  onChange={(e) => set(i, { ...h, type: "video", url: e.target.value })}
+                />
+                <TrimInputs start={h.start} end={h.end} onChange={(p) => set(i, { ...h, type: "video", ...p })} t={t} />
+              </>
             )}
             {type === "map" && (
               <div>
@@ -305,9 +440,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const [quiz, setQuiz] = useState(initial);
   const [picker, setPicker] = useState(false);
 
+  // Functional updaters so back-to-back writes in one event compose (e.g. the
+  // map search sets {lat,lng} and {name} in the same tick) instead of clobbering.
   const setRound = (rid, patch) =>
-    setQuiz({ ...quiz, rounds: quiz.rounds.map((r) => (r.id === rid ? { ...r, ...patch } : r)) });
-  const reorderRounds = (from, to) => setQuiz({ ...quiz, rounds: moveItem(quiz.rounds, from, to) });
+    setQuiz((prev) => ({ ...prev, rounds: prev.rounds.map((r) => (r.id === rid ? { ...r, ...patch } : r)) }));
+  const reorderRounds = (from, to) => setQuiz((prev) => ({ ...prev, rounds: moveItem(prev.rounds, from, to) }));
   const reorderQuestions = (r, from, to) => setRound(r.id, { questions: moveItem(r.questions, from, to) });
   const reorderCategories = (r, from, to) => setRound(r.id, { categories: moveItem(r.categories, from, to) });
   const setTimer = (r, raw) => {
@@ -315,11 +452,24 @@ export default function Builder({ initial, note, onSave, onCancel }) {
     setRound(r.id, { timer: v === "" ? null : Math.max(0, Math.round(+v)) || null });
   };
   const addRound = (type) => {
-    setQuiz({ ...quiz, rounds: [...quiz.rounds, makeRound(type)] });
+    setQuiz((prev) => ({ ...prev, rounds: [...prev.rounds, makeRound(type)] }));
+    setPicker(false);
+  };
+  // Insert a starter round from a template (normalized so it gets fresh ids).
+  const addTemplateRound = (tpl) => {
+    const round = normalizeQuiz({ rounds: [tpl.round] })?.rounds?.[0];
+    if (round) setQuiz((prev) => ({ ...prev, rounds: [...prev.rounds, round] }));
     setPicker(false);
   };
   const qRow = (r, item, patch) =>
-    setRound(r.id, { questions: r.questions.map((x) => (x.id === item.id ? { ...x, ...patch } : x)) });
+    setQuiz((prev) => ({
+      ...prev,
+      rounds: prev.rounds.map((rd) =>
+        rd.id !== r.id
+          ? rd
+          : { ...rd, questions: rd.questions.map((x) => (x.id === item.id ? { ...x, ...patch } : x)) },
+      ),
+    }));
   const qDel = (r, item) => setRound(r.id, { questions: r.questions.filter((x) => x.id !== item.id) });
   const setCat = (r, cid, patch) =>
     setRound(r.id, { categories: r.categories.map((c) => (c.id === cid ? { ...c, ...patch } : c)) });
@@ -597,6 +747,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             />
                             {t("builder.audioOnly")}
                           </label>
+                          <TrimInputs start={item.start} end={item.end} onChange={(p) => qRow(r, item, p)} t={t} />
                           <input
                             className={`${inputCls} mt-2`}
                             placeholder={t("builder.afterClip")}
@@ -994,11 +1145,33 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           value={item.name}
                           onChange={(e) => qRow(r, item, { name: e.target.value })}
                         />
+                        <div className="mt-2 inline-flex rounded-xl border border-stone-200 p-0.5 dark:border-stone-700">
+                          {[
+                            { k: "map", label: t("builder.layerMap") },
+                            { k: "satellite", label: t("builder.layerSatellite") },
+                          ].map(({ k, label }) => (
+                            <button
+                              key={k}
+                              onClick={() => qRow(r, item, { tileLayer: k })}
+                              className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${FOCUS} ${
+                                (item.tileLayer || "map") === k
+                                  ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
+                                  : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
                         <div className="mt-2">
                           <LeafletMap
                             answer={item.lat != null ? { lat: item.lat, lng: item.lng, label: item.name } : undefined}
                             onPick={(lat, lng) => qRow(r, item, { lat, lng })}
-                            className="h-72"
+                            onSearchName={(name) => name && qRow(r, item, { name })}
+                            tileLayer={item.tileLayer}
+                            search
+                            mapillary
+                            className="h-80"
                           />
                           <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
                             {item.lat != null
@@ -1045,6 +1218,25 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               >
                 {t("common.cancel")}
               </button>
+            </div>
+
+            <p className="mb-2 mt-5 text-sm font-medium text-stone-500 dark:text-stone-400">
+              {t("builder.fromTemplate")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ROUND_TEMPLATES.map((tpl) => {
+                const Icon = TYPES[tpl.type]?.icon || Sparkles;
+                return (
+                  <button
+                    key={tpl.key}
+                    onClick={() => addTemplateRound(tpl)}
+                    className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-stone-700 dark:bg-stone-800/50 dark:hover:border-indigo-500/50 dark:hover:bg-indigo-500/10 ${FOCUS}`}
+                  >
+                    <Icon size={16} className="text-indigo-500" />
+                    <span className="truncate">{tpl.round.title}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         ) : (

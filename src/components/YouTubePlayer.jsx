@@ -42,10 +42,16 @@ const fmt = (s) => {
  * @param {object} props
  * @param {string} props.videoId YouTube video ID (validated by the caller).
  * @param {boolean} [props.audioOnly] Hide the video behind a cover; play sound only.
+ * @param {number|null} [props.start] Trim: start playback at this second.
+ * @param {number|null} [props.end] Trim: pause when playback reaches this second.
  */
-export default function YouTubePlayer({ videoId, audioOnly = false }) {
+export default function YouTubePlayer({ videoId, audioOnly = false, start = null, end = null }) {
   const hostRef = useRef(null);
   const playerRef = useRef(null);
+  const startRef = useRef(start);
+  startRef.current = start;
+  const endRef = useRef(end);
+  endRef.current = end;
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [state, setState] = useState("unstarted"); // unstarted | playing | paused | ended
@@ -75,12 +81,17 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
             fs: 0,
             disablekb: 1,
             playsinline: 1,
+            ...(start ? { start: Math.floor(start) } : {}),
           },
           events: {
             onReady: (e) => {
               if (cancelled) return;
               setReady(true);
               setDur(e.target.getDuration() || 0);
+              if (startRef.current) {
+                e.target.seekTo(startRef.current, true);
+                setCur(startRef.current);
+              }
               const f = e.target.getIframe();
               if (f) {
                 f.style.position = "absolute";
@@ -92,9 +103,23 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
               poll = setInterval(() => {
                 const p = playerRef.current;
                 if (!p || typeof p.getCurrentTime !== "function") return;
-                setCur(p.getCurrentTime() || 0);
+                const now = p.getCurrentTime() || 0;
+                setCur(now);
                 setDur(p.getDuration() || 0);
                 setMuted(typeof p.isMuted === "function" ? p.isMuted() : false);
+                // Trim: stop at the out-point so only the chosen clip plays
+                // (only when `end` is a real point past the start).
+                const out = endRef.current;
+                if (
+                  out != null &&
+                  out > (startRef.current || 0) &&
+                  now >= out &&
+                  window.YT?.PlayerState &&
+                  typeof p.getPlayerState === "function" &&
+                  p.getPlayerState() === window.YT.PlayerState.PLAYING
+                ) {
+                  p.pauseVideo();
+                }
               }, 250);
             },
             onStateChange: (e) => {
@@ -128,9 +153,12 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
       }
       if (host) host.innerHTML = "";
     };
-  }, [videoId]);
+  }, [videoId, start]);
 
   const playing = state === "playing";
+  // Seek-bar bounds: honor a trim window only when end is past start.
+  const trimLo = start || 0;
+  const trimHi = end && end > trimLo ? end : dur || 0;
 
   const togglePlay = () => {
     const p = playerRef.current;
@@ -141,7 +169,7 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
   const restart = () => {
     const p = playerRef.current;
     if (!p) return;
-    p.seekTo(0, true);
+    p.seekTo(startRef.current || 0, true);
     p.playVideo();
   };
   const toggleMute = () => {
@@ -248,15 +276,15 @@ export default function YouTubePlayer({ videoId, audioOnly = false }) {
         <input
           type="range"
           aria-label="Seek"
-          min={0}
-          max={dur || 0}
+          min={trimLo}
+          max={trimHi}
           step="any"
-          value={Math.min(cur, dur || 0)}
+          value={Math.min(Math.max(cur, trimLo), trimHi)}
           onChange={seek}
           disabled={!ready}
           className="h-1 flex-1 cursor-pointer accent-rose-500"
         />
-        <span className="w-10 text-xs tabular-nums text-white/70">{fmt(dur)}</span>
+        <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
         <button
           onClick={toggleMute}
           disabled={!ready}

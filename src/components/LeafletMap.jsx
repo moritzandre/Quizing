@@ -1,24 +1,35 @@
 /* ====================================================================
-   LEAFLET MAP (real slippy map via OpenStreetMap / Carto tiles)
+   LEAFLET MAP (real slippy map via OpenStreetMap / Carto / Esri tiles)
    --------------------------------------------------------------------
-   Replaces the stylized dot grid for map rounds. Shows an answer pin and
-   per-player guess markers, draws guess→answer lines on reveal, and calls
-   onPick(lat, lng) when clicked (builder + phone pin placement). Tiles
-   need internet; the layer switches with the app's light/dark theme.
+   Shows an answer pin and per-player guess markers, draws guess→answer
+   lines on reveal, and calls onPick(lat, lng) when clicked (builder +
+   phone pin placement). tileLayer="satellite" uses keyless Esri World
+   Imagery (and does NOT follow the light/dark theme); otherwise Carto
+   tiles track the app theme. Optional `search` (OSM Nominatim) and
+   `mapillary` (street-level link-out) overlays are builder-facing.
    ==================================================================== */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Search, ExternalLink, Loader2 } from "lucide-react";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const TILES = {
   light: {
     url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     attribution: "&copy; OpenStreetMap &copy; CARTO",
+    maxZoom: 19,
   },
   dark: {
     url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     attribution: "&copy; OpenStreetMap &copy; CARTO",
+    maxZoom: 19,
+  },
+  satellite: {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics",
+    maxZoom: 19,
   },
 };
 
@@ -32,22 +43,59 @@ const answerIcon = () =>
     iconAnchor: [9, 9],
   });
 
+const round4 = (n) => Math.round(n * 1e4) / 1e4;
+const wrapLng = (lng) => round4(((((lng + 180) % 360) + 360) % 360) - 180);
+
 /**
  * @param {object} props
  * @param {{lat:number,lng:number,label?:string}} [props.answer] Answer/editable pin.
  * @param {Array<{lat:number,lng:number,label?:string,color?:string}>} [props.guesses] Guess markers.
  * @param {boolean} [props.showLines] Draw guess→answer lines and fit all into view.
  * @param {(lat:number,lng:number)=>void} [props.onPick] Click handler to place a pin.
+ * @param {"map"|"satellite"} [props.tileLayer] Base layer; satellite ignores the theme.
+ * @param {boolean} [props.search] Show a place-search box (sets the pin via onPick).
+ * @param {(name:string)=>void} [props.onSearchName] Receives a chosen place's short name.
+ * @param {boolean} [props.mapillary] Show a Mapillary street-level link-out button.
  * @param {string} [props.className] Sizing classes (must give the map a height).
  */
-export default function LeafletMap({ answer, guesses = [], showLines = false, onPick, className = "" }) {
+export default function LeafletMap({
+  answer,
+  guesses = [],
+  showLines = false,
+  onPick,
+  tileLayer = "map",
+  search = false,
+  onSearchName,
+  mapillary = false,
+  className = "",
+}) {
+  const { t } = useI18n();
   const elRef = useRef(null);
   const mapRef = useRef(null);
   const layerRef = useRef(null);
   const tileRef = useRef(null);
   const onPickRef = useRef(onPick);
   onPickRef.current = onPick;
+  const tileLayerRef = useRef(tileLayer);
+  tileLayerRef.current = tileLayer;
   const didCenterRef = useRef(false); // center once on mount; don't yank the view while picking
+
+  const [q, setQ] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [results, setResults] = useState(null);
+
+  // Choose the base layer: satellite is theme-independent; map follows light/dark.
+  const applyTile = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    const key = tileLayerRef.current === "satellite" ? "satellite" : isDark() ? "dark" : "light";
+    if (tileRef.current?._qnKey === key) return;
+    if (tileRef.current) tileRef.current.remove();
+    const layer = L.tileLayer(TILES[key].url, { attribution: TILES[key].attribution, maxZoom: TILES[key].maxZoom });
+    layer._qnKey = key;
+    layer.addTo(map);
+    tileRef.current = layer;
+  };
 
   // init once
   useEffect(() => {
@@ -57,40 +105,27 @@ export default function LeafletMap({ answer, guesses = [], showLines = false, on
     );
     mapRef.current = map;
     layerRef.current = L.layerGroup().addTo(map);
+    applyTile();
 
-    const theme = isDark() ? "dark" : "light";
-    tileRef.current = L.tileLayer(TILES[theme].url, { attribution: TILES[theme].attribution, maxZoom: 18 }).addTo(map);
+    map.on("click", (e) => onPickRef.current?.(round4(e.latlng.lat), wrapLng(e.latlng.lng)));
 
-    map.on("click", (e) =>
-      onPickRef.current?.(
-        Math.round(e.latlng.lat * 1e4) / 1e4,
-        Math.round((((((e.latlng.lng + 180) % 360) + 360) % 360) - 180) * 1e4) / 1e4,
-      ),
-    );
-
-    // swap tiles when the app theme toggles
-    const obs = new MutationObserver(() => {
-      const next = isDark() ? "dark" : "light";
-      const cur = tileRef.current?._url === TILES.dark.url ? "dark" : "light";
-      if (next !== cur && mapRef.current) {
-        if (tileRef.current) tileRef.current.remove();
-        tileRef.current = L.tileLayer(TILES[next].url, { attribution: TILES[next].attribution, maxZoom: 18 }).addTo(
-          mapRef.current,
-        );
-      }
-    });
+    // swap tiles when the app theme toggles (no-op while on satellite)
+    const obs = new MutationObserver(() => applyTile());
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    // container may have been sized after mount
-    const t = setTimeout(() => map.invalidateSize(), 60);
-
+    const tm = setTimeout(() => map.invalidateSize(), 60);
     return () => {
       obs.disconnect();
-      clearTimeout(t);
+      clearTimeout(tm);
       map.remove();
       mapRef.current = null;
     };
   }, []);
+
+  // rebuild the base layer when the tileLayer prop changes
+  useEffect(() => {
+    applyTile();
+  }, [tileLayer]);
 
   // keep the cursor/interaction hint in sync with whether picking is enabled
   useEffect(() => {
@@ -152,12 +187,95 @@ export default function LeafletMap({ answer, guesses = [], showLines = false, on
     }
   }, [answer, guesses, showLines]);
 
+  // Place search via the free OpenStreetMap Nominatim service (submit-driven to
+  // respect the ~1 req/s usage policy; the browser sends a Referer for them).
+  const runSearch = async (e) => {
+    e?.preventDefault();
+    const query = q.trim();
+    if (!query) return;
+    setBusy(true);
+    setResults(null);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(query)}`,
+        { headers: { "Accept-Language": typeof navigator !== "undefined" ? navigator.language || "en" : "en" } },
+      );
+      const data = await res.json();
+      setResults(Array.isArray(data) ? data.slice(0, 5) : []);
+    } catch {
+      setResults([]);
+    }
+    setBusy(false);
+  };
+  const pickResult = (r) => {
+    const lat = round4(+r.lat);
+    const lng = round4(+r.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    mapRef.current?.setView([lat, lng], 8);
+    onPickRef.current?.(lat, lng);
+    onSearchName?.(String(r.display_name || "").split(",")[0]);
+    setResults(null);
+    setQ("");
+  };
+
+  const openMapillary = () => {
+    const c = mapRef.current?.getCenter();
+    if (c) window.open(`https://www.mapillary.com/app/?lat=${c.lat}&lng=${c.lng}&z=15`, "_blank", "noopener");
+  };
+
   return (
     <div
-      ref={elRef}
-      role="application"
-      aria-label="Interactive map"
-      className={`w-full overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 ${className}`}
-    />
+      className={`relative w-full overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 ${className}`}
+    >
+      <div ref={elRef} role="application" aria-label="Interactive map" className="h-full w-full" />
+
+      {search && (
+        <div className="absolute left-1/2 top-2 z-[1000] w-[min(20rem,calc(100%-1rem))] -translate-x-1/2">
+          <form onSubmit={runSearch} className="flex gap-1.5">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("map.searchPlaceholder")}
+              className="min-w-0 flex-1 rounded-xl border border-stone-300 bg-white/95 px-3 py-2 text-sm text-stone-900 shadow-sm backdrop-blur placeholder:text-stone-400 focus:outline-none dark:border-stone-700 dark:bg-stone-900/95 dark:text-stone-100"
+            />
+            <button
+              type="submit"
+              aria-label={t("map.search")}
+              className="flex items-center justify-center rounded-xl bg-indigo-600 px-3 text-white shadow-sm hover:bg-indigo-500"
+            >
+              {busy ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+            </button>
+          </form>
+          {results && (
+            <div className="mt-1 overflow-hidden rounded-xl border border-stone-200 bg-white/95 shadow-lg backdrop-blur dark:border-stone-700 dark:bg-stone-900/95">
+              {results.length === 0 ? (
+                <p className="px-3 py-2 text-sm text-stone-400">{t("map.noResults")}</p>
+              ) : (
+                results.map((r, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => pickResult(r)}
+                    className="block w-full truncate px-3 py-2 text-left text-sm hover:bg-stone-100 dark:hover:bg-stone-800"
+                  >
+                    {r.display_name}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {mapillary && (
+        <button
+          type="button"
+          onClick={openMapillary}
+          className="absolute right-2 top-2 z-[1000] inline-flex items-center gap-1 rounded-xl bg-white/95 px-2.5 py-1.5 text-xs font-medium text-stone-700 shadow-sm backdrop-blur hover:bg-white dark:bg-stone-900/95 dark:text-stone-200"
+        >
+          <ExternalLink size={13} /> {t("map.streetView")}
+        </button>
+      )}
+    </div>
   );
 }

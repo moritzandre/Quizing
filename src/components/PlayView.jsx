@@ -936,7 +936,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {TimerPill}
         <div className="mx-auto max-w-2xl">
           {vid ? (
-            <YouTubePlayer key={qKey} videoId={vid} audioOnly={!!q.audioOnly} />
+            <YouTubePlayer key={qKey} videoId={vid} audioOnly={!!q.audioOnly} start={q.start} end={q.end} />
           ) : (
             <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
               {t("play.noVideo")}
@@ -1274,6 +1274,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             guesses={markers}
             showLines={game.revealed}
             onPick={game.revealed ? undefined : placeGuess}
+            tileLayer={q.tileLayer}
             className="h-[55vh]"
           />
         </div>

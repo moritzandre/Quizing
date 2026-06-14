@@ -8,7 +8,7 @@
    ==================================================================== */
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
-import { Play, Plus, X, Pencil, Copy, Download, Upload, Trophy } from "lucide-react";
+import { Play, Plus, X, Pencil, Copy, Download, Upload, Trophy, LayoutTemplate, Sparkles } from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
 import {
   uid,
@@ -23,6 +23,7 @@ import {
 } from "./lib/model.js";
 import { SAMPLE } from "./data/sampleQuiz.js";
 import { NERD_QUIZ } from "./data/nerdQuiz.js";
+import { QUIZ_TEMPLATES, AI_SCHEMA_HELP } from "./data/templates.js";
 import {
   FOCUS,
   cardCls,
@@ -64,6 +65,110 @@ const parseHash = () => {
   return { seg, arg };
 };
 
+const modalWrap = "fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-4 backdrop-blur-sm sm:items-center";
+const modalCard =
+  "w-full max-w-lg rounded-2xl border border-stone-200 bg-white p-5 shadow-xl dark:border-stone-800 dark:bg-stone-900";
+
+/** Pick a whole-quiz starter template, then open it in the builder. */
+function TemplateModal({ onClose, onPick, t }) {
+  return (
+    <div className={modalWrap} onClick={onClose}>
+      <div className={modalCard} onClick={(e) => e.stopPropagation()}>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <LayoutTemplate size={18} /> {t("home.newFromTemplate")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+        <div className="space-y-2">
+          {QUIZ_TEMPLATES.map((tpl) => (
+            <button
+              key={tpl.key}
+              onClick={() => onPick(tpl)}
+              className={`block w-full rounded-xl border border-stone-200 px-4 py-3 text-left transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-stone-700 dark:hover:border-indigo-500/50 dark:hover:bg-indigo-500/10 ${FOCUS}`}
+            >
+              <div className="font-semibold">{tpl.title}</div>
+              <div className="text-sm text-stone-400 dark:text-stone-500">
+                {t("home.templateRounds", { n: tpl.quiz.rounds.length })}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Copy a generation prompt for an LLM, then paste the returned JSON to import it. */
+function AiModal({ onClose, onImport, t }) {
+  const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(AI_SCHEMA_HELP);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard blocked — the prompt is visible to copy manually */
+    }
+  };
+  const doImport = () => {
+    const title = onImport(text.trim());
+    setMsg(title ? { ok: true, text: t("ai.added", { title }) } : { ok: false, text: t("ai.invalid") });
+  };
+  return (
+    <div className={modalWrap} onClick={onClose}>
+      <div className={modalCard} onClick={(e) => e.stopPropagation()}>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <Sparkles size={18} /> {t("ai.title")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+        <p className="text-sm text-stone-500 dark:text-stone-400">{t("ai.intro")}</p>
+        <div className="relative mt-2">
+          <pre className="max-h-36 overflow-auto rounded-xl bg-stone-100 p-3 text-xs leading-relaxed text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+            {AI_SCHEMA_HELP}
+          </pre>
+          <button
+            onClick={copy}
+            className={`absolute right-2 top-2 rounded-lg bg-white/90 px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-indigo-600 dark:bg-stone-900/90 dark:text-stone-300 ${FOCUS}`}
+          >
+            {copied ? t("ai.copied") : t("ai.copyPrompt")}
+          </button>
+        </div>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={t("ai.pastePlaceholder")}
+          rows={5}
+          className="mt-3 w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-400 focus:outline-none dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100"
+        />
+        {msg && (
+          <p
+            className={`mt-2 text-sm ${msg.ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
+          >
+            {msg.text}
+          </p>
+        )}
+        <div className="mt-3 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            {t("common.done")}
+          </Button>
+          <Button onClick={doImport} disabled={!text.trim()}>
+            <Sparkles size={16} /> {t("ai.import")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   // Initialise from the hash so a phone hitting #/join/<code> renders instantly.
   const [view, setView] = useState(() => {
@@ -78,6 +183,8 @@ function App() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [importError, setImportError] = useState("");
+  const [tplOpen, setTplOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
   const fileRef = useRef(null);
   const { t } = useI18n();
 
@@ -272,6 +379,28 @@ function App() {
     reader.readAsText(file);
   };
 
+  /** Open the builder on a fresh quiz seeded from a template (fresh ids). */
+  const newFromTemplate = (tpl) => {
+    const draft = normalizeQuiz(tpl.quiz);
+    setTplOpen(false);
+    if (draft) go({ name: "builder", draft });
+  };
+
+  /** Import an AI-pasted quiz JSON (same path as a file import). Returns the title or null. */
+  const importAiJson = (text) => {
+    try {
+      const parsed = JSON.parse(text);
+      const quiz = normalizeQuiz(parsed?.quiz ?? parsed);
+      if (!quiz || !quiz.rounds.length) return null;
+      quiz.id = uid();
+      quiz.sample = false;
+      persistQuizzes([...quizzes, quiz]);
+      return quiz.title || t("builder.untitledQuiz");
+    } catch {
+      return null;
+    }
+  };
+
   const loadingFallback = (
     <div className="qn-app-bg flex min-h-screen items-center justify-center font-sans text-stone-400 dark:text-stone-500">
       {t("home.loading")}
@@ -408,6 +537,14 @@ function App() {
             >
               <Plus size={18} /> {t("home.newQuiz")}
             </button>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button variant="outline" className="flex-1" onClick={() => setTplOpen(true)}>
+                <LayoutTemplate size={16} /> {t("home.newFromTemplate")}
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={() => setAiOpen(true)}>
+                <Sparkles size={16} /> {t("home.createWithAi")}
+              </Button>
+            </div>
           </div>
 
           <p className="mt-10 text-center text-xs text-stone-300 dark:text-stone-600">
@@ -415,6 +552,9 @@ function App() {
             {storage.name === "local" && t("home.storageLocal")}
             {storage.name === "memory" && <span className="font-medium text-amber-500">{t("home.storageMemory")}</span>}
           </p>
+
+          {tplOpen && <TemplateModal onClose={() => setTplOpen(false)} onPick={newFromTemplate} t={t} />}
+          {aiOpen && <AiModal onClose={() => setAiOpen(false)} onImport={importAiJson} t={t} />}
         </div>
       )}
 

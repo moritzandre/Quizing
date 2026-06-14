@@ -1,0 +1,212 @@
+/* ====================================================================
+   TEMPLATES (starter rounds + quizzes) and the AI-authoring helper text
+   --------------------------------------------------------------------
+   Plain data (no ids — they're assigned by normalizeQuiz on insert, so a
+   template can be inserted many times and always gets fresh ids). Round
+   templates seed the Builder's "from template" picker; quiz templates seed
+   "New from template". AI_SCHEMA_HELP is a compact, copy-paste spec a user
+   can hand to an LLM to generate a whole .quiz.json. Template content is
+   not translated (same contract as the built-in sample quizzes); the picker
+   shows each template's own title and round type.
+   ==================================================================== */
+
+/** One starter round per format. Pickers show `round.title` + the type icon. */
+export const ROUND_TEMPLATES = [
+  {
+    key: "classic-trivia",
+    type: "classic",
+    round: {
+      type: "classic",
+      title: "General Knowledge",
+      questions: [
+        { q: "What is the capital of Australia?", a: "Canberra", points: 10 },
+        { q: "Which planet is known as the Red Planet?", a: "Mars", points: 10 },
+        { q: "How many continents are there?", a: "Seven", points: 10 },
+      ],
+    },
+  },
+  {
+    key: "jeopardy-board",
+    type: "jeopardy",
+    round: {
+      type: "jeopardy",
+      title: "The Board",
+      categories: [
+        {
+          name: "Science",
+          questions: [
+            { clue: "The chemical symbol for gold.", answer: "Au", points: 100 },
+            { clue: "The closest star to Earth.", answer: "The Sun", points: 200 },
+            { clue: "The powerhouse of the cell.", answer: "Mitochondria", points: 300 },
+          ],
+        },
+        {
+          name: "History",
+          questions: [
+            { clue: "Year WWII ended.", answer: "1945", points: 100 },
+            { clue: "First person on the Moon.", answer: "Neil Armstrong", points: 200 },
+            { clue: "Ancient wonder still standing in Giza.", answer: "The Great Pyramid", points: 300 },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    key: "hints-ladder",
+    type: "hints",
+    round: {
+      type: "hints",
+      title: "Who Am I?",
+      questions: [
+        {
+          answer: "Albert Einstein",
+          hints: [
+            "I was born in Germany in 1879.",
+            "I developed a famous theory of physics.",
+            "E = mc².",
+            "My hair is as iconic as my equations.",
+          ],
+        },
+      ],
+    },
+  },
+  {
+    key: "video-clip",
+    type: "video",
+    round: {
+      type: "video",
+      title: "Name That Clip",
+      questions: [{ url: "", q: "What is this from?", a: "", points: 10, audioOnly: false, start: null, end: null }],
+    },
+  },
+  {
+    key: "picture-round",
+    type: "image",
+    round: {
+      type: "image",
+      title: "Guess the Picture",
+      questions: [
+        { url: "", q: "What is this?", a: "", points: 10 },
+        { url: "", q: "Where is this?", a: "", points: 10 },
+      ],
+    },
+  },
+  {
+    key: "morph-reveal",
+    type: "morph",
+    round: {
+      type: "morph",
+      title: "Slowly Revealed",
+      questions: [{ url: "", a: "", points: 30, effect: "pixelate", steps: 5 }],
+    },
+  },
+  {
+    key: "fusion-blend",
+    type: "fusion",
+    round: {
+      type: "fusion",
+      title: "Who Did We Blend?",
+      questions: [{ urlA: "", urlB: "", a: "", points: 40, steps: 4 }],
+    },
+  },
+  {
+    key: "map-geography",
+    type: "map",
+    round: {
+      type: "map",
+      title: "Where in the World?",
+      questions: [
+        {
+          q: "Where is the Eiffel Tower?",
+          name: "Paris, France",
+          lat: 48.8584,
+          lng: 2.2945,
+          points: 10,
+          tileLayer: "map",
+        },
+        {
+          q: "Where is the Statue of Liberty?",
+          name: "New York, USA",
+          lat: 40.6892,
+          lng: -74.0445,
+          points: 10,
+          tileLayer: "map",
+        },
+      ],
+    },
+  },
+  {
+    key: "choice-quiz",
+    type: "choice",
+    round: {
+      type: "choice",
+      title: "Multiple Choice",
+      questions: [
+        {
+          q: "Which is the largest ocean?",
+          options: ["Atlantic", "Indian", "Pacific", "Arctic"],
+          correct: 2,
+          points: 10,
+        },
+        {
+          q: "Which language has the most native speakers?",
+          options: ["English", "Mandarin Chinese", "Spanish", "Hindi"],
+          correct: 1,
+          points: 10,
+        },
+      ],
+    },
+  },
+  {
+    key: "number-guess",
+    type: "number",
+    round: {
+      type: "number",
+      title: "Closest Guess Wins",
+      questions: [
+        { q: "How tall is the Eiffel Tower (m)?", answer: 330, unit: "m", points: 15 },
+        { q: "In what year was the first iPhone released?", answer: 2007, unit: "", points: 15 },
+      ],
+    },
+  },
+];
+
+/** Whole-quiz starters for "New from template". Pickers show `title` + round count. */
+export const QUIZ_TEMPLATES = [
+  {
+    key: "mixed-night",
+    title: "Mixed Night (Starter)",
+    quiz: {
+      title: "Mixed Night",
+      rounds: [ROUND_TEMPLATES[0].round, ROUND_TEMPLATES[8].round, ROUND_TEMPLATES[7].round, ROUND_TEMPLATES[9].round],
+    },
+  },
+  {
+    key: "pub-classic",
+    title: "Pub Classic (Starter)",
+    quiz: {
+      title: "Pub Classic",
+      rounds: [ROUND_TEMPLATES[0].round, ROUND_TEMPLATES[2].round, ROUND_TEMPLATES[4].round, ROUND_TEMPLATES[1].round],
+    },
+  },
+];
+
+/** Copy-paste spec for generating a .quiz.json with an AI. English (AI-facing). */
+export const AI_SCHEMA_HELP = `Generate a Quiz Night quiz as JSON. Reply with ONLY a JSON object, no prose.
+
+Top level: { "title": string, "rounds": [ ...rounds ] }
+Every round: { "type": <one of the types below>, "title": string, "timer": number|null, and a questions or categories array }
+
+Round types and their question shapes:
+- "classic":  questions: [{ "q": string, "a": string, "points": number }]
+- "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]
+- "hints":    questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder
+- "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]
+- "image":    questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]
+- "morph":    questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]
+- "fusion":   questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]
+- "map":      questions: [{ "q": string, "name": string, "lat": number, "lng": number, "points": number, "tileLayer": "map"|"satellite" }]
+- "choice":   questions: [{ "q": string, "options": [string,...], "correct": <0-based index>, "points": number }]
+- "number":   questions: [{ "q": string, "answer": number, "unit": string, "points": number }]
+
+Rules: omit "id" fields (they are generated). Use real, publicly reachable image/video URLs, or leave url empty for the host to fill in. Keep 3-6 questions per round. Make answers unambiguous.`;

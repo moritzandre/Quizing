@@ -73,7 +73,7 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
         {q.q && <Q>{q.q}</Q>}
         <div className="mx-auto mt-5 max-w-3xl">
           {vid ? (
-            <YouTubePlayer videoId={vid} audioOnly={!!q.audioOnly} />
+            <YouTubePlayer videoId={vid} audioOnly={!!q.audioOnly} start={q.start} end={q.end} />
           ) : (
             <p className="text-stone-400">{t("play.noVideo")}</p>
           )}
@@ -129,6 +129,7 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
             answer={
               ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
             }
+            tileLayer={q.tileLayer}
             className="h-[55vh]"
           />
         </div>

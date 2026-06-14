@@ -92,7 +92,9 @@ describe("normalizeQuiz", () => {
         type: "video",
         title: "V",
         timer: null,
-        questions: [{ id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10, audioOnly: true }],
+        questions: [
+          { id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10, audioOnly: true, start: 5, end: 20 },
+        ],
       },
       {
         id: "r6",
@@ -136,7 +138,7 @@ describe("normalizeQuiz", () => {
         type: "map",
         title: "M",
         timer: null,
-        questions: [{ id: "m1", q: "Where?", name: "Spot", lat: 1.5, lng: -2.25, points: 10 }],
+        questions: [{ id: "m1", q: "Where?", name: "Spot", lat: 1.5, lng: -2.25, points: 10, tileLayer: "satellite" }],
       },
     ],
   };
@@ -261,6 +263,42 @@ describe("normalizeQuiz", () => {
     expect(hints[2]).toEqual({ type: "map", lat: 1.5, lng: null, name: "" });
     expect(hints[3]).toBe("t"); // unknown type → text → str(h.text)
     expect(hints[4]).toBe(""); // non-string/object → ""
+  });
+
+  it("normalizes video trim (start/end) and map tileLayer with safe defaults", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "video", questions: [{ url: "u", start: "5", end: "abc" }, {}] },
+        { type: "map", questions: [{ q: "W?", tileLayer: "satellite" }, { q: "W2?", tileLayer: "hack" }, {}] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ start: 5, end: null });
+    expect(q.rounds[0].questions[1]).toMatchObject({ start: null, end: null });
+    expect(q.rounds[1].questions[0].tileLayer).toBe("satellite");
+    expect(q.rounds[1].questions[1].tileLayer).toBe("map"); // unknown → map
+    expect(q.rounds[1].questions[2].tileLayer).toBe("map"); // missing → map
+  });
+
+  it("keeps an audio/video hint trim window; image hints carry no trim", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "hints",
+          questions: [
+            {
+              answer: "Z",
+              hints: [
+                { type: "audio", url: "a", start: "3", end: 9 },
+                { type: "image", url: "i" },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    const hints = q.rounds[0].questions[0].hints;
+    expect(hints[0]).toEqual({ type: "audio", url: "a", start: 3, end: 9 });
+    expect(hints[1]).toEqual({ type: "image", url: "i" });
   });
 });
 

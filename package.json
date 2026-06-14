@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "cropperjs": "^1.6.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.18.0",
     "mqtt": "^5.15.1",

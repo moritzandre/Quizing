@@ -38,9 +38,9 @@ export function makeHint(type) {
     case "image":
       return { type: "image", url: "" };
     case "audio":
-      return { type: "audio", url: "" };
+      return { type: "audio", url: "", start: null, end: null };
     case "video":
-      return { type: "video", url: "" };
+      return { type: "video", url: "", start: null, end: null };
     case "map":
       return { type: "map", lat: null, lng: null, name: "" };
     default:
@@ -55,7 +55,9 @@ function normalizeHint(h) {
   const type = HINT_TYPES.includes(h.type) ? h.type : "text";
   if (type === "text") return str(h.text);
   if (type === "map") return { type: "map", lat: numOrNull(h.lat), lng: numOrNull(h.lng), name: str(h.name) };
-  return { type, url: str(h.url) };
+  if (type === "image") return { type: "image", url: str(h.url) };
+  // audio / video: keep an optional trim window (start/end seconds)
+  return { type, url: str(h.url), start: numOrNull(h.start), end: numOrNull(h.end) };
 }
 
 /** True if a hint actually carries content (used for the value ladder + display). */
@@ -171,7 +173,16 @@ export function makeQuestion(type) {
     case "hints":
       return { id: uid(), answer: "", hints: ["", "", ""] };
     case "video":
-      return { id: uid(), url: "", q: "Name what you see or hear.", a: "", points: 10, audioOnly: false };
+      return {
+        id: uid(),
+        url: "",
+        q: "Name what you see or hear.",
+        a: "",
+        points: 10,
+        audioOnly: false,
+        start: null,
+        end: null,
+      };
     case "image":
       return { id: uid(), url: "", q: "What do you see?", a: "", points: 10 };
     case "morph":
@@ -183,7 +194,7 @@ export function makeQuestion(type) {
     case "number":
       return { id: uid(), q: "", answer: null, unit: "", points: 10 };
     case "map":
-      return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10 };
+      return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10, tileLayer: "map" };
     default:
       return { id: uid() };
   }
@@ -248,6 +259,8 @@ export function normalizeQuiz(raw) {
               a: str(q?.a),
               points: num(q?.points, 10),
               audioOnly: !!q?.audioOnly,
+              start: numOrNull(q?.start),
+              end: numOrNull(q?.end),
             });
           if (r.type === "image")
             Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
@@ -290,6 +303,7 @@ export function normalizeQuiz(raw) {
               lat: numOrNull(q?.lat),
               lng: numOrNull(q?.lng),
               points: num(q?.points, 10),
+              tileLayer: q?.tileLayer === "satellite" ? "satellite" : "map",
             });
           return it;
         });
@@ -462,7 +476,7 @@ function presentQ(type, q) {
     case "fusion":
       return { urlA: str(q.urlA), urlB: str(q.urlB), steps: num(q.steps, 4) };
     case "map":
-      return { q: str(q.q) };
+      return { q: str(q.q), tileLayer: q.tileLayer === "satellite" ? "satellite" : "map" };
     case "choice":
       return { q: str(q.q), options: (Array.isArray(q.options) ? q.options : []).map(str) };
     case "number":
@@ -574,6 +588,7 @@ export function normalizePresent(raw) {
     const o = { audioOnly: !!q.audioOnly };
     for (const k of ["q", "clue", "url", "urlA", "urlB", "unit"]) if (typeof q[k] === "string") o[k] = q[k];
     if (typeof q.effect === "string") o.effect = MORPH_EFFECTS.includes(q.effect) ? q.effect : "blur";
+    if (typeof q.tileLayer === "string") o.tileLayer = q.tileLayer === "satellite" ? "satellite" : "map";
     if (q.steps != null) o.steps = num(q.steps, 4);
     if (q.points != null) o.points = num(q.points, 10);
     if (q.start != null) o.start = numOrNull(q.start);
