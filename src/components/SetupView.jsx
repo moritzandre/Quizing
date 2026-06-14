@@ -53,31 +53,31 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
             {t("setup.joinedByPhone", { n: phonePlayers.length })}
           </p>
         )}
-        {names.map((n, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <Avatar
-              color={colorAt(phonePlayers.length + i)}
-              emoji={emojiAt(phonePlayers.length + i)}
-              name={n || `${i + 1}`}
-              size={34}
-            />
-            <input
-              className={inputCls}
-              placeholder={t("setup.playerN", { n: i + 1 })}
-              value={n}
-              onChange={(e) => setNames(names.map((x, j) => (j === i ? e.target.value : x)))}
-            />
-            {names.length > 1 && (
-              <IconButton
-                label={t("setup.removePlayer")}
-                onClick={() => setNames(names.filter((_, j) => j !== i))}
-                className="hover:text-red-600"
-              >
-                <X size={16} />
-              </IconButton>
-            )}
-          </div>
-        ))}
+        {names.map((n, i) => {
+          // Preview the color this player will actually get: phone players first,
+          // then non-blank manual names in order (mirrors startGame's seeding).
+          const slot = phonePlayers.length + names.slice(0, i).filter((x) => x.trim()).length;
+          return (
+            <div key={i} className="flex items-center gap-2">
+              <Avatar color={colorAt(slot)} emoji={emojiAt(slot)} name={n || `${i + 1}`} size={34} />
+              <input
+                className={inputCls}
+                placeholder={t("setup.playerN", { n: i + 1 })}
+                value={n}
+                onChange={(e) => setNames(names.map((x, j) => (j === i ? e.target.value : x)))}
+              />
+              {names.length > 1 && (
+                <IconButton
+                  label={t("setup.removePlayer")}
+                  onClick={() => setNames(names.filter((_, j) => j !== i))}
+                  className="hover:text-red-600"
+                >
+                  <X size={16} />
+                </IconButton>
+              )}
+            </div>
+          );
+        })}
         <button
           onClick={() => setNames([...names, ""])}
           className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}

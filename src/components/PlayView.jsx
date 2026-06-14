@@ -128,15 +128,29 @@ export default function PlayView({ game, setGame, onExit, room }) {
     return () => clearTimeout(id);
   }, [timeLeft, paused, game.revealed, game.stage, timerSecs, qKey]);
 
-  // Sound the alarm once when the timer runs out.
+  // Sound the alarm once per question when its timer genuinely reaches 0
+  // (a ref keyed by qKey avoids re-firing on a stale 0 carried into the next question).
+  const timeupRef = useRef(null);
   useEffect(() => {
-    if (timerSecs > 0 && timeLeft === 0 && game.stage === "question" && !game.revealed) playSound("timeup");
-  }, [timeLeft, timerSecs, game.stage, game.revealed]);
+    if (timerSecs > 0 && timeLeft === 0 && game.stage === "question" && !game.revealed && timeupRef.current !== qKey) {
+      timeupRef.current = qKey;
+      playSound("timeup");
+    }
+  }, [timeLeft, timerSecs, game.stage, game.revealed, qKey]);
 
   // Fanfare when the final scores appear.
   useEffect(() => {
     if (game.stage === "end") playSound("win");
   }, [game.stage]);
+
+  // Keep presentation state in sync when the user leaves fullscreen via Esc.
+  useEffect(() => {
+    const onFs = () => {
+      if (!document.fullscreenElement) setPres(false);
+    };
+    document.addEventListener("fullscreenchange", onFs);
+    return () => document.removeEventListener("fullscreenchange", onFs);
+  }, []);
 
   const toggleAward = (pid) => {
     const a = { ...(game.awarded || {}) };
@@ -360,6 +374,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 className="qn-fade-up flex w-24 flex-col items-center"
                 style={{ animationDelay: `${rank * 0.12}s` }}
               >
+                {rank === 0 && hasWinner && (
+                  <span className="mb-1 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-bold text-amber-900">
+                    {t("play.winner")}
+                  </span>
+                )}
                 <Avatar
                   color={colorFor(p, idxOf(p))}
                   emoji={p.emoji}
@@ -422,7 +441,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const T = TYPES[round.type];
     const Icon = T.icon;
     return (
-      <div className="mx-auto max-w-2xl px-6 pb-32 pt-6">
+      <div className={`mx-auto px-6 pb-32 pt-6 ${pres ? "max-w-4xl qn-present" : "max-w-2xl"}`}>
         {Header}
         <div className="qn-fade-up mt-10 text-center">
           <div
@@ -458,7 +477,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     );
     const maxRows = Math.max(...round.categories.map((c) => c.questions.length), 0);
     return (
-      <div className="mx-auto max-w-3xl px-6 pb-32 pt-6">
+      <div className={`mx-auto px-6 pb-32 pt-6 ${pres ? "max-w-5xl qn-present" : "max-w-3xl"}`}>
         {Header}
         <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">{round.title || t("play.pickTile")}</h2>
         <div
@@ -616,7 +635,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </h2>
         <div className="mt-10" style={{ minHeight: 80 }}>
           {game.revealed ? (
-            <p className="qn-pop text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+            <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
               {isJeop ? q.answer : q.a}
             </p>
           ) : (
@@ -668,7 +687,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         {game.revealed && (
           <>
-            <p className="qn-pop mt-8 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+            <p className="qn-pop qn-answer mt-8 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
               {q.answer}
             </p>
             <div className="mt-8">{NextBtn}</div>
@@ -696,7 +715,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
         <div className="mt-6" style={{ minHeight: 64 }}>
           {game.revealed ? (
-            <p className="qn-pop text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">{q.a}</p>
+            <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
+              {q.a}
+            </p>
           ) : (
             RevealBtn
           )}
@@ -727,7 +748,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
         <div className="mt-6" style={{ minHeight: 64 }}>
           {game.revealed ? (
-            <p className="qn-pop text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">{q.a}</p>
+            <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
+              {q.a}
+            </p>
           ) : (
             RevealBtn
           )}
@@ -771,7 +794,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         {game.revealed && (
           <>
-            <p className="qn-pop mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">{q.a}</p>
+            <p className="qn-pop qn-answer mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+              {q.a}
+            </p>
             <div className="mt-6">{NextBtn}</div>
           </>
         )}
@@ -813,7 +838,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         {game.revealed && (
           <>
-            <p className="qn-pop mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">{q.a}</p>
+            <p className="qn-pop qn-answer mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+              {q.a}
+            </p>
             <div className="mt-6">{NextBtn}</div>
           </>
         )}
