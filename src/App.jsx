@@ -198,8 +198,8 @@ function App() {
           id: p.id || p.deviceId || uid(),
           name: p.name,
           score: 0,
-          color: colorAt(i),
-          emoji: emojiAt(i),
+          color: p.color || colorAt(i),
+          emoji: p.emoji || emojiAt(i),
         };
         if (deviceIds.length) base.deviceIds = deviceIds;
         if (p.members) base.members = p.members;

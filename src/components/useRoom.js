@@ -11,6 +11,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connectRoom, roomTopics, newRoomCode } from "../lib/realtime.js";
 import { uid, str } from "../lib/model.js";
+import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
+
+/** Keep only a palette emoji/color from an (untrusted) phone join message. */
+const safeEmoji = (e) => (typeof e === "string" && PLAYER_EMOJI.includes(e) ? e : null);
+const safeColor = (c) => (typeof c === "string" && PLAYER_COLORS.includes(c) ? c : null);
 
 const joinLink = (code) => `${window.location.origin}${window.location.pathname}#/join/${code}`;
 
@@ -79,7 +84,12 @@ export function useHostRoom() {
         if (msg.type === "join") {
           setParticipants((p) => ({
             ...p,
-            [msg.deviceId]: { name: str(msg.name) || "Player", teamId: msg.teamId ? str(msg.teamId) : null },
+            [msg.deviceId]: {
+              name: str(msg.name) || "Player",
+              teamId: msg.teamId ? str(msg.teamId) : null,
+              emoji: safeEmoji(msg.emoji),
+              color: safeColor(msg.color),
+            },
           }));
           pushStateRef.current();
         } else if (msg.type === "leave") {
@@ -254,10 +264,16 @@ export function usePlayerRoom(code) {
   }, []);
 
   const join = useCallback(
-    (n, teamId) => {
+    (n, teamId, avatar) => {
       const clean = str(n).trim() || "Player";
       setName(clean);
-      send({ type: "join", name: clean, teamId: teamId || null });
+      send({
+        type: "join",
+        name: clean,
+        teamId: teamId || null,
+        emoji: avatar?.emoji || null,
+        color: avatar?.color || null,
+      });
     },
     [send],
   );

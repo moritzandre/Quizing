@@ -144,7 +144,7 @@ export function Avatar({ color, emoji, name, size = 28, className = "" }) {
   return (
     <span
       aria-hidden
-      className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold leading-none text-white ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold leading-none text-white shadow-sm ring-2 ring-white/70 dark:ring-white/15 ${className}`}
       style={{ width: size, height: size, backgroundColor: color || "#78716c", fontSize: Math.round(size * 0.52) }}
     >
       {emoji || (name ? name.trim().charAt(0).toUpperCase() : "?")}
@@ -167,7 +167,8 @@ export const cardCls = "rounded-2xl border border-stone-200 bg-white dark:border
 export function Button({ variant = "dark", className = "", children, ...props }) {
   const variants = {
     dark: "bg-stone-900 text-white shadow-sm hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white",
-    accent: "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500",
+    accent:
+      "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/25 hover:from-indigo-400 hover:to-violet-500",
     outline:
       "border border-stone-300 text-stone-900 hover:bg-stone-100 dark:border-stone-700 dark:text-stone-100 dark:hover:bg-stone-800",
     ghost: "text-stone-500 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200",
@@ -175,7 +176,7 @@ export function Button({ variant = "dark", className = "", children, ...props })
   };
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition active:scale-[.98] disabled:pointer-events-none disabled:opacity-30 ${FOCUS} ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-150 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-[.96] disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-30 ${FOCUS} ${variants[variant]} ${className}`}
       {...props}
     >
       {children}
@@ -203,7 +204,9 @@ export function TypeBadge({ type }) {
   const meta = TYPES[type];
   if (!meta) return null;
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-600 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${accentFor(type).soft}`}
+    >
       <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
       {t(`round.${type}.label`)}
     </span>
@@ -293,7 +296,18 @@ export function ThemeToggle({ className = "" }) {
 
 /* ---- confetti ---- */
 
-const CONFETTI_COLORS = ["#6366f1", "#f59e0b", "#10b981", "#f43f5e", "#0ea5e9", "#a855f7"];
+const CONFETTI_COLORS = [
+  "#6366f1",
+  "#f59e0b",
+  "#10b981",
+  "#f43f5e",
+  "#0ea5e9",
+  "#a855f7",
+  "#ec4899",
+  "#84cc16",
+  "#f97316",
+  "#14b8a6",
+];
 
 /**
  * One-shot confetti burst. Renders `count` pieces with deterministic-enough
@@ -301,16 +315,19 @@ const CONFETTI_COLORS = ["#6366f1", "#f59e0b", "#10b981", "#f43f5e", "#0ea5e9", 
  * @param {object} props
  * @param {number} [props.count] Number of pieces.
  */
-export function Confetti({ count = 90 }) {
+export function Confetti({ count = 120 }) {
   const [pieces] = useState(() =>
     Array.from({ length: count }, (_, i) => ({
       left: (i / count) * 100 + (((i * 53) % 17) - 8),
       delay: ((i * 37) % 100) / 100,
       duration: 2.4 + ((i * 29) % 20) / 10,
       color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-      rotate: (i * 47) % 360,
+      round: i % 3 === 0, // mix discs in with the rectangles
+      scale: 0.7 + ((i * 19) % 10) / 10,
     })),
   );
+  // The fall animation owns `transform` (translate + spin), so size variety is
+  // baked into width/height — an inline transform here would be overridden.
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
       {pieces.map((p, i) => (
@@ -319,10 +336,12 @@ export function Confetti({ count = 90 }) {
           className="qn-confetti-piece"
           style={{
             left: `${p.left}%`,
+            width: `${Math.round(10 * p.scale)}px`,
+            height: `${Math.round(14 * p.scale)}px`,
             backgroundColor: p.color,
+            borderRadius: p.round ? "50%" : "2px",
             animationDelay: `${p.delay}s`,
             animationDuration: `${p.duration}s`,
-            transform: `rotate(${p.rotate}deg)`,
           }}
         />
       ))}

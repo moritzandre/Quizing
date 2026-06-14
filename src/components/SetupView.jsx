@@ -28,7 +28,7 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
   const unassigned = Object.entries(roster).filter(([, p]) => !p.teamId);
 
   const phonePlayers = room?.enabled
-    ? Object.entries(roster).map(([deviceId, p]) => ({ name: p.name, deviceId }))
+    ? Object.entries(roster).map(([deviceId, p]) => ({ name: p.name, deviceId, emoji: p.emoji, color: p.color }))
     : [];
   const manualPlayers = names
     .map((n) => n.trim())
@@ -159,9 +159,22 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
       ) : (
         <div className="mt-6 space-y-2">
           {phonePlayers.length > 0 && (
-            <p className="text-xs font-medium uppercase tracking-wide text-stone-400 dark:text-stone-500">
-              {t("setup.joinedByPhone", { n: phonePlayers.length })}
-            </p>
+            <div>
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-stone-400 dark:text-stone-500">
+                {t("setup.joinedByPhone", { n: phonePlayers.length })}
+              </p>
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {phonePlayers.map((p, i) => (
+                  <span
+                    key={p.deviceId}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 py-1 pl-1 pr-3 text-sm font-medium text-stone-700 dark:bg-stone-800 dark:text-stone-200"
+                  >
+                    <Avatar color={p.color || colorAt(i)} emoji={p.emoji || emojiAt(i)} name={p.name} size={24} />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
           {names.map((n, i) => {
             // Preview the color this player will actually get: phone players first,

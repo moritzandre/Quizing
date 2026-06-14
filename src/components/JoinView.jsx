@@ -5,9 +5,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
-import { FOCUS, inputCls, Button } from "./ui.jsx";
+import { FOCUS, inputCls, Button, Avatar, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+
+/** Stable small hash → spread default avatars so unconfigured phones still differ. */
+const hashIdx = (s, n) => {
+  let h = 0;
+  for (let i = 0; i < (s || "").length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h % n;
+};
 
 /**
  * Standalone phone page reached via #/join/<code> (the host's QR).
@@ -19,6 +26,8 @@ export default function JoinView({ code }) {
   const room = usePlayerRoom(code);
   const [draftName, setDraftName] = useState("");
   const [teamId, setTeamId] = useState(null);
+  const [pickedEmoji, setPickedEmoji] = useState(() => PLAYER_EMOJI[hashIdx(room.deviceId, PLAYER_EMOJI.length)]);
+  const [pickedColor, setPickedColor] = useState(() => PLAYER_COLORS[hashIdx(room.deviceId, PLAYER_COLORS.length)]);
   const [joined, setJoined] = useState(false);
   const [myPin, setMyPin] = useState(null);
   const [pinSent, setPinSent] = useState(false);
@@ -97,7 +106,7 @@ export default function JoinView({ code }) {
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!canJoin) return;
-                room.join(draftName, teamId);
+                room.join(draftName, teamId, needsTeam ? null : { emoji: pickedEmoji, color: pickedColor });
                 setJoined(true);
               }}
             >
@@ -109,6 +118,49 @@ export default function JoinView({ code }) {
                 maxLength={24}
                 onChange={(e) => setDraftName(e.target.value)}
               />
+              {!needsTeam && (
+                <div className="mt-5">
+                  <div className="mb-3 flex items-center gap-3">
+                    <Avatar color={pickedColor} emoji={pickedEmoji} name={draftName} size={48} className="shadow-sm" />
+                    <p className="text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickAvatar")}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {PLAYER_EMOJI.map((em) => (
+                      <button
+                        type="button"
+                        key={em}
+                        onClick={() => setPickedEmoji(em)}
+                        aria-label={em}
+                        aria-pressed={pickedEmoji === em}
+                        className={`flex h-9 w-9 items-center justify-center rounded-xl text-lg transition active:scale-90 ${FOCUS} ${
+                          pickedEmoji === em
+                            ? "bg-stone-900 ring-2 ring-stone-900 dark:bg-stone-100 dark:ring-stone-100"
+                            : "bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700"
+                        }`}
+                      >
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-2.5 flex flex-wrap gap-1.5">
+                    {PLAYER_COLORS.map((c, i) => (
+                      <button
+                        type="button"
+                        key={c}
+                        onClick={() => setPickedColor(c)}
+                        aria-label={t("join.colorN", { n: i + 1 })}
+                        aria-pressed={pickedColor === c}
+                        style={{ backgroundColor: c }}
+                        className={`h-9 w-9 rounded-full transition active:scale-90 ${FOCUS} ${
+                          pickedColor === c
+                            ? "ring-2 ring-stone-900 ring-offset-2 ring-offset-white dark:ring-stone-100 dark:ring-offset-stone-950"
+                            : ""
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
               {needsTeam && (
                 <div className="mt-4">
                   <p className="mb-2 text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickTeam")}</p>
@@ -142,7 +194,8 @@ export default function JoinView({ code }) {
           </div>
         ) : (
           <div className="flex flex-1 flex-col">
-            <p className="mb-6 text-sm text-stone-500 dark:text-stone-400">
+            <p className="mb-6 flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
+              {!needsTeam && <Avatar color={pickedColor} emoji={pickedEmoji} name={room.name} size={28} />}
               <span className="font-semibold text-stone-800 dark:text-stone-100">
                 {t("join.playingAs", { name: room.name })}
               </span>
