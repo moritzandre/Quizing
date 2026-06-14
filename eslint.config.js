@@ -30,9 +30,10 @@ export default [
       "no-empty": ["error", { allowEmptyCatch: true }],
     },
   },
-  // Hook/provider modules legitimately export non-components; fast-refresh N/A.
+  // Shared/hook/provider modules legitimately export non-components alongside
+  // components (style tokens, palettes, helpers); fast-refresh granularity N/A.
   {
-    files: ["**/useRoom.js", "**/I18nProvider.jsx"],
+    files: ["**/useRoom.js", "**/I18nProvider.jsx", "**/ui.jsx"],
     rules: { "react-refresh/only-export-components": "off" },
   },
   prettier,

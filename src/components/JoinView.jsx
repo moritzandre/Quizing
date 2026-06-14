@@ -52,7 +52,7 @@ export default function JoinView({ code }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50 px-5 py-6 font-sans text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100">
+    <div className="qn-app-bg flex min-h-screen flex-col px-5 py-6 font-sans text-stone-900 antialiased dark:text-stone-100">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">

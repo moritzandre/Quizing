@@ -23,7 +23,17 @@ import {
 } from "./lib/model.js";
 import { SAMPLE } from "./data/sampleQuiz.js";
 import { NERD_QUIZ } from "./data/nerdQuiz.js";
-import { FOCUS, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, ThemeToggle } from "./components/ui.jsx";
+import {
+  FOCUS,
+  cardCls,
+  Button,
+  IconButton,
+  TypeBadge,
+  ConfirmDelete,
+  ThemeToggle,
+  colorAt,
+  emojiAt,
+} from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import PlayView from "./components/PlayView.jsx";
 import SetupView from "./components/SetupView.jsx";
@@ -170,8 +180,8 @@ function App() {
     persistGame({
       id: uid(),
       quiz: deepClone(quiz),
-      players: players.map((p) => {
-        const base = { id: p.deviceId || uid(), name: p.name, score: 0 };
+      players: players.map((p, i) => {
+        const base = { id: p.deviceId || uid(), name: p.name, score: 0, color: colorAt(i), emoji: emojiAt(i) };
         if (p.deviceId) base.deviceId = p.deviceId;
         return base;
       }),
@@ -248,7 +258,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased transition-colors dark:bg-stone-950 dark:text-stone-100">
+    <div className="qn-app-bg min-h-screen font-sans text-stone-900 antialiased transition-colors dark:text-stone-100">
       {view.name === "home" && (
         <div className="mx-auto max-w-2xl px-6 pb-16 pt-12">
           <div className="flex items-start justify-between">

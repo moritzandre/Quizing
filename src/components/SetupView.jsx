@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, Users, X, Plus, Play } from "lucide-react";
-import { FOCUS, inputCls, Button, IconButton, TypeBadge } from "./ui.jsx";
+import { FOCUS, inputCls, Button, IconButton, TypeBadge, Avatar, colorAt, emojiAt } from "./ui.jsx";
 import BuzzerPanel from "./BuzzerPanel.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
@@ -54,7 +54,13 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
           </p>
         )}
         {names.map((n, i) => (
-          <div key={i} className="flex gap-2">
+          <div key={i} className="flex items-center gap-2">
+            <Avatar
+              color={colorAt(phonePlayers.length + i)}
+              emoji={emojiAt(phonePlayers.length + i)}
+              name={n || `${i + 1}`}
+              size={34}
+            />
             <input
               className={inputCls}
               placeholder={t("setup.playerN", { n: i + 1 })}

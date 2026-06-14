@@ -15,11 +15,16 @@ import {
   Sparkles,
   Blend,
   MapPin,
+  ListChecks,
+  Hash,
   Trash2,
   Sun,
   Moon,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+import { isMuted, setMuted, playSound } from "../lib/sound.js";
 
 /**
  * Round-type metadata: icon + accent dot. Keys must match ROUND_TYPES in
@@ -76,7 +81,76 @@ export const TYPES = {
     dot: "bg-emerald-500",
     desc: "Everyone drops a pin where they think it is. Reveal the real spot and the closest guess wins.",
   },
+  choice: {
+    label: "Multiple Choice",
+    icon: ListChecks,
+    dot: "bg-teal-500",
+    desc: "Players tap A/B/C/D on their phones. Reveal the right answer and everyone who got it scores.",
+  },
+  number: {
+    label: "Closest Guess",
+    icon: Hash,
+    dot: "bg-orange-500",
+    desc: "Everyone submits a number from their phone. Reveal the answer — the closest guess wins.",
+  },
 };
+
+/** Per-round accent classes (full literals so Tailwind keeps them). */
+const ACCENT = {
+  classic: { soft: "bg-stone-100 text-stone-700 dark:bg-stone-700/60 dark:text-stone-200", solid: "bg-stone-500" },
+  jeopardy: {
+    soft: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300",
+    solid: "bg-indigo-500",
+  },
+  hints: { soft: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", solid: "bg-amber-500" },
+  video: { soft: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", solid: "bg-rose-500" },
+  image: { soft: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", solid: "bg-sky-500" },
+  morph: {
+    soft: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300",
+    solid: "bg-fuchsia-500",
+  },
+  fusion: { soft: "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300", solid: "bg-purple-500" },
+  map: {
+    soft: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
+    solid: "bg-emerald-500",
+  },
+  choice: { soft: "bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300", solid: "bg-teal-500" },
+  number: { soft: "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300", solid: "bg-orange-500" },
+};
+/** Accent class set for a round type (soft chip bg/text + solid dot). */
+export const accentFor = (type) => ACCENT[type] || ACCENT.classic;
+
+/** Player avatar palette — colors + matching emoji, cycled by index. */
+export const PLAYER_COLORS = [
+  "#6366f1",
+  "#f43f5e",
+  "#10b981",
+  "#f59e0b",
+  "#0ea5e9",
+  "#a855f7",
+  "#ec4899",
+  "#84cc16",
+  "#f97316",
+  "#14b8a6",
+  "#eab308",
+  "#ef4444",
+];
+export const PLAYER_EMOJI = ["🦊", "🐼", "🐧", "🦄", "🐸", "🐙", "🦁", "🐢", "🐝", "🦉", "🐬", "🐲"];
+export const colorAt = (i) => PLAYER_COLORS[((i % PLAYER_COLORS.length) + PLAYER_COLORS.length) % PLAYER_COLORS.length];
+export const emojiAt = (i) => PLAYER_EMOJI[((i % PLAYER_EMOJI.length) + PLAYER_EMOJI.length) % PLAYER_EMOJI.length];
+
+/** Round avatar: emoji on a colored disc, or the name's initial as a fallback. */
+export function Avatar({ color, emoji, name, size = 28, className = "" }) {
+  return (
+    <span
+      aria-hidden
+      className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold leading-none text-white ${className}`}
+      style={{ width: size, height: size, backgroundColor: color || "#78716c", fontSize: Math.round(size * 0.52) }}
+    >
+      {emoji || (name ? name.trim().charAt(0).toUpperCase() : "?")}
+    </span>
+  );
+}
 
 /** Shared focus-visible ring classes for interactive elements. */
 export const FOCUS =
@@ -186,6 +260,23 @@ export function useTheme() {
       return next;
     });
   return [theme, toggle];
+}
+
+/** Speaker button that mutes/unmutes sound effects. */
+export function SoundToggle({ className = "" }) {
+  const { t } = useI18n();
+  const [m, setM] = useState(isMuted());
+  const toggle = () => {
+    const next = !m;
+    setMuted(next);
+    setM(next);
+    if (!next) playSound("reveal"); // confirm audio is back
+  };
+  return (
+    <IconButton label={m ? t("sound.unmute") : t("sound.mute")} onClick={toggle} className={className}>
+      {m ? <VolumeX size={18} /> : <Volume2 size={18} />}
+    </IconButton>
+  );
 }
 
 /** Sun/moon button that flips the app between light and dark. */

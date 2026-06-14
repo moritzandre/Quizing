@@ -18,10 +18,17 @@ import {
   Target,
   Radio,
   Bell,
+  Maximize,
+  Minimize,
+  SlidersHorizontal,
+  Plus,
+  Minus,
+  X,
 } from "lucide-react";
 import { uid, ytId, nextNonEmpty, haversineKm, morphValue, hintHasContent } from "../lib/model.js";
-import { TYPES, FOCUS, Button, Confetti } from "./ui.jsx";
+import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, colorAt, SoundToggle } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+import { playSound } from "../lib/sound.js";
 import ScoreBar from "./ScoreBar.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import YouTubePlayer from "./YouTubePlayer.jsx";
@@ -29,41 +36,8 @@ import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
 
-/** Short WebAudio beep when a player buzzes in (no asset needed). */
-function beep() {
-  try {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    const ctx = new Ctx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "square";
-    osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.34);
-    osc.onended = () => ctx.close();
-  } catch {
-    /* audio not available */
-  }
-}
-
-/** Distinct marker colors for player map guesses (cycled). */
-const PLAYER_COLORS = [
-  "#6366f1",
-  "#f43f5e",
-  "#10b981",
-  "#f59e0b",
-  "#0ea5e9",
-  "#a855f7",
-  "#ec4899",
-  "#84cc16",
-  "#f97316",
-];
-const colorFor = (i) => PLAYER_COLORS[i % PLAYER_COLORS.length];
+/** Map marker color for a player (their chosen color, else by index). */
+const colorFor = (p, i) => p?.color || colorAt(i);
 
 const fmtClock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const fmtKm = (km) => (km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km).toLocaleString()} km`);
@@ -95,6 +69,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   /* morph round reveal step (0 = fully obscured) */
   const [morphStep, setMorphStep] = useState(0);
+
+  /* host UI toggles (not persisted): projector layout + score editor panel */
+  const [pres, setPres] = useState(false);
+  const [editScores, setEditScores] = useState(false);
 
   /* countdown timer (UI-only; not persisted) */
   const [timeLeft, setTimeLeft] = useState(timerSecs);
@@ -140,7 +118,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const lastBuzzId = useRef(room?.buzz?.deviceId || null);
   useEffect(() => {
     const id = room?.buzz?.deviceId || null;
-    if (id && id !== lastBuzzId.current) beep();
+    if (id && id !== lastBuzzId.current) playSound("buzz");
     lastBuzzId.current = id;
   }, [room?.buzz]);
 
@@ -149,6 +127,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const id = setTimeout(() => setTimeLeft((t) => Math.max(0, t - 1)), 1000);
     return () => clearTimeout(id);
   }, [timeLeft, paused, game.revealed, game.stage, timerSecs, qKey]);
+
+  // Sound the alarm once when the timer runs out.
+  useEffect(() => {
+    if (timerSecs > 0 && timeLeft === 0 && game.stage === "question" && !game.revealed) playSound("timeup");
+  }, [timeLeft, timerSecs, game.stage, game.revealed]);
+
+  // Fanfare when the final scores appear.
+  useEffect(() => {
+    if (game.stage === "end") playSound("win");
+  }, [game.stage]);
 
   const toggleAward = (pid) => {
     const a = { ...(game.awarded || {}) };
@@ -161,8 +149,29 @@ export default function PlayView({ game, setGame, onExit, room }) {
       const delta = sign * value;
       a[pid] = delta;
       players = game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p));
+      playSound(delta < 0 ? "wrong" : "correct");
     }
     upd({ players, awarded: a });
+  };
+
+  const reveal = () => {
+    playSound("reveal");
+    upd({ revealed: true });
+  };
+
+  const adjustScore = (pid, delta) =>
+    upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
+
+  // Toggle projector layout + browser fullscreen (called from the click for the gesture).
+  const togglePres = () => {
+    const next = !pres;
+    setPres(next);
+    try {
+      if (next) document.documentElement.requestFullscreen?.();
+      else if (document.fullscreenElement) document.exitFullscreen?.();
+    } catch {
+      /* fullscreen may be blocked — the layout still enlarges */
+    }
   };
 
   const placeGuess = (lat, lng) => {
@@ -220,7 +229,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       const k = e.key.toLowerCase();
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
       if (!q) return;
-      if (k === "r" && !game.revealed) upd({ revealed: true });
+      if (k === "r" && !game.revealed) reveal();
       else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
@@ -237,22 +246,73 @@ export default function PlayView({ game, setGame, onExit, room }) {
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  const stepperCls = `rounded-lg border border-stone-200 px-2 py-1 text-xs font-bold text-stone-600 transition hover:bg-stone-100 active:scale-95 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800 ${FOCUS}`;
   const Header = (
-    <div className="mb-8 flex items-center justify-between">
-      <button
-        onClick={onExit}
-        className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
-      >
-        <ChevronLeft size={16} /> {t("play.exit")}
-      </button>
-      {round && game.stage !== "end" && (
-        <p className="text-sm text-stone-500 dark:text-stone-400">
-          {t("play.roundProgress", { n: game.ri + 1, total: quiz.rounds.length })} ·{" "}
-          <span className="font-medium text-stone-700 dark:text-stone-200">{t(`round.${round.type}.label`)}</span>
-        </p>
+    <>
+      <div className="mb-8 flex items-center justify-between gap-2">
+        <button
+          onClick={onExit}
+          className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-stone-500 transition hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
+        >
+          <ChevronLeft size={16} /> {t("play.exit")}
+        </button>
+        {round && (
+          <p className="hidden text-sm text-stone-500 dark:text-stone-400 sm:block">
+            {t("play.roundProgress", { n: game.ri + 1, total: quiz.rounds.length })} ·{" "}
+            <span className="font-medium text-stone-700 dark:text-stone-200">{t(`round.${round.type}.label`)}</span>
+          </p>
+        )}
+        <div className="flex items-center gap-1">
+          <IconButton label={t("play.editScores")} onClick={() => setEditScores(true)}>
+            <SlidersHorizontal size={18} />
+          </IconButton>
+          <IconButton label={pres ? t("play.exitPresentation") : t("play.presentation")} onClick={togglePres}>
+            {pres ? <Minimize size={18} /> : <Maximize size={18} />}
+          </IconButton>
+          <SoundToggle />
+        </div>
+      </div>
+
+      {editScores && (
+        <div
+          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-4 backdrop-blur-sm sm:items-center"
+          onClick={() => setEditScores(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-800 dark:bg-stone-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-semibold">{t("play.adjustScores")}</h3>
+              <IconButton label={t("common.done")} onClick={() => setEditScores(false)}>
+                <X size={16} />
+              </IconButton>
+            </div>
+            <div className="space-y-2">
+              {game.players.map((p, i) => (
+                <div key={p.id} className="flex items-center gap-1.5">
+                  <Avatar color={colorFor(p, i)} emoji={p.emoji} name={p.name} size={26} />
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{p.name}</span>
+                  <button onClick={() => adjustScore(p.id, -5)} className={stepperCls}>
+                    −5
+                  </button>
+                  <button onClick={() => adjustScore(p.id, -1)} className={stepperCls} aria-label="-1">
+                    <Minus size={13} />
+                  </button>
+                  <span className="w-10 text-center text-sm font-bold tabular-nums">{p.score}</span>
+                  <button onClick={() => adjustScore(p.id, 1)} className={stepperCls} aria-label="+1">
+                    <Plus size={13} />
+                  </button>
+                  <button onClick={() => adjustScore(p.id, 5)} className={stepperCls}>
+                    +5
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
-      <span className="w-14" />
-    </div>
+    </>
   );
 
   /* ---- final scores ---- */
@@ -276,36 +336,73 @@ export default function PlayView({ game, setGame, onExit, room }) {
         tile: null,
         guesses: {},
       });
+    const podium = sorted.slice(0, 3);
+    const rest = sorted.slice(3);
+    // Visual left→right order: 2nd, 1st, 3rd (1st in the middle, tallest).
+    const layout = podium.length === 1 ? [0] : podium.length === 2 ? [1, 0] : [1, 0, 2];
+    const medal = ["🥇", "🥈", "🥉"];
+    const podHeight = ["h-32", "h-24", "h-20"];
+    const idxOf = (p) => game.players.findIndex((x) => x.id === p.id);
     return (
       <div className="mx-auto max-w-xl px-6 pb-16 pt-10 text-center">
         {hasWinner && <Confetti />}
-        <Trophy className="mx-auto mb-4 text-amber-500" size={44} />
+        <Trophy className="mx-auto mb-3 text-amber-500" size={44} />
         <h2 className="text-3xl font-bold tracking-tight">{t("play.finalScores")}</h2>
         <p className="mt-1 text-stone-500 dark:text-stone-400">{quiz.title}</p>
-        <div className="mt-8 space-y-2">
-          {sorted.map((p, i) => (
-            <div
-              key={p.id}
-              className={`qn-fade-up flex items-center justify-between rounded-2xl border px-5 py-4 ${
-                i === 0
-                  ? "border-amber-300 bg-amber-50 dark:border-amber-500/40 dark:bg-amber-500/10"
-                  : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
-              }`}
-              style={{ animationDelay: `${i * 0.06}s` }}
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  className={`text-lg font-bold ${i === 0 ? "text-amber-600 dark:text-amber-400" : "text-stone-400"}`}
+
+        <div className="mt-10 flex items-end justify-center gap-2 sm:gap-4">
+          {layout.map((rank) => {
+            const p = podium[rank];
+            if (!p) return null;
+            return (
+              <div
+                key={p.id}
+                className="qn-fade-up flex w-24 flex-col items-center"
+                style={{ animationDelay: `${rank * 0.12}s` }}
+              >
+                <Avatar
+                  color={colorFor(p, idxOf(p))}
+                  emoji={p.emoji}
+                  name={p.name}
+                  size={rank === 0 ? 56 : 44}
+                  className="shadow-md"
+                />
+                <span className="mt-1 max-w-full truncate text-sm font-semibold">{p.name}</span>
+                <span className="text-lg font-bold tabular-nums">{p.score}</span>
+                <div
+                  className={`mt-1 flex w-full items-start justify-center rounded-t-xl pt-2 text-2xl ${podHeight[rank]} ${
+                    rank === 0
+                      ? "bg-amber-200 dark:bg-amber-500/30"
+                      : rank === 1
+                        ? "bg-stone-200 dark:bg-stone-700"
+                        : "bg-orange-200 dark:bg-orange-500/25"
+                  }`}
                 >
-                  {i + 1}
-                </span>
-                <span className="text-lg font-medium">{p.name}</span>
-                {i === 0 && hasWinner && <span className="text-xl">🏆</span>}
+                  {medal[rank]}
+                </div>
               </div>
-              <span className="text-xl font-bold tabular-nums">{p.score}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        {rest.length > 0 && (
+          <div className="mt-6 space-y-2">
+            {rest.map((p, i) => (
+              <div
+                key={p.id}
+                className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-2.5 dark:border-stone-800 dark:bg-stone-900"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-5 text-sm font-bold text-stone-400">{i + 4}</span>
+                  <Avatar color={colorFor(p, idxOf(p))} emoji={p.emoji} name={p.name} size={24} />
+                  <span className="font-medium">{p.name}</span>
+                </div>
+                <span className="font-bold tabular-nums">{p.score}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="mt-8 flex justify-center gap-3">
           <Button onClick={playAgain}>
             <RotateCcw size={16} /> {t("play.playAgain")}
@@ -328,8 +425,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
       <div className="mx-auto max-w-2xl px-6 pb-32 pt-6">
         {Header}
         <div className="qn-fade-up mt-10 text-center">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
-            <Icon size={28} className="text-stone-700 dark:text-stone-200" />
+          <div
+            className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl shadow-sm ${accentFor(round.type).soft}`}
+          >
+            <Icon size={28} />
           </div>
           <p className="text-sm font-medium uppercase tracking-widest text-stone-400">
             {t("play.round", { n: game.ri + 1 })}
@@ -412,7 +511,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const q = isJeop ? round.categories[game.tile.ci].questions[game.tile.qi] : round.questions[game.qi];
 
   const RevealBtn = (
-    <Button className="px-6 py-3.5 text-base" onClick={() => upd({ revealed: true })}>
+    <Button className="px-6 py-3.5 text-base" onClick={reveal}>
       <Eye size={18} /> {t("play.revealAnswer")}
     </Button>
   );
@@ -538,7 +637,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {TimerPill}
         <div className="mb-4 flex items-center justify-center gap-3">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whoOrWhat")}</h2>
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
+          <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
             {t("play.worth", { value })}
           </span>
         </div>
@@ -647,7 +746,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <div className="mb-4 flex items-center justify-center gap-3">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whatIsThis")}</h2>
           {!game.revealed && (
-            <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-sm font-bold text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300">
+            <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
               {t("play.worth", { value })}
             </span>
           )}
@@ -689,7 +788,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <div className="mb-4 flex items-center justify-center gap-3">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whoOrWhat")}</h2>
           {!game.revealed && (
-            <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-sm font-bold text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300">
+            <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
               {t("play.worth", { value })}
             </span>
           )}
@@ -729,7 +828,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const markers = game.players
       .map((p, i) => {
         const g = combined[p.id];
-        return g ? { lat: g.lat, lng: g.lng, color: colorFor(i), label: p.name } : null;
+        return g ? { lat: g.lat, lng: g.lng, color: colorFor(p, i), label: p.name } : null;
       })
       .filter(Boolean);
     const ranked = hasAnswer
@@ -771,11 +870,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
                         ? "border-transparent text-white shadow-sm"
                         : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200"
                     }`}
-                    style={sel ? { backgroundColor: colorFor(i) } : undefined}
+                    style={sel ? { backgroundColor: colorFor(p, i) } : undefined}
                   >
                     <span
                       className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: sel ? "#fff" : colorFor(i) }}
+                      style={{ backgroundColor: sel ? "#fff" : colorFor(p, i) }}
                     />
                     {p.name}
                     {has && <span className={sel ? "text-white/80" : "text-emerald-600 dark:text-emerald-400"}>✓</span>}
@@ -808,7 +907,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 }`}
               >
                 <span className="flex items-center gap-2 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colorFor(x.i) }} />
+                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
                   {x.p.name}
                   {idx === 0 && (
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
@@ -826,7 +925,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           {game.revealed ? (
             NextBtn
           ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => upd({ revealed: true })}>
+            <Button className="px-6 py-3.5 text-base" onClick={reveal}>
               <MapPin size={18} /> {t("play.revealLocation")}
             </Button>
           )}
@@ -836,13 +935,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-36 pt-6">
+    <div className={`mx-auto px-6 pb-36 pt-6 ${pres ? "max-w-5xl qn-present" : "max-w-3xl"}`}>
       {Header}
       {BuzzerBar}
       <div key={qKey} className="qn-fade-up">
         {body}
       </div>
-      {Shortcuts}
+      {!pres && Shortcuts}
       <ScoreBar
         players={game.players}
         active={scoreActive}

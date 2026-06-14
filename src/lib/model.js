@@ -284,6 +284,8 @@ export function normalizeGame(raw) {
     players: raw.players.map((p) => {
       const player = { id: str(p?.id) || uid(), name: str(p?.name) || "Player", score: num(p?.score, 0) };
       if (p?.deviceId) player.deviceId = str(p.deviceId); // links a player to a phone in the buzzer room
+      if (p?.color) player.color = str(p.color);
+      if (p?.emoji) player.emoji = str(p.emoji);
       return player;
     }),
     ri: num(raw.ri, 0),
