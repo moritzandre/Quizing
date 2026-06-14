@@ -21,6 +21,7 @@ import {
   Maximize,
   Minimize,
   SlidersHorizontal,
+  ListOrdered,
   Plus,
   Minus,
   X,
@@ -38,6 +39,12 @@ import HintMedia from "./HintMedia.jsx";
 
 /** Map marker color for a player (their chosen color, else by index). */
 const colorFor = (p, i) => p?.color || colorAt(i);
+
+/** Number of questions in a round (jeopardy counts clues across categories). */
+const roundCount = (r) =>
+  r.type === "jeopardy"
+    ? (r.categories || []).reduce((n, c) => n + (c.questions?.length || 0), 0)
+    : r.questions?.length || 0;
 
 const fmtClock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const fmtKm = (km) => (km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km).toLocaleString()} km`);
@@ -70,9 +77,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* morph round reveal step (0 = fully obscured) */
   const [morphStep, setMorphStep] = useState(0);
 
-  /* host UI toggles (not persisted): projector layout + score editor panel */
+  /* host UI toggles (not persisted): projector layout + score/round panels */
   const [pres, setPres] = useState(false);
   const [editScores, setEditScores] = useState(false);
+  const [nav, setNav] = useState(false);
 
   /* countdown timer (UI-only; not persisted) */
   const [timeLeft, setTimeLeft] = useState(timerSecs);
@@ -176,6 +184,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const adjustScore = (pid, delta) =>
     upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
 
+  const jumpToRound = (ri) => {
+    setMorphStep(0);
+    upd({ ri, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
+    setNav(false);
+  };
+
   // Toggle projector layout + browser fullscreen (called from the click for the gesture).
   const togglePres = () => {
     const next = !pres;
@@ -277,6 +291,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </p>
         )}
         <div className="flex items-center gap-1">
+          <IconButton label={t("play.jump")} onClick={() => setNav(true)}>
+            <ListOrdered size={18} />
+          </IconButton>
           <IconButton label={t("play.editScores")} onClick={() => setEditScores(true)}>
             <SlidersHorizontal size={18} />
           </IconButton>
@@ -321,6 +338,54 @@ export default function PlayView({ game, setGame, onExit, room }) {
                     +5
                   </button>
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {nav && (
+        <div
+          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-4 backdrop-blur-sm sm:items-center"
+          onClick={() => setNav(false)}
+        >
+          <div
+            className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-800 dark:bg-stone-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-semibold">{t("play.rounds")}</h3>
+              <IconButton label={t("common.done")} onClick={() => setNav(false)}>
+                <X size={16} />
+              </IconButton>
+            </div>
+            {game.stage === "question" && (
+              <button
+                onClick={() => {
+                  setNav(false);
+                  advance();
+                }}
+                className={`mb-2 w-full rounded-xl border border-stone-200 px-3 py-2 text-left text-sm font-medium transition hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
+              >
+                <ArrowRight size={14} className="mr-1 inline" /> {t("play.skipQuestion")}
+              </button>
+            )}
+            <div className="space-y-1.5">
+              {quiz.rounds.map((r, ri) => (
+                <button
+                  key={r.id}
+                  onClick={() => jumpToRound(ri)}
+                  className={`flex w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm transition ${FOCUS} ${
+                    ri === game.ri
+                      ? "border-indigo-400 bg-indigo-50 dark:border-indigo-500/50 dark:bg-indigo-500/10"
+                      : "border-stone-200 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+                  }`}
+                >
+                  <span className="w-5 text-xs font-bold text-stone-400">{ri + 1}</span>
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${accentFor(r.type).solid}`} />
+                  <span className="min-w-0 flex-1 truncate font-medium">{r.title || t(`round.${r.type}.label`)}</span>
+                  <span className="text-xs text-stone-400">{roundCount(r)}</span>
+                </button>
               ))}
             </div>
           </div>
