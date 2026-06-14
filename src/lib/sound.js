@@ -76,11 +76,17 @@ const SEQUENCES = {
     { freq: 784, start: 0.24, dur: 0.12 },
     { freq: 1047, start: 0.36, dur: 0.34 },
   ],
+  // A light upward flourish for the between-rounds recap (shorter than `win`).
+  fanfare: [
+    { freq: 587, dur: 0.1, type: "triangle", gain: 0.14 },
+    { freq: 740, start: 0.09, dur: 0.1, type: "triangle", gain: 0.14 },
+    { freq: 880, start: 0.18, dur: 0.22, type: "triangle", gain: 0.15 },
+  ],
 };
 
 /**
  * Play a named cue. No-op when muted or WebAudio is unavailable.
- * @param {"reveal"|"correct"|"wrong"|"timeup"|"buzz"|"win"} kind
+ * @param {"reveal"|"correct"|"wrong"|"timeup"|"buzz"|"win"|"fanfare"} kind
  */
 export function playSound(kind) {
   if (muted) return;

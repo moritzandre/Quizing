@@ -108,6 +108,7 @@ const en = {
   "builder.creatorRound": "Creator Room",
   "builder.creatorRoundHint": "Pick a round type, copy the prompt into your AI, then paste the JSON it returns.",
   "play.roundRecap": "Points this round",
+  "play.biggestMover": "Biggest mover",
   "play.mapView": "Map",
   "play.streetView": "Street view",
   "play.tvScreen": "TV screen (view only)",
@@ -448,6 +449,7 @@ const de = {
   "builder.creatorRoundHint":
     "Wähle einen Rundentyp, kopiere den Prompt in deine KI und füge das zurückgegebene JSON ein.",
   "play.roundRecap": "Punkte diese Runde",
+  "play.biggestMover": "Größter Sprung",
   "play.mapView": "Karte",
   "play.streetView": "Street View",
   "play.tvScreen": "TV-Bildschirm (nur Ansicht)",

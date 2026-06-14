@@ -8,7 +8,7 @@
    ==================================================================== */
 
 import { Check, Minus, Plus } from "lucide-react";
-import { FOCUS, Avatar, colorAt } from "./ui.jsx";
+import { FOCUS, Avatar, AnimatedNumber, colorAt } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const fmtDelta = (n) => `${n < 0 ? "−" : "+"}${Math.abs(n)}`;
@@ -87,9 +87,10 @@ export default function ScoreBar({
                 )}
                 <Avatar color={p.color || colorAt(i)} emoji={p.emoji} photo={p.photo} name={p.name} size={20} />
                 <span className="font-medium">{p.name}</span>
-                <span className={`font-bold tabular-nums ${got ? "text-white" : "text-stone-500 dark:text-stone-400"}`}>
-                  {p.score}
-                </span>
+                <AnimatedNumber
+                  value={p.score}
+                  className={`font-bold tabular-nums ${got ? "text-white" : "text-stone-500 dark:text-stone-400"}`}
+                />
                 {active &&
                   (got ? (
                     <span className="inline-flex items-center gap-0.5 text-xs font-semibold">

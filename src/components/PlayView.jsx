@@ -378,8 +378,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
     else upd({ ri: j, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
   };
 
-  // Show the between-rounds recap; the host confirms to actually advance.
-  const endRound = () => setRecap(true);
+  // Show the between-rounds recap (with a little flourish); host confirms to advance.
+  const endRound = () => {
+    playSound("fanfare");
+    setRecap(true);
+  };
   const continueAfterRecap = () => {
     setRecap(false);
     goNextRound();

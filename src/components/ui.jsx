@@ -160,6 +160,40 @@ export function Avatar({ color, emoji, photo, name, size = 28, className = "" })
   );
 }
 
+/** True when the user asked for reduced motion (so animations can no-op). */
+export const prefersReducedMotion = () =>
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * A number that smoothly counts to `value` whenever it changes (e.g. on a score
+ * award). Honors prefers-reduced-motion (snaps instantly).
+ * @param {object} props
+ * @param {number} props.value Target number.
+ * @param {string} [props.className]
+ */
+export function AnimatedNumber({ value, className = "" }) {
+  const [display, setDisplay] = useState(value);
+  useEffect(() => {
+    if (display === value) return;
+    if (prefersReducedMotion()) return setDisplay(value);
+    const from = display;
+    let raf;
+    let start;
+    const dur = 500;
+    const tick = (now) => {
+      if (start == null) start = now;
+      const p = Math.min(1, (now - start) / dur);
+      setDisplay(Math.round(from + (value - from) * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // Only re-run when the target changes; `display` is the live start point.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return <span className={className}>{display}</span>;
+}
+
 /** Shared focus-visible ring classes for interactive elements. */
 export const FOCUS =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950";
