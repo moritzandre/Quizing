@@ -10,7 +10,8 @@
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Music } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Music, ExternalLink } from "lucide-react";
+import { useI18n } from "../i18n/I18nProvider.jsx";
 
 /** Load the IFrame API once and resolve with the global YT namespace. */
 let apiPromise = null;
@@ -47,12 +48,14 @@ const fmt = (s) => {
  * @param {*} [props.pauseSignal] When this changes to a truthy value, pause playback (e.g. on first buzz).
  */
 export default function YouTubePlayer({ videoId, audioOnly = false, start = null, end = null, pauseSignal = null }) {
+  const { t } = useI18n();
   const hostRef = useRef(null);
   const playerRef = useRef(null);
   const startRef = useRef(start);
   startRef.current = start;
   const endRef = useRef(end);
   endRef.current = end;
+  const retriesRef = useRef(0); // one-shot recovery budget for onError (per source)
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [state, setState] = useState("unstarted"); // unstarted | playing | paused | ended
@@ -64,6 +67,7 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
     let cancelled = false;
     let poll = null;
     const host = hostRef.current;
+    retriesRef.current = 0; // fresh recovery budget whenever the source changes
     // YT.Player replaces its target element with an iframe, so give it a
     // disposable inner div (not the React-managed host) — this survives
     // StrictMode's mount→unmount→remount without detaching the host ref.
@@ -133,7 +137,25 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
               else if (e.data === YTP.ENDED) setState("ended");
               else if (e.data === YTP.UNSTARTED || e.data === YTP.CUED) setState("unstarted");
             },
-            onError: () => !cancelled && setFailed(true),
+            onError: () => {
+              if (cancelled) return;
+              // Recover once before giving up: a clip whose start point sits past
+              // the video's end errors out, as do transient load glitches. Re-cue
+              // the video from the beginning (dropping the start) — if it still
+              // errors (e.g. embedding disabled by the uploader) we show the
+              // fallback. This is the common case for music clips.
+              const p = playerRef.current;
+              if (retriesRef.current < 1 && p && typeof p.cueVideoById === "function") {
+                retriesRef.current += 1;
+                try {
+                  p.cueVideoById({ videoId });
+                  return;
+                } catch {
+                  /* fall through to the failed state */
+                }
+              }
+              setFailed(true);
+            },
           },
         });
       })
@@ -206,8 +228,16 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
 
   if (failed) {
     return (
-      <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-        Couldn't load the clip
+      <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-stone-300 px-6 text-center dark:border-stone-700">
+        <p className="text-sm font-medium text-stone-500 dark:text-stone-400">{t("play.clipBlocked")}</p>
+        <a
+          href={`https://www.youtube.com/watch?v=${videoId}`}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-stone-300"
+        >
+          <ExternalLink size={15} /> {t("play.openOnYoutube")}
+        </a>
       </div>
     );
   }

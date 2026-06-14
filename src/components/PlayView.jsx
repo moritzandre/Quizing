@@ -1438,6 +1438,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
           .map((x) => ({ ...x, km: haversineKm(x.g.lat, x.g.lng, q.lat, q.lng) }))
           .sort((a, b) => a.km - b.km)
       : [];
+    // Fit the whole map round on one screen for the host (shorter map); keep it
+    // big for the projector/TV (pres).
+    const mapH = pres ? "h-[58vh]" : "h-[40vh]";
 
     body = (
       <div className="text-center">
@@ -1446,7 +1449,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
 
         {!game.revealed && (
-          <div className="mx-auto mt-5 max-w-2xl">
+          <div className="mx-auto mt-3 max-w-2xl">
             {buzzerOn && (
               <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
                 <Radio size={14} /> {t("play.pinsIn", { n: Object.keys(phonePins).length, total: game.players.length })}
@@ -1506,9 +1509,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
 
-        <div className="mx-auto mt-4 max-w-3xl">
+        <div className="mx-auto mt-3 max-w-3xl">
           {streetOn && !game.revealed && mapillaryEmbedUrl(q.street) ? (
-            <MapillaryEmbed street={q.street} className="h-[55vh]" />
+            <MapillaryEmbed street={q.street} className={mapH} />
           ) : (
             <LeafletMap
               answer={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : undefined}
@@ -1516,7 +1519,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               showLines={game.revealed}
               onPick={game.revealed ? undefined : placeGuess}
               tileLayer={q.tileLayer}
-              className="h-[55vh]"
+              className={mapH}
             />
           )}
         </div>

@@ -105,7 +105,7 @@ export function mapillaryEmbedUrl(street) {
  * @returns {string|null} The video ID, or null if none found.
  */
 export function ytId(url = "") {
-  const m = String(url).match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  const m = String(url).match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/);
   if (m) return m[1];
   const t = String(url).trim();
   return /^[\w-]{11}$/.test(t) ? t : null;

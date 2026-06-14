@@ -52,7 +52,7 @@ src/components/PodiumClimb.jsx animated live standings (FLIP-lite rows + hop on 
 src/components/RoundRecap.jsx between-rounds count-up: scores animate start→end (rAF), rows slide on overtakes (FLIP-lite via transform), biggest-mover badge; host + TV
 src/components/RoundBody.jsx read-only per-round renderer for the TV (driven by the present/live payload; no pins/controls)
 src/components/PresenterView.jsx phone-less TV page (#/present/<code>): subscribes via usePresenterRoom, renders RoundBody + PodiumClimb
-src/components/HostRemoteView.jsx phone host controller (#/host/<code>): present/live context + sendCtrl(reveal/advance/award/hint/…)
+src/components/HostRemoteView.jsx phone host controller (#/host/<code>): present/live context + sendCtrl(reveal/advance/award/hint/…); embeds a read-only RoundBody (compact) so the host sees the live round (map/image/clip + question/answer) on the phone
 src/components/PlayView.jsx  game flow: intro → question/board → end; timer; buzzer arm/lock; phone pins; keyboard;
                              streams present/live to the TV; "Stream to TV" modal + standings overlay
 src/components/SetupView.jsx player/team entry; Solo/Teams toggle; embeds BuzzerPanel; seeds entities from the phone roster

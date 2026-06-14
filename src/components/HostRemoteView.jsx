@@ -13,6 +13,7 @@ import { usePresenterRoom } from "./useRoom.js";
 import { TYPES, FOCUS, Button, Avatar } from "./ui.jsx";
 import { clipLadderActive } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+import RoundBody from "./RoundBody.jsx";
 
 /**
  * @param {object} props
@@ -88,6 +89,24 @@ export default function HostRemoteView({ code }) {
         </div>
         {present.q?.q && <p className="mt-1 truncate text-sm text-stone-500 dark:text-stone-400">{present.q.q}</p>}
       </div>
+
+      {/* live round mirror — lets the host read the question/answer and see the
+          map/image/clip on the phone (so map rounds don't need the PC). Scrolls
+          with the page; read-only (no pin placement here). */}
+      {stage === "question" && present.q && type && (
+        <div className="mb-4 rounded-2xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-stone-900">
+          <RoundBody
+            type={type}
+            q={present.q}
+            revealed={revealed}
+            hintsShown={live?.hintsShown || 1}
+            step={live?.step || 0}
+            reveal={live?.reveal || null}
+            buzzed={!!live?.buzzed}
+            compact
+          />
+        </div>
+      )}
 
       {/* primary controls */}
       <div className="grid grid-cols-2 gap-2">

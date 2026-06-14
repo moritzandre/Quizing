@@ -36,6 +36,7 @@ const Q = ({ children }) => (
  * @param {number} props.step Morph/fusion reveal step (also the video clip-ladder step).
  * @param {object|null} props.reveal Answer data (live.reveal), present once revealed.
  * @param {boolean} [props.buzzed] Someone has buzzed — pause the video clip.
+ * @param {boolean} [props.compact] Smaller media heights (for the host phone mirror).
  */
 export default function RoundBody({
   type,
@@ -45,8 +46,10 @@ export default function RoundBody({
   step = 0,
   reveal = null,
   buzzed = false,
+  compact = false,
 }) {
   const { t } = useI18n();
+  const mapH = compact ? "h-[42vh]" : "h-[70vh]";
 
   if (type === "classic" || type === "jeopardy") {
     return (
@@ -108,7 +111,7 @@ export default function RoundBody({
             <img
               src={q.url}
               alt=""
-              className="max-h-[74vh] w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900"
+              className={`${compact ? "max-h-[42vh]" : "max-h-[74vh]"} w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900`}
             />
           ) : null}
         </div>
@@ -145,14 +148,14 @@ export default function RoundBody({
         {q.q && <Q>{q.q}</Q>}
         <div className="mt-5">
           {showStreet ? (
-            <MapillaryEmbed street={q.street} className="h-[70vh]" />
+            <MapillaryEmbed street={q.street} className={mapH} />
           ) : (
             <LeafletMap
               answer={
                 ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
               }
               tileLayer={q.tileLayer}
-              className="h-[70vh]"
+              className={mapH}
             />
           )}
         </div>
