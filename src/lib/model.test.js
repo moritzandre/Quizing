@@ -647,6 +647,21 @@ describe("presenter payloads", () => {
     expect(n.q.options).toEqual(["A", "B"]);
     expect(n.q.correct).toBeUndefined(); // the correct index is never in the present payload
   });
+
+  it("carries avatar photos on the heavy present channel, not the light live one", () => {
+    const g = game();
+    g.players = [
+      { id: "a", name: "Ann", score: 1, photo: "data:image/png;base64,AAA" },
+      { id: "b", name: "Bob", score: 0 },
+    ];
+    expect(buildPresentQ(g).photos).toEqual({ a: "data:image/png;base64,AAA" });
+    expect(buildLive(g).standings.every((s) => !("photo" in s))).toBe(true);
+  });
+
+  it("normalizePresent keeps only small data: image avatar photos", () => {
+    const n = normalizePresent({ stage: "intro", photos: { a: "data:image/png;base64,Z", b: "http://evil", c: 5 } });
+    expect(n.photos).toEqual({ a: "data:image/png;base64,Z" });
+  });
 });
 
 describe("roundsFromImport", () => {

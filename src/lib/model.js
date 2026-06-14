@@ -352,6 +352,9 @@ export function normalizeGame(raw) {
       if (Array.isArray(p?.members)) player.members = p.members.map((m) => ({ name: str(m?.name) || "Player" }));
       if (p?.color) player.color = str(p.color);
       if (p?.emoji) player.emoji = str(p.emoji);
+      // an uploaded avatar photo: keep only a small data: image
+      if (typeof p?.photo === "string" && /^data:image\//.test(p.photo) && p.photo.length <= 200000)
+        player.photo = p.photo;
       return player;
     }),
     ri: num(raw.ri, 0),
@@ -582,6 +585,11 @@ export function buildPresentQ(game) {
     roundType: round ? str(round.type) : null,
     roundTitle: round ? str(round.title) : "",
   };
+  // Avatar photos ride the heavy/per-question channel (not the frequent live one).
+  const photos = {};
+  for (const p of Array.isArray(game.players) ? game.players : [])
+    if (typeof p.photo === "string") photos[p.id] = p.photo;
+  if (Object.keys(photos).length) base.photos = photos;
   if (game.stage === "question" && round) {
     const q = currentQuestion(game);
     if (q) base.q = presentQ(round.type, q);
@@ -635,6 +643,12 @@ export function normalizePresent(raw) {
     roundType: ROUND_TYPES.includes(raw.roundType) ? raw.roundType : null,
     roundTitle: str(raw.roundTitle),
   };
+  if (raw.photos && typeof raw.photos === "object" && !Array.isArray(raw.photos)) {
+    const photos = {};
+    for (const [k, v] of Object.entries(raw.photos))
+      if (typeof v === "string" && /^data:image\//.test(v) && v.length <= 200000) photos[str(k)] = v;
+    if (Object.keys(photos).length) out.photos = photos;
+  }
   if (raw.q && typeof raw.q === "object" && !Array.isArray(raw.q)) {
     const q = raw.q;
     const o = { audioOnly: !!q.audioOnly };

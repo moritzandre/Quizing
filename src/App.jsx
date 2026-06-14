@@ -345,6 +345,7 @@ function App() {
           score: 0,
           color: p.color || colorAt(i),
           emoji: p.emoji || emojiAt(i),
+          ...(p.photo ? { photo: p.photo } : {}),
         };
         if (deviceIds.length) base.deviceIds = deviceIds;
         if (p.members) base.members = p.members;

@@ -24,7 +24,10 @@ export default function PresenterView({ code }) {
   const { t } = useI18n();
   const { status, present, live, alive } = usePresenterRoom(code);
   const online = status === "connected";
-  const standings = live?.standings || [];
+  // Avatar photos arrive on the heavy/present channel; merge them into the
+  // light live standings so the podium/recap can show them on the TV.
+  const photos = present?.photos || {};
+  const standings = (live?.standings || []).map((s) => (photos[s.id] ? { ...s, photo: photos[s.id] } : s));
 
   // A plain function (not a component) so children reconcile by type instead of
   // remounting the map/player subtree on every live update.
@@ -78,6 +81,7 @@ export default function PresenterView({ code }) {
             name: s.name,
             color: s.color,
             emoji: s.emoji,
+            photo: s.photo,
             from: from[s.id] ?? s.score,
             to: s.score,
           }))}

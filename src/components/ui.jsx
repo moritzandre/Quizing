@@ -139,12 +139,20 @@ export const PLAYER_EMOJI = ["🦊", "🐼", "🐧", "🦄", "🐸", "🐙", "�
 export const colorAt = (i) => PLAYER_COLORS[((i % PLAYER_COLORS.length) + PLAYER_COLORS.length) % PLAYER_COLORS.length];
 export const emojiAt = (i) => PLAYER_EMOJI[((i % PLAYER_EMOJI.length) + PLAYER_EMOJI.length) % PLAYER_EMOJI.length];
 
-/** Round avatar: emoji on a colored disc, or the name's initial as a fallback. */
-export function Avatar({ color, emoji, name, size = 28, className = "" }) {
+/** Round avatar: an uploaded photo, else an emoji on a colored disc, else the name's initial. */
+export function Avatar({ color, emoji, photo, name, size = 28, className = "" }) {
+  const base = `inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold leading-none text-white shadow-sm ring-2 ring-white/70 dark:ring-white/15 ${className}`;
+  if (photo) {
+    return (
+      <span aria-hidden className={base} style={{ width: size, height: size, backgroundColor: color || "#78716c" }}>
+        <img src={photo} alt="" className="h-full w-full object-cover" />
+      </span>
+    );
+  }
   return (
     <span
       aria-hidden
-      className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold leading-none text-white shadow-sm ring-2 ring-white/70 dark:ring-white/15 ${className}`}
+      className={base}
       style={{ width: size, height: size, backgroundColor: color || "#78716c", fontSize: Math.round(size * 0.52) }}
     >
       {emoji || (name ? name.trim().charAt(0).toUpperCase() : "?")}

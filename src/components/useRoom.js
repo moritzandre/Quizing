@@ -16,6 +16,8 @@ import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 /** Keep only a palette emoji/color from an (untrusted) phone join message. */
 const safeEmoji = (e) => (typeof e === "string" && PLAYER_EMOJI.includes(e) ? e : null);
 const safeColor = (c) => (typeof c === "string" && PLAYER_COLORS.includes(c) ? c : null);
+// Accept a small inline avatar photo only (data: image, capped so the broker payload stays sane).
+const safePhoto = (p) => (typeof p === "string" && /^data:image\//.test(p) && p.length <= 120000 ? p : null);
 
 const joinLink = (code) => `${window.location.origin}${window.location.pathname}#/join/${code}`;
 
@@ -101,6 +103,7 @@ export function useHostRoom() {
               teamId: msg.teamId ? str(msg.teamId) : null,
               emoji: safeEmoji(msg.emoji),
               color: safeColor(msg.color),
+              photo: safePhoto(msg.photo),
             },
           }));
           pushStateRef.current();
@@ -349,6 +352,7 @@ export function usePlayerRoom(code) {
         teamId: teamId || null,
         emoji: avatar?.emoji || null,
         color: avatar?.color || null,
+        photo: avatar?.photo || null,
       });
     },
     [send],

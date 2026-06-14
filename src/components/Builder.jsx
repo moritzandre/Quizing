@@ -35,7 +35,7 @@ import {
 } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
-import { ROUND_TEMPLATES } from "../data/templates.js";
+import { ROUND_TEMPLATES, roundCreatorPrompt } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
 import MapillaryEmbed from "./MapillaryEmbed.jsx";
 
@@ -284,6 +284,123 @@ function RoundImportModal({ onClose, onAdd, t }) {
   );
 }
 
+/** Round-level Creator Room: pick a type, copy a tailored AI prompt, paste the JSON back. */
+function RoundCreatorModal({ onClose, onAdd, t }) {
+  const [type, setType] = useState("classic");
+  const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
+  const prompt = roundCreatorPrompt(type);
+  let rounds = [];
+  if (text.trim()) {
+    try {
+      rounds = roundsFromImport(JSON.parse(text));
+    } catch {
+      rounds = [];
+    }
+  }
+  // navigator.clipboard needs a secure context; fall back to execCommand over http.
+  const copy = async () => {
+    let ok = false;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(prompt);
+        ok = true;
+      }
+    } catch {
+      ok = false;
+    }
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = prompt;
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch {
+        ok = false;
+      }
+    }
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 backdrop-blur-sm sm:items-center"
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[88vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-stone-200 bg-white p-5 shadow-xl dark:border-stone-800 dark:bg-stone-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <Sparkles size={18} /> {t("builder.creatorRound")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+        <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">{t("builder.creatorRoundHint")}</p>
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          className={inputCls}
+          aria-label={t("builder.roundType")}
+        >
+          {Object.keys(TYPES).map((k) => (
+            <option key={k} value={k}>
+              {t(`round.${k}.label`)}
+            </option>
+          ))}
+        </select>
+        <div className="relative mt-2">
+          <textarea
+            readOnly
+            value={prompt}
+            onFocus={(e) => e.target.select()}
+            rows={6}
+            className="w-full resize-none rounded-xl bg-stone-100 p-3 pr-20 font-mono text-xs leading-relaxed text-stone-600 focus:outline-none dark:bg-stone-800 dark:text-stone-300"
+          />
+          <button
+            onClick={copy}
+            className={`absolute right-2 top-2 rounded-lg bg-white px-2 py-1 text-xs font-medium text-stone-600 shadow-sm transition hover:text-indigo-600 dark:bg-stone-900 dark:text-stone-300 ${FOCUS}`}
+          >
+            {copied ? t("ai.copied") : t("ai.copyPrompt")}
+          </button>
+        </div>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={t("builder.importPaste")}
+          rows={5}
+          className="mt-3 w-full rounded-xl border border-stone-200 bg-white px-3 py-2 font-mono text-xs text-stone-900 placeholder-stone-400 focus:border-stone-400 focus:outline-none dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100"
+        />
+        {text.trim() && (
+          <p
+            className={`mt-2 text-sm ${rounds.length ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
+          >
+            {rounds.length ? t("builder.importFound", { n: rounds.length }) : t("builder.importBad")}
+          </p>
+        )}
+        <div className="mt-3 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={() => onAdd(rounds)} disabled={!rounds.length}>
+            <Plus size={16} /> {t("builder.importAdd", { n: rounds.length })}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Picture field: paste a URL or upload an image (downscaled to a data URL). */
 function ImageField({ value, onChange }) {
   const { t } = useI18n();
@@ -518,6 +635,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const [quiz, setQuiz] = useState(initial);
   const [picker, setPicker] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   // Functional updaters so back-to-back writes in one event compose (e.g. the
   // map search sets {lat,lng} and {name} in the same tick) instead of clobbering.
@@ -558,6 +676,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const addImportedRounds = (rounds) => {
     if (rounds?.length) setQuiz((prev) => ({ ...prev, rounds: [...prev.rounds, ...rounds.map(reId)] }));
     setImporting(false);
+    setCreating(false);
     setPicker(false);
   };
   const qRow = (r, item, patch) =>
@@ -1349,12 +1468,20 @@ export default function Builder({ initial, note, onSave, onCancel }) {
             </div>
 
             <p className="mb-2 mt-5 text-sm font-medium text-stone-500 dark:text-stone-400">{t("builder.orImport")}</p>
-            <button
-              onClick={() => setImporting(true)}
-              className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium transition hover:border-stone-400 hover:bg-stone-50 dark:border-stone-700 dark:hover:border-stone-500 dark:hover:bg-stone-800 ${FOCUS}`}
-            >
-              <FileJson size={16} className="text-stone-500 dark:text-stone-400" /> {t("builder.importRound")}
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setImporting(true)}
+                className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium transition hover:border-stone-400 hover:bg-stone-50 dark:border-stone-700 dark:hover:border-stone-500 dark:hover:bg-stone-800 ${FOCUS}`}
+              >
+                <FileJson size={16} className="text-stone-500 dark:text-stone-400" /> {t("builder.importRound")}
+              </button>
+              <button
+                onClick={() => setCreating(true)}
+                className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-stone-700 dark:hover:border-indigo-500/50 dark:hover:bg-indigo-500/10 ${FOCUS}`}
+              >
+                <Sparkles size={16} className="text-indigo-500" /> {t("builder.creatorRound")}
+              </button>
+            </div>
           </div>
         ) : (
           <button
@@ -1367,6 +1494,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
       </div>
 
       {importing && <RoundImportModal onClose={() => setImporting(false)} onAdd={addImportedRounds} t={t} />}
+      {creating && <RoundCreatorModal onClose={() => setCreating(false)} onAdd={addImportedRounds} t={t} />}
     </div>
   );
 }

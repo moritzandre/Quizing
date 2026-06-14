@@ -17,7 +17,7 @@ const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 
 /**
  * @param {object} props
- * @param {Array<{id:string,name:string,color?:string,emoji?:string,from:number,to:number}>} props.entities
+ * @param {Array<{id:string,name:string,color?:string,emoji?:string,photo?:string,from:number,to:number}>} props.entities
  * @param {boolean} [props.present] Larger sizing for the TV.
  */
 export default function RoundRecap({ entities = [], present = false }) {
@@ -53,7 +53,7 @@ export default function RoundRecap({ entities = [], present = false }) {
             key={e.id}
             className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/80 px-3 py-2 dark:border-stone-800 dark:bg-stone-900/70"
           >
-            <Avatar color={e.color} emoji={e.emoji} name={e.name} size={present ? 40 : 30} />
+            <Avatar color={e.color} emoji={e.emoji} photo={e.photo} name={e.name} size={present ? 40 : 30} />
             <div className="min-w-0 flex-1">
               <div className={`truncate font-semibold ${present ? "text-xl" : "text-sm"}`}>{e.name}</div>
               <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-stone-200 dark:bg-stone-700">

@@ -3,9 +3,10 @@
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
-import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash } from "lucide-react";
+import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash, Camera, Loader2, X } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
 import { FOCUS, inputCls, Button, Avatar, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
+import { fileToDataUrl } from "../lib/model.js";
 import LeafletMap from "./LeafletMap.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
@@ -28,6 +29,9 @@ export default function JoinView({ code }) {
   const [teamId, setTeamId] = useState(null);
   const [pickedEmoji, setPickedEmoji] = useState(() => PLAYER_EMOJI[hashIdx(room.deviceId, PLAYER_EMOJI.length)]);
   const [pickedColor, setPickedColor] = useState(() => PLAYER_COLORS[hashIdx(room.deviceId, PLAYER_COLORS.length)]);
+  const [pickedPhoto, setPickedPhoto] = useState("");
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const photoRef = useRef(null);
   const [joined, setJoined] = useState(false);
   const [myPin, setMyPin] = useState(null);
   const [pinSent, setPinSent] = useState(false);
@@ -73,6 +77,20 @@ export default function JoinView({ code }) {
     setAnswerSent(true);
     room.sendAnswer(value);
   };
+  const onPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setPhotoBusy(true);
+    try {
+      // Avatars are tiny — downscale hard so the photo stays small on the wire.
+      setPickedPhoto(await fileToDataUrl(file, { maxDim: 160, keepBelow: 0, quality: 0.72 }));
+    } catch {
+      /* ignore — keep the emoji avatar */
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
 
   const letters = ["A", "B", "C", "D", "E", "F"];
 
@@ -106,7 +124,11 @@ export default function JoinView({ code }) {
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!canJoin) return;
-                room.join(draftName, teamId, needsTeam ? null : { emoji: pickedEmoji, color: pickedColor });
+                room.join(
+                  draftName,
+                  teamId,
+                  needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto },
+                );
                 setJoined(true);
               }}
             >
@@ -121,8 +143,35 @@ export default function JoinView({ code }) {
               {!needsTeam && (
                 <div className="mt-5">
                   <div className="mb-3 flex items-center gap-3">
-                    <Avatar color={pickedColor} emoji={pickedEmoji} name={draftName} size={48} className="shadow-sm" />
+                    <Avatar
+                      color={pickedColor}
+                      emoji={pickedEmoji}
+                      photo={pickedPhoto}
+                      name={draftName}
+                      size={48}
+                      className="shadow-sm"
+                    />
                     <p className="text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickAvatar")}</p>
+                    <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
+                    {pickedPhoto ? (
+                      <button
+                        type="button"
+                        onClick={() => setPickedPhoto("")}
+                        className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+                      >
+                        <X size={14} /> {t("join.removePhoto")}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => photoRef.current?.click()}
+                        disabled={photoBusy}
+                        className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 disabled:opacity-50 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+                      >
+                        {photoBusy ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}{" "}
+                        {t("join.usePhoto")}
+                      </button>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {PLAYER_EMOJI.map((em) => (
@@ -195,7 +244,9 @@ export default function JoinView({ code }) {
         ) : (
           <div className="flex flex-1 flex-col">
             <p className="mb-6 flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
-              {!needsTeam && <Avatar color={pickedColor} emoji={pickedEmoji} name={room.name} size={28} />}
+              {!needsTeam && (
+                <Avatar color={pickedColor} emoji={pickedEmoji} photo={pickedPhoto} name={room.name} size={28} />
+              )}
               <span className="font-semibold text-stone-800 dark:text-stone-100">
                 {t("join.playingAs", { name: room.name })}
               </span>

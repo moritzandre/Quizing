@@ -302,6 +302,27 @@ export default function PlayView({ game, setGame, onExit, room }) {
     upd({ revealed: true, players, awarded });
   };
 
+  // Map reveal: auto-award the closest guess (host-placed or phone pin) the points.
+  const revealMap = (q) => {
+    let awarded = {};
+    let players = game.players;
+    if (q.lat != null && q.lng != null) {
+      const combined = { ...(game.guesses || {}), ...(buzzerOn ? mapByEntity(room.pins) : {}) };
+      const ranked = game.players
+        .map((p) => ({ p, g: combined[p.id] }))
+        .filter((x) => x.g)
+        .sort((a, b) => haversineKm(a.g.lat, a.g.lng, q.lat, q.lng) - haversineKm(b.g.lat, b.g.lng, q.lat, q.lng));
+      if (ranked.length) {
+        const winnerId = ranked[0].p.id;
+        const pts = ptsOr(q.points, 10);
+        awarded = { [winnerId]: pts };
+        players = game.players.map((p) => (p.id === winnerId ? { ...p, score: p.score + pts } : p));
+      }
+    }
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
+  };
+
   const adjustScore = (pid, delta) =>
     upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
 
@@ -400,6 +421,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         if (game.stage === "question" && !game.revealed && cq) {
           if (round.type === "choice") revealChoice(cq);
           else if (round.type === "number") revealNumber(cq);
+          else if (round.type === "map") revealMap(cq);
           else reveal();
         }
         break;
@@ -456,6 +478,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       if (k === "r" && !game.revealed) {
         if (round.type === "choice") revealChoice(q);
         else if (round.type === "number") revealNumber(q);
+        else if (round.type === "map") revealMap(q);
         else reveal();
       } else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
@@ -531,7 +554,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <div className="space-y-2">
               {game.players.map((p, i) => (
                 <div key={p.id} className="flex items-center gap-1.5">
-                  <Avatar color={colorFor(p, i)} emoji={p.emoji} name={p.name} size={26} />
+                  <Avatar color={colorFor(p, i)} emoji={p.emoji} photo={p.photo} name={p.name} size={26} />
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">{p.name}</span>
                   <button onClick={() => adjustScore(p.id, -5)} className={stepperCls}>
                     −5
@@ -691,6 +714,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   name: p.name,
                   color: p.color,
                   emoji: p.emoji,
+                  photo: p.photo,
                   from: game.roundStartScores?.[p.id] ?? p.score,
                   to: p.score,
                 }))}
@@ -760,6 +784,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 <Avatar
                   color={colorFor(p, idxOf(p))}
                   emoji={p.emoji}
+                  photo={p.photo}
                   name={p.name}
                   size={rank === 0 ? 56 : 44}
                   className="shadow-md"
@@ -791,7 +816,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               >
                 <div className="flex items-center gap-2.5">
                   <span className="w-5 text-sm font-bold text-stone-400">{i + 4}</span>
-                  <Avatar color={colorFor(p, idxOf(p))} emoji={p.emoji} name={p.name} size={24} />
+                  <Avatar color={colorFor(p, idxOf(p))} emoji={p.emoji} photo={p.photo} name={p.name} size={24} />
                   <span className="font-medium">{p.name}</span>
                 </div>
                 <span className="font-bold tabular-nums">{p.score}</span>
@@ -1327,7 +1352,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 }`}
               >
                 <span className="flex items-center gap-2 font-medium">
-                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
+                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} photo={x.p.photo} name={x.p.name} size={22} />
                   {x.p.name}
                   <span className="text-stone-400">
                     {x.g}
@@ -1464,7 +1489,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 }`}
               >
                 <span className="flex items-center gap-2 font-medium">
-                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
+                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} photo={x.p.photo} name={x.p.name} size={22} />
                   {x.p.name}
                   {idx === 0 && (
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
@@ -1482,7 +1507,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           {game.revealed ? (
             NextBtn
           ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={reveal}>
+            <Button className="px-6 py-3.5 text-base" onClick={() => revealMap(q)}>
               <MapPin size={18} /> {t("play.revealLocation")}
             </Button>
           )}

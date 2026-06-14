@@ -191,6 +191,43 @@ export const QUIZ_TEMPLATES = [
   },
 ];
 
+/** Per-round-type question/category JSON shape (AI-facing; used by the round Creator Room). */
+const ROUND_SHAPES = {
+  classic: 'questions: [{ "q": string, "a": string, "points": number }]',
+  jeopardy: 'categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]',
+  hints:
+    'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
+  video:
+    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]',
+  image: 'questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]',
+  morph:
+    'questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]',
+  fusion:
+    'questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]',
+  map: 'questions: [{ "q": string, "name": string, "lat": number, "lng": number, "points": number, "tileLayer": "map"|"satellite" }]',
+  choice: 'questions: [{ "q": string, "options": [string,...], "correct": <0-based index>, "points": number }]',
+  number: 'questions: [{ "q": string, "answer": number, "unit": string, "points": number }]',
+};
+
+/**
+ * A copy-paste prompt for generating ONE round of a given type with an AI,
+ * including the JSON shape and a concrete example. Paste the reply back into the
+ * round Creator Room to insert it.
+ * @param {string} type One of ROUND_TYPES.
+ */
+export function roundCreatorPrompt(type) {
+  const shape = ROUND_SHAPES[type] || ROUND_SHAPES.classic;
+  const example = ROUND_TEMPLATES.find((tpl) => tpl.type === type)?.round;
+  return [
+    `Generate ONE Quiz Night "${type}" round as JSON. Reply with ONLY the JSON object, no prose.`,
+    "",
+    `Shape: { "type": "${type}", "title": string, "timer": number|null, ${shape} }`,
+    example ? `\nExample:\n${JSON.stringify(example, null, 2)}` : "",
+    "",
+    'Rules: omit "id" fields (they are generated). 3-6 questions. Unambiguous answers. Use real reachable media URLs, or leave url empty for the host to fill in.',
+  ].join("\n");
+}
+
 /** Copy-paste spec for generating a .quiz.json with an AI. English (AI-facing). */
 export const AI_SCHEMA_HELP = `Generate a Quiz Night quiz as JSON. Reply with ONLY a JSON object, no prose.
 

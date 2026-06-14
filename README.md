@@ -13,14 +13,14 @@ A host-led party quiz app. One host screen runs the show; players can buzz in, d
 | Picture         | Show an image (paste a URL or upload one), then reveal the answer.                                                                                       |
 | Morph           | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
 | Fusion          | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
-| Map             | A real pan/zoom world map. Players drop a pin (on the host screen or their phones); reveal the true spot and the ranked guesses, closest wins.           |
+| Map             | A real pan/zoom world map. Players drop a pin (host screen or phones); reveal the true spot and the ranked guesses — **auto-scored**, closest wins.      |
 | Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.            |
 | Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                         |
 
 Other features:
 
 - **Teams** — play solo (one entry per player) or split into teams. In team mode each team is one scoring entity and phones pick which team they're on when they join.
-- **Phone avatars** — players choose their own emoji + colour on their phone; it shows up on the scoreboard, podium and TV.
+- **Phone avatars** — players choose their own emoji + colour, or **upload a photo**, on their phone; it shows up on the scoreboard, podium and TV.
 - **Phone buzzers & answers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), drop map pins, pick multiple-choice answers, and submit number guesses. Works on your local network — see below.
 - **Stream to a TV** — open `#/present/<code>` on any second screen on the same Wi-Fi for a clean, enlarged, read-only mirror of the host with an animated **podium-climb** scoreboard. Map pins stay hidden until reveal. No HDMI, no backend (it rides the same room) — e.g. cast a Chrome tab to a Google TV. See _Stream to a TV_ below.
 - **Host remote** — open `#/host/<code>` on a phone to drive the whole game (reveal, advance, award/dock, hints, …) without standing at the laptop. Its QR sits next to the TV one in the Stream-to-TV panel; keep it to yourself (it controls the game).
@@ -81,7 +81,7 @@ It reuses the same MQTT room, so there's no extra setup and no HDMI cable — ju
 - **Richer maps** — switch a map question between **Map** and **Satellite** (keyless Esri imagery), or **Search for a place** to drop the answer pin and fill in its name automatically (via OpenStreetMap Nominatim). Paste a **Mapillary** link/ID to embed a **street view** on the question — the TV/host shows it as the prompt and reveals the map answer afterwards. (Use the **Street view** button to find a spot on Mapillary, then copy its link.)
 - **Templates** — the round picker offers per-type starters, and the home screen has **New from template** for whole-quiz starters.
 - **Import round(s) from JSON** — the round picker's **Import round(s)** button takes pasted JSON or a `.quiz.json` file (a single round, an array, or a whole quiz) and appends the rounds to the quiz you're editing (validated and re-id'd).
-- **Creator Room** — copy the generated schema prompt into ChatGPT/Claude/any AI, paste the JSON it returns, and it imports straight into your library (validated and coerced).
+- **Creator Room** — at the home screen, copy a whole-quiz schema prompt into ChatGPT/Claude/any AI and paste the JSON back to add a quiz; or, in the round picker, **Creator Room** gives a prompt tailored to a single round type (with its exact JSON shape + example) and inserts the round you paste back. Everything is validated and coerced.
 
 ## Deployment
 
