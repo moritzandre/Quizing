@@ -697,7 +697,7 @@ export function buildPresentQ(game) {
 /**
  * Build the light, frequently-changing presenter payload (topic: live).
  * @param {object} game A valid game.
- * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object}} [opts]
+ * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object, transport?:object, soundOnTv?:boolean}} [opts]
  */
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
@@ -719,7 +719,12 @@ export function buildLive(game, opts = {}) {
     allowNegative: !!opts.allowNegative,
     showRecap: !!opts.recap,
     recapFrom: opts.recap ? scoreMap(opts.recapFrom) : null,
-    buzzed: !!opts.buzzed,
+    // Remote media transport (the TV/host followers play/pause/restart from this).
+    transport:
+      opts.transport && typeof opts.transport === "object"
+        ? { n: num(opts.transport.n, 0), action: str(opts.transport.action) || "idle" }
+        : { n: 0, action: "idle" },
+    soundOnTv: !!opts.soundOnTv,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -788,7 +793,11 @@ export function normalizeLive(raw) {
     allowNegative: !!raw.allowNegative,
     showRecap: !!raw.showRecap,
     recapFrom: raw.showRecap ? scoreMap(raw.recapFrom) : null,
-    buzzed: !!raw.buzzed,
+    transport:
+      raw.transport && typeof raw.transport === "object"
+        ? { n: num(raw.transport.n, 0), action: ["play", "pause", "restart"].includes(raw.transport.action) ? raw.transport.action : "idle" }
+        : { n: 0, action: "idle" },
+    soundOnTv: !!raw.soundOnTv,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",

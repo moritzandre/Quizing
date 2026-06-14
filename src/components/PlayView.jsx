@@ -105,8 +105,19 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* whose pin is being placed in a map round (host-side) */
   const [guessFor, setGuessFor] = useState(null);
 
-  /* morph round reveal step (0 = fully obscured) */
+  /* morph round reveal step (0 = fully obscured); also the clip-ladder step */
   const [morphStep, setMorphStep] = useState(0);
+
+  /* media transport for clips/video: the stage (this screen or the TV) plays/
+     pauses/restarts from this. `soundOnTv` moves the stage (audio) to the TV. */
+  const [transport, setTransport] = useState({ n: 0, action: "idle" });
+  const [soundOnTv, setSoundOnTv] = useState(false);
+  const sendTransport = (action) => setTransport((tr) => ({ n: tr.n + 1, action }));
+  // Extending the clip ladder replays from the start at the new (longer) length.
+  const extendClip = (steps) => {
+    setMorphStep((s) => Math.min(steps, s + 1));
+    sendTransport("restart");
+  };
 
   /* map round: show the Mapillary street view instead of the map (UI-only) */
   const [streetOn, setStreetOn] = useState(false);
@@ -147,10 +158,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setTimeLeft(timerSecs);
     setPaused(false);
     setMorphStep(0);
+    setTransport({ n: 0, action: "idle" });
     setStreetOn(false);
     setRecap(false);
     setGuessFor(game.players[0]?.id ?? null);
   }, [qKey, timerSecs]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A buzz auto-pauses the clip on whichever screen is the stage (host or TV).
+  useEffect(() => {
+    if (room?.buzz) sendTransport("pause");
+  }, [room?.buzz?.deviceId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Buzzer/pin orchestration: tell phones what to show for the current question.
   useEffect(() => {
@@ -186,10 +203,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         allowNegative,
         recap,
         recapFrom: game.roundStartScores,
-        buzzed: !!room?.buzz,
+        transport,
+        soundOnTv,
       }),
     );
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, room?.buzz?.deviceId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
@@ -441,9 +459,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
           if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
             upd({ hintsShown: game.hintsShown + 1 });
           else if (round.type === "morph" || round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
-          else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq))
-            setMorphStep((s) => Math.min(cq.steps, s + 1));
+          else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq)) extendClip(cq.steps);
         }
+        break;
+      case "media":
+        if (["play", "pause", "restart"].includes(a.action)) sendTransport(a.action);
+        break;
+      case "soundOnTv":
+        setSoundOnTv(!!a.on);
         break;
       case "sign":
         setSign(a.sign === -1 ? -1 : 1);
@@ -499,7 +522,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
         setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (k === "h" && !game.revealed && (round.type === "video" || round.type === "clip") && clipLadderActive(q))
-        setMorphStep((s) => Math.min(q.steps, s + 1));
+        extendClip(q.steps);
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
       else if (allowNegative && game.revealed && (e.key === "+" || e.key === "=")) setSign(1);
       else if (game.revealed && /^[1-9]$/.test(e.key)) {
@@ -687,6 +710,22 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   <p className="mt-2 text-left text-xs text-amber-600 dark:text-amber-400">
                     {t("play.hostRemoteHint")}
                   </p>
+                </div>
+                <div className="border-t border-stone-200 pt-4 dark:border-stone-800">
+                  <label className="flex cursor-pointer items-center justify-between gap-3">
+                    <span className="text-sm">
+                      <span className="font-semibold">{t("play.soundOnTv")}</span>
+                      <span className="mt-0.5 block text-xs text-stone-500 dark:text-stone-400">
+                        {t("play.soundOnTvHint")}
+                      </span>
+                    </span>
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5 shrink-0 rounded accent-indigo-600"
+                      checked={soundOnTv}
+                      onChange={(e) => setSoundOnTv(e.target.checked)}
+                    />
+                  </label>
                 </div>
               </div>
             ) : (
@@ -1132,15 +1171,36 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
         <div className="mx-auto max-w-2xl">
-          <MediaPlayer
-            key={qKey}
-            url={q.url}
-            audioOnly={!!q.audioOnly}
-            start={q.start}
-            end={clipEnd(q, morphStep)}
-            pauseSignal={room?.buzz?.deviceId || null}
-          />
+          {soundOnTv ? (
+            <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
+              <Tv size={32} />
+              <p className="text-sm font-medium">{t("play.playingOnTv")}</p>
+            </div>
+          ) : (
+            <MediaPlayer
+              key={qKey}
+              url={q.url}
+              audioOnly={!!q.audioOnly}
+              start={q.start}
+              end={clipEnd(q, morphStep)}
+              transport={transport}
+            />
+          )}
         </div>
+        {/* transport: when the TV is the stage, the host drives playback from here */}
+        {soundOnTv && !game.revealed && (
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("play")}>
+              <Play size={16} /> {t("play.play")}
+            </Button>
+            <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("pause")}>
+              <Pause size={16} /> {t("play.pause")}
+            </Button>
+            <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("restart")}>
+              <RotateCcw size={16} /> {t("play.restart")}
+            </Button>
+          </div>
+        )}
         <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
         <div className="mt-6 flex flex-wrap justify-center gap-3" style={{ minHeight: 64 }}>
           {game.revealed ? (
@@ -1150,11 +1210,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           ) : (
             <>
               {ladder && !atEnd && (
-                <Button
-                  variant="outline"
-                  className="px-5 py-3 text-base"
-                  onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
-                >
+                <Button variant="outline" className="px-5 py-3 text-base" onClick={() => extendClip(q.steps)}>
                   <FastForward size={18} /> {t("play.extendClip")}{" "}
                   <span className="text-sm text-stone-400">
                     ({morphStep + 1}/{q.steps + 1})

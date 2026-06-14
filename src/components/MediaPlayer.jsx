@@ -22,9 +22,17 @@ import NativeMediaPlayer from "./NativeMediaPlayer.jsx";
  * @param {boolean} [props.audioOnly] Hide the video, play sound only (YouTube / file).
  * @param {number|null} [props.start] Clip start (seconds).
  * @param {number|null} [props.end] Clip out-point (seconds) — the ladder's current end.
- * @param {*} [props.pauseSignal] Changing to truthy pauses playback (e.g. first buzz).
+ * @param {{n:number,action:string}|null} [props.transport] Remote transport (play | pause | restart) on n change.
+ * @param {boolean} [props.controls] Show the player's own control bar (false = headless, transport-driven).
  */
-export default function MediaPlayer({ url, audioOnly = false, start = null, end = null, pauseSignal = null }) {
+export default function MediaPlayer({
+  url,
+  audioOnly = false,
+  start = null,
+  end = null,
+  transport = null,
+  controls = true,
+}) {
   const { t } = useI18n();
   const src = mediaSource(url);
 
@@ -36,7 +44,7 @@ export default function MediaPlayer({ url, audioOnly = false, start = null, end 
     );
   }
   if (src.kind === "spotify") {
-    return <SpotifyPlayer uri={src.uri} start={start} end={end} pauseSignal={pauseSignal} />;
+    return <SpotifyPlayer uri={src.uri} start={start} end={end} transport={transport} controls={controls} />;
   }
   if (src.kind === "file") {
     return (
@@ -46,9 +54,19 @@ export default function MediaPlayer({ url, audioOnly = false, start = null, end 
         audioOnly={audioOnly}
         start={start}
         end={end}
-        pauseSignal={pauseSignal}
+        transport={transport}
+        controls={controls}
       />
     );
   }
-  return <YouTubePlayer videoId={src.id} audioOnly={audioOnly} start={start} end={end} pauseSignal={pauseSignal} />;
+  return (
+    <YouTubePlayer
+      videoId={src.id}
+      audioOnly={audioOnly}
+      start={start}
+      end={end}
+      transport={transport}
+      controls={controls}
+    />
+  );
 }

@@ -45,9 +45,18 @@ const fmt = (s) => {
  * @param {boolean} [props.audioOnly] Hide the video behind a cover; play sound only.
  * @param {number|null} [props.start] Trim: start playback at this second.
  * @param {number|null} [props.end] Trim: pause when playback reaches this second.
- * @param {*} [props.pauseSignal] When this changes to a truthy value, pause playback (e.g. on first buzz).
+ * @param {{n:number,action:string}|null} [props.transport] Remote transport: when `n` changes, apply
+ *   `action` (play | pause | restart). Lets the host drive playback from another screen (and a buzz pause).
+ * @param {boolean} [props.controls] Show the built-in control bar (false = headless, transport-driven).
  */
-export default function YouTubePlayer({ videoId, audioOnly = false, start = null, end = null, pauseSignal = null }) {
+export default function YouTubePlayer({
+  videoId,
+  audioOnly = false,
+  start = null,
+  end = null,
+  transport = null,
+  controls = true,
+}) {
   const { t } = useI18n();
   const hostRef = useRef(null);
   const playerRef = useRef(null);
@@ -177,18 +186,23 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
     };
   }, [videoId, start]);
 
-  // Pause playback when the signal changes to a truthy value (e.g. first buzz).
+  // Remote transport: apply play / pause / restart whenever transport.n changes
+  // (host driving from another screen, or a buzz auto-pause).
   useEffect(() => {
-    if (!pauseSignal) return;
+    if (!transport || !transport.n) return;
     const p = playerRef.current;
-    if (p && typeof p.pauseVideo === "function") {
-      try {
-        p.pauseVideo();
-      } catch {
-        /* player not ready */
+    if (!p) return;
+    try {
+      if (transport.action === "pause") p.pauseVideo();
+      else if (transport.action === "play") p.playVideo();
+      else if (transport.action === "restart") {
+        p.seekTo(startRef.current || 0, true);
+        p.playVideo();
       }
+    } catch {
+      /* player not ready */
     }
-  }, [pauseSignal]);
+  }, [transport?.n]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const playing = state === "playing";
   // Seek-bar bounds: honor a trim window only when end is past start.
@@ -297,46 +311,48 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
         )}
       </div>
 
-      {/* custom control bar */}
-      <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
-        <button
-          onClick={togglePlay}
-          disabled={!ready}
-          aria-label={playing ? "Pause" : "Play"}
-          className="text-white/90 transition hover:text-white disabled:opacity-40"
-        >
-          {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-        </button>
-        <button
-          onClick={restart}
-          disabled={!ready}
-          aria-label="Restart"
-          className="text-white/70 transition hover:text-white disabled:opacity-40"
-        >
-          <RotateCcw size={17} />
-        </button>
-        <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
-        <input
-          type="range"
-          aria-label="Seek"
-          min={trimLo}
-          max={trimHi}
-          step="any"
-          value={Math.min(Math.max(cur, trimLo), trimHi)}
-          onChange={seek}
-          disabled={!ready}
-          className="h-1 flex-1 cursor-pointer accent-rose-500"
-        />
-        <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
-        <button
-          onClick={toggleMute}
-          disabled={!ready}
-          aria-label={muted ? "Unmute" : "Mute"}
-          className="text-white/70 transition hover:text-white disabled:opacity-40"
-        >
-          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-        </button>
-      </div>
+      {/* custom control bar (hidden when transport-driven from another screen) */}
+      {controls && (
+        <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
+          <button
+            onClick={togglePlay}
+            disabled={!ready}
+            aria-label={playing ? "Pause" : "Play"}
+            className="text-white/90 transition hover:text-white disabled:opacity-40"
+          >
+            {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+          </button>
+          <button
+            onClick={restart}
+            disabled={!ready}
+            aria-label="Restart"
+            className="text-white/70 transition hover:text-white disabled:opacity-40"
+          >
+            <RotateCcw size={17} />
+          </button>
+          <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
+          <input
+            type="range"
+            aria-label="Seek"
+            min={trimLo}
+            max={trimHi}
+            step="any"
+            value={Math.min(Math.max(cur, trimLo), trimHi)}
+            onChange={seek}
+            disabled={!ready}
+            className="h-1 flex-1 cursor-pointer accent-rose-500"
+          />
+          <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
+          <button
+            onClick={toggleMute}
+            disabled={!ready}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className="text-white/70 transition hover:text-white disabled:opacity-40"
+          >
+            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

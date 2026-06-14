@@ -47,9 +47,10 @@ function loadSpotifyAPI() {
  * @param {string} props.uri Spotify URI (spotify:track:ID / spotify:episode:ID).
  * @param {number|null} [props.start] Trim: seek here on first play (seconds).
  * @param {number|null} [props.end] Trim: pause when playback reaches this second.
- * @param {*} [props.pauseSignal] When this changes to a truthy value, pause (e.g. first buzz).
+ * @param {{n:number,action:string}|null} [props.transport] Remote transport (play | pause | restart) on n change.
+ * @param {boolean} [props.controls] Show the built-in control bar (false = headless, transport-driven).
  */
-export default function SpotifyPlayer({ uri, start = null, end = null, pauseSignal = null }) {
+export default function SpotifyPlayer({ uri, start = null, end = null, transport = null, controls = true }) {
   const { t } = useI18n();
   const hostRef = useRef(null);
   const ctrlRef = useRef(null);
@@ -61,6 +62,8 @@ export default function SpotifyPlayer({ uri, start = null, end = null, pauseSign
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const playingRef = useRef(false);
+  playingRef.current = playing;
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
 
@@ -118,18 +121,27 @@ export default function SpotifyPlayer({ uri, start = null, end = null, pauseSign
     };
   }, [uri]);
 
-  // Pause when the signal flips truthy (e.g. someone buzzed).
+  // Remote transport: apply play / pause / restart whenever transport.n changes
+  // (host driving from another screen, or a buzz auto-pause).
   useEffect(() => {
-    if (!pauseSignal) return;
+    if (!transport || !transport.n) return;
     const c = ctrlRef.current;
-    if (c) {
-      try {
-        c.pause();
-      } catch {
-        /* not ready */
+    if (!c) return;
+    try {
+      if (transport.action === "pause") c.pause();
+      else if (transport.action === "play") {
+        if (startRef.current && !startedRef.current) c.seek(startRef.current);
+        startedRef.current = true;
+        if (!playingRef.current) c.togglePlay();
+      } else if (transport.action === "restart") {
+        startedRef.current = true;
+        c.seek(startRef.current || 0);
+        if (!playingRef.current) c.togglePlay();
       }
+    } catch {
+      /* not ready */
     }
-  }, [pauseSignal]);
+  }, [transport?.n]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const togglePlay = () => {
     const c = ctrlRef.current;
@@ -197,33 +209,35 @@ export default function SpotifyPlayer({ uri, start = null, end = null, pauseSign
         </div>
       </div>
 
-      {/* custom control bar (Spotify chrome stays hidden behind the cover) */}
-      <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
-        <button
-          onClick={togglePlay}
-          disabled={!ready}
-          aria-label={playing ? "Pause" : "Play"}
-          className="text-white/90 transition hover:text-white disabled:opacity-40"
-        >
-          {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-        </button>
-        <button
-          onClick={restart}
-          disabled={!ready}
-          aria-label="Restart"
-          className="text-white/70 transition hover:text-white disabled:opacity-40"
-        >
-          <RotateCcw size={17} />
-        </button>
-        <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
-        <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/20">
-          <div
-            className="h-full rounded-full bg-emerald-500"
-            style={{ width: `${trimHi > 0 ? Math.min(100, (Math.max(0, cur - trimLo) / Math.max(0.01, trimHi - trimLo)) * 100) : 0}%` }}
-          />
+      {/* custom control bar (hidden when transport-driven; Spotify chrome stays hidden behind the cover) */}
+      {controls && (
+        <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
+          <button
+            onClick={togglePlay}
+            disabled={!ready}
+            aria-label={playing ? "Pause" : "Play"}
+            className="text-white/90 transition hover:text-white disabled:opacity-40"
+          >
+            {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+          </button>
+          <button
+            onClick={restart}
+            disabled={!ready}
+            aria-label="Restart"
+            className="text-white/70 transition hover:text-white disabled:opacity-40"
+          >
+            <RotateCcw size={17} />
+          </button>
+          <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
+          <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/20">
+            <div
+              className="h-full rounded-full bg-emerald-500"
+              style={{ width: `${trimHi > 0 ? Math.min(100, (Math.max(0, cur - trimLo) / Math.max(0.01, trimHi - trimLo)) * 100) : 0}%` }}
+            />
+          </div>
+          <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
         </div>
-        <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
-      </div>
+      )}
     </div>
   );
 }

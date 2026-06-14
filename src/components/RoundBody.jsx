@@ -10,7 +10,8 @@
    ==================================================================== */
 
 import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
-import { Check, Target } from "lucide-react";
+import { useI18n } from "../i18n/I18nProvider.jsx";
+import { Check, Target, Volume2 } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
@@ -34,8 +35,10 @@ const Q = ({ children }) => (
  * @param {number} props.hintsShown
  * @param {number} props.step Morph/fusion reveal step (also the video clip-ladder step).
  * @param {object|null} props.reveal Answer data (live.reveal), present once revealed.
- * @param {boolean} [props.buzzed] Someone has buzzed — pause the video clip.
+ * @param {{n:number,action:string}|null} [props.transport] Remote media transport (play/pause/restart).
+ * @param {boolean} [props.stage] This screen is the audio/video stage — render the real player (else a placeholder).
  * @param {boolean} [props.compact] Smaller media heights (for the host phone mirror).
+ * @param {string} [props.qKey] Stable per-question key so the player remounts on a new question (even same URL).
  */
 export default function RoundBody({
   type,
@@ -44,9 +47,12 @@ export default function RoundBody({
   hintsShown = 1,
   step = 0,
   reveal = null,
-  buzzed = false,
+  transport = null,
+  stage = false,
   compact = false,
+  qKey = "",
 }) {
+  const { t } = useI18n();
   // Heights are capped so the question + media + answer fit one screen without
   // scrolling (compact = the host phone; otherwise the TV).
   const mapH = compact ? "h-[42vh]" : "h-[58vh]";
@@ -85,14 +91,22 @@ export default function RoundBody({
       <div className="text-center">
         {q.q && <Q>{q.q}</Q>}
         <div className={`mx-auto mt-5 ${mediaW}`}>
-          <MediaPlayer
-            key={q.url || "none"}
-            url={q.url}
-            audioOnly={!!q.audioOnly}
-            start={q.start}
-            end={clipEnd(q, step)}
-            pauseSignal={buzzed ? "buzzed" : null}
-          />
+          {stage ? (
+            <MediaPlayer
+              key={qKey || q.url || "none"}
+              url={q.url}
+              audioOnly={!!q.audioOnly}
+              start={q.start}
+              end={clipEnd(q, step)}
+              transport={transport}
+              controls={false}
+            />
+          ) : (
+            <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
+              <Volume2 size={compact ? 28 : 40} />
+              <p className="text-sm font-medium">{t("play.clipElsewhere")}</p>
+            </div>
+          )}
         </div>
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
       </div>

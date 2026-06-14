@@ -8,7 +8,8 @@
    (coordinates aren't sent until reveal). No controls, no answers early.
    ==================================================================== */
 
-import { Trophy, Wifi, WifiOff, Tv } from "lucide-react";
+import { useState } from "react";
+import { Trophy, Wifi, WifiOff, Tv, Volume2 } from "lucide-react";
 import { usePresenterRoom } from "./useRoom.js";
 import { TYPES, accentFor, ThemeToggle, Confetti } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
@@ -24,6 +25,10 @@ export default function PresenterView({ code }) {
   const { t } = useI18n();
   const { status, present, live, alive } = usePresenterRoom(code);
   const online = status === "connected";
+  // Browsers block audio autoplay until the page is interacted with. When the
+  // host routes clip sound to the TV, we show a one-time tap to unlock audio.
+  const [soundOn, setSoundOn] = useState(false);
+  const needsSound = !!live?.soundOnTv && !soundOn;
   // Avatar photos arrive on the heavy/present channel; merge them into the
   // light live standings so the podium/recap can show them on the TV.
   const photos = present?.photos || {};
@@ -52,6 +57,17 @@ export default function PresenterView({ code }) {
         </div>
       </div>
       <div className="flex flex-1 flex-col justify-center">{children}</div>
+      {needsSound && (
+        <button
+          onClick={() => setSoundOn(true)}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-stone-900/95 text-white backdrop-blur"
+        >
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white/10">
+            <Volume2 size={48} />
+          </div>
+          <p className="text-2xl font-bold">{t("play.tapForSound")}</p>
+        </button>
+      )}
     </div>
   );
 
@@ -148,7 +164,9 @@ export default function PresenterView({ code }) {
       hintsShown={live?.hintsShown || 1}
       step={live?.step || 0}
       reveal={live?.reveal || null}
-      buzzed={!!live?.buzzed}
+      transport={live?.transport || null}
+      stage={!!live?.soundOnTv && soundOn}
+      qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
     />,
   );
 }

@@ -699,11 +699,21 @@ describe("presenter payloads", () => {
     expect(r.recapFrom).toEqual({ a: 10, b: 5 }); // non-numeric entries dropped
   });
 
-  it("buildLive carries the buzzed flag (so the TV pauses the clip)", () => {
-    expect(buildLive(game()).buzzed).toBe(false);
-    expect(buildLive(game(), { buzzed: true }).buzzed).toBe(true);
-    expect(normalizeLive({ buzzed: 1 }).buzzed).toBe(true);
-    expect(normalizeLive({}).buzzed).toBe(false);
+  it("buildLive carries the media transport + soundOnTv (so the TV plays/pauses the clip)", () => {
+    expect(buildLive(game()).transport).toEqual({ n: 0, action: "idle" });
+    expect(buildLive(game()).soundOnTv).toBe(false);
+    const t = buildLive(game(), { transport: { n: 3, action: "play" }, soundOnTv: true });
+    expect(t.transport).toEqual({ n: 3, action: "play" });
+    expect(t.soundOnTv).toBe(true);
+  });
+
+  it("normalizeLive validates the transport action + soundOnTv against junk", () => {
+    expect(normalizeLive({}).transport).toEqual({ n: 0, action: "idle" });
+    expect(normalizeLive({ transport: { n: 5, action: "restart" }, soundOnTv: 1 })).toMatchObject({
+      transport: { n: 5, action: "restart" },
+      soundOnTv: true,
+    });
+    expect(normalizeLive({ transport: { n: 2, action: "hack" } }).transport).toEqual({ n: 2, action: "idle" }); // bad action dropped
   });
 
   it("buildPresentQ → normalizePresent round-trips a clip ladder (steps + window survive)", () => {

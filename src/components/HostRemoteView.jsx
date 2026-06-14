@@ -18,6 +18,9 @@ import {
   Plus,
   Minus,
   SkipForward,
+  Volume2,
+  RotateCcw,
+  Pause,
   Wifi,
   WifiOff,
   Gamepad2,
@@ -115,8 +118,8 @@ export default function HostRemoteView({ code }) {
             hintsShown={live?.hintsShown || 1}
             step={live?.step || 0}
             reveal={live?.reveal || null}
-            buzzed={!!live?.buzzed}
             compact
+            qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
           />
         </div>
       )}
@@ -148,6 +151,28 @@ export default function HostRemoteView({ code }) {
               >
                 <Eye size={18} /> {t("play.revealAnswer")}
               </button>
+            )}
+            {!revealed && (type === "video" || type === "clip") && (
+              <div className="col-span-2 grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => sendCtrl("media", { action: "play" })}
+                  className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+                >
+                  <Play size={16} /> {t("play.play")}
+                </button>
+                <button
+                  onClick={() => sendCtrl("media", { action: "pause" })}
+                  className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+                >
+                  <Pause size={16} /> {t("play.pause")}
+                </button>
+                <button
+                  onClick={() => sendCtrl("media", { action: "restart" })}
+                  className={`border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+                >
+                  <RotateCcw size={16} /> {t("play.restart")}
+                </button>
+              </div>
             )}
             {!revealed && hasLadder && (
               <button
@@ -184,6 +209,16 @@ export default function HostRemoteView({ code }) {
           className={`col-span-2 border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
         >
           <BarChart3 size={18} /> {t("play.standings")}
+        </button>
+        <button
+          onClick={() => sendCtrl("soundOnTv", { on: !live?.soundOnTv })}
+          className={`col-span-2 border ${btn} ${FOCUS} ${
+            live?.soundOnTv
+              ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
+              : "border-stone-300 dark:border-stone-700"
+          }`}
+        >
+          <Volume2 size={18} /> {t("play.soundOnTv")} {live?.soundOnTv ? "✓" : ""}
         </button>
       </div>
 

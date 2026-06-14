@@ -25,7 +25,8 @@ const fmt = (s) => {
  * @param {boolean} [props.audioOnly] Force the audio-only cover for a video file.
  * @param {number|null} [props.start] Trim: start playback at this second.
  * @param {number|null} [props.end] Trim: pause when playback reaches this second.
- * @param {*} [props.pauseSignal] When this changes to a truthy value, pause (e.g. first buzz).
+ * @param {{n:number,action:string}|null} [props.transport] Remote transport (play | pause | restart) on n change.
+ * @param {boolean} [props.controls] Show the built-in control bar (false = headless, transport-driven).
  */
 export default function NativeMediaPlayer({
   url,
@@ -33,7 +34,8 @@ export default function NativeMediaPlayer({
   audioOnly = false,
   start = null,
   end = null,
-  pauseSignal = null,
+  transport = null,
+  controls = true,
 }) {
   const { t } = useI18n();
   const ref = useRef(null);
@@ -51,18 +53,23 @@ export default function NativeMediaPlayer({
 
   const isVideo = media === "video" && !audioOnly;
 
-  // Pause when the signal flips truthy (e.g. someone buzzed).
+  // Remote transport: apply play / pause / restart whenever transport.n changes
+  // (host driving from another screen, or a buzz auto-pause).
   useEffect(() => {
-    if (!pauseSignal) return;
+    if (!transport || !transport.n) return;
     const el = ref.current;
-    if (el && !el.paused) {
-      try {
-        el.pause();
-      } catch {
-        /* element not ready */
+    if (!el) return;
+    try {
+      if (transport.action === "pause") el.pause();
+      else if (transport.action === "play") el.play();
+      else if (transport.action === "restart") {
+        el.currentTime = startRef.current || 0;
+        el.play();
       }
+    } catch {
+      /* element not ready */
     }
-  }, [pauseSignal]);
+  }, [transport?.n]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset transient state + reload when the source changes — RoundBody (TV /
   // host remote) reuses this component across questions without remounting it.
@@ -205,46 +212,48 @@ export default function NativeMediaPlayer({
         )}
       </div>
 
-      {/* custom control bar (matches the YouTube player) */}
-      <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
-        <button
-          onClick={togglePlay}
-          disabled={!ready}
-          aria-label={playing ? "Pause" : "Play"}
-          className="text-white/90 transition hover:text-white disabled:opacity-40"
-        >
-          {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-        </button>
-        <button
-          onClick={restart}
-          disabled={!ready}
-          aria-label="Restart"
-          className="text-white/70 transition hover:text-white disabled:opacity-40"
-        >
-          <RotateCcw size={17} />
-        </button>
-        <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
-        <input
-          type="range"
-          aria-label="Seek"
-          min={trimLo}
-          max={trimHi}
-          step="any"
-          value={Math.min(Math.max(cur, trimLo), trimHi)}
-          onChange={seek}
-          disabled={!ready}
-          className="h-1 flex-1 cursor-pointer accent-rose-500"
-        />
-        <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
-        <button
-          onClick={toggleMute}
-          disabled={!ready}
-          aria-label={muted ? "Unmute" : "Mute"}
-          className="text-white/70 transition hover:text-white disabled:opacity-40"
-        >
-          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-        </button>
-      </div>
+      {/* custom control bar (hidden when transport-driven from another screen) */}
+      {controls && (
+        <div className="flex items-center gap-3 bg-stone-900 px-4 py-3 text-white">
+          <button
+            onClick={togglePlay}
+            disabled={!ready}
+            aria-label={playing ? "Pause" : "Play"}
+            className="text-white/90 transition hover:text-white disabled:opacity-40"
+          >
+            {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+          </button>
+          <button
+            onClick={restart}
+            disabled={!ready}
+            aria-label="Restart"
+            className="text-white/70 transition hover:text-white disabled:opacity-40"
+          >
+            <RotateCcw size={17} />
+          </button>
+          <span className="w-10 text-right text-xs tabular-nums text-white/70">{fmt(cur)}</span>
+          <input
+            type="range"
+            aria-label="Seek"
+            min={trimLo}
+            max={trimHi}
+            step="any"
+            value={Math.min(Math.max(cur, trimLo), trimHi)}
+            onChange={seek}
+            disabled={!ready}
+            className="h-1 flex-1 cursor-pointer accent-rose-500"
+          />
+          <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>
+          <button
+            onClick={toggleMute}
+            disabled={!ready}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className="text-white/70 transition hover:text-white disabled:opacity-40"
+          >
+            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
