@@ -309,7 +309,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
       const k = e.key.toLowerCase();
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
       if (!q) return;
-      if (k === "r" && !game.revealed) reveal();
+      if (k === "r" && !game.revealed) {
+        if (round.type === "choice") revealChoice(q);
+        else if (round.type === "number") revealNumber(q);
+        else reveal();
+      }
       else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
