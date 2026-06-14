@@ -15,6 +15,8 @@ import {
   Loader2,
   Crop as CropIcon,
   Sparkles,
+  FileJson,
+  X,
 } from "lucide-react";
 import {
   uid,
@@ -27,6 +29,7 @@ import {
   makeHint,
   hintHasContent,
   normalizeQuiz,
+  roundsFromImport,
   MORPH_EFFECTS,
   HINT_TYPES,
 } from "../lib/model.js";
@@ -200,6 +203,80 @@ function CropModal({ src, onApply, onClose, t }) {
           </Button>
           <Button onClick={apply} disabled={loading}>
             <CropIcon size={16} /> {t("builder.applyCrop")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Import one or more rounds from pasted JSON or a .quiz.json file into the quiz. */
+function RoundImportModal({ onClose, onAdd, t }) {
+  const fileRef = useRef(null);
+  const [text, setText] = useState("");
+  const [err, setErr] = useState("");
+  let rounds = [];
+  if (text.trim()) {
+    try {
+      rounds = roundsFromImport(JSON.parse(text));
+    } catch {
+      rounds = [];
+    }
+  }
+  const onFile = (e) => {
+    const f = e.target.files?.[0];
+    e.target.value = "";
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => setText(String(r.result));
+    r.onerror = () => setErr(t("builder.importBad"));
+    r.readAsText(f);
+  };
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 backdrop-blur-sm sm:items-center"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl border border-stone-200 bg-white p-5 shadow-xl dark:border-stone-800 dark:bg-stone-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <FileJson size={18} /> {t("builder.importRound")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+        <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">{t("builder.importRoundHint")}</p>
+        <input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={onFile} />
+        <Button variant="outline" className="mb-2 px-3 py-2" onClick={() => fileRef.current?.click()}>
+          <Upload size={15} /> {t("builder.importFile")}
+        </Button>
+        <textarea
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+            setErr("");
+          }}
+          placeholder={t("builder.importPaste")}
+          rows={6}
+          className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 font-mono text-xs text-stone-900 placeholder-stone-400 focus:border-stone-400 focus:outline-none dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100"
+        />
+        {(err || text.trim()) && (
+          <p
+            className={`mt-2 text-sm ${rounds.length ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
+          >
+            {err || (rounds.length ? t("builder.importFound", { n: rounds.length }) : t("builder.importBad"))}
+          </p>
+        )}
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={() => onAdd(rounds)} disabled={!rounds.length}>
+            <Plus size={16} /> {t("builder.importAdd", { n: rounds.length })}
           </Button>
         </div>
       </div>
@@ -440,6 +517,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const { t } = useI18n();
   const [quiz, setQuiz] = useState(initial);
   const [picker, setPicker] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   // Functional updaters so back-to-back writes in one event compose (e.g. the
   // map search sets {lat,lng} and {name} in the same tick) instead of clobbering.
@@ -460,6 +538,26 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const addTemplateRound = (tpl) => {
     const round = normalizeQuiz({ rounds: [tpl.round] })?.rounds?.[0];
     if (round) setQuiz((prev) => ({ ...prev, rounds: [...prev.rounds, round] }));
+    setPicker(false);
+  };
+  // Insert imported (already-normalized) rounds, re-id'd so they never collide.
+  const reId = (r) => ({
+    ...r,
+    id: uid(),
+    ...(r.questions ? { questions: r.questions.map((q) => ({ ...q, id: uid() })) } : {}),
+    ...(r.categories
+      ? {
+          categories: r.categories.map((c) => ({
+            ...c,
+            id: uid(),
+            questions: c.questions.map((q) => ({ ...q, id: uid() })),
+          })),
+        }
+      : {}),
+  });
+  const addImportedRounds = (rounds) => {
+    if (rounds?.length) setQuiz((prev) => ({ ...prev, rounds: [...prev.rounds, ...rounds.map(reId)] }));
+    setImporting(false);
     setPicker(false);
   };
   const qRow = (r, item, patch) =>
@@ -1249,6 +1347,14 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 );
               })}
             </div>
+
+            <p className="mb-2 mt-5 text-sm font-medium text-stone-500 dark:text-stone-400">{t("builder.orImport")}</p>
+            <button
+              onClick={() => setImporting(true)}
+              className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium transition hover:border-stone-400 hover:bg-stone-50 dark:border-stone-700 dark:hover:border-stone-500 dark:hover:bg-stone-800 ${FOCUS}`}
+            >
+              <FileJson size={16} className="text-stone-500 dark:text-stone-400" /> {t("builder.importRound")}
+            </button>
           </div>
         ) : (
           <button
@@ -1259,6 +1365,8 @@ export default function Builder({ initial, note, onSave, onCancel }) {
           </button>
         )}
       </div>
+
+      {importing && <RoundImportModal onClose={() => setImporting(false)} onAdd={addImportedRounds} t={t} />}
     </div>
   );
 }

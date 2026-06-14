@@ -373,7 +373,38 @@ export function normalizeGame(raw) {
               .map(([pid, g]) => [pid, { lat: +g.lat, lng: +g.lng }]),
           )
         : {},
+    // Per-entity totals captured at the start of the current round, so the
+    // between-rounds recap can animate from start-of-round to end-of-round.
+    roundStartScores: scoreMap(raw.roundStartScores),
   };
+}
+
+/** Coerce an untrusted {id: score} object to a clean {id: number} map. */
+function scoreMap(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  return Object.fromEntries(
+    Object.entries(raw)
+      .filter(([, v]) => Number.isFinite(+v))
+      .map(([k, v]) => [str(k), +v]),
+  );
+}
+
+/**
+ * Extract normalized rounds from arbitrary imported JSON: an array of rounds, a
+ * quiz, a `{quiz}` wrapper, or a single round object. Returns [] if none valid.
+ * @param {*} parsed Parsed JSON (untrusted).
+ */
+export function roundsFromImport(parsed) {
+  let rounds = null;
+  if (Array.isArray(parsed)) rounds = parsed;
+  else if (parsed && typeof parsed === "object") {
+    if (Array.isArray(parsed.rounds)) rounds = parsed.rounds;
+    else if (parsed.quiz && Array.isArray(parsed.quiz.rounds)) rounds = parsed.quiz.rounds;
+    else if (typeof parsed.type === "string") rounds = [parsed];
+  }
+  if (!rounds) return [];
+  const q = normalizeQuiz({ rounds });
+  return q ? q.rounds : [];
 }
 
 /* ---- quiz/game helpers ---- */
@@ -561,7 +592,7 @@ export function buildPresentQ(game) {
 /**
  * Build the light, frequently-changing presenter payload (topic: live).
  * @param {object} game A valid game.
- * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean}} [opts]
+ * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object}} [opts]
  */
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
@@ -581,6 +612,8 @@ export function buildLive(game, opts = {}) {
     showStandings: !!opts.showStandings,
     value: num(opts.value, 0),
     allowNegative: !!opts.allowNegative,
+    showRecap: !!opts.recap,
+    recapFrom: opts.recap ? scoreMap(opts.recapFrom) : null,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -641,6 +674,8 @@ export function normalizeLive(raw) {
     showStandings: !!raw.showStandings,
     value: num(raw.value, 0),
     allowNegative: !!raw.allowNegative,
+    showRecap: !!raw.showRecap,
+    recapFrom: raw.showRecap ? scoreMap(raw.recapFrom) : null,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",

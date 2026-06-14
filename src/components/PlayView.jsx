@@ -47,6 +47,7 @@ import { playSound } from "../lib/sound.js";
 import QRCode from "qrcode";
 import ScoreBar from "./ScoreBar.jsx";
 import PodiumClimb from "./PodiumClimb.jsx";
+import RoundRecap from "./RoundRecap.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import YouTubePlayer from "./YouTubePlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
@@ -114,6 +115,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const [nav, setNav] = useState(false);
   const [streamTv, setStreamTv] = useState(false); // "Stream to TV" modal
   const [showStandings, setShowStandings] = useState(false); // live podium overlay (host + TV)
+  const [recap, setRecap] = useState(false); // between-rounds points-progression overlay
   const [tvQr, setTvQr] = useState("");
   const [hostQr, setHostQr] = useState("");
 
@@ -142,6 +144,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setPaused(false);
     setMorphStep(0);
     setStreetOn(false);
+    setRecap(false);
     setGuessFor(game.players[0]?.id ?? null);
   }, [qKey, timerSecs]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -171,8 +174,17 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const scoreSig = game.players.map((p) => `${p.id}:${p.score}:${p.name}:${p.color}:${p.emoji}`).join(",");
   useEffect(() => {
     if (!buzzerOn) return;
-    room.pushLive(buildLive(game, { step: morphStep, showStandings, value, allowNegative }));
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, value, qKey, scoreSig]); // eslint-disable-line react-hooks/exhaustive-deps
+    room.pushLive(
+      buildLive(game, {
+        step: morphStep,
+        showStandings,
+        value,
+        allowNegative,
+        recap,
+        recapFrom: game.roundStartScores,
+      }),
+    );
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
@@ -334,6 +346,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       awarded: {},
       tile: null,
       guesses: {},
+      // snapshot totals at round start so the recap can animate the round's gains
+      roundStartScores: Object.fromEntries(game.players.map((p) => [p.id, p.score])),
     });
   };
 
@@ -343,11 +357,18 @@ export default function PlayView({ game, setGame, onExit, room }) {
     else upd({ ri: j, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
   };
 
+  // Show the between-rounds recap; the host confirms to actually advance.
+  const endRound = () => setRecap(true);
+  const continueAfterRecap = () => {
+    setRecap(false);
+    goNextRound();
+  };
+
   const nextQuestion = () => {
     if (game.qi + 1 < round.questions.length) {
       setMorphStep(0);
       upd({ qi: game.qi + 1, revealed: false, hintsShown: 1, awarded: {}, guesses: {} });
-    } else goNextRound();
+    } else endRound();
   };
 
   const backToBoard = () => {
@@ -368,6 +389,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (!cmd || cmd.id <= lastCmdRef.current) return;
     lastCmdRef.current = cmd.id;
     const a = cmd.args || {};
+    // While the recap is up, "advance" continues past it; ignore other actions.
+    if (recap) {
+      if (cmd.action === "advance") continueAfterRecap();
+      return;
+    }
     const cq = isJeop ? round?.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] : round?.questions?.[game.qi];
     switch (cmd.action) {
       case "reveal":
@@ -418,8 +444,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const onKey = (e) => {
       const el = e.target;
       if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
-      if (game.stage !== "question" || !round) return;
       const k = e.key.toLowerCase();
+      // While the between-rounds recap is up, N/→/Enter continues past it.
+      if (recap) {
+        if (k === "n" || k === "arrowright" || k === "enter") continueAfterRecap();
+        return;
+      }
+      if (game.stage !== "question" || !round) return;
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
       if (!q) return;
       if (k === "r" && !game.revealed) {
@@ -645,6 +676,34 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         </div>
       )}
+
+      {recap && (
+        <div className="qn-app-bg fixed inset-0 z-50 flex flex-col overflow-y-auto px-6 py-10">
+          <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col">
+            <h2 className="mb-1 text-center text-3xl font-bold tracking-tight">{t("play.roundRecap")}</h2>
+            <p className="mb-6 text-center text-stone-500 dark:text-stone-400">
+              {round?.title || (round ? t(`round.${round.type}.label`) : "")}
+            </p>
+            <div className="flex flex-1 flex-col justify-center">
+              <RoundRecap
+                entities={game.players.map((p) => ({
+                  id: p.id,
+                  name: p.name,
+                  color: p.color,
+                  emoji: p.emoji,
+                  from: game.roundStartScores?.[p.id] ?? p.score,
+                  to: p.score,
+                }))}
+              />
+            </div>
+            <div className="mt-6 text-center">
+              <Button className="px-6 py-3.5 text-base" onClick={continueAfterRecap}>
+                {t("play.continue")} <ArrowRight size={18} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 
@@ -835,7 +894,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         {boardDone && (
           <div className="mt-8 text-center">
-            <Button className="px-6 py-3.5 text-base" onClick={goNextRound}>
+            <Button className="px-6 py-3.5 text-base" onClick={endRound}>
               {t("play.continue")} <ArrowRight size={18} />
             </Button>
           </div>

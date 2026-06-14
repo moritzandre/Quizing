@@ -24,8 +24,9 @@ Other features:
 - **Phone buzzers & answers** — show a QR code; players join from their phones, buzz in (first-to-buzz lockout with a sound on the host screen), drop map pins, pick multiple-choice answers, and submit number guesses. Works on your local network — see below.
 - **Stream to a TV** — open `#/present/<code>` on any second screen on the same Wi-Fi for a clean, enlarged, read-only mirror of the host with an animated **podium-climb** scoreboard. Map pins stay hidden until reveal. No HDMI, no backend (it rides the same room) — e.g. cast a Chrome tab to a Google TV. See _Stream to a TV_ below.
 - **Host remote** — open `#/host/<code>` on a phone to drive the whole game (reveal, advance, award/dock, hints, …) without standing at the laptop. Its QR sits next to the TV one in the Stream-to-TV panel; keep it to yourself (it controls the game).
+- **Between-rounds recap** — when a round ends, an animation counts each player/team up from their score at the start of the round to their score at the end (with a `+N` badge), on the host and the TV.
 - **Quiz builder power tools** — drag-and-drop reordering, **image crop**, **video/audio trim** (start/end), a **satellite** map layer, **place search** to drop answer pins, and an embedded **Mapillary street view** on map questions.
-- **Templates & Creator Room** — start a round or whole quiz from a template, or open **Creator Room**: copy the generated schema prompt into any AI, paste the JSON it returns, and it imports straight in.
+- **Templates, Creator Room & JSON import** — start a round or whole quiz from a template; open **Creator Room** to copy a schema prompt into any AI and paste the JSON back; or **import round(s) from JSON** (paste or upload) straight into the quiz you're editing.
 - **English / German** — language toggle (top-right), remembered across sessions.
 - **Per-round countdown timer** — optional, set in the builder; pause/reset while playing.
 - **Persistent leaderboard** — every finished game is recorded on the device; standings aggregate wins, totals, and best scores across games.
@@ -79,6 +80,7 @@ It reuses the same MQTT room, so there's no extra setup and no HDMI cable — ju
 - **Video / audio trim** — give a YouTube clip or audio/video hint a **start** and **end** (seconds) so only the chosen segment plays.
 - **Richer maps** — switch a map question between **Map** and **Satellite** (keyless Esri imagery), or **Search for a place** to drop the answer pin and fill in its name automatically (via OpenStreetMap Nominatim). Paste a **Mapillary** link/ID to embed a **street view** on the question — the TV/host shows it as the prompt and reveals the map answer afterwards. (Use the **Street view** button to find a spot on Mapillary, then copy its link.)
 - **Templates** — the round picker offers per-type starters, and the home screen has **New from template** for whole-quiz starters.
+- **Import round(s) from JSON** — the round picker's **Import round(s)** button takes pasted JSON or a `.quiz.json` file (a single round, an array, or a whole quiz) and appends the rounds to the quiz you're editing (validated and re-id'd).
 - **Creator Room** — copy the generated schema prompt into ChatGPT/Claude/any AI, paste the JSON it returns, and it imports straight into your library (validated and coerced).
 
 ## Deployment
@@ -121,6 +123,7 @@ src/
     YouTubePlayer.jsx       Chrome-free YouTube player (hides the title) + audio-only mode + start/end trim
     ScoreBar.jsx            Fixed scoreboard with +/− award toggle
     PodiumClimb.jsx         Animated live standings (host overlay + TV)
+    RoundRecap.jsx          Between-rounds count-up of each score from round start to round end
     RoundBody.jsx           Read-only per-round renderer for the TV presenter
     PresenterView.jsx       TV page (#/present/<code>): clean read-only mirror of the host
     HostRemoteView.jsx      Phone host controller (#/host/<code>): reveal/advance/award/hints over a ctrl channel

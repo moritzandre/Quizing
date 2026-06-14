@@ -14,6 +14,7 @@ import { TYPES, accentFor, ThemeToggle, Confetti } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import RoundBody from "./RoundBody.jsx";
 import PodiumClimb from "./PodiumClimb.jsx";
+import RoundRecap from "./RoundRecap.jsx";
 
 /**
  * @param {object} props
@@ -61,6 +62,27 @@ export default function PresenterView({ code }) {
         <h2 className="text-3xl font-bold">{online ? t("present.waiting") : t("present.connecting")}</h2>
         <p className="mt-2 text-stone-500 dark:text-stone-400">{t("present.roomCode", { code })}</p>
       </div>,
+    );
+  }
+
+  // Between-rounds points-progression recap (host advanced past a round).
+  if (live?.showRecap) {
+    const from = live.recapFrom || {};
+    return shell(
+      <>
+        <h2 className="mb-6 text-center text-3xl font-bold">{t("play.roundRecap")}</h2>
+        <RoundRecap
+          present
+          entities={standings.map((s) => ({
+            id: s.id,
+            name: s.name,
+            color: s.color,
+            emoji: s.emoji,
+            from: from[s.id] ?? s.score,
+            to: s.score,
+          }))}
+        />
+      </>,
     );
   }
 

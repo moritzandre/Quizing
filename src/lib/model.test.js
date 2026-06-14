@@ -17,6 +17,7 @@ import {
   normalizePresent,
   normalizeLive,
   mapillaryEmbedUrl,
+  roundsFromImport,
 } from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
@@ -588,6 +589,14 @@ describe("presenter payloads", () => {
     ]);
   });
 
+  it("buildLive carries the recap window only when opts.recap is set", () => {
+    expect(buildLive(game()).showRecap).toBe(false);
+    expect(buildLive(game()).recapFrom).toBe(null);
+    const r = buildLive(game(), { recap: true, recapFrom: { a: 10, b: 5, junk: "x" } });
+    expect(r.showRecap).toBe(true);
+    expect(r.recapFrom).toEqual({ a: 10, b: 5 }); // non-numeric entries dropped
+  });
+
   it("buildPresentQ has no q when not in the question stage", () => {
     expect(buildPresentQ(game({ stage: "intro" })).q).toBeUndefined();
   });
@@ -637,5 +646,30 @@ describe("presenter payloads", () => {
     expect(n.roundType).toBe("choice");
     expect(n.q.options).toEqual(["A", "B"]);
     expect(n.q.correct).toBeUndefined(); // the correct index is never in the present payload
+  });
+});
+
+describe("roundsFromImport", () => {
+  const r = (over = {}) => ({ type: "classic", title: "T", questions: [{ q: "Q", a: "A", points: 10 }], ...over });
+
+  it("accepts a single round, an array, a {rounds} object, and a {quiz} wrapper", () => {
+    expect(roundsFromImport(r())).toHaveLength(1);
+    expect(roundsFromImport([r(), r({ type: "image" })])).toHaveLength(2);
+    expect(roundsFromImport({ rounds: [r()] })).toHaveLength(1);
+    expect(roundsFromImport({ quiz: { rounds: [r(), r()] } })).toHaveLength(2);
+  });
+
+  it("normalizes + assigns ids and drops invalid rounds", () => {
+    const out = roundsFromImport([r(), { type: "bogus" }, { nope: 1 }]);
+    expect(out).toHaveLength(1);
+    expect(out[0].id).toBeTruthy();
+    expect(out[0].type).toBe("classic");
+  });
+
+  it("returns [] for junk", () => {
+    expect(roundsFromImport(null)).toEqual([]);
+    expect(roundsFromImport(42)).toEqual([]);
+    expect(roundsFromImport("nope")).toEqual([]);
+    expect(roundsFromImport({})).toEqual([]);
   });
 });
