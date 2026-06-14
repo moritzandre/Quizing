@@ -144,7 +144,7 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
  * @param {object} [opts] maxDim (px), keepBelow (bytes kept untouched), quality (JPEG 0–1).
  * @returns {Promise<string>} data URL.
  */
-export function fileToDataUrl(file, { maxDim = 1400, keepBelow = 300 * 1024, quality = 0.82 } = {}) {
+export function fileToDataUrl(file, { maxDim = 1600, keepBelow = 300 * 1024, quality = 0.86 } = {}) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("Could not read the file."));

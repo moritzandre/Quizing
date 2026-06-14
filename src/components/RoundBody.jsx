@@ -51,7 +51,7 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
   if (type === "hints") {
     const shown = (Array.isArray(q.hints) ? q.hints : []).filter(hintHasContent).slice(0, Math.max(1, hintsShown));
     return (
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-3xl">
         <div className="space-y-3">
           {shown.map((h, i) => (
             <div
@@ -72,7 +72,7 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
     return (
       <div className="text-center">
         {q.q && <Q>{q.q}</Q>}
-        <div className="mx-auto mt-5 max-w-3xl">
+        <div className="mx-auto mt-5 max-w-5xl">
           {vid ? (
             <YouTubePlayer videoId={vid} audioOnly={!!q.audioOnly} start={q.start} end={q.end} />
           ) : (
@@ -88,12 +88,12 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
     return (
       <div className="text-center">
         {q.q && <Q>{q.q}</Q>}
-        <div className="mx-auto mt-5 max-w-2xl">
+        <div className="mx-auto mt-5 max-w-5xl">
           {q.url ? (
             <img
               src={q.url}
               alt=""
-              className="max-h-[60vh] w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900"
+              className="max-h-[74vh] w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900"
             />
           ) : null}
         </div>
@@ -104,7 +104,7 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
 
   if (type === "morph") {
     return (
-      <div className="mx-auto max-w-2xl text-center">
+      <div className="mx-auto max-w-4xl text-center">
         <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={step} revealed={revealed} />
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
       </div>
@@ -113,7 +113,7 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
 
   if (type === "fusion") {
     return (
-      <div className="mx-auto max-w-2xl text-center">
+      <div className="mx-auto max-w-4xl text-center">
         <FusionImage urlA={q.urlA} urlB={q.urlB} steps={q.steps} step={step} revealed={revealed} />
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
       </div>
@@ -126,18 +126,18 @@ export default function RoundBody({ type, q = {}, revealed = false, hintsShown =
     // on reveal switch to the map so the answer location is shown.
     const showStreet = !revealed && mapillaryEmbedUrl(q.street);
     return (
-      <div className="mx-auto max-w-3xl text-center">
+      <div className="mx-auto max-w-5xl text-center">
         {q.q && <Q>{q.q}</Q>}
         <div className="mt-5">
           {showStreet ? (
-            <MapillaryEmbed street={q.street} className="h-[55vh]" />
+            <MapillaryEmbed street={q.street} className="h-[70vh]" />
           ) : (
             <LeafletMap
               answer={
                 ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
               }
               tileLayer={q.tileLayer}
-              className="h-[55vh]"
+              className="h-[70vh]"
             />
           )}
         </div>

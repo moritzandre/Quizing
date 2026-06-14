@@ -88,10 +88,9 @@ export default function YouTubePlayer({ videoId, audioOnly = false, start = null
               if (cancelled) return;
               setReady(true);
               setDur(e.target.getDuration() || 0);
-              if (startRef.current) {
-                e.target.seekTo(startRef.current, true);
-                setCur(startRef.current);
-              }
+              // Start position is handled natively by playerVars.start — calling
+              // seekTo() here too can leave the player stuck, so we don't.
+              if (startRef.current) setCur(startRef.current);
               const f = e.target.getIframe();
               if (f) {
                 f.style.position = "absolute";

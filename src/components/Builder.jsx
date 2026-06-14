@@ -165,8 +165,8 @@ function CropModal({ src, onApply, onClose, t }) {
   const apply = () => {
     const c = cropperRef.current;
     if (!c) return;
-    const canvas = c.getCroppedCanvas({ maxWidth: 1400, maxHeight: 1400, imageSmoothingQuality: "high" });
-    if (canvas) onApply(canvas.toDataURL("image/jpeg", 0.82));
+    const canvas = c.getCroppedCanvas({ maxWidth: 1600, maxHeight: 1600, imageSmoothingQuality: "high" });
+    if (canvas) onApply(canvas.toDataURL("image/jpeg", 0.86));
   };
 
   return (
