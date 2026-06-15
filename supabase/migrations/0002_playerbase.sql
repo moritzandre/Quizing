@@ -28,11 +28,13 @@ create policy "profiles_insert_any" on public.profiles for insert with check (tr
 create policy "profiles_update_unlocked" on public.profiles for update using (pin_hash is null) with check (true);
 -- no delete policy => denied by default
 
--- ---- keep pin_hash UNREADABLE and UN-WRITABLE to clients ---------------------
--- (the update revoke is essential: without it the unlocked-update policy would
---  let a client write a bogus string into pin_hash and brick the lock.)
-revoke select (pin_hash) on public.profiles from anon, authenticated;
-revoke update (pin_hash) on public.profiles from anon, authenticated;
+-- ---- keep pin_hash secret: lock the base table entirely -------------------
+-- A column-level `revoke select (pin_hash)` is OVERRIDDEN by the table-level
+-- SELECT grant Supabase gives anon/authenticated, so it leaks. Instead revoke
+-- ALL table privileges — clients only ever touch the profiles_public view (for
+-- reads) and the SECURITY DEFINER functions below (for writes/PIN checks), so
+-- the hash never reaches a client and the direct policies above can't be abused.
+revoke all on public.profiles from anon, authenticated;
 
 -- the pin-free view clients read the directory from (exposes a `locked` boolean)
 create or replace view public.profiles_public as
@@ -51,7 +53,7 @@ create policy "results_select_all" on public.results for select using (true);
 -- SECURITY DEFINER RPCs (owner = postgres; each pins search_path)
 -- ============================================================================
 create or replace function public.verify_pin(p_id uuid, p_pin text)
-returns boolean language plpgsql security definer set search_path = public, pg_temp as $$
+returns boolean language plpgsql security definer set search_path = public, extensions, pg_temp as $$
 declare h text;
 begin
   select pin_hash into h from public.profiles where id = p_id;
@@ -61,7 +63,7 @@ begin
 end $$;
 
 create or replace function public.set_pin(p_id uuid, p_current_pin text, p_new_pin text)
-returns boolean language plpgsql security definer set search_path = public, pg_temp as $$
+returns boolean language plpgsql security definer set search_path = public, extensions, pg_temp as $$
 declare h text;
 begin
   select pin_hash into h from public.profiles where id = p_id;
@@ -78,7 +80,7 @@ begin
 end $$;
 
 create or replace function public.create_player(p_name text, p_emoji text, p_color text, p_photo text, p_pin text)
-returns public.profiles_public language plpgsql security definer set search_path = public, pg_temp as $$
+returns public.profiles_public language plpgsql security definer set search_path = public, extensions, pg_temp as $$
 declare new_id uuid; out public.profiles_public;
 begin
   insert into public.profiles (name, emoji, color, photo, pin_hash)
@@ -97,7 +99,7 @@ end $$;
 
 create or replace function public.update_player(
   p_id uuid, p_pin text, p_name text, p_emoji text, p_color text, p_photo text)
-returns public.profiles_public language plpgsql security definer set search_path = public, pg_temp as $$
+returns public.profiles_public language plpgsql security definer set search_path = public, extensions, pg_temp as $$
 declare h text; out public.profiles_public;
 begin
   select pin_hash into h from public.profiles where id = p_id;
@@ -113,7 +115,7 @@ end $$;
 create or replace function public.record_result(
   p_profile_id uuid, p_game_id text, p_quiz_title text, p_score int,
   p_won boolean, p_team_name text, p_room_code text)
-returns boolean language plpgsql security definer set search_path = public, pg_temp as $$
+returns boolean language plpgsql security definer set search_path = public, extensions, pg_temp as $$
 begin
   if p_profile_id is null or p_game_id is null or length(p_game_id) = 0 then return false; end if;
   if not exists (select 1 from public.profiles where id = p_profile_id) then return false; end if;
