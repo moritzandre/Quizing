@@ -207,7 +207,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
         soundOnTv,
       }),
     );
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv]); // prettier-ignore
 
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
@@ -1519,64 +1520,67 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
           {!game.revealed && (
             <div className="mx-auto mt-3 max-w-2xl">
-            {buzzerOn && (
-              <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
-                <Radio size={14} /> {t("play.pinsIn", { n: Object.keys(phonePins).length, total: game.players.length })}
+              {buzzerOn && (
+                <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+                  <Radio size={14} />{" "}
+                  {t("play.pinsIn", { n: Object.keys(phonePins).length, total: game.players.length })}
+                </p>
+              )}
+              <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
+                {guessFor
+                  ? t("play.dropPinFor", { name: game.players.find((p) => p.id === guessFor)?.name || "the player" })
+                  : t("play.everyoneGuessed")}
               </p>
-            )}
-            <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
-              {guessFor
-                ? t("play.dropPinFor", { name: game.players.find((p) => p.id === guessFor)?.name || "the player" })
-                : t("play.everyoneGuessed")}
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {game.players.map((p, i) => {
-                const has = !!combined[p.id];
-                const sel = guessFor === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => setGuessFor(p.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition active:scale-95 ${FOCUS} ${
-                      sel
-                        ? "border-transparent text-white shadow-sm"
-                        : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200"
-                    }`}
-                    style={sel ? { backgroundColor: colorFor(p, i) } : undefined}
-                  >
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: sel ? "#fff" : colorFor(p, i) }}
-                    />
-                    {p.name}
-                    {has && <span className={sel ? "text-white/80" : "text-emerald-600 dark:text-emerald-400"}>✓</span>}
-                  </button>
-                );
-              })}
+              <div className="flex flex-wrap justify-center gap-2">
+                {game.players.map((p, i) => {
+                  const has = !!combined[p.id];
+                  const sel = guessFor === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setGuessFor(p.id)}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition active:scale-95 ${FOCUS} ${
+                        sel
+                          ? "border-transparent text-white shadow-sm"
+                          : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200"
+                      }`}
+                      style={sel ? { backgroundColor: colorFor(p, i) } : undefined}
+                    >
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: sel ? "#fff" : colorFor(p, i) }}
+                      />
+                      {p.name}
+                      {has && (
+                        <span className={sel ? "text-white/80" : "text-emerald-600 dark:text-emerald-400"}>✓</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {!game.revealed && mapillaryEmbedUrl(q.street) && (
-          <div className="mx-auto mt-4 inline-flex rounded-xl border border-stone-200 p-0.5 dark:border-stone-700">
-            {[
-              { k: false, label: t("play.mapView") },
-              { k: true, label: t("play.streetView") },
-            ].map(({ k, label }) => (
-              <button
-                key={String(k)}
-                onClick={() => setStreetOn(k)}
-                className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${FOCUS} ${
-                  streetOn === k
-                    ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
-                    : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        )}
+          {!game.revealed && mapillaryEmbedUrl(q.street) && (
+            <div className="mx-auto mt-4 inline-flex rounded-xl border border-stone-200 p-0.5 dark:border-stone-700">
+              {[
+                { k: false, label: t("play.mapView") },
+                { k: true, label: t("play.streetView") },
+              ].map(({ k, label }) => (
+                <button
+                  key={String(k)}
+                  onClick={() => setStreetOn(k)}
+                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${FOCUS} ${
+                    streetOn === k
+                      ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
+                      : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="relative mt-3 min-h-0 w-full flex-1">
@@ -1595,41 +1599,41 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
 
         <div className="shrink-0">
-        {game.revealed && ranked.length > 0 && (
-          <div className="mx-auto mt-3 max-h-[28vh] max-w-md space-y-1.5 overflow-y-auto text-left">
-            {ranked.map((x, idx) => (
-              <div
-                key={x.p.id}
-                className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-sm ${
-                  idx === 0
-                    ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
-                    : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
-                }`}
-              >
-                <span className="flex items-center gap-2 font-medium">
-                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} photo={x.p.photo} name={x.p.name} size={22} />
-                  {x.p.name}
-                  {idx === 0 && (
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                      <Target size={12} /> {t("play.closest")}
-                    </span>
-                  )}
-                </span>
-                <span className="tabular-nums text-stone-500 dark:text-stone-400">{fmtKm(x.km)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="mt-4">
-          {game.revealed ? (
-            NextBtn
-          ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => revealMap(q)}>
-              <MapPin size={18} /> {t("play.revealLocation")}
-            </Button>
+          {game.revealed && ranked.length > 0 && (
+            <div className="mx-auto mt-3 max-h-[28vh] max-w-md space-y-1.5 overflow-y-auto text-left">
+              {ranked.map((x, idx) => (
+                <div
+                  key={x.p.id}
+                  className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-sm ${
+                    idx === 0
+                      ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                      : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                  }`}
+                >
+                  <span className="flex items-center gap-2 font-medium">
+                    <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} photo={x.p.photo} name={x.p.name} size={22} />
+                    {x.p.name}
+                    {idx === 0 && (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        <Target size={12} /> {t("play.closest")}
+                      </span>
+                    )}
+                  </span>
+                  <span className="tabular-nums text-stone-500 dark:text-stone-400">{fmtKm(x.km)}</span>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
+
+          <div className="mt-4">
+            {game.revealed ? (
+              NextBtn
+            ) : (
+              <Button className="px-6 py-3.5 text-base" onClick={() => revealMap(q)}>
+                <MapPin size={18} /> {t("play.revealLocation")}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -1644,7 +1648,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Header}
         {BuzzerBar}
       </div>
-      <div key={qKey} className={`qn-fade-up mx-auto flex w-full min-h-0 flex-1 flex-col overflow-y-auto px-4 ${stageW}`}>
+      <div
+        key={qKey}
+        className={`qn-fade-up mx-auto flex w-full min-h-0 flex-1 flex-col overflow-y-auto px-4 ${stageW}`}
+      >
         {body}
       </div>
       {!pres && <div className={`mx-auto w-full shrink-0 px-4 pb-1 ${stageW}`}>{Shortcuts}</div>}

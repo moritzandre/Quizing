@@ -55,7 +55,7 @@ export default function HostRemoteView({ code }) {
     "flex items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold transition active:scale-[.97] disabled:opacity-30";
 
   const Shell = (children) => (
-    <div className="qn-app-bg flex min-h-screen flex-col px-5 py-6 text-stone-900 antialiased dark:text-stone-100">
+    <div className="qn-app-bg flex min-h-[100dvh] flex-col px-5 py-6 text-stone-900 antialiased dark:text-stone-100">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <div className="mb-5 flex items-center justify-between">
           <h1 className="flex items-center gap-2 text-xl font-bold tracking-tight">
@@ -111,7 +111,7 @@ export default function HostRemoteView({ code }) {
           with the page; read-only (no pin placement here). */}
       {stage === "question" && present.q && type && (
         <div className="mb-4 rounded-2xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-stone-900">
-          <div className="h-[38vh]">
+          <div className="h-[38vh] overflow-hidden">
             <RoundBody
               type={type}
               q={present.q}
