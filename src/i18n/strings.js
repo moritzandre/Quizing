@@ -15,7 +15,7 @@ const en = {
   "common.done": "Done",
   "common.next": "Next",
 
-  "home.tagline": "One screen, one host, eleven round formats. Phones can buzz in. You tap to score.",
+  "home.tagline": "One screen, one host, thirteen round formats. Phones can buzz in. You tap to score.",
   "home.leaderboard": "Leaderboard",
   "home.gameInProgress": "Game in progress",
   "home.roundOf": "{title} · Round {n} of {total}",
@@ -302,6 +302,9 @@ const en = {
   "builder.addOption": "Add option",
   "builder.deleteOption": "Delete option",
   "builder.markCorrect": "Mark as correct",
+  "builder.statement": "Statement (players judge true or false)",
+  "builder.correctAnswer": "Correct answer",
+  "builder.revealNote": "Note shown on reveal (optional)",
   "builder.numberAnswer": "Answer (a number)",
   "builder.unit": "Unit (optional)",
   "play.chooseAnswer": "Players tap an answer on their phones",
@@ -367,6 +370,16 @@ const en = {
   "round.choice.label": "Multiple Choice",
   "round.choice.desc":
     "Players tap an answer on their phones. Reveal the correct option — everyone who picked it scores automatically.",
+  "round.truefalse.label": "True / False",
+  "round.truefalse.desc":
+    "Read a statement; players tap True or False on their phones. Reveal it — everyone who was right scores automatically.",
+  "round.truefalse.opt0": "True",
+  "round.truefalse.opt1": "False",
+  "round.higherlower.label": "Higher / Lower",
+  "round.higherlower.desc":
+    "Players guess whether the answer is higher or lower than the clue. Reveal it — everyone who was right scores automatically.",
+  "round.higherlower.opt0": "Higher",
+  "round.higherlower.opt1": "Lower",
   "round.number.label": "Closest Guess",
   "round.number.desc":
     "Everyone submits a number from their phone. Reveal the answer — the closest guess wins automatically.",
@@ -378,7 +391,7 @@ const de = {
   "common.done": "Fertig",
   "common.next": "Weiter",
 
-  "home.tagline": "Ein Bildschirm, ein Moderator, elf Rundenformate. Handys können buzzern. Du tippst zum Punkten.",
+  "home.tagline": "Ein Bildschirm, ein Moderator, dreizehn Rundenformate. Handys können buzzern. Du tippst zum Punkten.",
   "home.leaderboard": "Bestenliste",
   "home.gameInProgress": "Spiel läuft",
   "home.roundOf": "{title} · Runde {n} von {total}",
@@ -669,6 +682,9 @@ const de = {
   "builder.addOption": "Option hinzufügen",
   "builder.deleteOption": "Option löschen",
   "builder.markCorrect": "Als richtig markieren",
+  "builder.statement": "Aussage (Spieler entscheiden wahr oder falsch)",
+  "builder.correctAnswer": "Richtige Antwort",
+  "builder.revealNote": "Hinweis beim Auflösen (optional)",
   "builder.numberAnswer": "Antwort (eine Zahl)",
   "builder.unit": "Einheit (optional)",
   "play.chooseAnswer": "Spieler tippen die Antwort auf ihren Handys",
@@ -735,6 +751,16 @@ const de = {
   "round.choice.label": "Multiple Choice",
   "round.choice.desc":
     "Spieler tippen die Antwort auf ihren Handys. Decke die richtige Option auf — wer sie gewählt hat, punktet automatisch.",
+  "round.truefalse.label": "Wahr / Falsch",
+  "round.truefalse.desc":
+    "Lies eine Aussage vor; Spieler tippen Wahr oder Falsch auf ihren Handys. Aufdecken — wer richtig lag, punktet automatisch.",
+  "round.truefalse.opt0": "Wahr",
+  "round.truefalse.opt1": "Falsch",
+  "round.higherlower.label": "Höher / Niedriger",
+  "round.higherlower.desc":
+    "Spieler raten, ob die Antwort höher oder niedriger als der Hinweis ist. Aufdecken — wer richtig lag, punktet automatisch.",
+  "round.higherlower.opt0": "Höher",
+  "round.higherlower.opt1": "Niedriger",
   "round.number.label": "Näheste Schätzung",
   "round.number.desc":
     "Alle senden eine Zahl von ihrem Handy. Decke die Antwort auf — der näheste Tipp gewinnt automatisch.",

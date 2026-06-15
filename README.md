@@ -1,6 +1,6 @@
 # Quiz Night
 
-A host-led party quiz app. One host screen runs the show; players can buzz in, drop map pins, pick answers and guess numbers from their own phones over a QR code. Eleven round formats, solo or in teams, English or German, light or dark — plus a TV presenter mode that mirrors a clean view to a second screen over Wi-Fi (no HDMI).
+A host-led party quiz app. One host screen runs the show; players can buzz in, drop map pins, pick answers and guess numbers from their own phones over a QR code. Thirteen round formats, solo or in teams, English or German, light or dark — plus a TV presenter mode that mirrors a clean view to a second screen over Wi-Fi (no HDMI).
 
 **Round formats**
 
@@ -16,6 +16,8 @@ A host-led party quiz app. One host screen runs the show; players can buzz in, d
 | Fusion          | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
 | Map             | A real pan/zoom world map. Players drop a pin (host screen or phones); reveal the true spot and the ranked guesses — **auto-scored**, closest wins.      |
 | Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.            |
+| True / False    | Read a statement; players tap **True** or **False** on their phones. **Auto-scored** — everyone right scores. Optional fact shown on reveal.            |
+| Higher / Lower  | Players guess whether the answer is **Higher** or **Lower** than the clue (e.g. "Everest is 8,849 m — is K2 higher or lower?"). **Auto-scored**.        |
 | Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                         |
 
 Other features:
@@ -136,7 +138,7 @@ src/
     HostRemoteView.jsx      Phone host controller (#/host/<code>): reveal/advance/award/hints over a ctrl channel
     PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins/answers, auto-scoring, TV stream
     SetupView.jsx           Player/team entry (Solo/Teams toggle) + buzzer lobby
-    Builder.jsx             Quiz editor for all eleven round types; drag-and-drop; image crop; media trim; map satellite/search; templates
+    Builder.jsx             Quiz editor for all thirteen round types; drag-and-drop; image crop; media trim; map satellite/search; templates
     BuzzerPanel.jsx         Host buzzer lobby: QR, room code, roster
     JoinView.jsx            Phone page: avatar + team picker, buzz, pin, choice tap, number guess
     LeaderboardView.jsx     Persistent standings

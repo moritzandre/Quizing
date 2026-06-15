@@ -33,7 +33,7 @@ import {
   MORPH_EFFECTS,
   HINT_TYPES,
 } from "../lib/model.js";
-import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete } from "./ui.jsx";
+import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, optionsFor } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { ROUND_TEMPLATES, roundCreatorPrompt } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
@@ -1295,6 +1295,77 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   </SortableList>
                   <button
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("choice")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addQuestion")}
+                  </button>
+                </>
+              )}
+
+              {/* true/false + higher/lower (binary auto-scored) */}
+              {(r.type === "truefalse" || r.type === "higherlower") && (
+                <>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
+                    {(item, i, hp) => {
+                      const opts = optionsFor(r.type, item, t);
+                      return (
+                        <div className={panelCls}>
+                          <div className={rowLabelCls}>
+                            <span className="flex items-center gap-1">
+                              <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                            </span>
+                            <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                          </div>
+                          <input
+                            className={inputCls}
+                            placeholder={r.type === "truefalse" ? t("builder.statement") : t("builder.question")}
+                            value={item.q}
+                            onChange={(e) => qRow(r, item, { q: e.target.value })}
+                          />
+                          <p className="mt-2 text-xs font-medium text-stone-400 dark:text-stone-500">
+                            {t("builder.correctAnswer")}
+                          </p>
+                          <div className="mt-1 flex gap-2">
+                            {opts.map((opt, oi) => (
+                              <button
+                                key={oi}
+                                onClick={() => qRow(r, item, { correct: oi })}
+                                className={`flex-1 rounded-xl border px-3 py-2 text-sm font-semibold transition ${FOCUS} ${
+                                  item.correct === oi
+                                    ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/10 dark:text-emerald-300"
+                                    : "border-stone-200 text-stone-600 dark:border-stone-700 dark:text-stone-300"
+                                }`}
+                              >
+                                {opt}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="mt-2 flex gap-2">
+                            <input
+                              className={inputCls}
+                              placeholder={t("builder.revealNote")}
+                              value={item.note || ""}
+                              onChange={(e) => qRow(r, item, { note: e.target.value })}
+                            />
+                            <input
+                              type="number"
+                              aria-label={t("builder.points")}
+                              className={`${inputCls} w-20`}
+                              title={t("builder.points")}
+                              value={item.points}
+                              onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion(r.type)] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
                     <Plus size={15} /> {t("builder.addQuestion")}

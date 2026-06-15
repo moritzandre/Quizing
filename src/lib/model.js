@@ -20,6 +20,8 @@ export const ROUND_TYPES = [
   "fusion",
   "map",
   "choice",
+  "truefalse",
+  "higherlower",
   "number",
 ];
 
@@ -258,6 +260,12 @@ export function makeQuestion(type) {
       return { id: uid(), urlA: "", urlB: "", a: "", points: 40, steps: 4 };
     case "choice":
       return { id: uid(), q: "", options: ["", "", "", ""], correct: 0, points: 10 };
+    case "truefalse":
+      // correct: 0 = True, 1 = False. note: optional fact shown on reveal.
+      return { id: uid(), q: "", correct: 0, points: 10, note: "" };
+    case "higherlower":
+      // correct: 0 = Higher, 1 = Lower. note: optional fact shown on reveal.
+      return { id: uid(), q: "", correct: 0, points: 10, note: "" };
     case "number":
       return { id: uid(), q: "", answer: null, unit: "", points: 10 };
     case "map":
@@ -367,6 +375,13 @@ export function normalizeQuiz(raw) {
               points: num(q?.points, 10),
             });
           }
+          if (r.type === "truefalse" || r.type === "higherlower")
+            Object.assign(it, {
+              q: str(q?.q),
+              correct: num(q?.correct, 0) === 1 ? 1 : 0, // 0 = True/Higher, 1 = False/Lower
+              points: num(q?.points, 10),
+              note: str(q?.note),
+            });
           if (r.type === "number")
             Object.assign(it, {
               q: str(q?.q),
@@ -625,6 +640,10 @@ function presentQ(type, q) {
       return { q: str(q.q), tileLayer: q.tileLayer === "satellite" ? "satellite" : "map", street: str(q.street) };
     case "choice":
       return { q: str(q.q), options: (Array.isArray(q.options) ? q.options : []).map(str) };
+    case "truefalse":
+    case "higherlower":
+      // Options are fixed UI labels (synthesized per locale); the answer/note stay in revealData.
+      return { q: str(q.q) };
     case "number":
       return { q: str(q.q), unit: str(q.unit) };
     default:
@@ -649,6 +668,9 @@ function revealData(type, q) {
       return { answer: { lat: numOrNull(q.lat), lng: numOrNull(q.lng), name: str(q.name) } };
     case "choice":
       return { correct: num(q.correct, 0), options: (Array.isArray(q.options) ? q.options : []).map(str) };
+    case "truefalse":
+    case "higherlower":
+      return { correct: num(q.correct, 0) === 1 ? 1 : 0, note: str(q.note) };
     case "number":
       return { answer: numOrNull(q.answer), unit: str(q.unit) };
     default:
@@ -783,6 +805,7 @@ export function normalizeLive(raw) {
     if (r.correct != null) reveal.correct = num(r.correct, 0);
     if (Array.isArray(r.options)) reveal.options = r.options.map(str).slice(0, 8);
     if (typeof r.unit === "string") reveal.unit = r.unit;
+    if (typeof r.note === "string") reveal.note = r.note; // true/false + higher/lower reveal fact
   }
   return {
     stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",

@@ -169,6 +169,30 @@ export const ROUND_TEMPLATES = [
     },
   },
   {
+    key: "truefalse-quiz",
+    type: "truefalse",
+    round: {
+      type: "truefalse",
+      title: "True or False?",
+      questions: [
+        { q: "A group of flamingos is called a flamboyance.", correct: 0, points: 10, note: "Yes — really!" },
+        { q: "The Great Wall of China is visible from space with the naked eye.", correct: 1, points: 10, note: "A myth — it isn't." },
+      ],
+    },
+  },
+  {
+    key: "higherlower-quiz",
+    type: "higherlower",
+    round: {
+      type: "higherlower",
+      title: "Higher or Lower?",
+      questions: [
+        { q: "Mount Everest is 8,849 m. Is K2 higher or lower?", correct: 1, points: 10, note: "Lower — 8,611 m." },
+        { q: "Tokyo has ~14M people. Is London's population higher or lower?", correct: 1, points: 10, note: "Lower — ~9M." },
+      ],
+    },
+  },
+  {
     key: "number-guess",
     type: "number",
     round: {
@@ -222,6 +246,10 @@ const ROUND_SHAPES = {
     'questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]',
   map: 'questions: [{ "q": string, "name": string, "lat": number, "lng": number, "points": number, "tileLayer": "map"|"satellite" }]',
   choice: 'questions: [{ "q": string, "options": [string,...], "correct": <0-based index>, "points": number }]',
+  truefalse:
+    'questions: [{ "q": string (a statement), "correct": 0|1 (0 = True, 1 = False), "points": number, "note": string (optional, shown on reveal) }]',
+  higherlower:
+    'questions: [{ "q": string (e.g. "X is N. Is Y higher or lower?"), "correct": 0|1 (0 = Higher, 1 = Lower), "points": number, "note": string (optional fact shown on reveal) }]',
   number: 'questions: [{ "q": string, "answer": number, "unit": string, "points": number }]',
 };
 
@@ -261,6 +289,8 @@ Round types and their question shapes:
 - "fusion":   questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]
 - "map":      questions: [{ "q": string, "name": string, "lat": number, "lng": number, "points": number, "tileLayer": "map"|"satellite" }]
 - "choice":   questions: [{ "q": string, "options": [string,...], "correct": <0-based index>, "points": number }]
+- "truefalse": questions: [{ "q": string (a statement), "correct": 0|1 (0=True, 1=False), "points": number, "note": string (optional, shown on reveal) }]
+- "higherlower": questions: [{ "q": string (e.g. "X is N. Is Y higher or lower?"), "correct": 0|1 (0=Higher, 1=Lower), "points": number, "note": string (optional fact) }]
 - "number":   questions: [{ "q": string, "answer": number, "unit": string, "points": number }]
 
 Rules: omit "id" fields (they are generated). Use real, publicly reachable image/video URLs, or leave url empty for the host to fill in. Keep 3-6 questions per round. Make answers unambiguous.`;

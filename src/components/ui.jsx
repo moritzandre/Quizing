@@ -17,6 +17,8 @@ import {
   Blend,
   MapPin,
   ListChecks,
+  ToggleLeft,
+  ArrowUpDown,
   Hash,
   Trash2,
   Sun,
@@ -94,6 +96,18 @@ export const TYPES = {
     dot: "bg-teal-500",
     desc: "Players tap A/B/C/D on their phones. Reveal the right answer and everyone who got it scores.",
   },
+  truefalse: {
+    label: "True / False",
+    icon: ToggleLeft,
+    dot: "bg-lime-500",
+    desc: "Read a statement; players tap True or False on their phones. Auto-scored — everyone right scores.",
+  },
+  higherlower: {
+    label: "Higher / Lower",
+    icon: ArrowUpDown,
+    dot: "bg-cyan-500",
+    desc: "Players guess whether the answer is higher or lower than the clue. Auto-scored from their phones.",
+  },
   number: {
     label: "Closest Guess",
     icon: Hash,
@@ -123,10 +137,26 @@ const ACCENT = {
     solid: "bg-emerald-500",
   },
   choice: { soft: "bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300", solid: "bg-teal-500" },
+  truefalse: { soft: "bg-lime-100 text-lime-700 dark:bg-lime-500/20 dark:text-lime-300", solid: "bg-lime-500" },
+  higherlower: { soft: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300", solid: "bg-cyan-500" },
   number: { soft: "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300", solid: "bg-orange-500" },
 };
 /** Accent class set for a round type (soft chip bg/text + solid dot). */
 export const accentFor = (type) => ACCENT[type] || ACCENT.classic;
+
+/**
+ * The answer options for a binary auto-scored round (true/false, higher/lower):
+ * fixed, localized UI labels. Returns null for other types. `t` is the i18n fn.
+ */
+export const binaryOptions = (type, t) =>
+  type === "truefalse"
+    ? [t("round.truefalse.opt0"), t("round.truefalse.opt1")]
+    : type === "higherlower"
+      ? [t("round.higherlower.opt0"), t("round.higherlower.opt1")]
+      : null;
+
+/** Display options for a choice-style round: synthesized for binary types, else the question's own. */
+export const optionsFor = (type, q, t) => binaryOptions(type, t) || (Array.isArray(q?.options) ? q.options : []);
 
 /** Player avatar palette — colors + matching emoji, cycled by index. */
 export const PLAYER_COLORS = [

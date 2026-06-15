@@ -11,6 +11,7 @@
 
 import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
+import { optionsFor } from "./ui.jsx";
 import { Check, Target, Volume2 } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
@@ -187,8 +188,9 @@ export default function RoundBody({
     );
   }
 
-  if (type === "choice") {
-    const options = Array.isArray(q.options) ? q.options : [];
+  if (type === "choice" || type === "truefalse" || type === "higherlower") {
+    const options = optionsFor(type, q, t);
+    const binary = type !== "choice";
     return (
       <div className="flex h-full min-h-0 flex-col justify-center overflow-y-auto text-center">
         <Q>{q.q}</Q>
@@ -204,21 +206,26 @@ export default function RoundBody({
                     : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
                 }`}
               >
-                <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                    correct
-                      ? "bg-emerald-500 text-white"
-                      : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
-                  }`}
-                >
-                  {LETTERS[oi]}
-                </span>
+                {!binary && (
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                      correct
+                        ? "bg-emerald-500 text-white"
+                        : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                    }`}
+                  >
+                    {LETTERS[oi]}
+                  </span>
+                )}
                 <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
                 {correct && <Check size={18} className="text-emerald-600 dark:text-emerald-400" />}
               </div>
             );
           })}
         </div>
+        {revealed && binary && reveal?.note && (
+          <p className="mx-auto mt-4 max-w-xl text-sm text-stone-500 dark:text-stone-400">{reveal.note}</p>
+        )}
       </div>
     );
   }

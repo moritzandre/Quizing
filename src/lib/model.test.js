@@ -305,6 +305,19 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[1].questions[0]).toMatchObject({ options: ["", "", "", ""], correct: 0, points: 10 });
   });
 
+  it("normalizes true/false + higher/lower rounds: correct coerced to 0|1, optional note", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "truefalse", questions: [{ q: "Statement", correct: 1, points: 20, note: "fact" }, { correct: 5 }] },
+        { type: "higherlower", questions: [{ q: "Higher?", correct: 0 }, {}] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ q: "Statement", correct: 1, points: 20, note: "fact" });
+    expect(q.rounds[0].questions[1]).toMatchObject({ correct: 0, points: 10, note: "" }); // non-0/1 -> 0
+    expect(q.rounds[1].questions[0]).toMatchObject({ q: "Higher?", correct: 0, points: 10 });
+    expect(q.rounds[1].questions[1]).toMatchObject({ correct: 0, points: 10 });
+  });
+
   it("normalizes number rounds: numeric answer or null", () => {
     const q = normalizeQuiz({
       rounds: [{ type: "number", questions: [{ q: "How many?", answer: "42", unit: "kg" }, { answer: "" }] }],
@@ -794,6 +807,11 @@ describe("presenter payloads", () => {
     expect(n.hintsShown).toBe(1); // clamped to >= 1
     expect(n.standings[0]).toMatchObject({ name: "X", score: 5, color: null, emoji: null });
     expect(n.reveal.answer).toEqual({ lat: 1, lng: 2, name: "" });
+  });
+
+  it("normalizeLive round-trips a true/false reveal (correct + note for the TV)", () => {
+    const n = normalizeLive({ reveal: { correct: 1, note: "It's a myth." } });
+    expect(n.reveal).toMatchObject({ correct: 1, note: "It's a myth." });
   });
 
   it("buildPresentQ → normalizePresent round-trips a choice question", () => {

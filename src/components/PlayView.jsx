@@ -44,7 +44,7 @@ import {
   buildLive,
   mapillaryEmbedUrl,
 } from "../lib/model.js";
-import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, colorAt, SoundToggle } from "./ui.jsx";
+import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, optionsFor, colorAt, SoundToggle } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import MapillaryEmbed from "./MapillaryEmbed.jsx";
 import { playSound } from "../lib/sound.js";
@@ -179,8 +179,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.idle();
     } else if (round?.type === "map") {
       room.collectPins(qKey);
-    } else if (round?.type === "choice") {
-      room.collectAnswers(qKey, { phase: "choice", options: round.questions[game.qi]?.options || [] });
+    } else if (round?.type === "choice" || round?.type === "truefalse" || round?.type === "higherlower") {
+      // Binary rounds (true/false, higher/lower) reuse the choice phase with fixed labels.
+      room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
     } else if (round?.type === "number") {
       room.collectAnswers(qKey, { phase: "number" });
     } else {
@@ -450,7 +451,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     switch (cmd.action) {
       case "reveal":
         if (game.stage === "question" && !game.revealed && cq) {
-          if (round.type === "choice") revealChoice(cq);
+          if (["choice", "truefalse", "higherlower"].includes(round.type)) revealChoice(cq);
           else if (round.type === "number") revealNumber(cq);
           else if (round.type === "map") revealMap(cq);
           else reveal();
@@ -520,7 +521,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
       if (!q) return;
       if (k === "r" && !game.revealed) {
-        if (round.type === "choice") revealChoice(q);
+        if (["choice", "truefalse", "higherlower"].includes(round.type)) revealChoice(q);
         else if (round.type === "number") revealNumber(q);
         else if (round.type === "map") revealMap(q);
         else reveal();
@@ -1065,7 +1066,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   /* buzzer banner: who buzzed first, with re-arm/reset (only for buzz rounds) */
   const buzzName = room?.buzz ? entityForDevice(room.buzz.deviceId)?.name || room.buzz.name : "";
-  const BuzzerBar = buzzerOn && !game.revealed && !["map", "choice", "number"].includes(round.type) && (
+  const BuzzerBar = buzzerOn &&
+    !game.revealed &&
+    !["map", "choice", "truefalse", "higherlower", "number"].includes(round.type) && (
     <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
       {room.buzz ? (
         <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
@@ -1389,9 +1392,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
     );
   }
 
-  if (round.type === "choice") {
+  if (round.type === "choice" || round.type === "truefalse" || round.type === "higherlower") {
+    const options = optionsFor(round.type, q, t);
+    const binary = round.type !== "choice"; // true/false & higher/lower have fixed 2 options
     const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
-    const counts = q.options.map((_, oi) => Object.values(answersByEntity).filter((v) => v === oi).length);
+    const counts = options.map((_, oi) => Object.values(answersByEntity).filter((v) => v === oi).length);
     const answered = Object.keys(answersByEntity).length;
     const letters = ["A", "B", "C", "D", "E", "F"];
     body = (
@@ -1405,7 +1410,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </p>
         )}
         <div className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-2">
-          {q.options.map((opt, oi) => {
+          {options.map((opt, oi) => {
             const isCorrect = game.revealed && oi === q.correct;
             return (
               <div
@@ -1416,15 +1421,17 @@ export default function PlayView({ game, setGame, onExit, room }) {
                     : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
                 }`}
               >
-                <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                    isCorrect
-                      ? "bg-emerald-500 text-white"
-                      : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
-                  }`}
-                >
-                  {letters[oi]}
-                </span>
+                {!binary && (
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                      isCorrect
+                        ? "bg-emerald-500 text-white"
+                        : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                    }`}
+                  >
+                    {letters[oi]}
+                  </span>
+                )}
                 <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
                 {buzzerOn && <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>}
                 {isCorrect && <Check size={18} className="text-emerald-600 dark:text-emerald-400" />}
@@ -1432,6 +1439,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
             );
           })}
         </div>
+        {game.revealed && binary && q.note && (
+          <p className="mx-auto mt-4 max-w-xl text-sm text-stone-500 dark:text-stone-400">{q.note}</p>
+        )}
         <div className="mt-6">
           {game.revealed ? (
             NextBtn
