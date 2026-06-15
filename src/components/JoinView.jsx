@@ -3,11 +3,25 @@
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
-import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash, Camera, Loader2, X, Trophy } from "lucide-react";
+import {
+  Radio,
+  Wifi,
+  WifiOff,
+  Check,
+  MapPin,
+  ListChecks,
+  Hash,
+  Camera,
+  Loader2,
+  X,
+  Trophy,
+  LogOut,
+} from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
 import { useProfile } from "./useProfile.js";
 import { FOCUS, inputCls, Button, Avatar, AnimatedNumber, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 import { fileToDataUrl } from "../lib/model.js";
+import { loadJSON, saveJSON, removeKey } from "../lib/storage.js";
 import { playSound } from "../lib/sound.js";
 import LeafletMap from "./LeafletMap.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
@@ -36,6 +50,7 @@ export default function JoinView({ code }) {
   const [photoBusy, setPhotoBusy] = useState(false);
   const photoRef = useRef(null);
   const [joined, setJoined] = useState(false);
+  const [lastJoin, setLastJoin] = useState(null); // cached {code,name,teamId,avatar} for reconnect-on-reload
   const [myPin, setMyPin] = useState(null);
   const [pinSent, setPinSent] = useState(false);
   const [answer, setAnswer] = useState(null);
@@ -103,6 +118,39 @@ export default function JoinView({ code }) {
     if (p.photo) setPickedPhoto(p.photo);
   }, [prof.profile, joined]);
 
+  // Remember the last successful join, so a reload can reconnect us silently.
+  useEffect(() => {
+    loadJSON("lastJoin", null).then((v) => v && setLastJoin(v));
+  }, []);
+
+  // Reconnect on reload: if we previously joined THIS room and it's still live,
+  // rejoin silently with the saved identity (skip the form). The persisted
+  // deviceId re-links us to our existing scoring entity on the host side.
+  const autoRef = useRef(false);
+  useEffect(() => {
+    if (autoRef.current || joined || !lastJoin || lastJoin.code !== code) return;
+    if (!room.state) return; // wait for the host's retained state (= room alive)
+    if (prof.configured && !prof.ready) return; // wait for the session so profileId is set
+    const teamsList = room.state.teams;
+    // in team mode, only auto-rejoin if our cached team still exists
+    if (teamsList && !(lastJoin.teamId && teamsList.some((tm) => tm.id === lastJoin.teamId))) return;
+    autoRef.current = true;
+    const useProf = prof.configured && prof.profile;
+    const name = (useProf ? prof.profile.name : lastJoin.name) || lastJoin.name || "";
+    const av = useProf
+      ? { emoji: prof.profile.emoji, color: prof.profile.color, photo: prof.profile.photo }
+      : { emoji: lastJoin.emoji, color: lastJoin.color, photo: lastJoin.photo };
+    // reflect identity locally so the HUD avatar/name are right before scores arrive
+    setDraftName(name);
+    if (av.emoji) setPickedEmoji(av.emoji);
+    if (av.color) setPickedColor(av.color);
+    if (av.photo) setPickedPhoto(av.photo);
+    setTeamId(lastJoin.teamId || null);
+    room.join(name, lastJoin.teamId || null, teamsList ? null : av, prof.profileId);
+    setJoined(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room.state, joined, lastJoin, prof.ready, prof.configured, prof.profile, prof.profileId, code]);
+
   const iLocked = lockedBy && lockedBy === room.deviceId;
   const online = room.status === "connected";
   const needsTeam = !!teams;
@@ -123,6 +171,15 @@ export default function JoinView({ code }) {
   const buzz = () => {
     room.buzz();
     playSound("buzz");
+  };
+  // Leave the room and forget the cached join, returning to the join form so the
+  // player can re-pick (or hand the phone to someone else).
+  const switchPlayer = () => {
+    removeKey("lastJoin");
+    autoRef.current = false;
+    setLastJoin(null);
+    room.leave();
+    setJoined(false);
   };
   const onPhoto = async (e) => {
     const file = e.target.files?.[0];
@@ -148,16 +205,28 @@ export default function JoinView({ code }) {
           <h1 className="font-pixel text-sm leading-tight text-stone-900 dark:text-stone-50">
             QUIZ<span className="text-indigo-600 dark:text-indigo-400"> NIGHT</span>
           </h1>
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${
-              online
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
-                : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
-            }`}
-          >
-            {online ? <Wifi size={12} /> : <WifiOff size={12} />}
-            {online ? t("join.connected") : t("join.connecting")}
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${
+                online
+                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                  : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+              }`}
+            >
+              {online ? <Wifi size={12} /> : <WifiOff size={12} />}
+              {online ? t("join.connected") : t("join.connecting")}
+            </span>
+            {joined && (
+              <button
+                onClick={switchPlayer}
+                aria-label={t("profile.switch")}
+                title={t("profile.switch")}
+                className={`rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 ${FOCUS}`}
+              >
+                <LogOut size={16} />
+              </button>
+            )}
+          </div>
         </div>
 
         {!joined ? (
@@ -184,6 +253,15 @@ export default function JoinView({ code }) {
                     color: pickedColor,
                     photo: pickedPhoto,
                   });
+                // Cache this join so a reload reconnects us to the same room.
+                saveJSON("lastJoin", {
+                  code,
+                  name: draftName.trim(),
+                  teamId: needsTeam ? teamId : null,
+                  emoji: pickedEmoji,
+                  color: pickedColor,
+                  photo: pickedPhoto,
+                });
                 room.join(
                   draftName,
                   teamId,

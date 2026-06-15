@@ -295,6 +295,7 @@ const en = {
   "join.leaderboard": "Leaderboard",
   "join.youTag": "(you)",
   "profile.savedHint": "Your saved player — edits are remembered",
+  "profile.switch": "Leave / switch player",
   "join.connected": "Connected",
   "join.connecting": "Connecting…",
 
@@ -712,6 +713,7 @@ const de = {
   "join.leaderboard": "Rangliste",
   "join.youTag": "(du)",
   "profile.savedHint": "Dein gespeicherter Spieler — Änderungen werden gemerkt",
+  "profile.switch": "Verlassen / Spieler wechseln",
   "join.connected": "Verbunden",
   "join.connecting": "Verbinde…",
 

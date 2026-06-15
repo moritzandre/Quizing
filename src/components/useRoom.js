@@ -48,6 +48,7 @@ export function useHostRoom() {
 
   const connRef = useRef(null);
   const cmdIdRef = useRef(0);
+  const leaveTimersRef = useRef({}); // deviceId -> pending-leave timer (grace period vs reload races)
   const phaseRef = useRef({ phase: "idle", qKey: null });
   const lockedRef = useRef(null);
   const scoresRef = useRef(null); // latest standings to mirror onto phones
@@ -114,6 +115,12 @@ export function useHostRoom() {
       onMessage: (_topic, msg) => {
         if (!msg || !msg.deviceId) return;
         if (msg.type === "join") {
+          // A re-join (e.g. reload) cancels a just-fired `leave` for this device,
+          // so a stale pagehide `leave` arriving after the new `join` can't drop us.
+          if (leaveTimersRef.current[msg.deviceId]) {
+            clearTimeout(leaveTimersRef.current[msg.deviceId]);
+            delete leaveTimersRef.current[msg.deviceId];
+          }
           setParticipants((p) => ({
             ...p,
             [msg.deviceId]: {
@@ -127,11 +134,18 @@ export function useHostRoom() {
           }));
           pushStateRef.current();
         } else if (msg.type === "leave") {
-          setParticipants((p) => {
-            const n = { ...p };
-            delete n[msg.deviceId];
-            return n;
-          });
+          // Defer removal: a reload fires `leave` then immediately re-`join`s, so
+          // a short grace period lets the re-join cancel the removal (above).
+          if (leaveTimersRef.current[msg.deviceId]) clearTimeout(leaveTimersRef.current[msg.deviceId]);
+          leaveTimersRef.current[msg.deviceId] = setTimeout(() => {
+            delete leaveTimersRef.current[msg.deviceId];
+            setParticipants((p) => {
+              const n = { ...p };
+              delete n[msg.deviceId];
+              return n;
+            });
+            pushStateRef.current();
+          }, 3000);
         } else if (msg.type === "buzz") {
           // The host is the single arbiter — first message wins, no clock sync.
           if (phaseRef.current.phase === "buzz" && !lockedRef.current) {
@@ -177,6 +191,8 @@ export function useHostRoom() {
     phaseRef.current = { phase: "idle", qKey: null };
     lockedRef.current = null;
     scoresRef.current = null;
+    Object.values(leaveTimersRef.current).forEach(clearTimeout);
+    leaveTimersRef.current = {};
     setEnabled(false);
     setCode(null);
     setStatus("idle");
@@ -191,6 +207,7 @@ export function useHostRoom() {
   // Tear down on unmount — clear retained topics first so they don't strand phones/TVs.
   useEffect(
     () => () => {
+      Object.values(leaveTimersRef.current).forEach(clearTimeout);
       const c = connRef.current;
       if (c) {
         c.clearRetained(c.topics.state);
