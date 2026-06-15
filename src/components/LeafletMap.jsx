@@ -116,8 +116,16 @@ export default function LeafletMap({
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
     const tm = setTimeout(() => map.invalidateSize(), 60);
+    // Re-fit when the container resizes — the map now lives in flex layouts that
+    // change height (viewport-fit screens, device rotation, mobile browser chrome).
+    let ro = null;
+    if (typeof ResizeObserver !== "undefined" && elRef.current) {
+      ro = new ResizeObserver(() => map.invalidateSize());
+      ro.observe(elRef.current);
+    }
     return () => {
       obs.disconnect();
+      if (ro) ro.disconnect();
       clearTimeout(tm);
       map.remove();
       mapRef.current = null;
