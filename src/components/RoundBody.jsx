@@ -11,7 +11,7 @@
 
 import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
-import { optionsFor } from "./ui.jsx";
+import { optionsFor, Avatar } from "./ui.jsx";
 import { Check, Target, Volume2 } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
@@ -53,6 +53,7 @@ export default function RoundBody({
   compact = false,
   qKey = "",
   volume = 100,
+  whoknows = null,
 }) {
   const { t } = useI18n();
 
@@ -239,6 +240,91 @@ export default function RoundBody({
             <Target size={28} /> {reveal.answer}
             {reveal.unit ? ` ${reveal.unit}` : ""}
           </p>
+        )}
+      </div>
+    );
+  }
+
+  if (type === "whoknows") {
+    const wkk = whoknows || {};
+    const picked = wkk.picked || [];
+    const claimed = wkk.claimed || 0;
+    const pickedIdx = new Set(picked.map((p) => p.i));
+    return (
+      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
+        <Q>{q.q}</Q>
+        <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">{t("play.wkTotal", { n: wkk.total || 0 })}</p>
+        {wkk.phase === "auction" ? (
+          <p className="mt-8 text-3xl font-bold text-violet-600 dark:text-violet-400">{t("play.wkAuctionTitle")}</p>
+        ) : (
+          <>
+            <div className="mt-4 flex items-center justify-center gap-2 text-lg">
+              {wkk.winner && (
+                <span className="inline-flex items-center gap-2 font-semibold">
+                  <Avatar color={wkk.winner.color} emoji={wkk.winner.emoji} name={wkk.winner.name} size={28} />
+                  {wkk.winner.name}
+                </span>
+              )}
+              <span className="text-stone-400">·</span>
+              <span className="text-stone-500 dark:text-stone-400">{t("play.wkClaimsN", { n: claimed })}</span>
+              {wkk.phase === "answering" && wkk.secsLeft > 0 && (
+                <span
+                  className={`ml-1 rounded-full px-3 py-0.5 font-bold tabular-nums ${
+                    wkk.secsLeft <= 5
+                      ? "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-300"
+                      : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300"
+                  }`}
+                >
+                  {t("play.wkPerAnswerLeft", { n: wkk.secsLeft })}
+                </span>
+              )}
+            </div>
+            <div className="mt-6 flex max-w-4xl flex-wrap justify-center gap-2">
+              {Array.from({ length: claimed }).map((_, si) => {
+                const p = picked[si];
+                return (
+                  <div
+                    key={si}
+                    className={`flex h-12 min-w-[4rem] items-center justify-center rounded-xl border px-3 text-lg font-semibold ${
+                      p
+                        ? "qn-pop border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/10 dark:text-emerald-300"
+                        : "border-dashed border-stone-300 text-stone-300 dark:border-stone-700 dark:text-stone-600"
+                    }`}
+                  >
+                    {p ? p.text : si + 1}
+                  </div>
+                );
+              })}
+            </div>
+            {wkk.phase === "done" && (
+              <p
+                className={`mt-5 text-2xl font-bold ${
+                  wkk.result === "deliver" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                }`}
+              >
+                {wkk.result === "deliver"
+                  ? t("play.wkDelivered", { n: claimed })
+                  : t("play.wkBust", { n: picked.length })}
+              </p>
+            )}
+            {wkk.showAll && (wkk.answers || []).length > 0 && (
+              <div className="mt-5 grid max-h-[34vh] max-w-3xl gap-1.5 overflow-y-auto text-left sm:grid-cols-2">
+                {wkk.answers.map((ans, ai) => (
+                  <div
+                    key={ai}
+                    className={`rounded-lg border px-3 py-1.5 text-sm ${
+                      pickedIdx.has(ai)
+                        ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                        : "border-stone-200 bg-white text-stone-500 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-400"
+                    }`}
+                  >
+                    {wkk.ordered ? `${ai + 1}. ` : ""}
+                    {ans}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     );

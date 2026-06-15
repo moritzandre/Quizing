@@ -15,7 +15,7 @@ const en = {
   "common.done": "Done",
   "common.next": "Next",
 
-  "home.tagline": "One screen, one host, thirteen round formats. Phones can buzz in. You tap to score.",
+  "home.tagline": "One screen, one host, fourteen round formats. Phones can buzz in. You tap to score.",
   "home.leaderboard": "Leaderboard",
   "home.gameInProgress": "Game in progress",
   "home.roundOf": "{title} · Round {n} of {total}",
@@ -81,7 +81,8 @@ const en = {
   "play.extendClip": "Extend clip",
   "play.revealLocation": "Reveal location",
   "play.noVideo": "No valid video link",
-  "play.clipBlocked": "This clip can't play here — the video likely blocks embedding (common for music). Pick a different upload, or open it on YouTube.",
+  "play.clipBlocked":
+    "This clip can't play here — the video likely blocks embedding (common for music). Pick a different upload, or open it on YouTube.",
   "play.openOnYoutube": "Open on YouTube",
   "play.openLink": "Open link",
   "play.audioClip": "Audio clip",
@@ -230,7 +231,8 @@ const en = {
   "builder.ytOk": "✓ Link recognised",
   "builder.ytBad": "Unrecognised link — use YouTube, Spotify, or a direct .mp3/.mp4 URL",
   "builder.ytPaste": "Paste a YouTube, Spotify (great for music), or direct media link",
-  "builder.spotifyNote": "Spotify plays the ~30s preview (full track needs Spotify Premium in the browser); the title is hidden.",
+  "builder.spotifyNote":
+    "Spotify plays the ~30s preview (full track needs Spotify Premium in the browser); the title is hidden.",
   "builder.audioOnly": "Audio only — hide the video, play just the sound",
   "builder.clipN": "Clip {n}",
   "builder.deleteClip": "Delete clip",
@@ -383,6 +385,29 @@ const en = {
   "round.number.label": "Closest Guess",
   "round.number.desc":
     "Everyone submits a number from their phone. Reveal the answer — the closest guess wins automatically.",
+  "round.whoknows.label": "Who Knows More",
+  "round.whoknows.desc":
+    "Auction a category: players claim how many they know; the winner must deliver that many answers against a per-answer clock, or bust (everyone else then takes the points they banked).",
+  // who-knows-more play + builder
+  "play.wkPickWinner": "Who won the auction?",
+  "play.wkClaim": "Claim",
+  "play.wkAward": "Award category",
+  "play.wkTotal": "{n} correct answers",
+  "play.wkClaimsN": "claims {n}",
+  "play.wkClickHint": "Tap each correct answer as it's given",
+  "play.wkDelivered": "Delivered! +{n}",
+  "play.wkBust": "Bust — everyone else +{n}",
+  "play.wkEndTurn": "Bust / end turn",
+  "play.wkShowAll": "Show all answers",
+  "play.wkHideAll": "Hide answers",
+  "play.wkNextCategory": "Next category",
+  "play.wkPerAnswerLeft": "{n}s",
+  "play.wkAuctionTitle": "Auction — who knows the most?",
+  "play.wkAnsweringTitle": "{name} — name {n}",
+  "builder.wkAnswer": "Correct answer",
+  "builder.wkAddAnswer": "Add answer",
+  "builder.wkOrdered": "Ranked (show answers numbered on reveal)",
+  "builder.wkSecsPerAnswer": "Seconds per answer",
 };
 
 const de = {
@@ -391,7 +416,8 @@ const de = {
   "common.done": "Fertig",
   "common.next": "Weiter",
 
-  "home.tagline": "Ein Bildschirm, ein Moderator, dreizehn Rundenformate. Handys können buzzern. Du tippst zum Punkten.",
+  "home.tagline":
+    "Ein Bildschirm, ein Moderator, vierzehn Rundenformate. Handys können buzzern. Du tippst zum Punkten.",
   "home.leaderboard": "Bestenliste",
   "home.gameInProgress": "Spiel läuft",
   "home.roundOf": "{title} · Runde {n} von {total}",
@@ -457,7 +483,8 @@ const de = {
   "play.extendClip": "Clip verlängern",
   "play.revealLocation": "Ort zeigen",
   "play.noVideo": "Kein gültiger Video-Link",
-  "play.clipBlocked": "Dieser Clip lässt sich hier nicht abspielen — das Video blockiert vermutlich das Einbetten (oft bei Musik). Nimm einen anderen Upload oder öffne es auf YouTube.",
+  "play.clipBlocked":
+    "Dieser Clip lässt sich hier nicht abspielen — das Video blockiert vermutlich das Einbetten (oft bei Musik). Nimm einen anderen Upload oder öffne es auf YouTube.",
   "play.openOnYoutube": "Auf YouTube öffnen",
   "play.openLink": "Link öffnen",
   "play.audioClip": "Audio-Clip",
@@ -469,7 +496,8 @@ const de = {
   "play.clipElsewhere": "Ton läuft auf dem Hauptbildschirm",
   "play.tapForSound": "Tippen, um den Ton auf diesem TV zu aktivieren",
   "play.soundOnTv": "Ton auf TV",
-  "play.soundOnTvHint": "Clip-Ton auf dem TV statt auf diesem Bildschirm abspielen (tippe einmal auf den TV, um Ton zu erlauben).",
+  "play.soundOnTvHint":
+    "Clip-Ton auf dem TV statt auf diesem Bildschirm abspielen (tippe einmal auf den TV, um Ton zu erlauben).",
   "play.fileFailed": "Datei konnte nicht abgespielt werden — achte auf einen direkten, öffentlichen Audio/Video-Link.",
   "play.spotifyClip": "Spotify-Clip",
   "play.spotifyFailed": "Spotify-Player konnte nicht geladen werden.",
@@ -610,7 +638,8 @@ const de = {
   "builder.ytOk": "✓ Link erkannt",
   "builder.ytBad": "Link nicht erkannt — nutze YouTube, Spotify oder eine direkte .mp3/.mp4-URL",
   "builder.ytPaste": "YouTube-, Spotify- (super für Musik) oder direkten Medien-Link einfügen",
-  "builder.spotifyNote": "Spotify spielt die ~30s-Vorschau (ganzer Track braucht Spotify Premium im Browser); der Titel wird ausgeblendet.",
+  "builder.spotifyNote":
+    "Spotify spielt die ~30s-Vorschau (ganzer Track braucht Spotify Premium im Browser); der Titel wird ausgeblendet.",
   "builder.audioOnly": "Nur Audio — Video ausblenden, nur Ton abspielen",
   "builder.clipN": "Clip {n}",
   "builder.deleteClip": "Clip löschen",
@@ -764,6 +793,29 @@ const de = {
   "round.number.label": "Näheste Schätzung",
   "round.number.desc":
     "Alle senden eine Zahl von ihrem Handy. Decke die Antwort auf — der näheste Tipp gewinnt automatisch.",
+  "round.whoknows.label": "Wer weiß mehr",
+  "round.whoknows.desc":
+    "Versteigere eine Kategorie: Spieler behaupten, wie viele sie wissen; der Gewinner muss so viele Antworten gegen eine Pro-Antwort-Uhr liefern — oder geht bust (dann bekommen alle anderen die bis dahin erspielten Punkte).",
+  // who-knows-more play + builder
+  "play.wkPickWinner": "Wer hat die Auktion gewonnen?",
+  "play.wkClaim": "Behauptet",
+  "play.wkAward": "Kategorie zuteilen",
+  "play.wkTotal": "{n} richtige Antworten",
+  "play.wkClaimsN": "behauptet {n}",
+  "play.wkClickHint": "Tippe jede richtige Antwort an, sobald sie genannt wird",
+  "play.wkDelivered": "Geliefert! +{n}",
+  "play.wkBust": "Bust — alle anderen +{n}",
+  "play.wkEndTurn": "Bust / Zug beenden",
+  "play.wkShowAll": "Alle Antworten zeigen",
+  "play.wkHideAll": "Antworten verbergen",
+  "play.wkNextCategory": "Nächste Kategorie",
+  "play.wkPerAnswerLeft": "{n}s",
+  "play.wkAuctionTitle": "Auktion — wer weiß am meisten?",
+  "play.wkAnsweringTitle": "{name} — nenne {n}",
+  "builder.wkAnswer": "Richtige Antwort",
+  "builder.wkAddAnswer": "Antwort hinzufügen",
+  "builder.wkOrdered": "Geordnet (Antworten beim Auflösen nummeriert zeigen)",
+  "builder.wkSecsPerAnswer": "Sekunden pro Antwort",
 };
 
 export const STRINGS = { en, de };

@@ -168,6 +168,7 @@ export default function PresenterView({ code }) {
       stage={!!live?.soundOnTv && soundOn}
       qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
       volume={live?.volume ?? 100}
+      whoknows={live?.whoknows || null}
     />,
   );
 }

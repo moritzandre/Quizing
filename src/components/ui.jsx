@@ -20,6 +20,7 @@ import {
   ToggleLeft,
   ArrowUpDown,
   Hash,
+  Gavel,
   Trash2,
   Sun,
   Moon,
@@ -114,6 +115,12 @@ export const TYPES = {
     dot: "bg-orange-500",
     desc: "Everyone submits a number from their phone. Reveal the answer — the closest guess wins.",
   },
+  whoknows: {
+    label: "Who Knows More",
+    icon: Gavel,
+    dot: "bg-violet-500",
+    desc: "Auction a category: players claim how many they know; the winner must deliver that many answers against a per-answer clock, or bust.",
+  },
 };
 
 /** Per-round accent classes (full literals so Tailwind keeps them). */
@@ -140,6 +147,10 @@ const ACCENT = {
   truefalse: { soft: "bg-lime-100 text-lime-700 dark:bg-lime-500/20 dark:text-lime-300", solid: "bg-lime-500" },
   higherlower: { soft: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300", solid: "bg-cyan-500" },
   number: { soft: "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300", solid: "bg-orange-500" },
+  whoknows: {
+    soft: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
+    solid: "bg-violet-500",
+  },
 };
 /** Accent class set for a round type (soft chip bg/text + solid dot). */
 export const accentFor = (type) => ACCENT[type] || ACCENT.classic;

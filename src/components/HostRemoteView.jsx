@@ -122,6 +122,7 @@ export default function HostRemoteView({ code }) {
               reveal={live?.reveal || null}
               compact
               qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
+              whoknows={live?.whoknows || null}
             />
           </div>
         </div>

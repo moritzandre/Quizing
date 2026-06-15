@@ -176,7 +176,12 @@ export const ROUND_TEMPLATES = [
       title: "True or False?",
       questions: [
         { q: "A group of flamingos is called a flamboyance.", correct: 0, points: 10, note: "Yes — really!" },
-        { q: "The Great Wall of China is visible from space with the naked eye.", correct: 1, points: 10, note: "A myth — it isn't." },
+        {
+          q: "The Great Wall of China is visible from space with the naked eye.",
+          correct: 1,
+          points: 10,
+          note: "A myth — it isn't.",
+        },
       ],
     },
   },
@@ -188,7 +193,12 @@ export const ROUND_TEMPLATES = [
       title: "Higher or Lower?",
       questions: [
         { q: "Mount Everest is 8,849 m. Is K2 higher or lower?", correct: 1, points: 10, note: "Lower — 8,611 m." },
-        { q: "Tokyo has ~14M people. Is London's population higher or lower?", correct: 1, points: 10, note: "Lower — ~9M." },
+        {
+          q: "Tokyo has ~14M people. Is London's population higher or lower?",
+          correct: 1,
+          points: 10,
+          note: "Lower — ~9M.",
+        },
       ],
     },
   },
@@ -204,6 +214,37 @@ export const ROUND_TEMPLATES = [
       ],
     },
   },
+  {
+    key: "whoknows-auction",
+    type: "whoknows",
+    round: {
+      type: "whoknows",
+      title: "Who Knows More",
+      timer: 20,
+      questions: [
+        {
+          q: "Name countries that border Germany",
+          answers: [
+            "France",
+            "Poland",
+            "Austria",
+            "Switzerland",
+            "Czechia",
+            "Netherlands",
+            "Belgium",
+            "Denmark",
+            "Luxembourg",
+          ],
+          ordered: false,
+        },
+        {
+          q: "The planets from the Sun outward",
+          answers: ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"],
+          ordered: true,
+        },
+      ],
+    },
+  },
 ];
 
 /** The starter round for a given ROUND_TEMPLATES key (by key so order can change freely). */
@@ -216,7 +257,12 @@ export const QUIZ_TEMPLATES = [
     title: "Mixed Night (Starter)",
     quiz: {
       title: "Mixed Night",
-      rounds: [roundTpl("classic-trivia"), roundTpl("choice-quiz"), roundTpl("map-geography"), roundTpl("number-guess")],
+      rounds: [
+        roundTpl("classic-trivia"),
+        roundTpl("choice-quiz"),
+        roundTpl("map-geography"),
+        roundTpl("number-guess"),
+      ],
     },
   },
   {
@@ -224,7 +270,12 @@ export const QUIZ_TEMPLATES = [
     title: "Pub Classic (Starter)",
     quiz: {
       title: "Pub Classic",
-      rounds: [roundTpl("classic-trivia"), roundTpl("hints-ladder"), roundTpl("clip-ladder"), roundTpl("jeopardy-board")],
+      rounds: [
+        roundTpl("classic-trivia"),
+        roundTpl("hints-ladder"),
+        roundTpl("clip-ladder"),
+        roundTpl("jeopardy-board"),
+      ],
     },
   },
 ];
@@ -237,8 +288,7 @@ const ROUND_SHAPES = {
     'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
   video:
     'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // url may be YouTube, a Spotify track (open.spotify.com/track/…), or a direct .mp3/.mp4 link; start/end (seconds) optionally trim it; pauses automatically when a player buzzes',
-  clip:
-    'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // the clip ladder: url may be YouTube, Spotify (great for music — dodges YouTube embed blocks), or a direct .mp3/.mp4; start/end is the FULL window; the host plays the first 1/(steps+1) of it and extends step by step for fewer points (like the hint ladder)',
+  clip: 'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // the clip ladder: url may be YouTube, Spotify (great for music — dodges YouTube embed blocks), or a direct .mp3/.mp4; start/end is the FULL window; the host plays the first 1/(steps+1) of it and extends step by step for fewer points (like the hint ladder)',
   image: 'questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]',
   morph:
     'questions: [{ "url": "https://.../pic.jpg", "a": string, "points": number, "effect": "blur"|"pixelate"|"tiles"|"zoom"|"slices", "steps": 1-8 }]',
@@ -250,6 +300,8 @@ const ROUND_SHAPES = {
     'questions: [{ "q": string (a statement), "correct": 0|1 (0 = True, 1 = False), "points": number, "note": string (optional, shown on reveal) }]',
   higherlower:
     'questions: [{ "q": string (e.g. "X is N. Is Y higher or lower?"), "correct": 0|1 (0 = Higher, 1 = Lower), "points": number, "note": string (optional fact shown on reveal) }]',
+  whoknows:
+    'top-level may add "timer": number (seconds per answer). questions: [{ "q": string (the category prompt), "answers": [string, ...] (ALL correct answers), "ordered": boolean (true = a ranked list, shown numbered) }]   // the host auctions the category; the winner must name as many as they claimed',
   number: 'questions: [{ "q": string, "answer": number, "unit": string, "points": number }]',
 };
 

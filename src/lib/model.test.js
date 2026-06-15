@@ -80,7 +80,10 @@ describe("mediaSource", () => {
       spType: "track",
       id: "4cOdK2wGLETKBW3PvgPWqT",
     });
-    expect(mediaSource("spotify:track:4cOdK2wGLETKBW3PvgPWqT")).toMatchObject({ kind: "spotify", id: "4cOdK2wGLETKBW3PvgPWqT" });
+    expect(mediaSource("spotify:track:4cOdK2wGLETKBW3PvgPWqT")).toMatchObject({
+      kind: "spotify",
+      id: "4cOdK2wGLETKBW3PvgPWqT",
+    });
     expect(mediaSource("https://open.spotify.com/episode/512ojhOuo1ktJprKbVcKyQ")).toMatchObject({
       kind: "spotify",
       spType: "episode",
@@ -324,6 +327,26 @@ describe("normalizeQuiz", () => {
     });
     expect(q.rounds[0].questions[0]).toMatchObject({ q: "How many?", answer: 42, unit: "kg", points: 10 });
     expect(q.rounds[0].questions[1].answer).toBe(null);
+  });
+
+  it("normalizes who-knows rounds: stringifies answers, drops blanks, coerces ordered", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "whoknows",
+          questions: [
+            { q: "Border countries", answers: ["France", "", "  ", 42, "Poland"], ordered: 1 },
+            { answers: "nope" },
+          ],
+        },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({
+      q: "Border countries",
+      answers: ["France", "42", "Poland"],
+      ordered: true,
+    });
+    expect(q.rounds[0].questions[1]).toMatchObject({ q: "", answers: [], ordered: false });
   });
 
   it("normalizes typed media hints; keeps text hints as strings; coerces junk", () => {
@@ -812,6 +835,45 @@ describe("presenter payloads", () => {
   it("normalizeLive round-trips a true/false reveal (correct + note for the TV)", () => {
     const n = normalizeLive({ reveal: { correct: 1, note: "It's a myth." } });
     expect(n.reveal).toMatchObject({ correct: 1, note: "It's a myth." });
+  });
+
+  it("normalizeLive round-trips a who-knows payload and defends against junk", () => {
+    expect(normalizeLive({}).whoknows).toBeNull();
+    const n = normalizeLive({
+      whoknows: {
+        phase: "answering",
+        winner: { name: "Ann", color: "#f00", emoji: "🦊" },
+        claimed: 3,
+        picked: [{ i: 1, text: "Poland" }, "junk"],
+        result: "hack", // not deliver|bust -> ""
+        showAll: false,
+        answers: ["should", "be", "hidden"], // dropped while showAll=false (no leak)
+        ordered: 1,
+        total: 9,
+        secsLeft: 12,
+      },
+    });
+    expect(n.whoknows).toMatchObject({
+      phase: "answering",
+      winner: { name: "Ann", color: "#f00", emoji: "🦊" },
+      claimed: 3,
+      result: "",
+      ordered: true,
+      total: 9,
+      secsLeft: 12,
+      answers: [], // not exposed until the host shows all
+    });
+    expect(n.whoknows.picked).toEqual([
+      { i: 1, text: "Poland" },
+      { i: 0, text: "" },
+    ]);
+  });
+
+  it("normalizeLive who-knows surfaces the full answer list only when showAll is set", () => {
+    const n = normalizeLive({
+      whoknows: { phase: "done", showAll: true, answers: ["France", 42, "Poland"], total: 3 },
+    });
+    expect(n.whoknows.answers).toEqual(["France", "42", "Poland"]);
   });
 
   it("buildPresentQ → normalizePresent round-trips a choice question", () => {

@@ -4,21 +4,22 @@ A host-led party quiz app. One host screen runs the show; players can buzz in, d
 
 **Round formats**
 
-| Type            | How it plays                                                                                                                                             |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Classic         | Read the question, reveal the answer, tap whoever got it right.                                                                                          |
-| Jeopardy        | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                                     |
-| Hint Ladder     | The answer starts at full value; every extra hint lowers it. Hints can be **text, image, audio, video, or a map pin**.                                   |
-| Video           | Plays a clip with custom controls — the **title stays hidden** (it would give the answer away). Source can be **YouTube, Spotify, or a direct audio/video file** (see _Media sources_). Optional **audio-only** mode. Auto-pauses **when a player buzzes in**.                          |
-| Clip Ladder     | A video/audio sibling of the Hint Ladder: the host plays a **short slice** of the clip and **extends it step by step** (the **Extend clip** button, the **H** key, or the host remote) — the longer it runs, the fewer points it's worth. Same sources as Video; auto-pauses on buzz. |
-| Picture         | Show an image (paste a URL or upload one), then reveal the answer.                                                                                       |
-| Morph           | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes. |
-| Fusion          | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                         |
-| Map             | A real pan/zoom world map. Players drop a pin (host screen or phones); reveal the true spot and the ranked guesses — **auto-scored**, closest wins.      |
-| Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.            |
-| True / False    | Read a statement; players tap **True** or **False** on their phones. **Auto-scored** — everyone right scores. Optional fact shown on reveal.            |
-| Higher / Lower  | Players guess whether the answer is **Higher** or **Lower** than the clue (e.g. "Everest is 8,849 m — is K2 higher or lower?"). **Auto-scored**.        |
-| Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                         |
+| Type            | How it plays                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Classic         | Read the question, reveal the answer, tap whoever got it right.                                                                                                                                                                                                                                                                                                                                                                    |
+| Jeopardy        | Category board of point tiles. Award **or dock** the tile's points (the +/− toggle).                                                                                                                                                                                                                                                                                                                                               |
+| Hint Ladder     | The answer starts at full value; every extra hint lowers it. Hints can be **text, image, audio, video, or a map pin**.                                                                                                                                                                                                                                                                                                             |
+| Video           | Plays a clip with custom controls — the **title stays hidden** (it would give the answer away). Source can be **YouTube, Spotify, or a direct audio/video file** (see _Media sources_). Optional **audio-only** mode. Auto-pauses **when a player buzzes in**.                                                                                                                                                                     |
+| Clip Ladder     | A video/audio sibling of the Hint Ladder: the host plays a **short slice** of the clip and **extends it step by step** (the **Extend clip** button, the **H** key, or the host remote) — the longer it runs, the fewer points it's worth. Same sources as Video; auto-pauses on buzz.                                                                                                                                              |
+| Picture         | Show an image (paste a URL or upload one), then reveal the answer.                                                                                                                                                                                                                                                                                                                                                                 |
+| Morph           | The picture starts obscured and worth the most; **demorph** it step by step (blur, pixelate, tiles, zoom, or slices) — fewer points the longer it takes.                                                                                                                                                                                                                                                                           |
+| Fusion          | Two images blended into one — guess both halves. **Defuse** to peek toward each; reveal shows them side by side.                                                                                                                                                                                                                                                                                                                   |
+| Map             | A real pan/zoom world map. Players drop a pin (host screen or phones); reveal the true spot and the ranked guesses — **auto-scored**, closest wins.                                                                                                                                                                                                                                                                                |
+| Multiple choice | Players tap A/B/C/D on their phones; live tallies on the host screen, **auto-scored** — everyone who picked the right option gets the points.                                                                                                                                                                                                                                                                                      |
+| True / False    | Read a statement; players tap **True** or **False** on their phones. **Auto-scored** — everyone right scores. Optional fact shown on reveal.                                                                                                                                                                                                                                                                                       |
+| Higher / Lower  | Players guess whether the answer is **Higher** or **Lower** than the clue (e.g. "Everest is 8,849 m — is K2 higher or lower?"). **Auto-scored**.                                                                                                                                                                                                                                                                                   |
+| Closest number  | Players type a number on their phones; reveal ranks every guess by distance and **auto-awards the closest** one.                                                                                                                                                                                                                                                                                                                   |
+| Who Knows More  | An **auction**: a player claims how many of a category they know, then must name at least that many — the host taps each correct answer (they pop onto squares matching the claim) against a **per-answer clock**. Deliver them all and the winner scores the claim; **bust** (run out of time short) and every _other_ player banks the answers given so far. The host can showcase the full, optionally **ranked**, answer list. |
 
 Other features:
 
@@ -138,7 +139,7 @@ src/
     HostRemoteView.jsx      Phone host controller (#/host/<code>): reveal/advance/award/hints over a ctrl channel
     PlayView.jsx            Game screen: intro → question/board → final scores; timer, buzzer, phone pins/answers, auto-scoring, TV stream
     SetupView.jsx           Player/team entry (Solo/Teams toggle) + buzzer lobby
-    Builder.jsx             Quiz editor for all thirteen round types; drag-and-drop; image crop; media trim; map satellite/search; templates
+    Builder.jsx             Quiz editor for all fourteen round types; drag-and-drop; image crop; media trim; map satellite/search; templates
     BuzzerPanel.jsx         Host buzzer lobby: QR, room code, roster
     JoinView.jsx            Phone page: avatar + team picker, buzz, pin, choice tap, number guess
     LeaderboardView.jsx     Persistent standings
@@ -288,6 +289,35 @@ Quizzes exported from the home screen look like this (import accepts this wrappe
         "title": "Closest Guess",
         // answer is the target number; unit is an optional label; closest phone guess auto-wins
         "questions": [{ "id": "nu1", "q": "How many…?", "answer": 168, "unit": "items", "points": 15 }],
+      },
+      {
+        "id": "r11",
+        "type": "truefalse",
+        "title": "True or False",
+        // correct: 0 = True, 1 = False; auto-scored; note is an optional fact shown on reveal
+        "questions": [{ "id": "tf1", "q": "A statement…", "correct": 1, "points": 10, "note": "Actually…" }],
+      },
+      {
+        "id": "r12",
+        "type": "higherlower",
+        "title": "Higher or Lower",
+        // correct: 0 = Higher, 1 = Lower; auto-scored; note is optional
+        "questions": [{ "id": "hl1", "q": "X is N — is Y higher or lower?", "correct": 0, "points": 10, "note": "" }],
+      },
+      {
+        "id": "r13",
+        "type": "whoknows",
+        "title": "Who Knows More",
+        // timer = seconds per answer; answers = ALL correct answers; ordered = show them numbered
+        "timer": 20,
+        "questions": [
+          {
+            "id": "wk1",
+            "q": "Countries bordering Germany",
+            "answers": ["France", "Poland", "Austria"],
+            "ordered": false,
+          },
+        ],
       },
     ],
   },

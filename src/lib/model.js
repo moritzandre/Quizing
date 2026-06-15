@@ -23,6 +23,7 @@ export const ROUND_TYPES = [
   "truefalse",
   "higherlower",
   "number",
+  "whoknows",
 ];
 
 /** Reveal effects for the morph round. */
@@ -130,11 +131,19 @@ export function mediaSource(url = "") {
   const s = String(url).trim();
   if (!s) return null;
   // Spotify track/episode: open.spotify.com/(intl-xx/)track/ID, or spotify:track:ID
-  const sp = s.match(/(?:open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|episode)\/|spotify:(track|episode):)([A-Za-z0-9]+)/);
+  const sp = s.match(
+    /(?:open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|episode)\/|spotify:(track|episode):)([A-Za-z0-9]+)/,
+  );
   if (sp) {
     const spType = sp[1] || sp[2];
     const id = sp[3];
-    return { kind: "spotify", id, spType, uri: `spotify:${spType}:${id}`, embedUrl: `https://open.spotify.com/embed/${spType}/${id}` };
+    return {
+      kind: "spotify",
+      id,
+      spType,
+      uri: `spotify:${spType}:${id}`,
+      embedUrl: `https://open.spotify.com/embed/${spType}/${id}`,
+    };
   }
   // Direct media file by extension (allowing a trailing ?query/#hash) or data: URL
   const ext = s.match(/\.([a-z0-9]+)(?:[?#]|$)/i);
@@ -270,6 +279,11 @@ export function makeQuestion(type) {
       return { id: uid(), q: "", answer: null, unit: "", points: 10 };
     case "map":
       return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10, tileLayer: "map", street: "" };
+    case "whoknows":
+      // "Who Knows More": a category the host auctions; the winner must name
+      // at least as many correct answers as they claimed. `answers` is the full
+      // list (for clicking + showcase); `ordered` shows them numbered on reveal.
+      return { id: uid(), q: "", answers: ["", "", "", "", ""], ordered: false };
     default:
       return { id: uid() };
   }
@@ -388,6 +402,14 @@ export function normalizeQuiz(raw) {
               answer: numOrNull(q?.answer),
               unit: str(q?.unit),
               points: num(q?.points, 10),
+            });
+          if (r.type === "whoknows")
+            Object.assign(it, {
+              q: str(q?.q),
+              answers: (Array.isArray(q?.answers) ? q.answers : [])
+                .map((a) => (typeof a === "number" ? String(a) : str(a)))
+                .filter((a) => a.trim() !== ""),
+              ordered: !!q?.ordered,
             });
           if (r.type === "map")
             Object.assign(it, {
@@ -646,9 +668,47 @@ function presentQ(type, q) {
       return { q: str(q.q) };
     case "number":
       return { q: str(q.q), unit: str(q.unit) };
+    case "whoknows":
+      // The full answer list is NEVER sent here (it would leak); the picked /
+      // showcased answers travel in the live payload (whoknows) instead.
+      return { q: str(q.q), total: (Array.isArray(q.answers) ? q.answers : []).length, ordered: !!q.ordered };
     default:
       return {};
   }
+}
+
+/**
+ * Validate/sanitize the live state of a "Who Knows More" round (host → TV).
+ * Used both when the host builds the payload and when the TV parses it. The
+ * full answer list is only carried once the host showcases it (showAll).
+ */
+function normalizeWhoknows(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const w = raw.winner;
+  return {
+    phase: ["auction", "answering", "done"].includes(raw.phase) ? raw.phase : "auction",
+    winner:
+      w && typeof w === "object" && !Array.isArray(w)
+        ? {
+            name: str(w.name),
+            color: typeof w.color === "string" ? w.color : null,
+            emoji: typeof w.emoji === "string" ? w.emoji : null,
+          }
+        : null,
+    claimed: Math.max(0, num(raw.claimed, 0)),
+    picked: (Array.isArray(raw.picked) ? raw.picked : [])
+      .slice(0, 100)
+      .map((p) => ({ i: num(p?.i, 0), text: str(p?.text) })),
+    result: ["deliver", "bust"].includes(raw.result) ? raw.result : "",
+    showAll: !!raw.showAll,
+    answers:
+      raw.showAll && Array.isArray(raw.answers)
+        ? raw.answers.map((a) => (typeof a === "number" ? String(a) : str(a))).slice(0, 200)
+        : [],
+    ordered: !!raw.ordered,
+    total: Math.max(0, num(raw.total, 0)),
+    secsLeft: Math.max(0, num(raw.secsLeft, 0)),
+  };
 }
 
 /** The answer/reveal fields for the TV (only emitted once the host reveals). */
@@ -748,6 +808,7 @@ export function buildLive(game, opts = {}) {
         : { n: 0, action: "idle" },
     soundOnTv: !!opts.soundOnTv,
     volume: Math.max(0, Math.min(100, num(opts.volume, 100))),
+    whoknows: opts.whoknows ? normalizeWhoknows(opts.whoknows) : null,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -819,10 +880,14 @@ export function normalizeLive(raw) {
     recapFrom: raw.showRecap ? scoreMap(raw.recapFrom) : null,
     transport:
       raw.transport && typeof raw.transport === "object"
-        ? { n: num(raw.transport.n, 0), action: ["play", "pause", "restart"].includes(raw.transport.action) ? raw.transport.action : "idle" }
+        ? {
+            n: num(raw.transport.n, 0),
+            action: ["play", "pause", "restart"].includes(raw.transport.action) ? raw.transport.action : "idle",
+          }
         : { n: 0, action: "idle" },
     soundOnTv: !!raw.soundOnTv,
     volume: Math.max(0, Math.min(100, num(raw.volume, 100))),
+    whoknows: raw.whoknows ? normalizeWhoknows(raw.whoknows) : null,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",

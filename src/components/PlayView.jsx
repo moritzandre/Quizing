@@ -18,6 +18,7 @@ import {
   FastForward,
   Volume2,
   VolumeX,
+  Gavel,
   Target,
   Radio,
   Bell,
@@ -44,7 +45,18 @@ import {
   buildLive,
   mapillaryEmbedUrl,
 } from "../lib/model.js";
-import { TYPES, FOCUS, Button, IconButton, Confetti, Avatar, accentFor, optionsFor, colorAt, SoundToggle } from "./ui.jsx";
+import {
+  TYPES,
+  FOCUS,
+  Button,
+  IconButton,
+  Confetti,
+  Avatar,
+  accentFor,
+  optionsFor,
+  colorAt,
+  SoundToggle,
+} from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import MapillaryEmbed from "./MapillaryEmbed.jsx";
 import { playSound } from "../lib/sound.js";
@@ -122,6 +134,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
     sendTransport("restart");
   };
 
+  /* "Who Knows More" live play state (UI-only): auction → answering → done */
+  const WK_INIT = { phase: "auction", winnerId: null, claimed: 1, picked: [], result: "", showAll: false };
+  const [wk, setWk] = useState(WK_INIT);
+  const [wkLeft, setWkLeft] = useState(0); // per-answer countdown (seconds)
+  const wkSecs = round?.timer || 20; // seconds per answer for this round
+
   /* map round: show the Mapillary street view instead of the map (UI-only) */
   const [streetOn, setStreetOn] = useState(false);
 
@@ -162,6 +180,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setPaused(false);
     setMorphStep(0);
     setTransport({ n: 0, action: "idle" });
+    setWk(WK_INIT);
+    setWkLeft(0);
     setStreetOn(false);
     setRecap(false);
     setGuessFor(game.players[0]?.id ?? null);
@@ -184,6 +204,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
     } else if (round?.type === "number") {
       room.collectAnswers(qKey, { phase: "number" });
+    } else if (round?.type === "whoknows") {
+      room.idle(); // host-driven auction round — phones aren't used
     } else {
       room.arm(qKey);
     }
@@ -194,6 +216,24 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (!buzzerOn) return;
     room.pushPresent(buildPresentQ(game));
   }, [buzzerOn, game.stage, qKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Build the "Who Knows More" live state (winner / squares / picked answers / timer) for the TV.
+  const wkQ = round?.type === "whoknows" ? round.questions?.[game.qi] : null;
+  const wkWinner = wk.winnerId ? game.players.find((p) => p.id === wk.winnerId) : null;
+  const wkLive = wkQ
+    ? {
+        phase: wk.phase,
+        winner: wkWinner ? { name: wkWinner.name, color: wkWinner.color || null, emoji: wkWinner.emoji || null } : null,
+        claimed: wk.claimed,
+        picked: wk.picked.map((i) => ({ i, text: (wkQ.answers || [])[i] || "" })),
+        result: wk.result,
+        showAll: wk.showAll,
+        answers: wk.showAll ? wkQ.answers || [] : [],
+        ordered: !!wkQ.ordered,
+        total: (wkQ.answers || []).length,
+        secsLeft: wk.phase === "answering" ? wkLeft : 0,
+      }
+    : null;
 
   // Stream the light, frequently-changing presenter payload (reveal/step/scores).
   const scoreSig = game.players.map((p) => `${p.id}:${p.score}:${p.name}:${p.color}:${p.emoji}`).join(",");
@@ -210,10 +250,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         transport,
         soundOnTv,
         volume,
+        whoknows: wkLive,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv, volume]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
@@ -354,6 +395,49 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   const adjustScore = (pid, delta) =>
     upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
+
+  /* ---- "Who Knows More" handlers ---- */
+  // Award the category to the auction winner and start their per-answer clock.
+  const wkAward = () => {
+    if (wk.winnerId == null || wk.claimed < 1) return;
+    setWk({ ...wk, phase: "answering", picked: [], result: "" });
+    setWkLeft(wkSecs);
+  };
+  // Host clicks a correct answer the player gave: fill a square, reset the clock,
+  // and deliver once they've reached their claim.
+  const wkPick = (ai) => {
+    if (wk.phase !== "answering" || wk.picked.includes(ai)) return;
+    const picked = [...wk.picked, ai];
+    setWkLeft(wkSecs);
+    if (picked.length >= wk.claimed) {
+      playSound("correct");
+      upd({ players: game.players.map((p) => (p.id === wk.winnerId ? { ...p, score: p.score + wk.claimed } : p)) });
+      setWk({ ...wk, picked, phase: "done", result: "deliver" });
+    } else {
+      setWk({ ...wk, picked });
+    }
+  };
+  // Bust: the winner gets nothing; every other player banks the points gained so far.
+  const wkBustNow = () => {
+    if (wk.phase !== "answering") return;
+    playSound("wrong");
+    const gained = wk.picked.length;
+    if (gained > 0)
+      upd({ players: game.players.map((p) => (p.id !== wk.winnerId ? { ...p, score: p.score + gained } : p)) });
+    setWk({ ...wk, phase: "done", result: "bust" });
+    setWkLeft(0);
+  };
+
+  // Per-answer countdown: tick while answering; bust when it hits zero.
+  useEffect(() => {
+    if (wk.phase !== "answering") return;
+    if (wkLeft <= 0) {
+      wkBustNow();
+      return;
+    }
+    const id = setTimeout(() => setWkLeft((s) => s - 1), 1000);
+    return () => clearTimeout(id);
+  }, [wk.phase, wkLeft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const jumpToRound = (ri) => {
     if (!Number.isInteger(ri) || ri < 0 || ri >= quiz.rounds.length) return; // guard untrusted ctrl/jump input
@@ -1068,25 +1152,25 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const buzzName = room?.buzz ? entityForDevice(room.buzz.deviceId)?.name || room.buzz.name : "";
   const BuzzerBar = buzzerOn &&
     !game.revealed &&
-    !["map", "choice", "truefalse", "higherlower", "number"].includes(round.type) && (
-    <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
-      {room.buzz ? (
-        <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
-          <Bell size={15} /> {t("play.buzzedFirst", { name: buzzName })}
-        </span>
-      ) : (
-        <span className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-1.5 text-sm font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-300">
-          <Radio size={14} /> {t("play.buzzArmed")}
-        </span>
-      )}
-      <button
-        onClick={room.resetBuzz}
-        className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
-      >
-        <RotateCcw size={13} /> {t("play.rearm")}
-      </button>
-    </div>
-  );
+    !["map", "choice", "truefalse", "higherlower", "number", "whoknows"].includes(round.type) && (
+      <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
+        {room.buzz ? (
+          <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
+            <Bell size={15} /> {t("play.buzzedFirst", { name: buzzName })}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-1.5 text-sm font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-300">
+            <Radio size={14} /> {t("play.buzzArmed")}
+          </span>
+        )}
+        <button
+          onClick={room.resetBuzz}
+          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 ${FOCUS}`}
+        >
+          <RotateCcw size={13} /> {t("play.rearm")}
+        </button>
+      </div>
+    );
 
   let body = null;
 
@@ -1519,6 +1603,185 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
         {game.revealed && <div className="mt-6">{NextBtn}</div>}
+      </div>
+    );
+  }
+
+  if (round.type === "whoknows") {
+    const answers = q.answers || [];
+    const winner = wk.winnerId ? game.players.find((p) => p.id === wk.winnerId) : null;
+    const winnerIdx = winner ? game.players.findIndex((p) => p.id === winner.id) : 0;
+    body = (
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+          <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">{t("play.wkTotal", { n: answers.length })}</p>
+        </div>
+
+        {wk.phase === "auction" && (
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4">
+            <p className="text-lg font-semibold">{t("play.wkPickWinner")}</p>
+            <div className="flex max-w-2xl flex-wrap justify-center gap-2">
+              {game.players.map((p, i) => (
+                <button
+                  key={p.id}
+                  onClick={() => setWk({ ...wk, winnerId: p.id })}
+                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition active:scale-95 ${FOCUS} ${
+                    wk.winnerId === p.id
+                      ? "border-violet-400 bg-violet-50 text-violet-700 dark:border-violet-500/50 dark:bg-violet-500/10 dark:text-violet-300"
+                      : "border-stone-200 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200"
+                  }`}
+                >
+                  <Avatar color={colorFor(p, i)} emoji={p.emoji} photo={p.photo} name={p.name} size={20} /> {p.name}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{t("play.wkClaim")}</span>
+              <input
+                type="number"
+                min="1"
+                max={Math.max(1, answers.length)}
+                value={wk.claimed}
+                onChange={(e) => setWk({ ...wk, claimed: Math.max(1, Math.floor(+e.target.value || 1)) })}
+                className="w-20 rounded-xl border border-stone-300 bg-white px-3 py-2 text-center text-lg font-bold dark:border-stone-700 dark:bg-stone-900"
+              />
+            </div>
+            <Button className="px-6 py-3.5 text-base" disabled={wk.winnerId == null} onClick={wkAward}>
+              <Gavel size={18} /> {t("play.wkAward")}
+            </Button>
+          </div>
+        )}
+
+        {(wk.phase === "answering" || wk.phase === "done") && (
+          <>
+            <div className="mt-2 flex shrink-0 items-center justify-center gap-2 text-sm">
+              {winner && (
+                <span className="inline-flex items-center gap-1.5 font-semibold">
+                  <Avatar
+                    color={colorFor(winner, winnerIdx)}
+                    emoji={winner.emoji}
+                    photo={winner.photo}
+                    name={winner.name}
+                    size={22}
+                  />
+                  {winner.name}
+                </span>
+              )}
+              <span className="text-stone-400">·</span>
+              <span className="text-stone-500 dark:text-stone-400">{t("play.wkClaimsN", { n: wk.claimed })}</span>
+              {wk.phase === "answering" && (
+                <span
+                  className={`ml-1 rounded-full px-2.5 py-0.5 font-bold tabular-nums ${
+                    wkLeft <= 5
+                      ? "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-300"
+                      : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300"
+                  }`}
+                >
+                  {t("play.wkPerAnswerLeft", { n: wkLeft })}
+                </span>
+              )}
+            </div>
+
+            {/* squares for the claimed answers, filling as the host clicks correct ones */}
+            <div className="mt-3 flex shrink-0 flex-wrap justify-center gap-2">
+              {Array.from({ length: wk.claimed }).map((_, si) => {
+                const pick = wk.picked[si];
+                return (
+                  <div
+                    key={si}
+                    className={`flex h-9 min-w-[3rem] items-center justify-center rounded-lg border px-2 text-sm font-semibold ${
+                      pick != null
+                        ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/10 dark:text-emerald-300"
+                        : "border-dashed border-stone-300 text-stone-300 dark:border-stone-700 dark:text-stone-600"
+                    }`}
+                  >
+                    {pick != null ? answers[pick] : si + 1}
+                  </div>
+                );
+              })}
+            </div>
+
+            {wk.phase === "done" && (
+              <p
+                className={`mt-3 shrink-0 text-xl font-bold ${
+                  wk.result === "deliver" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                }`}
+              >
+                {wk.result === "deliver"
+                  ? t("play.wkDelivered", { n: wk.claimed })
+                  : t("play.wkBust", { n: wk.picked.length })}
+              </p>
+            )}
+
+            {/* the answer list — the host taps the ones the player gives (answering),
+                or reviews which were hit/missed (done + showcase) */}
+            {(wk.phase === "answering" || (wk.phase === "done" && wk.showAll)) && (
+              <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
+                {wk.phase === "answering" && (
+                  <p className="mb-2 text-xs text-stone-400 dark:text-stone-500">{t("play.wkClickHint")}</p>
+                )}
+                <div className="mx-auto grid max-w-2xl gap-1.5 text-left sm:grid-cols-2">
+                  {answers.map((ans, ai) => {
+                    const got = wk.picked.includes(ai);
+                    return wk.phase === "answering" ? (
+                      <button
+                        key={ai}
+                        disabled={got}
+                        onClick={() => wkPick(ai)}
+                        className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left text-sm transition active:scale-[.99] ${FOCUS} ${
+                          got
+                            ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/10 dark:text-emerald-300"
+                            : "border-stone-200 bg-white hover:border-violet-300 dark:border-stone-700 dark:bg-stone-800"
+                        }`}
+                      >
+                        <span>
+                          {q.ordered ? `${ai + 1}. ` : ""}
+                          {ans}
+                        </span>
+                        {got && <Check size={15} className="shrink-0" />}
+                      </button>
+                    ) : (
+                      <div
+                        key={ai}
+                        className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm ${
+                          got
+                            ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                            : "border-stone-200 bg-white text-stone-500 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-400"
+                        }`}
+                      >
+                        <span>
+                          {q.ordered ? `${ai + 1}. ` : ""}
+                          {ans}
+                        </span>
+                        {got && <Check size={15} className="shrink-0 text-emerald-600 dark:text-emerald-400" />}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-3 flex shrink-0 flex-wrap justify-center gap-2">
+              {wk.phase === "answering" && (
+                <Button variant="outline" className="px-4 py-2.5" onClick={wkBustNow}>
+                  {t("play.wkEndTurn")}
+                </Button>
+              )}
+              {wk.phase === "done" && (
+                <Button
+                  variant="outline"
+                  className="px-4 py-2.5"
+                  onClick={() => setWk({ ...wk, showAll: !wk.showAll })}
+                >
+                  {wk.showAll ? t("play.wkHideAll") : t("play.wkShowAll")}
+                </Button>
+              )}
+              {wk.phase === "done" && NextBtn}
+            </div>
+          </>
+        )}
       </div>
     );
   }

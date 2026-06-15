@@ -958,7 +958,9 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             {item.url ? (ok ? t("builder.ytOk") : t("builder.ytBad")) : t("builder.ytPaste")}
                           </p>
                           {src?.kind === "spotify" && (
-                            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("builder.spotifyNote")}</p>
+                            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
+                              {t("builder.spotifyNote")}
+                            </p>
                           )}
                           <label className="mt-2 inline-flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-stone-300">
                             <input
@@ -1423,6 +1425,115 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   </SortableList>
                   <button
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("number")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addQuestion")}
+                  </button>
+                </>
+              )}
+
+              {/* who knows more (auction) */}
+              {r.type === "whoknows" && (
+                <>
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="text-xs text-stone-400 dark:text-stone-500">{t("builder.wkSecsPerAnswer")}</span>
+                    <input
+                      type="number"
+                      min="3"
+                      className={`${inputCls} w-24 py-1`}
+                      value={r.timer ?? 20}
+                      onChange={(e) => setRound(r.id, { timer: Math.max(3, Math.floor(+e.target.value || 20)) })}
+                    />
+                  </div>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
+                    {(item, i, hp) => {
+                      const answers = item.answers || [];
+                      const moveAns = (ai, dir) => {
+                        const j = ai + dir;
+                        if (j < 0 || j >= answers.length) return;
+                        const a = [...answers];
+                        [a[ai], a[j]] = [a[j], a[ai]];
+                        qRow(r, item, { answers: a });
+                      };
+                      return (
+                        <div className={panelCls}>
+                          <div className={rowLabelCls}>
+                            <span className="flex items-center gap-1">
+                              <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                            </span>
+                            <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                          </div>
+                          <input
+                            className={inputCls}
+                            placeholder={t("builder.question")}
+                            value={item.q}
+                            onChange={(e) => qRow(r, item, { q: e.target.value })}
+                          />
+                          <label className="mt-2 inline-flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-stone-300">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 rounded accent-indigo-600"
+                              checked={!!item.ordered}
+                              onChange={(e) => qRow(r, item, { ordered: e.target.checked })}
+                            />
+                            {t("builder.wkOrdered")}
+                          </label>
+                          <div className="mt-2 space-y-1.5">
+                            {answers.map((ans, ai) => (
+                              <div key={ai} className="flex items-center gap-1.5">
+                                {item.ordered && (
+                                  <span className="w-5 shrink-0 text-right text-xs font-bold text-stone-400">
+                                    {ai + 1}
+                                  </span>
+                                )}
+                                <input
+                                  className={`${inputCls} flex-1`}
+                                  placeholder={t("builder.wkAnswer")}
+                                  value={ans}
+                                  onChange={(e) =>
+                                    qRow(r, item, { answers: answers.map((a, j) => (j === ai ? e.target.value : a)) })
+                                  }
+                                />
+                                <button
+                                  onClick={() => moveAns(ai, -1)}
+                                  aria-label="Move up"
+                                  className={`shrink-0 rounded-md border border-stone-200 p-1 text-stone-400 dark:border-stone-700 ${FOCUS}`}
+                                >
+                                  <ChevronUp size={14} />
+                                </button>
+                                <button
+                                  onClick={() => moveAns(ai, 1)}
+                                  aria-label="Move down"
+                                  className={`shrink-0 rounded-md border border-stone-200 p-1 text-stone-400 dark:border-stone-700 ${FOCUS}`}
+                                >
+                                  <ChevronDown size={14} />
+                                </button>
+                                <button
+                                  onClick={() => qRow(r, item, { answers: answers.filter((_, j) => j !== ai) })}
+                                  aria-label={t("builder.deleteOption")}
+                                  className={`shrink-0 rounded-md border border-stone-200 p-1 text-stone-400 hover:text-red-500 dark:border-stone-700 ${FOCUS}`}
+                                >
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button
+                            onClick={() => qRow(r, item, { answers: [...answers, ""] })}
+                            className={`mt-2 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+                          >
+                            <Plus size={13} /> {t("builder.wkAddAnswer")}
+                          </button>
+                        </div>
+                      );
+                    }}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("whoknows")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
                     <Plus size={15} /> {t("builder.addQuestion")}
