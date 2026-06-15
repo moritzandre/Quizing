@@ -36,6 +36,7 @@ export default function NativeMediaPlayer({
   end = null,
   transport = null,
   controls = true,
+  volume = 100,
 }) {
   const { t } = useI18n();
   const ref = useRef(null);
@@ -70,6 +71,18 @@ export default function NativeMediaPlayer({
       /* element not ready */
     }
   }, [transport?.n]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Volume (0-100) → the element's 0..1 volume.
+  useEffect(() => {
+    const el = ref.current;
+    if (el) {
+      try {
+        el.volume = Math.max(0, Math.min(1, volume / 100));
+      } catch {
+        /* not ready */
+      }
+    }
+  }, [volume]);
 
   // Reset transient state + reload when the source changes — RoundBody (TV /
   // host remote) reuses this component across questions without remounting it.

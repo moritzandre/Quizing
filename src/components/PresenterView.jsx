@@ -167,6 +167,7 @@ export default function PresenterView({ code }) {
       transport={live?.transport || null}
       stage={!!live?.soundOnTv && soundOn}
       qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
+      volume={live?.volume ?? 100}
     />,
   );
 }

@@ -699,21 +699,27 @@ describe("presenter payloads", () => {
     expect(r.recapFrom).toEqual({ a: 10, b: 5 }); // non-numeric entries dropped
   });
 
-  it("buildLive carries the media transport + soundOnTv (so the TV plays/pauses the clip)", () => {
+  it("buildLive carries the media transport + soundOnTv + volume (so the TV plays/pauses the clip)", () => {
     expect(buildLive(game()).transport).toEqual({ n: 0, action: "idle" });
     expect(buildLive(game()).soundOnTv).toBe(false);
-    const t = buildLive(game(), { transport: { n: 3, action: "play" }, soundOnTv: true });
+    expect(buildLive(game()).volume).toBe(100); // full by default
+    const t = buildLive(game(), { transport: { n: 3, action: "play" }, soundOnTv: true, volume: 40 });
     expect(t.transport).toEqual({ n: 3, action: "play" });
     expect(t.soundOnTv).toBe(true);
+    expect(t.volume).toBe(40);
   });
 
-  it("normalizeLive validates the transport action + soundOnTv against junk", () => {
+  it("normalizeLive validates the transport action + soundOnTv + volume against junk", () => {
     expect(normalizeLive({}).transport).toEqual({ n: 0, action: "idle" });
-    expect(normalizeLive({ transport: { n: 5, action: "restart" }, soundOnTv: 1 })).toMatchObject({
+    expect(normalizeLive({}).volume).toBe(100);
+    expect(normalizeLive({ transport: { n: 5, action: "restart" }, soundOnTv: 1, volume: 25 })).toMatchObject({
       transport: { n: 5, action: "restart" },
       soundOnTv: true,
+      volume: 25,
     });
     expect(normalizeLive({ transport: { n: 2, action: "hack" } }).transport).toEqual({ n: 2, action: "idle" }); // bad action dropped
+    expect(normalizeLive({ volume: 999 }).volume).toBe(100); // clamped
+    expect(normalizeLive({ volume: -5 }).volume).toBe(0); // clamped
   });
 
   it("buildPresentQ → normalizePresent round-trips a clip ladder (steps + window survive)", () => {

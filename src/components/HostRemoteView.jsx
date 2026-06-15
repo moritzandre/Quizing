@@ -19,6 +19,7 @@ import {
   Minus,
   SkipForward,
   Volume2,
+  VolumeX,
   RotateCcw,
   Pause,
   Wifi,
@@ -175,6 +176,21 @@ export default function HostRemoteView({ code }) {
                   <RotateCcw size={16} /> {t("play.restart")}
                 </button>
               </div>
+            )}
+            {!revealed && (type === "video" || type === "clip") && (
+              <label className="col-span-2 flex items-center gap-3 rounded-2xl border border-stone-300 px-4 py-2.5 dark:border-stone-700">
+                {(live?.volume ?? 100) === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={live?.volume ?? 100}
+                  onChange={(e) => sendCtrl("volume", { value: +e.target.value })}
+                  aria-label={t("play.volume")}
+                  className="h-1 flex-1 cursor-pointer accent-indigo-500"
+                />
+              </label>
             )}
             {!revealed && hasLadder && (
               <button

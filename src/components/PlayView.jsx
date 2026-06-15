@@ -16,6 +16,8 @@ import {
   Pause,
   Play,
   FastForward,
+  Volume2,
+  VolumeX,
   Target,
   Radio,
   Bell,
@@ -112,6 +114,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
      pauses/restarts from this. `soundOnTv` moves the stage (audio) to the TV. */
   const [transport, setTransport] = useState({ n: 0, action: "idle" });
   const [soundOnTv, setSoundOnTv] = useState(false);
+  const [volume, setVolume] = useState(100); // clip/audio playback volume (0-100), applied to the stage player
   const sendTransport = (action) => setTransport((tr) => ({ n: tr.n + 1, action }));
   // Extending the clip ladder replays from the start at the new (longer) length.
   const extendClip = (steps) => {
@@ -205,10 +208,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         recapFrom: game.roundStartScores,
         transport,
         soundOnTv,
+        volume,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv, volume]); // prettier-ignore
 
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
@@ -468,6 +472,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
         break;
       case "soundOnTv":
         setSoundOnTv(!!a.on);
+        break;
+      case "volume":
+        if (Number.isFinite(+a.value)) setVolume(Math.max(0, Math.min(100, +a.value)));
         break;
       case "sign":
         setSign(a.sign === -1 ? -1 : 1);
@@ -1189,6 +1196,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 end={clipEnd(q, morphStep)}
                 transport={transport}
                 controls={false}
+                volume={volume}
               />
             </div>
           )}
@@ -1196,7 +1204,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <div className="shrink-0">
           <h2 className="mt-3 text-xl font-bold tracking-tight md:text-2xl">{q.q}</h2>
           {!game.revealed && (
-            <div className="mt-3 flex flex-wrap justify-center gap-2">
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("play")}>
                 <Play size={16} /> {t("play.play")}
               </Button>
@@ -1214,6 +1222,19 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   </span>
                 </Button>
               )}
+              <label className="inline-flex items-center gap-2 rounded-2xl border border-stone-200 px-3 py-2 dark:border-stone-700">
+                {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={volume}
+                  onChange={(e) => setVolume(Math.max(0, Math.min(100, +e.target.value)))}
+                  aria-label={t("play.volume")}
+                  className="h-1 w-24 cursor-pointer accent-indigo-500"
+                />
+              </label>
             </div>
           )}
           <div className="mt-3" style={{ minHeight: 56 }}>

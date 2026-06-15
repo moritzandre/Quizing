@@ -51,6 +51,7 @@ export default function RoundBody({
   stage = false,
   compact = false,
   qKey = "",
+  volume = 100,
 }) {
   const { t } = useI18n();
 
@@ -101,6 +102,7 @@ export default function RoundBody({
                 end={clipEnd(q, step)}
                 transport={transport}
                 controls={false}
+                volume={volume}
               />
             </div>
           ) : (

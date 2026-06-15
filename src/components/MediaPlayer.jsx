@@ -32,6 +32,7 @@ export default function MediaPlayer({
   end = null,
   transport = null,
   controls = true,
+  volume = 100,
 }) {
   const { t } = useI18n();
   const src = mediaSource(url);
@@ -44,7 +45,7 @@ export default function MediaPlayer({
     );
   }
   if (src.kind === "spotify") {
-    return <SpotifyPlayer uri={src.uri} start={start} end={end} transport={transport} controls={controls} />;
+    return <SpotifyPlayer uri={src.uri} start={start} end={end} transport={transport} controls={controls} volume={volume} />;
   }
   if (src.kind === "file") {
     return (
@@ -56,6 +57,7 @@ export default function MediaPlayer({
         end={end}
         transport={transport}
         controls={controls}
+        volume={volume}
       />
     );
   }
@@ -67,6 +69,7 @@ export default function MediaPlayer({
       end={end}
       transport={transport}
       controls={controls}
+      volume={volume}
     />
   );
 }

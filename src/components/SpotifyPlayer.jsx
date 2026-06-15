@@ -50,7 +50,7 @@ function loadSpotifyAPI() {
  * @param {{n:number,action:string}|null} [props.transport] Remote transport (play | pause | restart) on n change.
  * @param {boolean} [props.controls] Show the built-in control bar (false = headless, transport-driven).
  */
-export default function SpotifyPlayer({ uri, start = null, end = null, transport = null, controls = true }) {
+export default function SpotifyPlayer({ uri, start = null, end = null, transport = null, controls = true, volume = 100 }) {
   const { t } = useI18n();
   const hostRef = useRef(null);
   const ctrlRef = useRef(null);
@@ -97,6 +97,7 @@ export default function SpotifyPlayer({ uri, start = null, end = null, transport
             if (out != null && out > (startRef.current || 0) && !d.isPaused && (d.position || 0) / 1000 >= out) {
               try {
                 ctrl.pause();
+                setPlaying(false); // keep our state accurate even if no follow-up update fires
               } catch {
                 /* ignore */
               }
@@ -121,6 +122,20 @@ export default function SpotifyPlayer({ uri, start = null, end = null, transport
     };
   }, [uri]);
 
+  // Definitively start playback regardless of our cached state (which can be
+  // stale after the end-poll auto-pause — that made Restart silently no-op).
+  // play() is the idempotent Spotify-embed method; resume()/togglePlay() are
+  // defensive fallbacks if a given embed build exposes a different surface.
+  const playNow = (c) => {
+    try {
+      if (typeof c.play === "function") c.play();
+      else if (typeof c.resume === "function") c.resume();
+      else if (!playingRef.current) c.togglePlay();
+    } catch {
+      /* ignore */
+    }
+  };
+
   // Remote transport: apply play / pause / restart whenever transport.n changes
   // (host driving from another screen, or a buzz auto-pause).
   useEffect(() => {
@@ -132,16 +147,29 @@ export default function SpotifyPlayer({ uri, start = null, end = null, transport
       else if (transport.action === "play") {
         if (startRef.current && !startedRef.current) c.seek(startRef.current);
         startedRef.current = true;
-        if (!playingRef.current) c.togglePlay();
+        playNow(c);
       } else if (transport.action === "restart") {
         startedRef.current = true;
         c.seek(startRef.current || 0);
-        if (!playingRef.current) c.togglePlay();
+        playNow(c);
       }
     } catch {
       /* not ready */
     }
   }, [transport?.n]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Volume (0-100). Best-effort: the Spotify embed API may not expose setVolume,
+  // in which case the volume follows the device — the slider is a no-op there.
+  useEffect(() => {
+    const c = ctrlRef.current;
+    if (c && typeof c.setVolume === "function") {
+      try {
+        c.setVolume(Math.max(0, Math.min(1, volume / 100)));
+      } catch {
+        /* unsupported */
+      }
+    }
+  }, [volume, ready]);
 
   const togglePlay = () => {
     const c = ctrlRef.current;
@@ -168,7 +196,7 @@ export default function SpotifyPlayer({ uri, start = null, end = null, transport
     if (!c) return;
     try {
       c.seek(startRef.current || 0);
-      if (!playing) c.togglePlay();
+      playNow(c);
     } catch {
       /* ignore */
     }

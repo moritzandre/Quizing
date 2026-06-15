@@ -56,6 +56,7 @@ export default function YouTubePlayer({
   end = null,
   transport = null,
   controls = true,
+  volume = 100,
 }) {
   const { t } = useI18n();
   const hostRef = useRef(null);
@@ -203,6 +204,18 @@ export default function YouTubePlayer({
       /* player not ready */
     }
   }, [transport?.n]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Volume (0-100), applied once the player is ready and whenever it changes.
+  useEffect(() => {
+    const p = playerRef.current;
+    if (!p || typeof p.setVolume !== "function") return;
+    try {
+      p.setVolume(Math.max(0, Math.min(100, volume)));
+      if (volume > 0 && typeof p.isMuted === "function" && p.isMuted() && typeof p.unMute === "function") p.unMute();
+    } catch {
+      /* player not ready */
+    }
+  }, [volume, ready]);
 
   const playing = state === "playing";
   // Seek-bar bounds: honor a trim window only when end is past start.

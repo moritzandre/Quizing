@@ -725,6 +725,7 @@ export function buildLive(game, opts = {}) {
         ? { n: num(opts.transport.n, 0), action: str(opts.transport.action) || "idle" }
         : { n: 0, action: "idle" },
     soundOnTv: !!opts.soundOnTv,
+    volume: Math.max(0, Math.min(100, num(opts.volume, 100))),
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -798,6 +799,7 @@ export function normalizeLive(raw) {
         ? { n: num(raw.transport.n, 0), action: ["play", "pause", "restart"].includes(raw.transport.action) ? raw.transport.action : "idle" }
         : { n: 0, action: "idle" },
     soundOnTv: !!raw.soundOnTv,
+    volume: Math.max(0, Math.min(100, num(raw.volume, 100))),
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",
