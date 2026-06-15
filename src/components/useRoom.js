@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connectRoom, roomTopics, newRoomCode } from "../lib/realtime.js";
-import { uid, str, normalizePresent, normalizeLive, normalizeHostAux } from "../lib/model.js";
+import { uid, str, normalizePresent, normalizeLive, normalizeHostAux, normalizePhoneScores } from "../lib/model.js";
 import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 
 /** Keep only a palette emoji/color from an (untrusted) phone join message. */
@@ -50,16 +50,27 @@ export function useHostRoom() {
   const cmdIdRef = useRef(0);
   const phaseRef = useRef({ phase: "idle", qKey: null });
   const lockedRef = useRef(null);
+  const scoresRef = useRef(null); // latest standings to mirror onto phones
   const participantsRef = useRef({});
   participantsRef.current = participants;
 
   const pushState = useCallback(() => {
     const conn = connRef.current;
     if (!conn) return;
-    conn.publish(conn.topics.state, { ...phaseRef.current, lockedBy: lockedRef.current }, { retain: true });
+    conn.publish(
+      conn.topics.state,
+      { ...phaseRef.current, lockedBy: lockedRef.current, ...(scoresRef.current ? { scores: scoresRef.current } : {}) },
+      { retain: true },
+    );
   }, []);
   const pushStateRef = useRef(pushState);
   pushStateRef.current = pushState;
+  // Mirror the live standings onto phones (so each player sees their own score
+  // + rank). Re-asserts the retained state with the latest scores attached.
+  const pushScores = useCallback((standings) => {
+    scoresRef.current = Array.isArray(standings) ? standings : null;
+    pushStateRef.current();
+  }, []);
 
   // Stream the clean TV mirror: present = heavy/per-question, live = light/frequent.
   const pushPresent = useCallback((payload) => {
@@ -85,6 +96,7 @@ export function useHostRoom() {
     setStatus("connecting");
     phaseRef.current = { phase: "idle", qKey: null };
     lockedRef.current = null;
+    scoresRef.current = null;
     setParticipants({});
     setBuzz(null);
     setPins({});
@@ -163,6 +175,7 @@ export function useHostRoom() {
     connRef.current = null;
     phaseRef.current = { phase: "idle", qKey: null };
     lockedRef.current = null;
+    scoresRef.current = null;
     setEnabled(false);
     setCode(null);
     setStatus("idle");
@@ -259,6 +272,7 @@ export function useHostRoom() {
     pushPresent,
     pushLive,
     pushHost,
+    pushScores,
   };
 }
 
@@ -346,6 +360,7 @@ export function usePlayerRoom(code) {
                 lockedBy: msg.lockedBy ?? null,
                 teams: Array.isArray(msg.teams) ? msg.teams : null,
                 options: Array.isArray(msg.options) ? msg.options : null,
+                scores: normalizePhoneScores(msg.scores),
               }
             : null,
         ),

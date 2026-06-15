@@ -83,11 +83,24 @@ const SEQUENCES = {
     { freq: 740, start: 0.09, dur: 0.1, type: "triangle", gain: 0.14 },
     { freq: 880, start: 0.18, dur: 0.22, type: "triangle", gain: 0.15 },
   ],
+  // Short UI blip for tapping an option/pin on a phone (snappy, low-key).
+  select: [{ freq: 660, dur: 0.07, type: "square", gain: 0.1 }],
+  // Classic two-note "coin" for a points gain shown on a player's phone.
+  coin: [
+    { freq: 988, dur: 0.07, type: "square", gain: 0.13 },
+    { freq: 1319, start: 0.07, dur: 0.22, type: "square", gain: 0.13 },
+  ],
+  // A little three-step climb when a player's rank improves.
+  levelup: [
+    { freq: 523, dur: 0.08, type: "square", gain: 0.12 },
+    { freq: 784, start: 0.08, dur: 0.08, type: "square", gain: 0.12 },
+    { freq: 1047, start: 0.16, dur: 0.2, type: "square", gain: 0.13 },
+  ],
 };
 
 /**
  * Play a named cue. No-op when muted or WebAudio is unavailable.
- * @param {"reveal"|"correct"|"wrong"|"timeup"|"buzz"|"win"|"fanfare"} kind
+ * @param {"reveal"|"correct"|"wrong"|"timeup"|"buzz"|"win"|"fanfare"|"select"|"coin"|"levelup"} kind
  */
 export function playSound(kind) {
   if (muted) return;

@@ -3,10 +3,11 @@
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
-import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash, Camera, Loader2, X } from "lucide-react";
+import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash, Camera, Loader2, X, Trophy } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
-import { FOCUS, inputCls, Button, Avatar, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
+import { FOCUS, inputCls, Button, Avatar, AnimatedNumber, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 import { fileToDataUrl } from "../lib/model.js";
+import { playSound } from "../lib/sound.js";
 import LeafletMap from "./LeafletMap.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
@@ -44,6 +45,14 @@ export default function JoinView({ code }) {
   const teams = room.state?.teams || null;
   const options = room.state?.options || [];
 
+  // Live standings mirrored from the host: find our own entity (by deviceId) to
+  // show score + rank, and the sorted list for the between-questions leaderboard.
+  const standings = room.state?.scores || [];
+  const sorted = [...standings].sort((a, b) => b.score - a.score);
+  const myEntity = standings.find((e) => (e.deviceIds || []).includes(room.deviceId)) || null;
+  const myScore = myEntity ? myEntity.score : null;
+  const myRank = myEntity ? sorted.findIndex((e) => e.id === myEntity.id) + 1 : null;
+
   // New question/round → clear our previous pin and answer.
   useEffect(() => {
     setMyPin(null);
@@ -51,6 +60,23 @@ export default function JoinView({ code }) {
     setAnswer(null);
     setAnswerSent(false);
   }, [qKey]);
+
+  // Celebrate a points gain: float a "+N" and play a coin (or a climb if our rank
+  // improved). Tracks the previous score/rank across renders.
+  const prevRef = useRef({ score: null, rank: null });
+  const gainKey = useRef(0);
+  const [gain, setGain] = useState(null);
+  useEffect(() => {
+    if (myScore == null) return;
+    const prev = prevRef.current;
+    const climbed = prev.rank != null && myRank != null && myRank < prev.rank;
+    if (prev.score != null && myScore > prev.score) {
+      gainKey.current += 1;
+      setGain({ delta: myScore - prev.score, key: gainKey.current });
+      playSound(climbed ? "levelup" : "coin");
+    }
+    prevRef.current = { score: myScore, rank: myRank };
+  }, [myScore, myRank]);
 
   // Tell the host we're gone when the tab/app closes, so the roster shrinks.
   const leaveRef = useRef(room.leave);
@@ -71,11 +97,17 @@ export default function JoinView({ code }) {
     setMyPin({ lat, lng });
     setPinSent(true);
     room.sendPin(lat, lng);
+    playSound("select");
   };
   const pick = (value) => {
     setAnswer(value);
     setAnswerSent(true);
     room.sendAnswer(value);
+    playSound("select");
+  };
+  const buzz = () => {
+    room.buzz();
+    playSound("buzz");
   };
   const onPhoto = async (e) => {
     const file = e.target.files?.[0];
@@ -98,8 +130,8 @@ export default function JoinView({ code }) {
     <div className="qn-app-bg flex h-[100dvh] flex-col overflow-hidden px-5 py-6 font-sans text-stone-900 antialiased dark:text-stone-100">
       <div className="mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col overflow-y-auto">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            Quiz Night<span className="text-indigo-600 dark:text-indigo-400">.</span>
+          <h1 className="font-pixel text-sm leading-tight text-stone-900 dark:text-stone-50">
+            QUIZ<span className="text-indigo-600 dark:text-indigo-400"> NIGHT</span>
           </h1>
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${
@@ -243,14 +275,51 @@ export default function JoinView({ code }) {
           </div>
         ) : (
           <div className="flex flex-1 flex-col">
-            <p className="mb-6 flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
-              {!needsTeam && (
-                <Avatar color={pickedColor} emoji={pickedEmoji} photo={pickedPhoto} name={room.name} size={28} />
+            {/* persistent arcade HUD: avatar + name, plus live score + rank once
+                the host has started scoring (a "+N" floats up on every gain) */}
+            <div className="relative mb-5 flex items-center gap-3 overflow-hidden rounded-2xl border-2 border-stone-200 bg-white/70 px-3.5 py-2.5 dark:border-stone-800 dark:bg-stone-900/60">
+              <Avatar
+                color={myEntity?.color || pickedColor}
+                emoji={needsTeam ? myEntity?.emoji : pickedEmoji}
+                photo={needsTeam ? null : pickedPhoto}
+                name={room.name}
+                size={40}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-stone-800 dark:text-stone-100">{room.name}</p>
+                <p className="font-pixel text-[8px] uppercase tracking-widest text-stone-400 dark:text-stone-500">
+                  {t("join.score")}
+                </p>
+                {myScore != null ? (
+                  <AnimatedNumber
+                    value={myScore}
+                    pop
+                    className="font-pixel text-lg leading-tight text-stone-900 dark:text-stone-50"
+                  />
+                ) : (
+                  <span className="font-pixel text-lg leading-tight text-stone-300 dark:text-stone-600">0</span>
+                )}
+              </div>
+              {myRank != null && (
+                <div className="shrink-0 text-right">
+                  <p className="font-pixel text-[8px] uppercase tracking-widest text-stone-400 dark:text-stone-500">
+                    {t("join.rank")}
+                  </p>
+                  <p className="font-pixel text-lg leading-tight text-indigo-600 dark:text-indigo-400">
+                    {myRank}
+                    <span className="text-[10px] text-stone-400">/{sorted.length}</span>
+                  </p>
+                </div>
               )}
-              <span className="font-semibold text-stone-800 dark:text-stone-100">
-                {t("join.playingAs", { name: room.name })}
-              </span>
-            </p>
+              {gain && (
+                <span
+                  key={gain.key}
+                  className="qn-float-up pointer-events-none absolute left-14 top-1.5 font-pixel text-sm text-emerald-500"
+                >
+                  +{gain.delta}
+                </span>
+              )}
+            </div>
 
             {phase === "buzz" && (
               <div className="flex flex-1 flex-col items-center justify-center">
@@ -271,10 +340,10 @@ export default function JoinView({ code }) {
                   </div>
                 ) : (
                   <button
-                    onClick={room.buzz}
-                    className={`flex h-56 w-56 items-center justify-center rounded-full bg-indigo-600 text-3xl font-bold uppercase tracking-widest text-white shadow-xl transition active:scale-95 hover:bg-indigo-500 ${FOCUS}`}
+                    onClick={buzz}
+                    className={`flex h-56 w-56 items-center justify-center rounded-full border-4 border-indigo-800 bg-indigo-600 font-pixel text-xl uppercase tracking-wider text-white shadow-[0_8px_0_0_#3730a3] transition hover:bg-indigo-500 active:translate-y-2 active:shadow-[0_2px_0_0_#3730a3] ${FOCUS} dark:border-indigo-300/40`}
                   >
-                    {t("join.buzz")}
+                    <span className="qn-blink">{t("join.buzz")}</span>
                   </button>
                 )}
               </div>
@@ -319,7 +388,7 @@ export default function JoinView({ code }) {
                         }`}
                       >
                         <span
-                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-pixel text-xs ${
                             selected
                               ? "bg-indigo-600 text-white"
                               : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
@@ -378,15 +447,61 @@ export default function JoinView({ code }) {
               </div>
             )}
 
-            {phase !== "buzz" && phase !== "map" && phase !== "choice" && phase !== "number" && (
-              <div className="flex flex-1 flex-col items-center justify-center text-center">
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
-                  <Radio size={34} className="text-stone-400" />
+            {phase !== "buzz" &&
+              phase !== "map" &&
+              phase !== "choice" &&
+              phase !== "number" &&
+              (sorted.length > 0 ? (
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <p className="mb-3 flex shrink-0 items-center justify-center gap-2 font-pixel text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">
+                    <Trophy size={14} className="text-amber-500" /> {t("join.leaderboard")}
+                  </p>
+                  <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto">
+                    {sorted.map((e, i) => {
+                      const mine = myEntity && e.id === myEntity.id;
+                      return (
+                        <div
+                          key={e.id}
+                          className={`flex items-center gap-2.5 rounded-xl border-2 px-3 py-2 transition ${
+                            mine
+                              ? "border-indigo-400 bg-indigo-50 dark:border-indigo-500/50 dark:bg-indigo-500/10"
+                              : "border-stone-200 bg-white/70 dark:border-stone-800 dark:bg-stone-900/50"
+                          }`}
+                        >
+                          <span
+                            className={`w-6 shrink-0 text-center font-pixel text-xs ${
+                              i === 0 ? "text-amber-500" : "text-stone-400 dark:text-stone-500"
+                            }`}
+                          >
+                            {i + 1}
+                          </span>
+                          <Avatar color={e.color} emoji={e.emoji} name={e.name} size={26} />
+                          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-stone-800 dark:text-stone-100">
+                            {e.name}
+                            {mine && <span className="ml-1 text-indigo-500">{t("join.youTag")}</span>}
+                          </span>
+                          <AnimatedNumber
+                            value={e.score}
+                            pop
+                            className="shrink-0 font-pixel text-sm text-stone-700 dark:text-stone-200"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-3 shrink-0 text-center text-xs text-stone-400 dark:text-stone-500">
+                    {t("join.watchScreen")}
+                  </p>
                 </div>
-                <p className="text-lg font-semibold">{t("join.youreIn")}</p>
-                <p className="mt-1 text-stone-500 dark:text-stone-400">{t("join.watchScreen")}</p>
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-1 flex-col items-center justify-center text-center">
+                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
+                    <Radio size={34} className="text-stone-400" />
+                  </div>
+                  <p className="text-lg font-semibold">{t("join.youreIn")}</p>
+                  <p className="mt-1 text-stone-500 dark:text-stone-400">{t("join.watchScreen")}</p>
+                </div>
+              ))}
           </div>
         )}
       </div>

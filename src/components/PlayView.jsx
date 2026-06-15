@@ -261,6 +261,23 @@ export default function PlayView({ game, setGame, onExit, room }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
+  // Mirror the standings onto phones so each player sees their own live score +
+  // rank. deviceIds let a phone find its entity; pushed whenever scores change.
+  useEffect(() => {
+    if (!buzzerOn) return;
+    room.pushScores(
+      game.players.map((p, i) => ({
+        id: p.id,
+        name: p.name,
+        score: p.score,
+        color: colorFor(p, i),
+        emoji: p.emoji || null,
+        deviceIds: p.deviceIds || [],
+      })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buzzerOn, scoreSig]);
+
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
     room?.code && typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "";

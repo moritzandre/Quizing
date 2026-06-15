@@ -9,7 +9,7 @@
    ==================================================================== */
 
 import { useEffect, useRef } from "react";
-import { Avatar } from "./ui.jsx";
+import { Avatar, AnimatedNumber } from "./ui.jsx";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
@@ -76,7 +76,11 @@ export default function PodiumClimb({ standings = [], present = false }) {
                 />
               </div>
             </div>
-            <span className={`shrink-0 font-bold tabular-nums ${present ? "text-3xl" : "text-lg"}`}>{s.score}</span>
+            <AnimatedNumber
+              value={s.score}
+              pop
+              className={`shrink-0 font-pixel tabular-nums ${present ? "text-2xl" : "text-base"}`}
+            />
           </div>
         );
       })}

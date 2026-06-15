@@ -5,7 +5,7 @@
    shared style constants, primitives, the theme toggle, and confetti.
    ==================================================================== */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   MessageSquare,
   LayoutGrid,
@@ -215,14 +215,21 @@ export const prefersReducedMotion = () =>
 
 /**
  * A number that smoothly counts to `value` whenever it changes (e.g. on a score
- * award). Honors prefers-reduced-motion (snaps instantly).
+ * award). Honors prefers-reduced-motion (snaps instantly). With `pop`, it gives
+ * an arcade "punch" (scale bounce) each time the value increases.
  * @param {object} props
  * @param {number} props.value Target number.
  * @param {string} [props.className]
+ * @param {boolean} [props.pop] Bounce on increase.
  */
-export function AnimatedNumber({ value, className = "" }) {
+export function AnimatedNumber({ value, className = "", pop = false }) {
   const [display, setDisplay] = useState(value);
+  const [popping, setPopping] = useState(false);
+  const prevRef = useRef(value);
   useEffect(() => {
+    const prev = prevRef.current;
+    prevRef.current = value;
+    if (pop && value > prev) setPopping(true);
     if (display === value) return;
     if (prefersReducedMotion()) return setDisplay(value);
     const from = display;
@@ -240,7 +247,14 @@ export function AnimatedNumber({ value, className = "" }) {
     // Only re-run when the target changes; `display` is the live start point.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
-  return <span className={className}>{display}</span>;
+  return (
+    <span
+      className={`${pop ? "inline-block" : ""} ${popping ? "qn-score-pop" : ""} ${className}`}
+      onAnimationEnd={() => setPopping(false)}
+    >
+      {display}
+    </span>
+  );
 }
 
 /** Shared focus-visible ring classes for interactive elements. */

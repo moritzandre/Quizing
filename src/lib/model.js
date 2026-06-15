@@ -931,6 +931,30 @@ export function buildHostAux(game) {
   return out;
 }
 
+/**
+ * Validate the live standings pushed to PHONES on the state topic (untrusted).
+ * Each entry carries its entity's deviceIds so a phone can find itself in the
+ * list and show its own score + rank.
+ * @param {*} raw
+ * @returns {Array<{id:string,name:string,score:number,color:string|null,emoji:string|null,deviceIds:string[]}>}
+ */
+export function normalizePhoneScores(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 50).map((p) => ({
+    id: str(p?.id) || str(p?.name) || "p",
+    name: str(p?.name) || "Player",
+    score: num(p?.score, 0),
+    color: typeof p?.color === "string" ? p.color : null,
+    emoji: typeof p?.emoji === "string" ? p.emoji : null,
+    deviceIds: Array.isArray(p?.deviceIds)
+      ? p.deviceIds
+          .map((d) => str(d))
+          .filter(Boolean)
+          .slice(0, 20)
+      : [],
+  }));
+}
+
 /** Validate an incoming host-aux payload from the broker (untrusted). */
 export function normalizeHostAux(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;

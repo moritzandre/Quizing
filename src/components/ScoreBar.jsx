@@ -94,7 +94,8 @@ export default function ScoreBar({
                 <span className="font-medium">{p.name}</span>
                 <AnimatedNumber
                   value={p.score}
-                  className={`font-bold tabular-nums ${got ? "text-white" : "text-stone-500 dark:text-stone-400"}`}
+                  pop
+                  className={`font-pixel text-xs tabular-nums ${got ? "text-white" : "text-stone-500 dark:text-stone-400"}`}
                 />
                 {active &&
                   (got ? (

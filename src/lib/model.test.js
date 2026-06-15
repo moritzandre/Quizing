@@ -19,6 +19,7 @@ import {
   buildLive,
   buildHostAux,
   normalizeHostAux,
+  normalizePhoneScores,
   normalizePresent,
   normalizeLive,
   mapillaryEmbedUrl,
@@ -937,6 +938,18 @@ describe("presenter payloads", () => {
       },
     });
     expect(buildHostAux(g).whoknows).toBe(null); // not the question stage
+  });
+
+  it("normalizePhoneScores coerces the standings pushed to phones (incl. deviceIds)", () => {
+    expect(normalizePhoneScores("nope")).toEqual([]);
+    expect(normalizePhoneScores(undefined)).toEqual([]);
+    const s = normalizePhoneScores([
+      { id: "p1", name: "Ann", score: "30", color: "#f00", emoji: "🦊", deviceIds: ["d1", 5, ""] },
+      { name: "Bob" },
+    ]);
+    // non-string deviceIds are dropped (real ids are uid strings)
+    expect(s[0]).toEqual({ id: "p1", name: "Ann", score: 30, color: "#f00", emoji: "🦊", deviceIds: ["d1"] });
+    expect(s[1]).toEqual({ id: "Bob", name: "Bob", score: 0, color: null, emoji: null, deviceIds: [] });
   });
 
   it("normalizeHostAux defends against junk and coerces numeric answers", () => {
