@@ -92,6 +92,7 @@ export default function PresenterView({ code }) {
         <h2 className="mb-6 text-center text-3xl font-bold">{t("play.roundRecap")}</h2>
         <RoundRecap
           present
+          variant={live.recapVariant}
           entities={standings.map((s) => ({
             id: s.id,
             name: s.name,

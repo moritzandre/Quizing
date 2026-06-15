@@ -858,6 +858,18 @@ describe("presenter payloads", () => {
     expect(n.reveal.answer).toEqual({ lat: 1, lng: 2, name: "" });
   });
 
+  it("normalizeLive validates the recap variant (unknown → first variant)", () => {
+    expect(normalizeLive({ recapVariant: "race" }).recapVariant).toBe("race");
+    expect(normalizeLive({ recapVariant: "stacker" }).recapVariant).toBe("stacker");
+    expect(normalizeLive({ recapVariant: "hax" }).recapVariant).toBe("invaders");
+    expect(normalizeLive({}).recapVariant).toBe("invaders");
+  });
+
+  it("buildLive carries the recap variant only sanely (defaults bad input)", () => {
+    expect(buildLive(game(), { recapVariant: "bricks" }).recapVariant).toBe("bricks");
+    expect(buildLive(game(), { recapVariant: "nope" }).recapVariant).toBe("invaders");
+  });
+
   it("normalizeLive round-trips a true/false reveal (correct + note for the TV)", () => {
     const n = normalizeLive({ reveal: { correct: 1, note: "It's a myth." } });
     expect(n.reveal).toMatchObject({ correct: 1, note: "It's a myth." });

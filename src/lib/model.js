@@ -29,6 +29,9 @@ export const ROUND_TYPES = [
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
 export const BINARY_TYPES = ["choice", "truefalse", "higherlower"];
 
+/** Between-rounds recap minigame skins; the host picks one at random per round. */
+export const RECAP_VARIANTS = ["invaders", "race", "stacker", "pellet", "bricks"];
+
 /** Reveal effects for the morph round. */
 export const MORPH_EFFECTS = ["blur", "pixelate", "tiles", "zoom", "slices"];
 
@@ -789,7 +792,7 @@ export function buildPresentQ(game) {
 /**
  * Build the light, frequently-changing presenter payload (topic: live).
  * @param {object} game A valid game.
- * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object, transport?:object, soundOnTv?:boolean}} [opts]
+ * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object, recapVariant?:string, transport?:object, soundOnTv?:boolean}} [opts]
  */
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
@@ -811,6 +814,7 @@ export function buildLive(game, opts = {}) {
     allowNegative: !!opts.allowNegative,
     showRecap: !!opts.recap,
     recapFrom: opts.recap ? scoreMap(opts.recapFrom) : null,
+    recapVariant: RECAP_VARIANTS.includes(opts.recapVariant) ? opts.recapVariant : RECAP_VARIANTS[0],
     // Remote media transport (the TV/host followers play/pause/restart from this).
     transport:
       opts.transport && typeof opts.transport === "object"
@@ -888,6 +892,7 @@ export function normalizeLive(raw) {
     allowNegative: !!raw.allowNegative,
     showRecap: !!raw.showRecap,
     recapFrom: raw.showRecap ? scoreMap(raw.recapFrom) : null,
+    recapVariant: RECAP_VARIANTS.includes(raw.recapVariant) ? raw.recapVariant : RECAP_VARIANTS[0],
     transport:
       raw.transport && typeof raw.transport === "object"
         ? {

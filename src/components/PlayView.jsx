@@ -45,6 +45,7 @@ import {
   buildLive,
   buildHostAux,
   BINARY_TYPES,
+  RECAP_VARIANTS,
   mapillaryEmbedUrl,
 } from "../lib/model.js";
 import {
@@ -152,6 +153,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const [streamTv, setStreamTv] = useState(false); // "Stream to TV" modal
   const [showStandings, setShowStandings] = useState(false); // live podium overlay (host + TV)
   const [recap, setRecap] = useState(false); // between-rounds points-progression overlay
+  const [recapVariant, setRecapVariant] = useState(RECAP_VARIANTS[0]); // which 8-bit minigame skin
   const [tvQr, setTvQr] = useState("");
   const [hostQr, setHostQr] = useState("");
 
@@ -252,6 +254,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         allowNegative,
         recap,
         recapFrom: game.roundStartScores,
+        recapVariant,
         transport,
         soundOnTv,
         volume,
@@ -259,7 +262,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, recapVariant, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -512,8 +515,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
   };
 
   // Show the between-rounds recap (with a little flourish); host confirms to advance.
+  // Pick a random arcade skin and mirror it to the TV via the live payload.
   const endRound = () => {
     playSound("fanfare");
+    setRecapVariant(RECAP_VARIANTS[Math.floor(Math.random() * RECAP_VARIANTS.length)]);
     setRecap(true);
   };
   const continueAfterRecap = () => {
@@ -901,10 +906,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
             </p>
             <div className="flex flex-1 flex-col justify-center">
               <RoundRecap
-                entities={game.players.map((p) => ({
+                variant={recapVariant}
+                entities={game.players.map((p, i) => ({
                   id: p.id,
                   name: p.name,
-                  color: p.color,
+                  color: colorFor(p, i),
                   emoji: p.emoji,
                   photo: p.photo,
                   from: game.roundStartScores?.[p.id] ?? p.score,
