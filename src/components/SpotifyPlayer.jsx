@@ -50,7 +50,14 @@ function loadSpotifyAPI() {
  * @param {{n:number,action:string}|null} [props.transport] Remote transport (play | pause | restart) on n change.
  * @param {boolean} [props.controls] Show the built-in control bar (false = headless, transport-driven).
  */
-export default function SpotifyPlayer({ uri, start = null, end = null, transport = null, controls = true, volume = 100 }) {
+export default function SpotifyPlayer({
+  uri,
+  start = null,
+  end = null,
+  transport = null,
+  controls = true,
+  volume = 100,
+}) {
   const { t } = useI18n();
   const hostRef = useRef(null);
   const ctrlRef = useRef(null);
@@ -260,7 +267,9 @@ export default function SpotifyPlayer({ uri, start = null, end = null, transport
           <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/20">
             <div
               className="h-full rounded-full bg-emerald-500"
-              style={{ width: `${trimHi > 0 ? Math.min(100, (Math.max(0, cur - trimLo) / Math.max(0.01, trimHi - trimLo)) * 100) : 0}%` }}
+              style={{
+                width: `${trimHi > 0 ? Math.min(100, (Math.max(0, cur - trimLo) / Math.max(0.01, trimHi - trimLo)) * 100) : 0}%`,
+              }}
             />
           </div>
           <span className="w-10 text-xs tabular-nums text-white/70">{fmt(trimHi)}</span>

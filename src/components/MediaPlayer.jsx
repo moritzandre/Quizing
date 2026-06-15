@@ -45,7 +45,9 @@ export default function MediaPlayer({
     );
   }
   if (src.kind === "spotify") {
-    return <SpotifyPlayer uri={src.uri} start={start} end={end} transport={transport} controls={controls} volume={volume} />;
+    return (
+      <SpotifyPlayer uri={src.uri} start={start} end={end} transport={transport} controls={controls} volume={volume} />
+    );
   }
   if (src.kind === "file") {
     return (
