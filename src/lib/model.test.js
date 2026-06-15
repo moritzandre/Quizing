@@ -17,6 +17,8 @@ import {
   hintHasContent,
   buildPresentQ,
   buildLive,
+  buildHostAux,
+  normalizeHostAux,
   normalizePresent,
   normalizeLive,
   mapillaryEmbedUrl,
@@ -874,6 +876,54 @@ describe("presenter payloads", () => {
       whoknows: { phase: "done", showAll: true, answers: ["France", 42, "Poland"], total: 3 },
     });
     expect(n.whoknows.answers).toEqual(["France", "42", "Poland"]);
+  });
+
+  it("normalizeLive who-knows carries winnerId for the host remote to highlight", () => {
+    expect(normalizeLive({ whoknows: { phase: "auction", winnerId: "p2" } }).whoknows.winnerId).toBe("p2");
+    expect(normalizeLive({ whoknows: { phase: "auction", winnerId: 5 } }).whoknows.winnerId).toBe(null); // junk dropped
+  });
+
+  it("buildHostAux carries the full who-knows answer list (host-only topic, never the TV)", () => {
+    const g = game({
+      quiz: {
+        title: "Q",
+        rounds: [
+          {
+            id: "r",
+            type: "whoknows",
+            title: "WK",
+            questions: [{ id: "wk1", q: "Cats", answers: ["Lion", "Tiger", "Puma"], ordered: true }],
+          },
+        ],
+      },
+    });
+    const aux = buildHostAux(g);
+    expect(aux.whoknows).toEqual({ answers: ["Lion", "Tiger", "Puma"], ordered: true });
+    // The TV-facing present payload must NOT carry the answers (only the count).
+    expect(buildPresentQ(g).q).toMatchObject({ total: 3 });
+    expect(buildPresentQ(g).q.answers).toBeUndefined();
+  });
+
+  it("buildHostAux is empty for non-whoknows rounds and off the question stage", () => {
+    expect(buildHostAux(game()).whoknows).toBe(null); // map round
+    const g = game({
+      stage: "intro",
+      quiz: {
+        title: "Q",
+        rounds: [{ id: "r", type: "whoknows", title: "WK", questions: [{ id: "w", answers: ["X"] }] }],
+      },
+    });
+    expect(buildHostAux(g).whoknows).toBe(null); // not the question stage
+  });
+
+  it("normalizeHostAux defends against junk and coerces numeric answers", () => {
+    expect(normalizeHostAux("nope")).toBeNull();
+    expect(normalizeHostAux({}).whoknows).toBe(null);
+    expect(normalizeHostAux({ whoknows: "bad" }).whoknows).toBe(null);
+    expect(normalizeHostAux({ whoknows: { answers: ["A", 7, null], ordered: 1 } }).whoknows).toEqual({
+      answers: ["A", "7", ""],
+      ordered: true,
+    });
   });
 
   it("buildPresentQ → normalizePresent round-trips a choice question", () => {

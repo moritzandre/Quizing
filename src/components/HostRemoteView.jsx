@@ -25,6 +25,8 @@ import {
   Wifi,
   WifiOff,
   Gamepad2,
+  Gavel,
+  Check,
 } from "lucide-react";
 import { usePresenterRoom } from "./useRoom.js";
 import { TYPES, FOCUS, Avatar } from "./ui.jsx";
@@ -38,12 +40,19 @@ import RoundBody from "./RoundBody.jsx";
  */
 export default function HostRemoteView({ code }) {
   const { t } = useI18n();
-  const { status, present, live, alive, sendCtrl } = usePresenterRoom(code);
+  const { status, present, live, alive, hostAux, sendCtrl } = usePresenterRoom(code, { host: true });
   const online = status === "connected";
   const stage = live?.stage || present?.stage || "idle";
   const type = present?.roundType;
   const revealed = !!live?.revealed;
   const value = live?.value || 0;
+  // Who Knows More: the auction state rides `live`; the full answer list rides the
+  // host-only topic (`hostAux`) so the host can tap correct answers from the phone.
+  const wkk = live?.whoknows || null;
+  const wkPhase = wkk?.phase || "auction";
+  const wkAnswers = hostAux?.whoknows?.answers || [];
+  const wkPickedIdx = new Set((wkk?.picked || []).map((p) => p.i));
+  const wkClaimed = wkk?.claimed ?? 1;
   // Rounds with a ladder to advance via the "hint" ctrl: hint/morph/fusion always,
   // and clip only while its ladder is live (steps + a real trim window).
   const hasLadder =
@@ -146,7 +155,120 @@ export default function HostRemoteView({ code }) {
             </button>
           </>
         )}
-        {stage === "question" && (
+        {stage === "question" && type === "whoknows" && (
+          <div className="col-span-2 space-y-3">
+            {/* AUCTION — pick the winner + their claim, then award the category */}
+            {wkPhase === "auction" && (
+              <>
+                <p className="text-center text-sm font-semibold">{t("play.wkPickWinner")}</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {standings.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => sendCtrl("wkWinner", { id: s.id })}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition active:scale-95 ${FOCUS} ${
+                        wkk?.winnerId === s.id
+                          ? "border-violet-400 bg-violet-50 text-violet-700 dark:border-violet-500/50 dark:bg-violet-500/10 dark:text-violet-300"
+                          : "border-stone-300 dark:border-stone-700"
+                      }`}
+                    >
+                      <Avatar color={s.color} emoji={s.emoji} photo={s.photo} name={s.name} size={20} /> {s.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{t("play.wkClaim")}</span>
+                  <button
+                    onClick={() => sendCtrl("wkClaim", { n: Math.max(1, wkClaimed - 1) })}
+                    aria-label="-1"
+                    className={`rounded-lg border border-stone-300 p-2 dark:border-stone-700 ${FOCUS}`}
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="w-10 text-center text-xl font-bold tabular-nums">{wkClaimed}</span>
+                  <button
+                    onClick={() => sendCtrl("wkClaim", { n: wkClaimed + 1 })}
+                    disabled={wkAnswers.length > 0 && wkClaimed >= wkAnswers.length}
+                    aria-label="+1"
+                    className={`rounded-lg border border-stone-300 p-2 disabled:opacity-30 dark:border-stone-700 ${FOCUS}`}
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+                <button
+                  disabled={!wkk?.winnerId}
+                  onClick={() => sendCtrl("wkAward")}
+                  className={`w-full bg-violet-600 text-white ${btn} ${FOCUS}`}
+                >
+                  <Gavel size={18} /> {t("play.wkAward")}
+                </button>
+              </>
+            )}
+
+            {/* ANSWERING — tap each correct answer the player gives (regrants the
+                clock); the turn never auto-busts, so this works after time is up */}
+            {wkPhase === "answering" && (
+              <>
+                <p className="text-center text-xs text-stone-400 dark:text-stone-500">{t("play.wkClickHint")}</p>
+                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                  {wkAnswers.map((ans, ai) => {
+                    const got = wkPickedIdx.has(ai);
+                    return (
+                      <button
+                        key={ai}
+                        disabled={got}
+                        onClick={() => sendCtrl("wkPick", { i: ai })}
+                        className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left text-sm transition active:scale-[.99] ${FOCUS} ${
+                          got
+                            ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/10 dark:text-emerald-300"
+                            : "border-stone-200 bg-white dark:border-stone-700 dark:bg-stone-800"
+                        }`}
+                      >
+                        <span>
+                          {wkk?.ordered ? `${ai + 1}. ` : ""}
+                          {ans}
+                        </span>
+                        {got && <Check size={15} className="shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => sendCtrl("wkBust")}
+                  className={`w-full border border-red-300 text-red-600 dark:border-red-500/40 dark:text-red-300 ${btn} ${FOCUS}`}
+                >
+                  {t("play.wkEndTurn")}
+                </button>
+              </>
+            )}
+
+            {/* DONE — showcase the full list, then advance */}
+            {wkPhase === "done" && (
+              <>
+                <button
+                  onClick={() => sendCtrl("wkShowAll", { on: !wkk?.showAll })}
+                  className={`w-full border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+                >
+                  {wkk?.showAll ? t("play.wkHideAll") : t("play.wkShowAll")}
+                </button>
+                <button
+                  onClick={() => sendCtrl("advance")}
+                  className={`w-full bg-indigo-600 text-white ${btn} ${FOCUS}`}
+                >
+                  <ArrowRight size={18} /> {t("host.next")}
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={() => sendCtrl("skipRound")}
+              className={`w-full border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+            >
+              <SkipForward size={18} /> {t("host.skipRound")}
+            </button>
+          </div>
+        )}
+        {stage === "question" && type !== "whoknows" && (
           <>
             {!revealed && (
               <button

@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connectRoom, roomTopics, newRoomCode } from "../lib/realtime.js";
-import { uid, str, normalizePresent, normalizeLive } from "../lib/model.js";
+import { uid, str, normalizePresent, normalizeLive, normalizeHostAux } from "../lib/model.js";
 import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 
 /** Keep only a palette emoji/color from an (untrusted) phone join message. */
@@ -69,6 +69,12 @@ export function useHostRoom() {
   const pushLive = useCallback((payload) => {
     const conn = connRef.current;
     if (conn) conn.publish(conn.topics.live, payload, { retain: true });
+  }, []);
+  // Host-only aux (e.g. the Who-Knows-More answer list) — only the host remote
+  // subscribes to this topic, never the TV, so present/live stay leak-free.
+  const pushHost = useCallback((payload) => {
+    const conn = connRef.current;
+    if (conn) conn.publish(conn.topics.host, payload, { retain: true });
   }, []);
 
   const enable = useCallback(() => {
@@ -151,6 +157,7 @@ export function useHostRoom() {
       conn.clearRetained(conn.topics.state);
       conn.clearRetained(conn.topics.present);
       conn.clearRetained(conn.topics.live);
+      conn.clearRetained(conn.topics.host);
       conn.close();
     }
     connRef.current = null;
@@ -175,6 +182,7 @@ export function useHostRoom() {
         c.clearRetained(c.topics.state);
         c.clearRetained(c.topics.present);
         c.clearRetained(c.topics.live);
+        c.clearRetained(c.topics.host);
         c.close();
       }
     },
@@ -250,6 +258,7 @@ export function useHostRoom() {
     idle,
     pushPresent,
     pushLive,
+    pushHost,
   };
 }
 
@@ -259,11 +268,13 @@ export function useHostRoom() {
  * latter clearing (empty body) signals the host left, so the TV can wait.
  * All payloads are validated; the broker is never trusted.
  */
-export function usePresenterRoom(code) {
+export function usePresenterRoom(code, opts = {}) {
+  const isHost = !!opts.host;
   const [status, setStatus] = useState("connecting");
   const [present, setPresent] = useState(null);
   const [live, setLive] = useState(null);
   const [alive, setAlive] = useState(true);
+  const [hostAux, setHostAux] = useState(null); // host-remote only (whoknows answer list, …)
   const connRef = useRef(null);
   const id = useRef(deviceId());
 
@@ -275,19 +286,25 @@ export function usePresenterRoom(code) {
       return;
     }
     const topics = roomTopics(validCode);
+    // The host remote also reads the host-only topic (reveal aids the TV never sees).
+    const subscribe = isHost
+      ? [topics.present, topics.live, topics.state, topics.host]
+      : [topics.present, topics.live, topics.state];
     const conn = connectRoom({
       code: validCode,
-      subscribe: [topics.present, topics.live, topics.state],
+      subscribe,
       onStatus: setStatus,
       onMessage: (topic, msg) => {
         if (topic === topics.present) setPresent(msg ? normalizePresent(msg) : null);
         else if (topic === topics.live) setLive(msg ? normalizeLive(msg) : null);
-        else if (topic === topics.state) setAlive(!!msg); // empty retained body = host gone
+        else if (topic === topics.state)
+          setAlive(!!msg); // empty retained body = host gone
+        else if (topic === topics.host) setHostAux(msg ? normalizeHostAux(msg) : null);
       },
     });
     connRef.current = conn;
     return () => conn.close();
-  }, [validCode]);
+  }, [validCode, isHost]);
 
   // Host-remote: send a control command up to the host (ignored by the TV view).
   const sendCtrl = useCallback((action, args) => {
@@ -296,7 +313,7 @@ export function usePresenterRoom(code) {
       conn.publish(conn.topics.up, { type: "ctrl", action, args: args || {}, deviceId: id.current });
   }, []);
 
-  return { status, present, live, alive, sendCtrl };
+  return { status, present, live, alive, hostAux, sendCtrl };
 }
 
 /** Phone-side room: join, buzz, submit a pin; mirrors the host's state. */

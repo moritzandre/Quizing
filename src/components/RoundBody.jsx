@@ -267,7 +267,7 @@ export default function RoundBody({
               )}
               <span className="text-stone-400">·</span>
               <span className="text-stone-500 dark:text-stone-400">{t("play.wkClaimsN", { n: claimed })}</span>
-              {wkk.phase === "answering" && wkk.secsLeft > 0 && (
+              {wkk.phase === "answering" && (
                 <span
                   className={`ml-1 rounded-full px-3 py-0.5 font-bold tabular-nums ${
                     wkk.secsLeft <= 5
@@ -275,7 +275,7 @@ export default function RoundBody({
                       : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300"
                   }`}
                 >
-                  {t("play.wkPerAnswerLeft", { n: wkk.secsLeft })}
+                  {wkk.secsLeft <= 0 ? t("play.wkTimeUp") : t("play.wkPerAnswerLeft", { n: wkk.secsLeft })}
                 </span>
               )}
             </div>

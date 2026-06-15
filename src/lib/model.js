@@ -687,6 +687,7 @@ function normalizeWhoknows(raw) {
   const w = raw.winner;
   return {
     phase: ["auction", "answering", "done"].includes(raw.phase) ? raw.phase : "auction",
+    winnerId: typeof raw.winnerId === "string" ? raw.winnerId : null,
     winner:
       w && typeof w === "object" && !Array.isArray(w)
         ? {
@@ -896,6 +897,45 @@ export function normalizeLive(raw) {
       emoji: typeof p?.emoji === "string" ? p.emoji : null,
     })),
     reveal,
+  };
+}
+
+/**
+ * Build the HOST-ONLY aux payload (topic: host). Carries reveal aids the host
+ * remote needs but the TV must never see — currently the full Who-Knows-More
+ * answer list, so the host can tap each correct answer from their phone. The TV
+ * presenter never subscribes to this topic, so present/live stay leak-free.
+ * @param {object} game A valid game.
+ * @returns {{v:number, whoknows:({answers:string[], ordered:boolean}|null)}}
+ */
+export function buildHostAux(game) {
+  const round = game.quiz?.rounds?.[game.ri];
+  const out = { v: 1, whoknows: null };
+  if (game.stage === "question" && round?.type === "whoknows") {
+    const q = currentQuestion(game);
+    if (q)
+      out.whoknows = {
+        answers: (Array.isArray(q.answers) ? q.answers : []).map(str).slice(0, 200),
+        ordered: !!q.ordered,
+      };
+  }
+  return out;
+}
+
+/** Validate an incoming host-aux payload from the broker (untrusted). */
+export function normalizeHostAux(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const wk = raw.whoknows;
+  return {
+    whoknows:
+      wk && typeof wk === "object" && !Array.isArray(wk)
+        ? {
+            answers: (Array.isArray(wk.answers) ? wk.answers : [])
+              .map((a) => (typeof a === "number" ? String(a) : str(a)))
+              .slice(0, 200),
+            ordered: !!wk.ordered,
+          }
+        : null,
   };
 }
 

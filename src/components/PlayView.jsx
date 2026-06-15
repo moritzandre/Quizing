@@ -43,6 +43,7 @@ import {
   hintHasContent,
   buildPresentQ,
   buildLive,
+  buildHostAux,
   mapillaryEmbedUrl,
 } from "../lib/model.js";
 import {
@@ -211,10 +212,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
     }
   }, [buzzerOn, game.stage, game.revealed, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Stream the heavy, per-question presenter payload (media + text) to any TV.
+  // Stream the heavy, per-question presenter payload (media + text) to any TV,
+  // plus the host-only aux (whoknows answer list) for the host remote.
   useEffect(() => {
     if (!buzzerOn) return;
     room.pushPresent(buildPresentQ(game));
+    room.pushHost(buildHostAux(game));
   }, [buzzerOn, game.stage, qKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build the "Who Knows More" live state (winner / squares / picked answers / timer) for the TV.
@@ -223,6 +226,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const wkLive = wkQ
     ? {
         phase: wk.phase,
+        winnerId: wk.winnerId || null,
         winner: wkWinner ? { name: wkWinner.name, color: wkWinner.color || null, emoji: wkWinner.emoji || null } : null,
         claimed: wk.claimed,
         picked: wk.picked.map((i) => ({ i, text: (wkQ.answers || [])[i] || "" })),
@@ -428,16 +432,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setWkLeft(0);
   };
 
-  // Per-answer countdown: tick while answering; bust when it hits zero.
+  // Per-answer countdown: tick down while answering, then HOLD at zero ("time's
+  // up"). We deliberately do NOT auto-bust — the host stays in control and can
+  // still award one more answer (which regrants the clock) or end the turn.
   useEffect(() => {
-    if (wk.phase !== "answering") return;
-    if (wkLeft <= 0) {
-      wkBustNow();
-      return;
-    }
-    const id = setTimeout(() => setWkLeft((s) => s - 1), 1000);
+    if (wk.phase !== "answering" || wkLeft <= 0) return;
+    const id = setTimeout(() => setWkLeft((s) => Math.max(0, s - 1)), 1000);
     return () => clearTimeout(id);
-  }, [wk.phase, wkLeft]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [wk.phase, wkLeft]);
 
   const jumpToRound = (ri) => {
     if (!Number.isInteger(ri) || ri < 0 || ri >= quiz.rounds.length) return; // guard untrusted ctrl/jump input
@@ -584,6 +586,31 @@ export default function PlayView({ game, setGame, onExit, room }) {
         break;
       case "resetBuzz":
         if (buzzerOn) room.resetBuzz();
+        break;
+      // ---- Who Knows More (host remote drives the auction + answer reveal) ----
+      case "wkWinner":
+        if (round?.type === "whoknows" && a.id && game.players.some((p) => p.id === a.id))
+          setWk((w) => ({ ...w, winnerId: a.id }));
+        break;
+      case "wkClaim":
+        // Cap the claim at the number of answers — claiming more than exist would
+        // make delivery impossible and strand the round in the answering phase.
+        if (round?.type === "whoknows" && Number.isFinite(+a.n))
+          setWk((w) => ({ ...w, claimed: Math.max(1, Math.min(cq?.answers?.length || 1, Math.floor(+a.n))) }));
+        break;
+      case "wkAward":
+        if (round?.type === "whoknows") wkAward();
+        break;
+      case "wkPick":
+        // Guard the index against the current question's answer list.
+        if (round?.type === "whoknows" && Number.isInteger(+a.i) && +a.i >= 0 && +a.i < (cq?.answers?.length || 0))
+          wkPick(+a.i);
+        break;
+      case "wkBust":
+        if (round?.type === "whoknows") wkBustNow();
+        break;
+      case "wkShowAll":
+        if (round?.type === "whoknows") setWk((w) => ({ ...w, showAll: !!a.on }));
         break;
       default:
         break;
@@ -1644,7 +1671,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 min="1"
                 max={Math.max(1, answers.length)}
                 value={wk.claimed}
-                onChange={(e) => setWk({ ...wk, claimed: Math.max(1, Math.floor(+e.target.value || 1)) })}
+                onChange={(e) =>
+                  setWk({
+                    ...wk,
+                    claimed: Math.max(1, Math.min(Math.max(1, answers.length), Math.floor(+e.target.value || 1))),
+                  })
+                }
                 className="w-20 rounded-xl border border-stone-300 bg-white px-3 py-2 text-center text-lg font-bold dark:border-stone-700 dark:bg-stone-900"
               />
             </div>
@@ -1679,7 +1711,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                       : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300"
                   }`}
                 >
-                  {t("play.wkPerAnswerLeft", { n: wkLeft })}
+                  {wkLeft <= 0 ? t("play.wkTimeUp") : t("play.wkPerAnswerLeft", { n: wkLeft })}
                 </span>
               )}
             </div>

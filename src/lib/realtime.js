@@ -21,6 +21,9 @@ const TOPIC_ROOT = "quiznight";
  * - up:      phones → host (join / buzz / pin / answer / leave)
  * - present: host → TV (heavy per-question display payload; retained)
  * - live:    host → TV (light frequently-changing state: reveal/step/standings; retained)
+ * - host:    host → host-remote ONLY (host-only reveal aids the TV must never see,
+ *            e.g. the full Who-Knows-More answer list; retained). The presenter (TV)
+ *            view never subscribes to this, so present/live stay leak-free.
  */
 export function roomTopics(code) {
   return {
@@ -28,6 +31,7 @@ export function roomTopics(code) {
     up: `${TOPIC_ROOT}/${code}/up`,
     present: `${TOPIC_ROOT}/${code}/present`,
     live: `${TOPIC_ROOT}/${code}/live`,
+    host: `${TOPIC_ROOT}/${code}/host`,
   };
 }
 
