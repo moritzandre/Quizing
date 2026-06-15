@@ -17,6 +17,8 @@ import {
   normalizeResults,
   summarizeResults,
   summarizeForProfile,
+  normalizeLeaderboard,
+  buildResultRow,
   makeHint,
   hintHasContent,
   buildPresentQ,
@@ -709,19 +711,65 @@ describe("aggregateLeaderboard", () => {
 });
 
 describe("player profiles (Supabase)", () => {
-  it("normalizeProfile coerces a row and requires an id", () => {
+  it("normalizeProfile coerces a row, requires an id, and carries `locked`", () => {
     expect(normalizeProfile(null)).toBe(null);
     expect(normalizeProfile({ name: "x" })).toBe(null); // no id
     expect(
-      normalizeProfile({ id: "u1", name: "Ann", emoji: "🦊", color: "#f00", photo: "data:image/png;base64,AAA" }),
-    ).toEqual({ id: "u1", name: "Ann", emoji: "🦊", color: "#f00", photo: "data:image/png;base64,AAA" });
-    // junk types coerced to null; a non-image photo dropped
+      normalizeProfile({
+        id: "u1",
+        name: "Ann",
+        emoji: "🦊",
+        color: "#f00",
+        photo: "data:image/png;base64,AAA",
+        locked: true,
+      }),
+    ).toEqual({ id: "u1", name: "Ann", emoji: "🦊", color: "#f00", photo: "data:image/png;base64,AAA", locked: true });
+    // junk types coerced to null; a non-image photo dropped; locked defaults false
     expect(normalizeProfile({ id: "u2", name: 7, emoji: 5, color: {}, photo: "http://x/y.png" })).toEqual({
       id: "u2",
       name: "",
       emoji: null,
       color: null,
       photo: null,
+      locked: false,
+    });
+  });
+
+  it("normalizeLeaderboard coerces view rows (snake→camel) and sorts by wins/total/best", () => {
+    expect(normalizeLeaderboard("nope")).toEqual([]);
+    const board = normalizeLeaderboard([
+      { id: "a", name: "Ann", games: 3, wins: 1, total_score: 80, best_score: 40 },
+      { id: "b", name: "Bob", games: 5, wins: "3", total_score: 120, best_score: 50 },
+      { name: "no-id" }, // dropped (no id)
+    ]);
+    expect(board.map((e) => e.id)).toEqual(["b", "a"]); // Bob (3 wins) first
+    expect(board[0]).toMatchObject({ name: "Bob", games: 5, wins: 3, totalScore: 120, bestScore: 50 });
+  });
+
+  it("buildResultRow computes a phone's own row from the standings it mirrors", () => {
+    const scores = [
+      { id: "a", name: "Ann", score: 30, deviceIds: ["d1"] },
+      { id: "b", name: "Bob", score: 10, deviceIds: ["d2"] },
+    ];
+    expect(buildResultRow(scores, "d1", { gameId: "g1", quizTitle: "Fri", mode: "solo", roomCode: "ABCD" })).toEqual({
+      game_id: "g1",
+      quiz_title: "Fri",
+      score: 30,
+      won: true,
+      team_name: null,
+      room_code: "ABCD",
+    });
+    expect(buildResultRow(scores, "d2", { gameId: "g1" }).won).toBe(false);
+    expect(buildResultRow(scores, "nope", { gameId: "g1" })).toBe(null); // not in standings
+    expect(buildResultRow(scores, "d1", {})).toBe(null); // no gameId
+    // team mode → team_name from the entity; tie → nobody won
+    const tied = [
+      { id: "r", name: "Reds", score: 20, deviceIds: ["d1"] },
+      { id: "b", name: "Blues", score: 20, deviceIds: ["d2"] },
+    ];
+    expect(buildResultRow(tied, "d1", { gameId: "g2", mode: "teams" })).toMatchObject({
+      won: false,
+      team_name: "Reds",
     });
   });
 

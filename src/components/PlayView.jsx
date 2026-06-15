@@ -281,6 +281,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buzzerOn, scoreSig]);
 
+  // Flag end-of-game on the phone state topic so phones can write their own stat
+  // row (they have no `game` object); cleared whenever we're not on the end screen.
+  useEffect(() => {
+    if (!buzzerOn) return;
+    room.setEnded(game.stage === "end" ? { gameId: game.id, quizTitle: game.quiz?.title, mode: game.mode } : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buzzerOn, game.stage, game.id]);
+
   // Build the TV (present) + host-remote (host) URLs and their QRs when the modal opens.
   const roomBase =
     room?.code && typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "";

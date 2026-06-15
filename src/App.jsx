@@ -47,6 +47,7 @@ const JoinView = lazy(() => import("./components/JoinView.jsx"));
 const PresenterView = lazy(() => import("./components/PresenterView.jsx"));
 const HostRemoteView = lazy(() => import("./components/HostRemoteView.jsx"));
 const LeaderboardView = lazy(() => import("./components/LeaderboardView.jsx"));
+const StatsView = lazy(() => import("./components/StatsView.jsx"));
 import { useI18n, LanguageToggle } from "./i18n/I18nProvider.jsx";
 
 const APP_VERSION = "1.2.0";
@@ -59,6 +60,7 @@ const hashFor = (v) => {
   if (v.name === "join") return `#/join/${v.code}`;
   if (v.name === "present") return `#/present/${v.code}`;
   if (v.name === "host") return `#/host/${v.code}`;
+  if (v.name === "me") return "#/me";
   return "#/";
 };
 
@@ -208,6 +210,7 @@ function App() {
     if (seg === "join" && arg) return { name: "join", code: arg };
     if (seg === "present" && arg) return { name: "present", code: arg };
     if (seg === "host" && arg) return { name: "host", code: arg };
+    if (seg === "me") return { name: "me" };
     return { name: "home" };
   });
   const [quizzes, setQuizzes] = useState([]);
@@ -266,6 +269,8 @@ function App() {
         setView({ name: "present", code: arg });
       } else if (seg === "host" && arg) {
         setView({ name: "host", code: arg });
+      } else if (seg === "me") {
+        setView({ name: "me" });
       } else if (seg === "play") {
         // An ended game is kept in state for the final-scores screen but is no
         // longer "in progress" — match the home screen's resume gating.
@@ -465,6 +470,14 @@ function App() {
     return (
       <Suspense fallback={loadingFallback}>
         <HostRemoteView code={view.code} />
+      </Suspense>
+    );
+
+  // Player stats / global leaderboard — standalone, renders before the data-load gate.
+  if (view.name === "me")
+    return (
+      <Suspense fallback={loadingFallback}>
+        <StatsView />
       </Suspense>
     );
 

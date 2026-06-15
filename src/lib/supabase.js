@@ -1,14 +1,18 @@
 /* ====================================================================
-   SUPABASE CLIENT (optional persistent-player backend)
+   SUPABASE CLIENT (optional shared "playerbase" backend)
    --------------------------------------------------------------------
    A thin, framework-free wrapper. The whole layer is OPTIONAL: with no
    VITE_SUPABASE_* env it stays dormant (isSupabaseConfigured === false)
-   and never loads the SDK, so the app behaves exactly as before. When
-   configured, each device signs in anonymously and owns one `profiles`
-   row; phones write their own `results` rows at game end. Every call is
-   best-effort — failures resolve to null/[]/false and never throw, so
-   persistence can never block a join. React bindings live in
-   components/useProfile.js (this file imports no React).
+   and never loads the SDK, so the app behaves exactly as before.
+
+   When configured, players are a SHARED, login-free directory: anyone can
+   read the list, create a player, or pick an existing one — optionally
+   gated by a numeric PIN. Identity is decoupled from the (invisible)
+   anonymous auth session. PIN checks + result writes go through
+   SECURITY DEFINER RPCs (the pin hash is never sent to clients). Every
+   call here is best-effort — failures resolve to null/[]/false and never
+   throw, so persistence can never block a join. React bindings live in
+   components/usePlayerbase.js (this file imports no React).
    ==================================================================== */
 
 const URL = import.meta.env?.VITE_SUPABASE_URL || "";
@@ -39,8 +43,8 @@ export function getSupabaseClient() {
 }
 
 /**
- * Ensure an anonymous auth session exists (creating one on first use). The
- * session is persisted by the SDK, so a returning device keeps the same uid.
+ * Ensure an anonymous auth session exists (an invisible, login-free session so
+ * RLS has an authenticated role). The PLAYER identity is separate from this uid.
  * @returns {Promise<{id:string}|null>} the auth user, or null on failure.
  */
 export async function ensureAnonSession() {
@@ -57,12 +61,55 @@ export async function ensureAnonSession() {
   }
 }
 
-/** Load the caller's own profile row (by auth uid). Returns the row or null. */
-export async function loadProfile(id) {
+/** The shared player directory (the pin-free view). Returns an array (never throws). */
+export async function listPlayers() {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return [];
+    const { data, error } = await sb.from("profiles_public").select("*").order("name");
+    if (error) return [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Create a new shared player, optionally locked with a numeric PIN.
+ * @param {{name:string,emoji?:string,color?:string,photo?:string,pin?:string}} p
+ * @returns {Promise<object|null>} the created player row (no hash), or null.
+ */
+export async function createPlayer(p) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return null;
+    const { data, error } = await sb.rpc("create_player", {
+      p_name: p?.name ?? "",
+      p_emoji: p?.emoji ?? null,
+      p_color: p?.color ?? null,
+      p_photo: p?.photo ?? null,
+      p_pin: p?.pin || null,
+    });
+    if (error) return null;
+    return data || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Edit a player's name/avatar (PIN required if it's locked). Returns the row or null. */
+export async function updatePlayer(id, pin, fields) {
   try {
     const sb = await getSupabaseClient();
     if (!sb || !id) return null;
-    const { data, error } = await sb.from("profiles").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await sb.rpc("update_player", {
+      p_id: id,
+      p_pin: pin || null,
+      p_name: fields?.name ?? null,
+      p_emoji: fields?.emoji ?? null,
+      p_color: fields?.color ?? null,
+      p_photo: fields?.photo ?? null,
+    });
     if (error) return null;
     return data || null;
   } catch {
@@ -70,50 +117,60 @@ export async function loadProfile(id) {
   }
 }
 
-/**
- * Create or update the caller's profile. `id` must be the auth uid (RLS).
- * @param {{id:string,name?:string,emoji?:string,color?:string,photo?:string}} profile
- * @returns {Promise<object|null>} the saved row, or null on failure.
- */
-export async function upsertProfile(profile) {
+/** True if the PIN is correct (or the player is unlocked). Never reveals the hash. */
+export async function verifyPin(id, pin) {
   try {
     const sb = await getSupabaseClient();
-    if (!sb || !profile?.id) return null;
-    const row = {
-      id: profile.id,
-      name: profile.name ?? "",
-      emoji: profile.emoji ?? null,
-      color: profile.color ?? null,
-      photo: profile.photo ?? null,
-    };
-    const { data, error } = await sb.from("profiles").upsert(row).select().maybeSingle();
-    if (error) return null;
-    return data || null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Record one finished-game result for the caller's profile (idempotent: a
- * repeated (profile_id, game_id) is a unique-violation, treated as success).
- * @param {object} result { profile_id, game_id, quiz_title, score, won, team_name?, room_code? }
- * @returns {Promise<boolean>} true if stored (or already present).
- */
-export async function recordResult(result) {
-  try {
-    const sb = await getSupabaseClient();
-    if (!sb || !result?.profile_id || !result?.game_id) return false;
-    const { error } = await sb.from("results").insert(result);
-    if (!error) return true;
-    return error.code === "23505"; // unique_violation = already recorded → success
+    if (!sb || !id) return false;
+    const { data, error } = await sb.rpc("verify_pin", { p_id: id, p_pin: pin || "" });
+    return !error && data === true;
   } catch {
     return false;
   }
 }
 
-/** Load the caller's own result rows, newest first. Returns an array (never throws). */
-export async function loadMyResults(id) {
+/** Set / change / clear a player's PIN (current PIN required if already locked). */
+export async function setPin(id, currentPin, newPin) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !id) return false;
+    const { data, error } = await sb.rpc("set_pin", {
+      p_id: id,
+      p_current_pin: currentPin || "",
+      p_new_pin: newPin || "",
+    });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Record one finished-game result for a player (idempotent server-side).
+ * @param {object} row { profile_id, game_id, quiz_title, score, won, team_name?, room_code? }
+ * @returns {Promise<boolean>}
+ */
+export async function recordResult(row) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !row?.profile_id || !row?.game_id) return false;
+    const { data, error } = await sb.rpc("record_result", {
+      p_profile_id: row.profile_id,
+      p_game_id: row.game_id,
+      p_quiz_title: row.quiz_title ?? "",
+      p_score: row.score ?? 0,
+      p_won: !!row.won,
+      p_team_name: row.team_name ?? null,
+      p_room_code: row.room_code ?? null,
+    });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** A player's own result rows, newest first. Returns an array (never throws). */
+export async function loadPlayerStats(id) {
   try {
     const sb = await getSupabaseClient();
     if (!sb || !id) return [];
@@ -123,6 +180,19 @@ export async function loadMyResults(id) {
       .eq("profile_id", id)
       .order("played_at", { ascending: false })
       .limit(500);
+    if (error) return [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+/** The global all-time leaderboard (one row per player with games). Array (never throws). */
+export async function loadGlobalLeaderboard() {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return [];
+    const { data, error } = await sb.from("player_leaderboard").select("*");
     if (error) return [];
     return Array.isArray(data) ? data : [];
   } catch {

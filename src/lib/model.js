@@ -652,6 +652,57 @@ export function normalizeProfile(raw) {
     emoji: typeof raw.emoji === "string" ? raw.emoji : null,
     color: typeof raw.color === "string" ? raw.color : null,
     photo,
+    locked: !!raw.locked,
+  };
+}
+
+/** Validate a row from the shared player directory (profiles_public view). */
+export function normalizePlayers(rows) {
+  return (Array.isArray(rows) ? rows : []).map((r) => normalizeProfile(r)).filter(Boolean);
+}
+
+/** Validate the global leaderboard view rows into UI-friendly aggregates. */
+export function normalizeLeaderboard(rows) {
+  return (Array.isArray(rows) ? rows : [])
+    .map((r) => ({
+      id: str(r?.id),
+      name: str(r?.name) || "Player",
+      emoji: typeof r?.emoji === "string" ? r.emoji : null,
+      color: typeof r?.color === "string" ? r.color : null,
+      photo: typeof r?.photo === "string" ? r.photo : null,
+      games: Math.max(0, num(r?.games, 0)),
+      wins: Math.max(0, num(r?.wins, 0)),
+      totalScore: num(r?.total_score, 0),
+      bestScore: num(r?.best_score, 0),
+    }))
+    .filter((e) => e.id)
+    .sort((a, b) => b.wins - a.wins || b.totalScore - a.totalScore || b.bestScore - a.bestScore);
+}
+
+/**
+ * Build the result row a phone writes for ITSELF at game end, from the standings
+ * it already mirrors (the phone has no `game` object — only `state.scores`). The
+ * phone finds its own entity by deviceId. Returns null if it isn't in the game.
+ * The caller adds `profile_id` (its own current player — correct in team mode,
+ * where the team entity is shared by several phones/players).
+ * @param {Array} scores normalizePhoneScores output (each has deviceIds[]).
+ * @param {string} deviceId The phone's device id.
+ * @param {{gameId?:string,quizTitle?:string,mode?:string,roomCode?:string}} meta
+ */
+export function buildResultRow(scores, deviceId, meta = {}) {
+  const list = Array.isArray(scores) ? scores : [];
+  const me = list.find((e) => (e.deviceIds || []).includes(deviceId));
+  if (!me || !str(meta.gameId)) return null;
+  const max = list.reduce((m, e) => Math.max(m, num(e.score, 0)), -Infinity);
+  const min = list.reduce((m, e) => Math.min(m, num(e.score, 0)), Infinity);
+  const decided = list.length > 1 && max > min;
+  return {
+    game_id: str(meta.gameId),
+    quiz_title: str(meta.quizTitle) || "Untitled quiz",
+    score: num(me.score, 0),
+    won: decided && num(me.score, 0) === max,
+    team_name: meta.mode === "teams" ? str(me.name) : null,
+    room_code: str(meta.roomCode) || null,
   };
 }
 

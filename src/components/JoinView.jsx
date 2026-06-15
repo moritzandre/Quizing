@@ -1,5 +1,11 @@
 /* ====================================================================
-   JOIN VIEW (phone) — buzz, drop map pins, pick answers, guess numbers
+   JOIN VIEW (phone) — pick/create a player, buzz, pin, answer, guess
+   --------------------------------------------------------------------
+   When the optional Supabase playerbase is configured, the pre-join step
+   is a SHARED player picker (choose an existing player — entering a PIN if
+   it's locked — or create one). Unconfigured, it's the classic type-a-name
+   form. The in-game views (HUD/buzz/map/choice/number/leaderboard) are the
+   same either way. Reconnects on reload; writes a stat row at game end.
    ==================================================================== */
 
 import { useEffect, useRef, useState } from "react";
@@ -16,11 +22,15 @@ import {
   X,
   Trophy,
   LogOut,
+  Lock,
+  Plus,
+  BarChart3,
+  ChevronLeft,
 } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
-import { useProfile } from "./useProfile.js";
+import { usePlayerbase } from "./usePlayerbase.js";
 import { FOCUS, inputCls, Button, Avatar, AnimatedNumber, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
-import { fileToDataUrl } from "../lib/model.js";
+import { fileToDataUrl, buildResultRow } from "../lib/model.js";
 import { loadJSON, saveJSON, removeKey } from "../lib/storage.js";
 import { playSound } from "../lib/sound.js";
 import LeafletMap from "./LeafletMap.jsx";
@@ -41,7 +51,7 @@ const hashIdx = (s, n) => {
 export default function JoinView({ code }) {
   const { t } = useI18n();
   const room = usePlayerRoom(code);
-  const prof = useProfile(); // optional persistent player profile (Supabase, gated)
+  const pb = usePlayerbase(); // optional shared playerbase (Supabase, gated)
   const [draftName, setDraftName] = useState("");
   const [teamId, setTeamId] = useState(null);
   const [pickedEmoji, setPickedEmoji] = useState(() => PLAYER_EMOJI[hashIdx(room.deviceId, PLAYER_EMOJI.length)]);
@@ -50,11 +60,19 @@ export default function JoinView({ code }) {
   const [photoBusy, setPhotoBusy] = useState(false);
   const photoRef = useRef(null);
   const [joined, setJoined] = useState(false);
-  const [lastJoin, setLastJoin] = useState(null); // cached {code,name,teamId,avatar} for reconnect-on-reload
+  const [lastJoin, setLastJoin] = useState(null); // cached join for reconnect-on-reload
   const [myPin, setMyPin] = useState(null);
   const [pinSent, setPinSent] = useState(false);
   const [answer, setAnswer] = useState(null);
   const [answerSent, setAnswerSent] = useState(false);
+  // playerbase pre-join flow
+  const [reselect, setReselect] = useState(false); // show the picker even if a player is chosen
+  const [creating, setCreating] = useState(false); // in the "new player" sub-form
+  const [newPin, setNewPin] = useState(""); // optional PIN when creating
+  const [pinFor, setPinFor] = useState(null); // a locked player awaiting its PIN
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState(false);
+  const [savedStats, setSavedStats] = useState(false);
 
   const phase = room.state?.phase || "idle";
   const qKey = room.state?.qKey;
@@ -105,51 +123,56 @@ export default function JoinView({ code }) {
     return () => window.removeEventListener("pagehide", onHide);
   }, [joined]);
 
-  // Prefill the join form from the saved profile once it loads (once only, so
-  // the player can still edit). No-op when Supabase isn't configured.
-  const hydratedRef = useRef(false);
-  useEffect(() => {
-    if (hydratedRef.current || joined || !prof.profile) return;
-    hydratedRef.current = true;
-    const p = prof.profile;
-    if (p.name) setDraftName(p.name);
-    if (p.emoji) setPickedEmoji(p.emoji);
-    if (p.color) setPickedColor(p.color);
-    if (p.photo) setPickedPhoto(p.photo);
-  }, [prof.profile, joined]);
-
   // Remember the last successful join, so a reload can reconnect us silently.
   useEffect(() => {
     loadJSON("lastJoin", null).then((v) => v && setLastJoin(v));
   }, []);
 
   // Reconnect on reload: if we previously joined THIS room and it's still live,
-  // rejoin silently with the saved identity (skip the form). The persisted
+  // rejoin silently with the saved identity (skip the picker). The persisted
   // deviceId re-links us to our existing scoring entity on the host side.
   const autoRef = useRef(false);
   useEffect(() => {
     if (autoRef.current || joined || !lastJoin || lastJoin.code !== code) return;
     if (!room.state) return; // wait for the host's retained state (= room alive)
-    if (prof.configured && !prof.ready) return; // wait for the session so profileId is set
+    if (pb.configured && (!pb.ready || !pb.current)) return; // configured: need our chosen player loaded
     const teamsList = room.state.teams;
-    // in team mode, only auto-rejoin if our cached team still exists
     if (teamsList && !(lastJoin.teamId && teamsList.some((tm) => tm.id === lastJoin.teamId))) return;
     autoRef.current = true;
-    const useProf = prof.configured && prof.profile;
-    const name = (useProf ? prof.profile.name : lastJoin.name) || lastJoin.name || "";
-    const av = useProf
-      ? { emoji: prof.profile.emoji, color: prof.profile.color, photo: prof.profile.photo }
+    const cur = pb.configured ? pb.current : null;
+    const name = (cur ? cur.name : lastJoin.name) || lastJoin.name || "";
+    const av = cur
+      ? { emoji: cur.emoji, color: cur.color, photo: cur.photo }
       : { emoji: lastJoin.emoji, color: lastJoin.color, photo: lastJoin.photo };
-    // reflect identity locally so the HUD avatar/name are right before scores arrive
     setDraftName(name);
     if (av.emoji) setPickedEmoji(av.emoji);
     if (av.color) setPickedColor(av.color);
     if (av.photo) setPickedPhoto(av.photo);
     setTeamId(lastJoin.teamId || null);
-    room.join(name, lastJoin.teamId || null, teamsList ? null : av, prof.profileId);
+    room.join(name, lastJoin.teamId || null, teamsList ? null : av, cur ? cur.id : null);
     setJoined(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [room.state, joined, lastJoin, prof.ready, prof.configured, prof.profile, prof.profileId, code]);
+  }, [room.state, joined, lastJoin, pb.ready, pb.configured, pb.current, code]);
+
+  // At game end, write this device's own stat row for its current player (once
+  // per game). The phone has no `game` object — it builds the row from the
+  // standings it mirrors + the host's end signal on the state topic.
+  const recordedRef = useRef(null);
+  useEffect(() => {
+    if (!joined || !pb.configured) return;
+    const st = room.state;
+    if (!st?.ended || !st.gameId || recordedRef.current === st.gameId) return;
+    const row = buildResultRow(st.scores || [], room.deviceId, {
+      gameId: st.gameId,
+      quizTitle: st.quizTitle,
+      mode: st.mode,
+      roomCode: code,
+    });
+    if (!row || !pb.currentId) return; // attribute to THIS phone's player (correct for teams too)
+    recordedRef.current = st.gameId;
+    pb.recordResult({ ...row, profile_id: pb.currentId }).then((ok) => ok && setSavedStats(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joined, pb.configured, pb.currentId, room.state, room.deviceId, code]);
 
   const iLocked = lockedBy && lockedBy === room.deviceId;
   const online = room.status === "connected";
@@ -172,14 +195,16 @@ export default function JoinView({ code }) {
     room.buzz();
     playSound("buzz");
   };
-  // Leave the room and forget the cached join, returning to the join form so the
-  // player can re-pick (or hand the phone to someone else).
+  // Leave the room + forget the cached join. Configured ⇒ back to the picker.
   const switchPlayer = () => {
     removeKey("lastJoin");
     autoRef.current = false;
+    recordedRef.current = null;
     setLastJoin(null);
+    setSavedStats(false);
     room.leave();
     setJoined(false);
+    if (pb.configured) setReselect(true);
   };
   const onPhoto = async (e) => {
     const file = e.target.files?.[0];
@@ -196,7 +221,339 @@ export default function JoinView({ code }) {
     }
   };
 
+  // ---- playerbase pre-join handlers (configured only) ----
+  const selectExisting = (player) => {
+    if (player.locked && !pb.isUnlocked(player.id)) {
+      setPinFor(player);
+      setPinInput("");
+      setPinError(false);
+      return;
+    }
+    pb.select(player);
+    setReselect(false);
+  };
+  const confirmPin = async () => {
+    const ok = await pb.select(pinFor, pinInput);
+    if (ok) {
+      setPinFor(null);
+      setReselect(false);
+    } else setPinError(true);
+  };
+  const createNew = async () => {
+    if (!draftName.trim()) return;
+    const row = await pb.create({
+      name: draftName.trim(),
+      emoji: pickedEmoji,
+      color: pickedColor,
+      photo: pickedPhoto,
+      pin: newPin || null,
+    });
+    if (row) {
+      setCreating(false);
+      setReselect(false);
+      setNewPin("");
+    }
+  };
+  // Join as the chosen playerbase player.
+  const joinAsCurrent = () => {
+    const c = pb.current;
+    if (!c || (needsTeam && !teamId)) return;
+    setDraftName(c.name);
+    setPickedEmoji(c.emoji);
+    setPickedColor(c.color);
+    setPickedPhoto(c.photo || "");
+    saveJSON("lastJoin", {
+      code,
+      name: c.name,
+      teamId: needsTeam ? teamId : null,
+      emoji: c.emoji,
+      color: c.color,
+      photo: c.photo,
+      playerId: c.id,
+    });
+    room.join(c.name, teamId, needsTeam ? null : { emoji: c.emoji, color: c.color, photo: c.photo }, c.id);
+    setJoined(true);
+  };
+  // Classic (unconfigured) join.
+  const joinClassic = (e) => {
+    e.preventDefault();
+    if (!canJoin) return;
+    saveJSON("lastJoin", {
+      code,
+      name: draftName.trim(),
+      teamId: needsTeam ? teamId : null,
+      emoji: pickedEmoji,
+      color: pickedColor,
+      photo: pickedPhoto,
+    });
+    room.join(
+      draftName,
+      teamId,
+      needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto },
+      null,
+    );
+    setJoined(true);
+  };
+
   const letters = ["A", "B", "C", "D", "E", "F"];
+
+  // ---- shared form fragments ----
+  const avatarPicker = (
+    <div className="mt-5">
+      <div className="mb-3 flex items-center gap-3">
+        <Avatar
+          color={pickedColor}
+          emoji={pickedEmoji}
+          photo={pickedPhoto}
+          name={draftName}
+          size={48}
+          className="shadow-sm"
+        />
+        <p className="text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickAvatar")}</p>
+        <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
+        {pickedPhoto ? (
+          <button
+            type="button"
+            onClick={() => setPickedPhoto("")}
+            className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+          >
+            <X size={14} /> {t("join.removePhoto")}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => photoRef.current?.click()}
+            disabled={photoBusy}
+            className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 disabled:opacity-50 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+          >
+            {photoBusy ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />} {t("join.usePhoto")}
+          </button>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {PLAYER_EMOJI.map((em) => (
+          <button
+            type="button"
+            key={em}
+            onClick={() => setPickedEmoji(em)}
+            aria-label={em}
+            aria-pressed={pickedEmoji === em}
+            className={`flex h-9 w-9 items-center justify-center rounded-xl text-lg transition active:scale-90 ${FOCUS} ${
+              pickedEmoji === em
+                ? "bg-stone-900 ring-2 ring-stone-900 dark:bg-stone-100 dark:ring-stone-100"
+                : "bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700"
+            }`}
+          >
+            {em}
+          </button>
+        ))}
+      </div>
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
+        {PLAYER_COLORS.map((c, i) => (
+          <button
+            type="button"
+            key={c}
+            onClick={() => setPickedColor(c)}
+            aria-label={t("join.colorN", { n: i + 1 })}
+            aria-pressed={pickedColor === c}
+            style={{ backgroundColor: c }}
+            className={`h-9 w-9 rounded-full transition active:scale-90 ${FOCUS} ${
+              pickedColor === c
+                ? "ring-2 ring-stone-900 ring-offset-2 ring-offset-white dark:ring-stone-100 dark:ring-offset-stone-950"
+                : ""
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+
+  const teamPicker = (
+    <div className="mt-4">
+      <p className="mb-2 text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickTeam")}</p>
+      <div className="grid grid-cols-2 gap-2">
+        {(teams || []).map((tm) => (
+          <button
+            type="button"
+            key={tm.id}
+            onClick={() => setTeamId(tm.id)}
+            className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-semibold transition ${FOCUS} ${
+              teamId === tm.id
+                ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-500/10 dark:text-indigo-300"
+                : "border-stone-200 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200"
+            }`}
+          >
+            <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: tm.color || "#6366f1" }} />
+            <span className="min-w-0 truncate">{tm.name}</span>
+            {teamId === tm.id && <Check size={15} className="ml-auto shrink-0" />}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ---- the configured (playerbase) pre-join flow ----
+  const renderPlayerbaseJoin = () => {
+    if (pinFor) {
+      return (
+        <div className="flex flex-1 flex-col justify-center">
+          <button
+            onClick={() => setPinFor(null)}
+            className={`mb-4 inline-flex items-center gap-1 self-start rounded-lg px-2 py-1.5 text-sm text-stone-500 ${FOCUS}`}
+          >
+            <ChevronLeft size={16} /> {t("playerbase.back")}
+          </button>
+          <div className="mb-4 flex items-center gap-3">
+            <Avatar color={pinFor.color} emoji={pinFor.emoji} photo={pinFor.photo} name={pinFor.name} size={44} />
+            <h2 className="text-xl font-bold tracking-tight">{t("playerbase.enterPin", { name: pinFor.name })}</h2>
+          </div>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={8}
+            autoFocus
+            value={pinInput}
+            onChange={(e) => {
+              setPinInput(e.target.value.replace(/\D/g, ""));
+              setPinError(false);
+            }}
+            className={`${inputCls} text-center font-pixel text-2xl tracking-[0.4em]`}
+            placeholder="••••••"
+          />
+          {pinError && (
+            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">{t("playerbase.wrongPin")}</p>
+          )}
+          <Button
+            variant="accent"
+            className="mt-4 w-full px-6 py-3.5 text-base"
+            disabled={!pinInput}
+            onClick={confirmPin}
+          >
+            <Lock size={16} /> {t("playerbase.unlock")}
+          </Button>
+        </div>
+      );
+    }
+
+    if (pb.current && !reselect) {
+      const c = pb.current;
+      return (
+        <div className="flex flex-1 flex-col justify-center">
+          <div className="mb-2 flex items-center gap-2 text-stone-400">
+            <Radio size={18} />
+            <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
+          </div>
+          <div className="mb-5 flex items-center gap-3 rounded-2xl border-2 border-stone-200 bg-white/70 p-3 dark:border-stone-800 dark:bg-stone-900/60">
+            <Avatar color={c.color} emoji={c.emoji} photo={c.photo} name={c.name} size={48} />
+            <div className="min-w-0 flex-1">
+              <p className="font-pixel text-[8px] uppercase tracking-widest text-stone-400">
+                {t("playerbase.playingAs")}
+              </p>
+              <p className="truncate text-lg font-bold">{c.name}</p>
+            </div>
+            <button
+              onClick={() => setReselect(true)}
+              className={`shrink-0 rounded-lg px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-500/10 ${FOCUS}`}
+            >
+              {t("playerbase.change")}
+            </button>
+          </div>
+          {needsTeam && teamPicker}
+          <Button
+            variant="accent"
+            className="mt-4 w-full px-6 py-3.5 text-base"
+            disabled={needsTeam && !teamId}
+            onClick={joinAsCurrent}
+          >
+            {t("join.joinGame")}
+          </Button>
+        </div>
+      );
+    }
+
+    if (creating || pb.players.length === 0) {
+      return (
+        <div className="flex flex-1 flex-col justify-center">
+          {pb.players.length > 0 && (
+            <button
+              onClick={() => setCreating(false)}
+              className={`mb-3 inline-flex items-center gap-1 self-start rounded-lg px-2 py-1.5 text-sm text-stone-500 ${FOCUS}`}
+            >
+              <ChevronLeft size={16} /> {t("playerbase.back")}
+            </button>
+          )}
+          <h2 className="mb-1 text-2xl font-bold tracking-tight">{t("playerbase.createTitle")}</h2>
+          <input
+            className={`${inputCls} text-lg`}
+            placeholder={t("join.namePlaceholder")}
+            value={draftName}
+            autoFocus
+            maxLength={24}
+            onChange={(e) => setDraftName(e.target.value)}
+          />
+          {avatarPicker}
+          <div className="mt-4">
+            <p className="mb-1 text-sm font-medium text-stone-600 dark:text-stone-300">{t("playerbase.pinOptional")}</p>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={8}
+              value={newPin}
+              onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ""))}
+              className={`${inputCls} font-pixel tracking-[0.3em]`}
+              placeholder={t("playerbase.pinPlaceholder")}
+            />
+            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("playerbase.pinHint")}</p>
+          </div>
+          <Button
+            variant="accent"
+            className="mt-4 w-full px-6 py-3.5 text-base"
+            disabled={!draftName.trim() || (!!newPin && !/^[0-9]{6,8}$/.test(newPin)) || !pb.ready}
+            onClick={createNew}
+          >
+            <Plus size={16} /> {t("playerbase.create")}
+          </Button>
+        </div>
+      );
+    }
+
+    // directory of existing players
+    return (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="mb-2 flex shrink-0 items-center gap-2 text-stone-400">
+          <Radio size={18} />
+          <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
+        </div>
+        <h2 className="mb-4 shrink-0 text-2xl font-bold tracking-tight">{t("playerbase.whoPlaying")}</h2>
+        <div className="grid min-h-0 flex-1 grid-cols-2 content-start gap-2 overflow-y-auto">
+          {pb.players.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => selectExisting(p)}
+              className={`flex items-center gap-2 rounded-xl border-2 border-stone-200 bg-white px-3 py-2.5 text-left transition active:scale-[.98] dark:border-stone-700 dark:bg-stone-900 ${FOCUS}`}
+            >
+              <Avatar color={p.color} emoji={p.emoji} photo={p.photo} name={p.name} size={32} />
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</span>
+              {p.locked && <Lock size={13} className="shrink-0 text-stone-400" />}
+            </button>
+          ))}
+        </div>
+        <Button
+          variant="outline"
+          className="mt-3 w-full shrink-0 px-6 py-3 text-base"
+          onClick={() => {
+            setDraftName("");
+            setNewPin("");
+            setCreating(true);
+          }}
+        >
+          <Plus size={16} /> {t("playerbase.newPlayer")}
+        </Button>
+      </div>
+    );
+  };
 
   return (
     <div className="qn-app-bg flex h-[100dvh] flex-col overflow-hidden px-5 py-6 font-sans text-stone-900 antialiased dark:text-stone-100">
@@ -216,6 +573,16 @@ export default function JoinView({ code }) {
               {online ? <Wifi size={12} /> : <WifiOff size={12} />}
               {online ? t("join.connected") : t("join.connecting")}
             </span>
+            {pb.configured && (
+              <a
+                href="#/me"
+                aria-label={t("stats.title")}
+                title={t("stats.title")}
+                className={`rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 ${FOCUS}`}
+              >
+                <BarChart3 size={16} />
+              </a>
+            )}
             {joined && (
               <button
                 onClick={switchPlayer}
@@ -230,161 +597,37 @@ export default function JoinView({ code }) {
         </div>
 
         {!joined ? (
-          <div className="flex flex-1 flex-col justify-center">
-            <div className="mb-2 flex items-center gap-2 text-stone-400">
-              <Radio size={18} />
-              <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
+          pb.configured ? (
+            renderPlayerbaseJoin()
+          ) : (
+            <div className="flex flex-1 flex-col justify-center">
+              <div className="mb-2 flex items-center gap-2 text-stone-400">
+                <Radio size={18} />
+                <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
+              </div>
+              <h2 className="mb-4 text-3xl font-bold tracking-tight">{t("join.whatsYourName")}</h2>
+              <form onSubmit={joinClassic}>
+                <input
+                  className={`${inputCls} text-lg`}
+                  placeholder={t("join.namePlaceholder")}
+                  value={draftName}
+                  autoFocus
+                  maxLength={24}
+                  onChange={(e) => setDraftName(e.target.value)}
+                />
+                {!needsTeam && avatarPicker}
+                {needsTeam && teamPicker}
+                <Button
+                  type="submit"
+                  variant="accent"
+                  className="mt-4 w-full px-6 py-3.5 text-base"
+                  disabled={!canJoin}
+                >
+                  {t("join.joinGame")}
+                </Button>
+              </form>
             </div>
-            <h2 className="mb-1 text-3xl font-bold tracking-tight">{t("join.whatsYourName")}</h2>
-            {prof.configured && prof.profile && (
-              <p className="mb-3 font-pixel text-[9px] uppercase tracking-widest text-indigo-500 dark:text-indigo-400">
-                ★ {t("profile.savedHint")}
-              </p>
-            )}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!canJoin) return;
-                // Remember the chosen name + avatar on the profile (if configured).
-                if (prof.configured)
-                  prof.saveProfile({
-                    name: draftName.trim(),
-                    emoji: pickedEmoji,
-                    color: pickedColor,
-                    photo: pickedPhoto,
-                  });
-                // Cache this join so a reload reconnects us to the same room.
-                saveJSON("lastJoin", {
-                  code,
-                  name: draftName.trim(),
-                  teamId: needsTeam ? teamId : null,
-                  emoji: pickedEmoji,
-                  color: pickedColor,
-                  photo: pickedPhoto,
-                });
-                room.join(
-                  draftName,
-                  teamId,
-                  needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto },
-                  prof.profileId,
-                );
-                setJoined(true);
-              }}
-            >
-              <input
-                className={`${inputCls} text-lg`}
-                placeholder={t("join.namePlaceholder")}
-                value={draftName}
-                autoFocus
-                maxLength={24}
-                onChange={(e) => setDraftName(e.target.value)}
-              />
-              {!needsTeam && (
-                <div className="mt-5">
-                  <div className="mb-3 flex items-center gap-3">
-                    <Avatar
-                      color={pickedColor}
-                      emoji={pickedEmoji}
-                      photo={pickedPhoto}
-                      name={draftName}
-                      size={48}
-                      className="shadow-sm"
-                    />
-                    <p className="text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickAvatar")}</p>
-                    <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
-                    {pickedPhoto ? (
-                      <button
-                        type="button"
-                        onClick={() => setPickedPhoto("")}
-                        className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
-                      >
-                        <X size={14} /> {t("join.removePhoto")}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => photoRef.current?.click()}
-                        disabled={photoBusy}
-                        className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 disabled:opacity-50 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
-                      >
-                        {photoBusy ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}{" "}
-                        {t("join.usePhoto")}
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {PLAYER_EMOJI.map((em) => (
-                      <button
-                        type="button"
-                        key={em}
-                        onClick={() => setPickedEmoji(em)}
-                        aria-label={em}
-                        aria-pressed={pickedEmoji === em}
-                        className={`flex h-9 w-9 items-center justify-center rounded-xl text-lg transition active:scale-90 ${FOCUS} ${
-                          pickedEmoji === em
-                            ? "bg-stone-900 ring-2 ring-stone-900 dark:bg-stone-100 dark:ring-stone-100"
-                            : "bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700"
-                        }`}
-                      >
-                        {em}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-2.5 flex flex-wrap gap-1.5">
-                    {PLAYER_COLORS.map((c, i) => (
-                      <button
-                        type="button"
-                        key={c}
-                        onClick={() => setPickedColor(c)}
-                        aria-label={t("join.colorN", { n: i + 1 })}
-                        aria-pressed={pickedColor === c}
-                        style={{ backgroundColor: c }}
-                        className={`h-9 w-9 rounded-full transition active:scale-90 ${FOCUS} ${
-                          pickedColor === c
-                            ? "ring-2 ring-stone-900 ring-offset-2 ring-offset-white dark:ring-stone-100 dark:ring-offset-stone-950"
-                            : ""
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {needsTeam && (
-                <div className="mt-4">
-                  <p className="mb-2 text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickTeam")}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {teams.map((tm) => (
-                      <button
-                        type="button"
-                        key={tm.id}
-                        onClick={() => setTeamId(tm.id)}
-                        className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-semibold transition ${FOCUS} ${
-                          teamId === tm.id
-                            ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-500/10 dark:text-indigo-300"
-                            : "border-stone-200 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200"
-                        }`}
-                      >
-                        <span
-                          className="h-3 w-3 shrink-0 rounded-full"
-                          style={{ backgroundColor: tm.color || "#6366f1" }}
-                        />
-                        <span className="min-w-0 truncate">{tm.name}</span>
-                        {teamId === tm.id && <Check size={15} className="ml-auto shrink-0" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <Button
-                type="submit"
-                variant="accent"
-                className="mt-4 w-full px-6 py-3.5 text-base"
-                disabled={!canJoin || (prof.configured && !prof.ready)}
-              >
-                {t("join.joinGame")}
-              </Button>
-            </form>
-          </div>
+          )
         ) : (
           <div className="flex flex-1 flex-col">
             {/* persistent arcade HUD: avatar + name, plus live score + rank once
@@ -601,9 +844,18 @@ export default function JoinView({ code }) {
                       );
                     })}
                   </div>
-                  <p className="mt-3 shrink-0 text-center text-xs text-stone-400 dark:text-stone-500">
-                    {t("join.watchScreen")}
-                  </p>
+                  {savedStats ? (
+                    <a
+                      href="#/me"
+                      className="mt-3 inline-flex shrink-0 items-center justify-center gap-1 text-center text-xs font-medium text-indigo-600 dark:text-indigo-400"
+                    >
+                      <Check size={12} /> {t("stats.savedToStats")} · {t("stats.viewMine")}
+                    </a>
+                  ) : (
+                    <p className="mt-3 shrink-0 text-center text-xs text-stone-400 dark:text-stone-500">
+                      {t("join.watchScreen")}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-1 flex-col items-center justify-center text-center">

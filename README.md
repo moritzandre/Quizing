@@ -107,15 +107,15 @@ The Vite `base` is relative and routing is hash-based, so the build also works u
 
 > **Cross-network play:** because the join QR encodes wherever the host loaded the app and the buzzer broker is public internet, players reach the host **from any network** when everyone uses the deployed URL (the same-Wi-Fi requirement only applies to the local `npm run dev` server, whose QR points at the host's LAN IP).
 
-## Persistent players (optional)
+## Persistent players + stats (optional)
 
-By default the app is fully backendless and each player types a name per game. You can **optionally** add persistent player profiles + per-player stats by pointing it at a free [Supabase](https://supabase.com) project — the frontend stays static on GitHub Pages and talks to Supabase from the browser.
+By default the app is fully backendless and each player types a name per game. You can **optionally** add a shared **playerbase** — a persistent roster everyone picks from across games and devices — plus per-player stats and an all-time leaderboard, by pointing it at a free [Supabase](https://supabase.com) project. The frontend stays static on GitHub Pages and talks to Supabase from the browser. **No login, email, or accounts** of any kind.
 
-1. Create a Supabase project; in the SQL editor run [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (creates `profiles` + `results` with Row Level Security).
-2. **Authentication → Providers → enable Anonymous sign-ins.**
+1. Create a Supabase project; in the SQL editor run **both** migrations in order: [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) then [`supabase/migrations/0002_playerbase.sql`](supabase/migrations/0002_playerbase.sql) (the second turns profiles into the shared, PIN-lockable directory + adds the stat-recording functions and the global leaderboard).
+2. **Authentication → Providers → enable Anonymous sign-ins** (an invisible session — players never see a login).
 3. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (Project Settings → API). Locally: copy [`.env.example`](.env.example) to `.env`. On GitHub Pages: add them as repository **Actions secrets** (the deploy workflow injects them).
 
-When set, each phone signs in anonymously, remembers its profile (name + avatar) across reloads, and joins with one tap. The anon key is publishable; RLS is the boundary. **Leave the vars unset and nothing changes** — the Supabase SDK is dropped from the build entirely and the app runs exactly as before.
+When set, the join screen becomes a **player picker**: tap an existing player or **create** one. A player can be free-to-claim, or locked with a **numeric PIN** (a soft lock — whoever sets it first; needed to play as it; no recovery if forgotten). Each phone writes its own result at game end, and **#/me** shows your stats + the all-time global leaderboard. The anon key is publishable; Row Level Security + server-side functions are the boundary (the PIN is hashed server-side and never sent to clients). **Leave the vars unset and nothing changes** — the Supabase SDK is dropped from the build entirely and the app runs exactly as before (type-a-name per game, host-local leaderboard).
 
 ## Project structure
 

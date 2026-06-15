@@ -52,6 +52,7 @@ export function useHostRoom() {
   const phaseRef = useRef({ phase: "idle", qKey: null });
   const lockedRef = useRef(null);
   const scoresRef = useRef(null); // latest standings to mirror onto phones
+  const endInfoRef = useRef(null); // {gameId, quizTitle, mode} while the game is over, for phone stat-writing
   const participantsRef = useRef({});
   participantsRef.current = participants;
 
@@ -60,7 +61,12 @@ export function useHostRoom() {
     if (!conn) return;
     conn.publish(
       conn.topics.state,
-      { ...phaseRef.current, lockedBy: lockedRef.current, ...(scoresRef.current ? { scores: scoresRef.current } : {}) },
+      {
+        ...phaseRef.current,
+        lockedBy: lockedRef.current,
+        ...(scoresRef.current ? { scores: scoresRef.current } : {}),
+        ...(endInfoRef.current ? { ended: true, ...endInfoRef.current } : {}),
+      },
       { retain: true },
     );
   }, []);
@@ -70,6 +76,19 @@ export function useHostRoom() {
   // + rank). Re-asserts the retained state with the latest scores attached.
   const pushScores = useCallback((standings) => {
     scoresRef.current = Array.isArray(standings) ? standings : null;
+    pushStateRef.current();
+  }, []);
+  // Flag the game as over on the retained state so phones can write their own
+  // stat row (they have no `game` object). Pass null when leaving the end stage.
+  const setEnded = useCallback((meta) => {
+    endInfoRef.current =
+      meta && meta.gameId
+        ? {
+            gameId: String(meta.gameId),
+            quizTitle: String(meta.quizTitle || ""),
+            mode: meta.mode === "teams" ? "teams" : "solo",
+          }
+        : null;
     pushStateRef.current();
   }, []);
 
@@ -98,6 +117,7 @@ export function useHostRoom() {
     phaseRef.current = { phase: "idle", qKey: null };
     lockedRef.current = null;
     scoresRef.current = null;
+    endInfoRef.current = null;
     setParticipants({});
     setBuzz(null);
     setPins({});
@@ -191,6 +211,7 @@ export function useHostRoom() {
     phaseRef.current = { phase: "idle", qKey: null };
     lockedRef.current = null;
     scoresRef.current = null;
+    endInfoRef.current = null;
     Object.values(leaveTimersRef.current).forEach(clearTimeout);
     leaveTimersRef.current = {};
     setEnabled(false);
@@ -291,6 +312,7 @@ export function useHostRoom() {
     pushLive,
     pushHost,
     pushScores,
+    setEnded,
   };
 }
 
@@ -379,6 +401,10 @@ export function usePlayerRoom(code) {
                 teams: Array.isArray(msg.teams) ? msg.teams : null,
                 options: Array.isArray(msg.options) ? msg.options : null,
                 scores: normalizePhoneScores(msg.scores),
+                ended: !!msg.ended,
+                gameId: str(msg.gameId),
+                quizTitle: str(msg.quizTitle),
+                mode: msg.mode === "teams" ? "teams" : "solo",
               }
             : null,
         ),
