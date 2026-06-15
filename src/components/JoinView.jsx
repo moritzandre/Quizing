@@ -95,8 +95,8 @@ export default function JoinView({ code }) {
   const letters = ["A", "B", "C", "D", "E", "F"];
 
   return (
-    <div className="qn-app-bg flex min-h-screen flex-col px-5 py-6 font-sans text-stone-900 antialiased dark:text-stone-100">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
+    <div className="qn-app-bg flex h-[100dvh] flex-col overflow-hidden px-5 py-6 font-sans text-stone-900 antialiased dark:text-stone-100">
+      <div className="mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col overflow-y-auto">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             Quiz Night<span className="text-indigo-600 dark:text-indigo-400">.</span>
@@ -281,17 +281,19 @@ export default function JoinView({ code }) {
             )}
 
             {phase === "map" && (
-              <div className="flex flex-1 flex-col">
-                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
+              <div className="flex min-h-0 flex-1 flex-col">
+                <div className="mb-2 flex shrink-0 items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
                   <MapPin size={16} /> {t("join.tapMap")}
                 </div>
-                <LeafletMap
-                  answer={myPin ? { lat: myPin.lat, lng: myPin.lng, label: room.name } : undefined}
-                  onPick={placePin}
-                  className="h-[55vh]"
-                />
+                <div className="min-h-0 flex-1">
+                  <LeafletMap
+                    answer={myPin ? { lat: myPin.lat, lng: myPin.lng, label: room.name } : undefined}
+                    onPick={placePin}
+                    className="h-full w-full"
+                  />
+                </div>
                 <p
-                  className={`mt-3 text-center text-sm ${pinSent ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}
+                  className={`mt-2 shrink-0 text-center text-sm ${pinSent ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}
                 >
                   {pinSent ? t("join.pinSent") : t("join.noPin")}
                 </p>

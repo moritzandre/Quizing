@@ -53,14 +53,10 @@ export default function RoundBody({
   qKey = "",
 }) {
   const { t } = useI18n();
-  // Heights are capped so the question + media + answer fit one screen without
-  // scrolling (compact = the host phone; otherwise the TV).
-  const mapH = compact ? "h-[42vh]" : "h-[58vh]";
-  const mediaW = compact ? "max-w-5xl" : "max-w-3xl";
 
   if (type === "classic" || type === "jeopardy") {
     return (
-      <div className="text-center">
+      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
         <Q>{type === "jeopardy" ? q.clue : q.q}</Q>
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
       </div>
@@ -70,7 +66,7 @@ export default function RoundBody({
   if (type === "hints") {
     const shown = (Array.isArray(q.hints) ? q.hints : []).filter(hintHasContent).slice(0, Math.max(1, hintsShown));
     return (
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col justify-center overflow-y-auto">
         <div className="space-y-3">
           {shown.map((h, i) => (
             <div
@@ -88,63 +84,73 @@ export default function RoundBody({
 
   if (type === "video" || type === "clip") {
     return (
-      <div className="text-center">
-        {q.q && <Q>{q.q}</Q>}
-        <div className={`mx-auto mt-5 ${mediaW}`}>
+      <div className="flex h-full min-h-0 flex-col text-center">
+        {q.q && (
+          <div className="shrink-0">
+            <Q>{q.q}</Q>
+          </div>
+        )}
+        <div className="relative mt-4 min-h-0 flex-1">
           {stage ? (
-            <MediaPlayer
-              key={qKey || q.url || "none"}
-              url={q.url}
-              audioOnly={!!q.audioOnly}
-              start={q.start}
-              end={clipEnd(q, step)}
-              transport={transport}
-              controls={false}
-            />
+            <div className="absolute inset-0 m-auto aspect-video max-h-full max-w-full">
+              <MediaPlayer
+                key={qKey || q.url || "none"}
+                url={q.url}
+                audioOnly={!!q.audioOnly}
+                start={q.start}
+                end={clipEnd(q, step)}
+                transport={transport}
+                controls={false}
+              />
+            </div>
           ) : (
-            <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
-              <Volume2 size={compact ? 28 : 40} />
+            <div className="absolute inset-0 m-auto flex aspect-video max-h-full max-w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
+              <Volume2 size={compact ? 28 : 44} />
               <p className="text-sm font-medium">{t("play.clipElsewhere")}</p>
             </div>
           )}
         </div>
-        {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
+        {revealed && reveal?.answer != null && <p className={`${answerCls} shrink-0`}>{reveal.answer}</p>}
       </div>
     );
   }
 
   if (type === "image") {
     return (
-      <div className="text-center">
-        {q.q && <Q>{q.q}</Q>}
-        <div className={`mx-auto mt-5 ${mediaW}`}>
+      <div className="flex h-full min-h-0 flex-col text-center">
+        {q.q && (
+          <div className="shrink-0">
+            <Q>{q.q}</Q>
+          </div>
+        )}
+        <div className="mt-4 flex min-h-0 flex-1 items-center justify-center">
           {q.url ? (
             <img
               src={q.url}
               alt=""
-              className={`${compact ? "max-h-[42vh]" : "max-h-[58vh]"} w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900`}
+              className="max-h-full max-w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900"
             />
           ) : null}
         </div>
-        {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
+        {revealed && reveal?.answer != null && <p className={`${answerCls} shrink-0`}>{reveal.answer}</p>}
       </div>
     );
   }
 
   if (type === "morph") {
     return (
-      <div className="mx-auto max-w-4xl text-center">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col items-center justify-center text-center">
         <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={step} revealed={revealed} />
-        {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
+        {revealed && reveal?.answer != null && <p className={`${answerCls} shrink-0`}>{reveal.answer}</p>}
       </div>
     );
   }
 
   if (type === "fusion") {
     return (
-      <div className="mx-auto max-w-4xl text-center">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col items-center justify-center text-center">
         <FusionImage urlA={q.urlA} urlB={q.urlB} steps={q.steps} step={step} revealed={revealed} />
-        {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
+        {revealed && reveal?.answer != null && <p className={`${answerCls} shrink-0`}>{reveal.answer}</p>}
       </div>
     );
   }
@@ -155,22 +161,26 @@ export default function RoundBody({
     // on reveal switch to the map so the answer location is shown.
     const showStreet = !revealed && mapillaryEmbedUrl(q.street);
     return (
-      <div className="mx-auto max-w-5xl text-center">
-        {q.q && <Q>{q.q}</Q>}
-        <div className="mt-5">
+      <div className="flex h-full min-h-0 flex-col text-center">
+        {q.q && (
+          <div className="shrink-0">
+            <Q>{q.q}</Q>
+          </div>
+        )}
+        <div className="mt-4 min-h-0 flex-1">
           {showStreet ? (
-            <MapillaryEmbed street={q.street} className={mapH} />
+            <MapillaryEmbed street={q.street} className="h-full w-full" />
           ) : (
             <LeafletMap
               answer={
                 ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
               }
               tileLayer={q.tileLayer}
-              className={mapH}
+              className="h-full w-full"
             />
           )}
         </div>
-        {ans?.name && <p className={answerCls}>{ans.name}</p>}
+        {ans?.name && <p className={`${answerCls} shrink-0`}>{ans.name}</p>}
       </div>
     );
   }
@@ -178,9 +188,9 @@ export default function RoundBody({
   if (type === "choice") {
     const options = Array.isArray(q.options) ? q.options : [];
     return (
-      <div className="text-center">
+      <div className="flex h-full min-h-0 flex-col justify-center overflow-y-auto text-center">
         <Q>{q.q}</Q>
-        <div className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-2">
+        <div className="mx-auto mt-6 grid w-full max-w-2xl gap-3 sm:grid-cols-2">
           {options.map((opt, oi) => {
             const correct = revealed && reveal?.correct === oi;
             return (
@@ -213,7 +223,7 @@ export default function RoundBody({
 
   if (type === "number") {
     return (
-      <div className="text-center">
+      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
         <Q>{q.q}</Q>
         {revealed && reveal?.answer != null && (
           <p className={`${answerCls} inline-flex items-center gap-2`}>

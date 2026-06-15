@@ -111,16 +111,18 @@ export default function HostRemoteView({ code }) {
           with the page; read-only (no pin placement here). */}
       {stage === "question" && present.q && type && (
         <div className="mb-4 rounded-2xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-stone-900">
-          <RoundBody
-            type={type}
-            q={present.q}
-            revealed={revealed}
-            hintsShown={live?.hintsShown || 1}
-            step={live?.step || 0}
-            reveal={live?.reveal || null}
-            compact
-            qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
-          />
+          <div className="h-[38vh]">
+            <RoundBody
+              type={type}
+              q={present.q}
+              revealed={revealed}
+              hintsShown={live?.hintsShown || 1}
+              step={live?.step || 0}
+              reveal={live?.reveal || null}
+              compact
+              qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
+            />
+          </div>
         </div>
       )}
 

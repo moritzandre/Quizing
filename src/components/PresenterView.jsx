@@ -37,7 +37,7 @@ export default function PresenterView({ code }) {
   // A plain function (not a component) so children reconcile by type instead of
   // remounting the map/player subtree on every live update.
   const shell = (children) => (
-    <div className="qn-app-bg qn-present flex min-h-screen flex-col px-8 py-6 text-stone-900 antialiased dark:text-stone-100">
+    <div className="qn-app-bg qn-present flex h-[100dvh] flex-col overflow-hidden px-6 py-5 text-stone-900 antialiased dark:text-stone-100">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-xl font-bold tracking-tight">
           <Tv size={20} /> {present?.quizTitle || "Quiz Night"}
@@ -56,7 +56,7 @@ export default function PresenterView({ code }) {
           <ThemeToggle />
         </div>
       </div>
-      <div className="flex flex-1 flex-col justify-center">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col justify-center">{children}</div>
       {needsSound && (
         <button
           onClick={() => setSoundOn(true)}
