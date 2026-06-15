@@ -61,7 +61,7 @@ export default function RoundRecap({ entities = [], present = false }) {
     >
       {ranked.map((e, rank) => {
         const delta = e.to - e.from;
-        const barPct = e.to > 0 ? Math.round((e.cur / maxTo) * 100) : 0;
+        const barPct = e.to > 0 ? Math.max(0, Math.round((e.cur / maxTo) * 100)) : 0;
         return (
           <div
             key={e.id}

@@ -108,6 +108,12 @@ function AiModal({ onClose, onImport, t }) {
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
   const [msg, setMsg] = useState(null);
+  // Auto-clear the "copied!" flag, cancelling the timer if the modal closes first.
+  useEffect(() => {
+    if (!copied) return;
+    const id = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(id);
+  }, [copied]);
   // navigator.clipboard only exists in secure contexts (https/localhost); over a
   // plain-http LAN address it's undefined, so fall back to execCommand("copy").
   const copy = async () => {
@@ -135,10 +141,7 @@ function AiModal({ onClose, onImport, t }) {
         ok = false;
       }
     }
-    if (ok) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    }
+    if (ok) setCopied(true);
   };
   const doImport = () => {
     const title = onImport(text.trim());

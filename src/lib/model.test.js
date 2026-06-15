@@ -310,6 +310,16 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[1].questions[0]).toMatchObject({ options: ["", "", "", ""], correct: 0, points: 10 });
   });
 
+  it("caps choice options at 6 (the UI only labels A–F) and clamps correct into range", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "choice", questions: [{ q: "Q", options: ["a", "b", "c", "d", "e", "f", "g", "h"], correct: 7 }] },
+      ],
+    });
+    expect(q.rounds[0].questions[0].options).toEqual(["a", "b", "c", "d", "e", "f"]);
+    expect(q.rounds[0].questions[0].correct).toBe(5); // clamped to options.length - 1
+  });
+
   it("normalizes true/false + higher/lower rounds: correct coerced to 0|1, optional note", () => {
     const q = normalizeQuiz({
       rounds: [
@@ -478,6 +488,19 @@ describe("normalizeGame", () => {
     expect(normalizeGame(null)).toBe(null);
     expect(normalizeGame({ quiz: baseQuiz, players: [] })).toBe(null);
     expect(normalizeGame({ quiz: { rounds: "no" }, players: [{ id: "p1" }] })).toBe(null);
+  });
+
+  it("falls a tile-less jeopardy question back to the board (corrupt-save coherence)", () => {
+    const jeopQuiz = {
+      rounds: [{ type: "jeopardy", categories: [{ name: "C", questions: [{ clue: "x", answer: "y", points: 100 }] }] }],
+    };
+    const players = [{ id: "p1", name: "A", score: 0 }];
+    // stage "question" with no tile would crash the render → reset to board.
+    expect(normalizeGame({ quiz: jeopQuiz, players, ri: 0, stage: "question", tile: null }).stage).toBe("board");
+    // a coherent tile is preserved.
+    const ok = normalizeGame({ quiz: jeopQuiz, players, ri: 0, stage: "question", tile: { ci: 0, qi: 0 } });
+    expect(ok.stage).toBe("question");
+    expect(ok.tile).toEqual({ ci: 0, qi: 0 });
   });
 
   it("normalizes team mode: deviceIds array + members; migrates single deviceId", () => {

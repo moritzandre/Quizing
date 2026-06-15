@@ -289,6 +289,12 @@ function RoundCreatorModal({ onClose, onAdd, t }) {
   const [type, setType] = useState("classic");
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
+  // Auto-clear the "copied!" flag, cancelling the timer if the modal closes first.
+  useEffect(() => {
+    if (!copied) return;
+    const id = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(id);
+  }, [copied]);
   const prompt = roundCreatorPrompt(type);
   let rounds = [];
   if (text.trim()) {
@@ -324,10 +330,7 @@ function RoundCreatorModal({ onClose, onAdd, t }) {
         ok = false;
       }
     }
-    if (ok) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    }
+    if (ok) setCopied(true);
   };
   return (
     <div
@@ -984,7 +987,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                 className={`${inputCls} w-20 py-1`}
                                 value={item.steps ?? 4}
                                 onChange={(e) =>
-                                  qRow(r, item, { steps: Math.max(1, Math.min(8, Math.floor(+e.target.value || 1))) })
+                                  qRow(r, item, { steps: Math.max(1, Math.min(8, +e.target.value || 4)) })
                                 }
                               />
                               <span className="text-xs text-stone-400 dark:text-stone-500">

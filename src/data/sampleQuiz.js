@@ -110,7 +110,7 @@ export const SAMPLE = {
       ],
     },
     {
-      id: "s6",
+      id: "s5",
       type: "image",
       title: "Guess the Flag",
       timer: 15,
@@ -139,7 +139,7 @@ export const SAMPLE = {
       ],
     },
     {
-      id: "s5",
+      id: "s6",
       type: "map",
       title: "Where in the World?",
       timer: null,

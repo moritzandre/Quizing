@@ -30,6 +30,7 @@ let ctx = null;
 function audioCtx() {
   const Ctx = window.AudioContext || window.webkitAudioContext;
   if (!Ctx) return null;
+  if (ctx && ctx.state === "closed") ctx = null; // the browser closed it — rebuild on demand
   if (!ctx) ctx = new Ctx();
   if (ctx.state === "suspended") ctx.resume().catch(() => {});
   return ctx;

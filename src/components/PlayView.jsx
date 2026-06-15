@@ -44,6 +44,7 @@ import {
   buildPresentQ,
   buildLive,
   buildHostAux,
+  BINARY_TYPES,
   mapillaryEmbedUrl,
 } from "../lib/model.js";
 import {
@@ -200,7 +201,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.idle();
     } else if (round?.type === "map") {
       room.collectPins(qKey);
-    } else if (round?.type === "choice" || round?.type === "truefalse" || round?.type === "higherlower") {
+    } else if (BINARY_TYPES.includes(round?.type)) {
       // Binary rounds (true/false, higher/lower) reuse the choice phase with fixed labels.
       room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
     } else if (round?.type === "number") {
@@ -511,7 +512,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   };
 
   const backToBoard = () => {
-    const key = `${game.ri}-${game.tile.ci}-${game.tile.qi}`;
+    const key = `${game.ri}-${game.tile?.ci}-${game.tile?.qi}`;
     upd({ used: { ...game.used, [key]: true }, tile: null, stage: "board", revealed: false, awarded: {} });
   };
 
@@ -537,7 +538,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     switch (cmd.action) {
       case "reveal":
         if (game.stage === "question" && !game.revealed && cq) {
-          if (["choice", "truefalse", "higherlower"].includes(round.type)) revealChoice(cq);
+          if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
           else if (round.type === "number") revealNumber(cq);
           else if (round.type === "map") revealMap(cq);
           else reveal();
@@ -632,7 +633,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
       if (!q) return;
       if (k === "r" && !game.revealed) {
-        if (["choice", "truefalse", "higherlower"].includes(round.type)) revealChoice(q);
+        if (BINARY_TYPES.includes(round.type)) revealChoice(q);
         else if (round.type === "number") revealNumber(q);
         else if (round.type === "map") revealMap(q);
         else reveal();
@@ -1104,7 +1105,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   /* ---- question stage ---- */
-  const q = isJeop ? round.categories[game.tile.ci].questions[game.tile.qi] : round.questions[game.qi];
+  const q = isJeop ? round.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] : round.questions[game.qi];
+  if (!q) return null; // defensive: a jeopardy question without a valid open tile (e.g. corrupt save)
 
   const RevealBtn = (
     <Button className="px-6 py-3.5 text-base" onClick={reveal}>
@@ -1179,7 +1181,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const buzzName = room?.buzz ? entityForDevice(room.buzz.deviceId)?.name || room.buzz.name : "";
   const BuzzerBar = buzzerOn &&
     !game.revealed &&
-    !["map", "choice", "truefalse", "higherlower", "number", "whoknows"].includes(round.type) && (
+    !["map", "number", "whoknows", ...BINARY_TYPES].includes(round.type) && (
       <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
         {room.buzz ? (
           <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
@@ -1208,7 +1210,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {TimerPill}
         {isJeop && (
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
-            {round.categories[game.tile.ci].name || t("play.category")} · {q.points}
+            {round.categories[game.tile?.ci]?.name || t("play.category")} · {q.points}
           </p>
         )}
         <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-snug tracking-tight md:text-5xl">
@@ -1434,7 +1436,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               >
                 <Sparkles size={18} /> {t("play.demorph")}{" "}
                 <span className="text-sm text-stone-400">
-                  ({morphStep + 1}/{q.steps})
+                  ({morphStep + 1}/{q.steps + 1})
                 </span>
               </Button>
             )}
@@ -1484,7 +1486,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               >
                 <Sparkles size={18} /> {t("play.defuse")}{" "}
                 <span className="text-sm text-stone-400">
-                  ({morphStep + 1}/{q.steps})
+                  ({morphStep + 1}/{q.steps + 1})
                 </span>
               </Button>
             )}
@@ -1503,7 +1505,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     );
   }
 
-  if (round.type === "choice" || round.type === "truefalse" || round.type === "higherlower") {
+  if (BINARY_TYPES.includes(round.type)) {
     const options = optionsFor(round.type, q, t);
     const binary = round.type !== "choice"; // true/false & higher/lower have fixed 2 options
     const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};

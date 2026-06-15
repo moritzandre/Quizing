@@ -26,6 +26,9 @@ export const ROUND_TYPES = [
   "whoknows",
 ];
 
+/** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
+export const BINARY_TYPES = ["choice", "truefalse", "higherlower"];
+
 /** Reveal effects for the morph round. */
 export const MORPH_EFFECTS = ["blur", "pixelate", "tiles", "zoom", "slices"];
 
@@ -381,7 +384,8 @@ export function normalizeQuiz(raw) {
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
             });
           if (r.type === "choice") {
-            const options = (Array.isArray(q?.options) ? q.options : ["", "", "", ""]).map((o) => str(o));
+            // Cap at 6 options — the UI labels them A–F (Builder caps at 6 too).
+            const options = (Array.isArray(q?.options) ? q.options.slice(0, 6) : ["", "", "", ""]).map((o) => str(o));
             Object.assign(it, {
               q: str(q?.q),
               options,
@@ -439,7 +443,7 @@ export function normalizeGame(raw) {
   if (!raw || typeof raw !== "object") return null;
   const quiz = normalizeQuiz(raw.quiz);
   if (!quiz || !Array.isArray(raw.players) || raw.players.length === 0) return null;
-  return {
+  const g = {
     id: str(raw.id) || uid(),
     mode: raw.mode === "teams" ? "teams" : "solo",
     quiz,
@@ -480,6 +484,11 @@ export function normalizeGame(raw) {
     // between-rounds recap can animate from start-of-round to end-of-round.
     roundStartScores: scoreMap(raw.roundStartScores),
   };
+  // Coherence guard: a jeopardy question needs an open tile. A corrupted/edited
+  // save with stage "question" but no tile would crash the question render, so
+  // fall back to the board.
+  if (g.quiz.rounds[g.ri]?.type === "jeopardy" && g.stage === "question" && !g.tile) g.stage = "board";
+  return g;
 }
 
 /** Coerce an untrusted {id: score} object to a clean {id: number} map. */
