@@ -294,6 +294,7 @@ const en = {
   "join.rank": "Rank",
   "join.leaderboard": "Leaderboard",
   "join.youTag": "(you)",
+  "profile.savedHint": "Your saved player — edits are remembered",
   "join.connected": "Connected",
   "join.connecting": "Connecting…",
 
@@ -710,6 +711,7 @@ const de = {
   "join.rank": "Platz",
   "join.leaderboard": "Rangliste",
   "join.youTag": "(du)",
+  "profile.savedHint": "Dein gespeicherter Spieler — Änderungen werden gemerkt",
   "join.connected": "Verbunden",
   "join.connecting": "Verbinde…",
 

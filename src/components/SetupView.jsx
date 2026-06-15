@@ -34,6 +34,7 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
         emoji: p.emoji,
         color: p.color,
         photo: p.photo,
+        profileId: p.profileId,
       }))
     : [];
   const manualPlayers = names

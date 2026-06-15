@@ -13,6 +13,10 @@ import {
   clipEnd,
   summarizeGame,
   aggregateLeaderboard,
+  normalizeProfile,
+  normalizeResults,
+  summarizeResults,
+  summarizeForProfile,
   makeHint,
   hintHasContent,
   buildPresentQ,
@@ -701,6 +705,80 @@ describe("aggregateLeaderboard", () => {
     ]);
     expect(board[0].name).toBe("B");
     expect(board).toHaveLength(2);
+  });
+});
+
+describe("player profiles (Supabase)", () => {
+  it("normalizeProfile coerces a row and requires an id", () => {
+    expect(normalizeProfile(null)).toBe(null);
+    expect(normalizeProfile({ name: "x" })).toBe(null); // no id
+    expect(
+      normalizeProfile({ id: "u1", name: "Ann", emoji: "🦊", color: "#f00", photo: "data:image/png;base64,AAA" }),
+    ).toEqual({ id: "u1", name: "Ann", emoji: "🦊", color: "#f00", photo: "data:image/png;base64,AAA" });
+    // junk types coerced to null; a non-image photo dropped
+    expect(normalizeProfile({ id: "u2", name: 7, emoji: 5, color: {}, photo: "http://x/y.png" })).toEqual({
+      id: "u2",
+      name: "",
+      emoji: null,
+      color: null,
+      photo: null,
+    });
+  });
+
+  it("normalizeResults + summarizeResults coerce rows and aggregate", () => {
+    expect(normalizeResults("nope")).toEqual([]);
+    const rows = [
+      { game_id: "g1", quiz_title: "Q", score: "30", won: true, team_name: null, room_code: "ABCD" },
+      { game_id: "g2", score: 10, won: 0 },
+    ];
+    const n = normalizeResults(rows);
+    expect(n[0]).toMatchObject({ game_id: "g1", quiz_title: "Q", score: 30, won: true, room_code: "ABCD" });
+    expect(n[1]).toMatchObject({ quiz_title: "Untitled quiz", score: 10, won: false });
+    expect(summarizeResults(rows)).toMatchObject({ games: 2, wins: 1, totalScore: 40, bestScore: 30 });
+  });
+
+  it("summarizeForProfile finds the phone's entity and computes its win (solo + team)", () => {
+    const solo = {
+      id: "game1",
+      mode: "solo",
+      quiz: { title: "Friday" },
+      players: [
+        { id: "a", name: "Ann", score: 30, deviceIds: ["d1"] },
+        { id: "b", name: "Bob", score: 10, deviceIds: ["d2"] },
+      ],
+    };
+    expect(summarizeForProfile(solo, "d1")).toEqual({
+      game_id: "game1",
+      quiz_title: "Friday",
+      score: 30,
+      won: true,
+      team_name: null,
+    });
+    expect(summarizeForProfile(solo, "d2").won).toBe(false);
+    expect(summarizeForProfile(solo, "unknown")).toBe(null); // phone not in the game
+
+    const team = {
+      id: "g2",
+      mode: "teams",
+      quiz: { title: "T" },
+      players: [
+        { id: "r", name: "Reds", score: 50, deviceIds: ["d1", "d2"] },
+        { id: "b", name: "Blues", score: 40, deviceIds: ["d3"] },
+      ],
+    };
+    expect(summarizeForProfile(team, "d2")).toMatchObject({ score: 50, won: true, team_name: "Reds" });
+  });
+
+  it("normalizeGame round-trips an optional per-player profileId", () => {
+    const g = normalizeGame({
+      quiz: { rounds: [{ type: "classic", questions: [{ q: "Q", a: "A" }] }] },
+      players: [
+        { id: "a", name: "Ann", score: 0, deviceIds: ["d1"], profileId: "prof-1" },
+        { id: "b", name: "Bob", score: 0 },
+      ],
+    });
+    expect(g.players[0].profileId).toBe("prof-1");
+    expect(g.players[1].profileId).toBeUndefined();
   });
 });
 

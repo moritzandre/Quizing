@@ -9,6 +9,9 @@ coverage/
 
 # local env files
 *.local
+.env
+.env.*
+!.env.example
 
 # editor & OS cruft
 .vscode/

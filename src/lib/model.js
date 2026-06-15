@@ -459,6 +459,7 @@ export function normalizeGame(raw) {
       if (Array.isArray(p?.members)) player.members = p.members.map((m) => ({ name: str(m?.name) || "Player" }));
       if (p?.color) player.color = str(p.color);
       if (p?.emoji) player.emoji = str(p.emoji);
+      if (p?.profileId) player.profileId = str(p.profileId); // links the entity to a persistent player profile
       // an uploaded avatar photo: keep only a small data: image
       if (typeof p?.photo === "string" && /^data:image\//.test(p.photo) && p.photo.length <= 200000)
         player.photo = p.photo;
@@ -628,6 +629,82 @@ export function aggregateLeaderboard(results) {
     }
   }
   return [...map.values()].sort((a, b) => b.wins - a.wins || b.totalScore - a.totalScore || b.bestScore - a.bestScore);
+}
+
+/* ---- persistent player profiles (optional Supabase backend) ----
+   All untrusted (a row from Supabase, or a cached profile) — coerced here so
+   nothing downstream trusts raw data. The backend layer is in lib/supabase.js. */
+
+/**
+ * Validate a player profile (from Supabase or local cache). Requires an id.
+ * @param {*} raw
+ * @returns {{id:string,name:string,emoji:string|null,color:string|null,photo:string|null}|null}
+ */
+export function normalizeProfile(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const id = str(raw.id);
+  if (!id) return null;
+  const photo =
+    typeof raw.photo === "string" && /^data:image\//.test(raw.photo) && raw.photo.length <= 200000 ? raw.photo : null;
+  return {
+    id,
+    name: str(raw.name),
+    emoji: typeof raw.emoji === "string" ? raw.emoji : null,
+    color: typeof raw.color === "string" ? raw.color : null,
+    photo,
+  };
+}
+
+/**
+ * Validate a list of stored result rows (from Supabase) for the stats view.
+ * @param {*} rows
+ */
+export function normalizeResults(rows) {
+  return (Array.isArray(rows) ? rows : []).slice(0, 500).map((r) => ({
+    game_id: str(r?.game_id),
+    quiz_title: str(r?.quiz_title) || "Untitled quiz",
+    score: num(r?.score, 0),
+    won: !!r?.won,
+    team_name: typeof r?.team_name === "string" ? r.team_name : null,
+    room_code: typeof r?.room_code === "string" ? r.room_code : null,
+    played_at: str(r?.played_at),
+  }));
+}
+
+/** Aggregate result rows into headline stats (games/wins/best/total). */
+export function summarizeResults(rows) {
+  const list = normalizeResults(rows);
+  return {
+    games: list.length,
+    wins: list.reduce((n, r) => n + (r.won ? 1 : 0), 0),
+    totalScore: list.reduce((n, r) => n + r.score, 0),
+    bestScore: list.reduce((m, r) => Math.max(m, r.score), 0),
+    recent: list.slice(0, 10),
+  };
+}
+
+/**
+ * Build the result row a phone writes for ITSELF at game end. Finds the phone's
+ * scoring entity via its deviceId; returns null if it isn't part of the game.
+ * The caller adds profile_id + room_code (which the phone knows from its URL).
+ * @param {object} game A finished game.
+ * @param {string} deviceId The phone's device id.
+ * @returns {{game_id:string,quiz_title:string,score:number,won:boolean,team_name:string|null}|null}
+ */
+export function summarizeForProfile(game, deviceId) {
+  const players = Array.isArray(game?.players) ? game.players : [];
+  const entity = players.find((p) => (p.deviceIds || []).includes(deviceId));
+  if (!entity) return null;
+  const max = players.reduce((m, p) => Math.max(m, num(p.score, 0)), -Infinity);
+  const min = players.reduce((m, p) => Math.min(m, num(p.score, 0)), Infinity);
+  const decided = players.length > 1 && max > min;
+  return {
+    game_id: str(game.id),
+    quiz_title: str(game.quiz?.title) || "Untitled quiz",
+    score: num(entity.score, 0),
+    won: decided && num(entity.score, 0) === max,
+    team_name: game.mode === "teams" ? str(entity.name) : null,
+  };
 }
 
 /* ---- presenter (TV) payloads ----

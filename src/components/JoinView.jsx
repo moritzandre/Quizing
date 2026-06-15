@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Radio, Wifi, WifiOff, Check, MapPin, ListChecks, Hash, Camera, Loader2, X, Trophy } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
+import { useProfile } from "./useProfile.js";
 import { FOCUS, inputCls, Button, Avatar, AnimatedNumber, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 import { fileToDataUrl } from "../lib/model.js";
 import { playSound } from "../lib/sound.js";
@@ -26,6 +27,7 @@ const hashIdx = (s, n) => {
 export default function JoinView({ code }) {
   const { t } = useI18n();
   const room = usePlayerRoom(code);
+  const prof = useProfile(); // optional persistent player profile (Supabase, gated)
   const [draftName, setDraftName] = useState("");
   const [teamId, setTeamId] = useState(null);
   const [pickedEmoji, setPickedEmoji] = useState(() => PLAYER_EMOJI[hashIdx(room.deviceId, PLAYER_EMOJI.length)]);
@@ -87,6 +89,19 @@ export default function JoinView({ code }) {
     window.addEventListener("pagehide", onHide);
     return () => window.removeEventListener("pagehide", onHide);
   }, [joined]);
+
+  // Prefill the join form from the saved profile once it loads (once only, so
+  // the player can still edit). No-op when Supabase isn't configured.
+  const hydratedRef = useRef(false);
+  useEffect(() => {
+    if (hydratedRef.current || joined || !prof.profile) return;
+    hydratedRef.current = true;
+    const p = prof.profile;
+    if (p.name) setDraftName(p.name);
+    if (p.emoji) setPickedEmoji(p.emoji);
+    if (p.color) setPickedColor(p.color);
+    if (p.photo) setPickedPhoto(p.photo);
+  }, [prof.profile, joined]);
 
   const iLocked = lockedBy && lockedBy === room.deviceId;
   const online = room.status === "connected";
@@ -151,15 +166,29 @@ export default function JoinView({ code }) {
               <Radio size={18} />
               <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
             </div>
-            <h2 className="mb-4 text-3xl font-bold tracking-tight">{t("join.whatsYourName")}</h2>
+            <h2 className="mb-1 text-3xl font-bold tracking-tight">{t("join.whatsYourName")}</h2>
+            {prof.configured && prof.profile && (
+              <p className="mb-3 font-pixel text-[9px] uppercase tracking-widest text-indigo-500 dark:text-indigo-400">
+                ★ {t("profile.savedHint")}
+              </p>
+            )}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!canJoin) return;
+                // Remember the chosen name + avatar on the profile (if configured).
+                if (prof.configured)
+                  prof.saveProfile({
+                    name: draftName.trim(),
+                    emoji: pickedEmoji,
+                    color: pickedColor,
+                    photo: pickedPhoto,
+                  });
                 room.join(
                   draftName,
                   teamId,
                   needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto },
+                  prof.profileId,
                 );
                 setJoined(true);
               }}
@@ -268,7 +297,12 @@ export default function JoinView({ code }) {
                   </div>
                 </div>
               )}
-              <Button type="submit" variant="accent" className="mt-4 w-full px-6 py-3.5 text-base" disabled={!canJoin}>
+              <Button
+                type="submit"
+                variant="accent"
+                className="mt-4 w-full px-6 py-3.5 text-base"
+                disabled={!canJoin || (prof.configured && !prof.ready)}
+              >
                 {t("join.joinGame")}
               </Button>
             </form>

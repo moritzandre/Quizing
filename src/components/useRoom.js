@@ -122,6 +122,7 @@ export function useHostRoom() {
               emoji: safeEmoji(msg.emoji),
               color: safeColor(msg.color),
               photo: safePhoto(msg.photo),
+              profileId: typeof msg.profileId === "string" ? msg.profileId : null,
             },
           }));
           pushStateRef.current();
@@ -375,7 +376,7 @@ export function usePlayerRoom(code) {
   }, []);
 
   const join = useCallback(
-    (n, teamId, avatar) => {
+    (n, teamId, avatar, profileId = null) => {
       const clean = str(n).trim() || "Player";
       setName(clean);
       send({
@@ -385,6 +386,7 @@ export function usePlayerRoom(code) {
         emoji: avatar?.emoji || null,
         color: avatar?.color || null,
         photo: avatar?.photo || null,
+        profileId: profileId || null, // links this phone to a persistent player profile (optional)
       });
     },
     [send],
