@@ -1160,101 +1160,109 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const ladder = clipLadderActive(q);
     const atEnd = morphStep >= q.steps;
     body = (
-      <div className="text-center">
-        {Progress}
-        {TimerPill}
-        {ladder && !game.revealed && (
-          <div className="mb-4 flex items-center justify-center">
-            <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
-              {t("play.worth", { value })}
-            </span>
-          </div>
-        )}
-        <div className="mx-auto max-w-2xl">
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          {TimerPill}
+          {ladder && !game.revealed && (
+            <div className="mb-2 flex items-center justify-center">
+              <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
+                {t("play.worth", { value })}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="relative min-h-0 flex-1">
           {soundOnTv ? (
-            <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
+            <div className="absolute inset-0 m-auto flex aspect-video max-h-full max-w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
               <Tv size={32} />
               <p className="text-sm font-medium">{t("play.playingOnTv")}</p>
             </div>
           ) : (
-            <MediaPlayer
-              key={qKey}
-              url={q.url}
-              audioOnly={!!q.audioOnly}
-              start={q.start}
-              end={clipEnd(q, morphStep)}
-              transport={transport}
-            />
+            <div className="absolute inset-0 m-auto aspect-video max-h-full max-w-full">
+              <MediaPlayer
+                key={qKey}
+                url={q.url}
+                audioOnly={!!q.audioOnly}
+                start={q.start}
+                end={clipEnd(q, morphStep)}
+                transport={transport}
+                controls={false}
+              />
+            </div>
           )}
         </div>
-        {/* transport: when the TV is the stage, the host drives playback from here */}
-        {soundOnTv && !game.revealed && (
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("play")}>
-              <Play size={16} /> {t("play.play")}
-            </Button>
-            <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("pause")}>
-              <Pause size={16} /> {t("play.pause")}
-            </Button>
-            <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("restart")}>
-              <RotateCcw size={16} /> {t("play.restart")}
-            </Button>
-          </div>
-        )}
-        <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
-        <div className="mt-6 flex flex-wrap justify-center gap-3" style={{ minHeight: 64 }}>
-          {game.revealed ? (
-            <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
-              {q.a}
-            </p>
-          ) : (
-            <>
+        <div className="shrink-0">
+          <h2 className="mt-3 text-xl font-bold tracking-tight md:text-2xl">{q.q}</h2>
+          {!game.revealed && (
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
+              <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("play")}>
+                <Play size={16} /> {t("play.play")}
+              </Button>
+              <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("pause")}>
+                <Pause size={16} /> {t("play.pause")}
+              </Button>
+              <Button variant="outline" className="px-4 py-2.5" onClick={() => sendTransport("restart")}>
+                <RotateCcw size={16} /> {t("play.restart")}
+              </Button>
               {ladder && !atEnd && (
-                <Button variant="outline" className="px-5 py-3 text-base" onClick={() => extendClip(q.steps)}>
-                  <FastForward size={18} /> {t("play.extendClip")}{" "}
+                <Button variant="outline" className="px-4 py-2.5" onClick={() => extendClip(q.steps)}>
+                  <FastForward size={16} /> {t("play.extendClip")}{" "}
                   <span className="text-sm text-stone-400">
                     ({morphStep + 1}/{q.steps + 1})
                   </span>
                 </Button>
               )}
-              {RevealBtn}
-            </>
+            </div>
           )}
+          <div className="mt-3" style={{ minHeight: 56 }}>
+            {game.revealed ? (
+              <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
+                {q.a}
+              </p>
+            ) : (
+              RevealBtn
+            )}
+          </div>
+          {game.revealed && <div className="mt-3">{NextBtn}</div>}
         </div>
-        {game.revealed && <div className="mt-6">{NextBtn}</div>}
       </div>
     );
   }
 
   if (round.type === "image") {
     body = (
-      <div className="text-center">
-        {Progress}
-        {TimerPill}
-        <div className="mx-auto max-w-2xl">
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          {TimerPill}
+        </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center">
           {q.url ? (
             <img
               src={q.url}
               alt="Quiz picture"
-              className="max-h-[60vh] w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900"
+              className="max-h-full max-w-full rounded-2xl border border-stone-200 bg-white object-contain shadow-sm dark:border-stone-800 dark:bg-stone-900"
             />
           ) : (
-            <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
+            <div className="flex aspect-video w-full max-w-2xl items-center justify-center rounded-2xl border border-dashed border-stone-300 text-stone-400 dark:border-stone-700 dark:text-stone-500">
               {t("play.noPicture")}
             </div>
           )}
         </div>
-        <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">{q.q}</h2>
-        <div className="mt-6" style={{ minHeight: 64 }}>
-          {game.revealed ? (
-            <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
-              {q.a}
-            </p>
-          ) : (
-            RevealBtn
-          )}
+        <div className="shrink-0">
+          <h2 className="mt-3 text-xl font-bold tracking-tight md:text-2xl">{q.q}</h2>
+          <div className="mt-3" style={{ minHeight: 56 }}>
+            {game.revealed ? (
+              <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-3xl">
+                {q.a}
+              </p>
+            ) : (
+              RevealBtn
+            )}
+          </div>
+          {game.revealed && <div className="mt-3">{NextBtn}</div>}
         </div>
-        {game.revealed && <div className="mt-6">{NextBtn}</div>}
       </div>
     );
   }
@@ -1262,43 +1270,49 @@ export default function PlayView({ game, setGame, onExit, room }) {
   if (round.type === "morph") {
     const atEnd = morphStep >= q.steps;
     body = (
-      <div className="text-center">
-        {Progress}
-        {TimerPill}
-        <div className="mb-4 flex items-center justify-center gap-3">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whatIsThis")}</h2>
-          {!game.revealed && (
-            <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
-              {t("play.worth", { value })}
-            </span>
-          )}
-        </div>
-        <div className="mx-auto max-w-2xl">
-          <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={morphStep} revealed={game.revealed} />
-        </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          {!game.revealed && !atEnd && (
-            <Button
-              variant="outline"
-              className="px-5 py-3 text-base"
-              onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
-            >
-              <Sparkles size={18} /> {t("play.demorph")}{" "}
-              <span className="text-sm text-stone-400">
-                ({morphStep + 1}/{q.steps})
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          {TimerPill}
+          <div className="mb-2 flex items-center justify-center gap-3">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whatIsThis")}</h2>
+            {!game.revealed && (
+              <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
+                {t("play.worth", { value })}
               </span>
-            </Button>
-          )}
-          {!game.revealed && RevealBtn}
+            )}
+          </div>
         </div>
-        {game.revealed && (
-          <>
-            <p className="qn-pop qn-answer mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
-              {q.a}
-            </p>
-            <div className="mt-6">{NextBtn}</div>
-          </>
-        )}
+        <div className="flex min-h-0 flex-1 items-center justify-center">
+          <div className="w-full max-w-3xl">
+            <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={morphStep} revealed={game.revealed} />
+          </div>
+        </div>
+        <div className="shrink-0">
+          <div className="mt-3 flex flex-wrap justify-center gap-3">
+            {!game.revealed && !atEnd && (
+              <Button
+                variant="outline"
+                className="px-5 py-3 text-base"
+                onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
+              >
+                <Sparkles size={18} /> {t("play.demorph")}{" "}
+                <span className="text-sm text-stone-400">
+                  ({morphStep + 1}/{q.steps})
+                </span>
+              </Button>
+            )}
+            {!game.revealed && RevealBtn}
+          </div>
+          {game.revealed && (
+            <>
+              <p className="qn-pop qn-answer mt-3 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+                {q.a}
+              </p>
+              <div className="mt-3">{NextBtn}</div>
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -1306,43 +1320,49 @@ export default function PlayView({ game, setGame, onExit, room }) {
   if (round.type === "fusion") {
     const atEnd = morphStep >= q.steps;
     body = (
-      <div className="text-center">
-        {Progress}
-        {TimerPill}
-        <div className="mb-4 flex items-center justify-center gap-3">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whoOrWhat")}</h2>
-          {!game.revealed && (
-            <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
-              {t("play.worth", { value })}
-            </span>
-          )}
-        </div>
-        <div className="mx-auto max-w-2xl">
-          <FusionImage urlA={q.urlA} urlB={q.urlB} steps={q.steps} step={morphStep} revealed={game.revealed} />
-        </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          {!game.revealed && !atEnd && (
-            <Button
-              variant="outline"
-              className="px-5 py-3 text-base"
-              onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
-            >
-              <Sparkles size={18} /> {t("play.defuse")}{" "}
-              <span className="text-sm text-stone-400">
-                ({morphStep + 1}/{q.steps})
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          {TimerPill}
+          <div className="mb-2 flex items-center justify-center gap-3">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whoOrWhat")}</h2>
+            {!game.revealed && (
+              <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
+                {t("play.worth", { value })}
               </span>
-            </Button>
-          )}
-          {!game.revealed && RevealBtn}
+            )}
+          </div>
         </div>
-        {game.revealed && (
-          <>
-            <p className="qn-pop qn-answer mt-6 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
-              {q.a}
-            </p>
-            <div className="mt-6">{NextBtn}</div>
-          </>
-        )}
+        <div className="flex min-h-0 flex-1 items-center justify-center">
+          <div className="w-full max-w-3xl">
+            <FusionImage urlA={q.urlA} urlB={q.urlB} steps={q.steps} step={morphStep} revealed={game.revealed} />
+          </div>
+        </div>
+        <div className="shrink-0">
+          <div className="mt-3 flex flex-wrap justify-center gap-3">
+            {!game.revealed && !atEnd && (
+              <Button
+                variant="outline"
+                className="px-5 py-3 text-base"
+                onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
+              >
+                <Sparkles size={18} /> {t("play.defuse")}{" "}
+                <span className="text-sm text-stone-400">
+                  ({morphStep + 1}/{q.steps})
+                </span>
+              </Button>
+            )}
+            {!game.revealed && RevealBtn}
+          </div>
+          {game.revealed && (
+            <>
+              <p className="qn-pop qn-answer mt-3 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+                {q.a}
+              </p>
+              <div className="mt-3">{NextBtn}</div>
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -1489,18 +1509,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
           .map((x) => ({ ...x, km: haversineKm(x.g.lat, x.g.lng, q.lat, q.lng) }))
           .sort((a, b) => a.km - b.km)
       : [];
-    // Fit the whole map round on one screen for the host (shorter map); keep it
-    // big for the projector/TV (pres).
-    const mapH = pres ? "h-[58vh]" : "h-[40vh]";
 
     body = (
-      <div className="text-center">
-        {Progress}
-        {TimerPill}
-        <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          {TimerPill}
+          <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
 
-        {!game.revealed && (
-          <div className="mx-auto mt-3 max-w-2xl">
+          {!game.revealed && (
+            <div className="mx-auto mt-3 max-w-2xl">
             {buzzerOn && (
               <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
                 <Radio size={14} /> {t("play.pinsIn", { n: Object.keys(phonePins).length, total: game.players.length })}
@@ -1559,10 +1577,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
             ))}
           </div>
         )}
+        </div>
 
-        <div className="mx-auto mt-3 max-w-3xl">
+        <div className="relative mt-3 min-h-0 w-full flex-1">
           {streetOn && !game.revealed && mapillaryEmbedUrl(q.street) ? (
-            <MapillaryEmbed street={q.street} className={mapH} />
+            <MapillaryEmbed street={q.street} className="h-full w-full" />
           ) : (
             <LeafletMap
               answer={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : undefined}
@@ -1570,13 +1589,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
               showLines={game.revealed}
               onPick={game.revealed ? undefined : placeGuess}
               tileLayer={q.tileLayer}
-              className={mapH}
+              className="h-full w-full"
             />
           )}
         </div>
 
+        <div className="shrink-0">
         {game.revealed && ranked.length > 0 && (
-          <div className="mx-auto mt-5 max-w-md space-y-1.5 text-left">
+          <div className="mx-auto mt-3 max-h-[28vh] max-w-md space-y-1.5 overflow-y-auto text-left">
             {ranked.map((x, idx) => (
               <div
                 key={x.p.id}
@@ -1601,7 +1621,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
 
-        <div className="mt-6">
+        <div className="mt-4">
           {game.revealed ? (
             NextBtn
           ) : (
@@ -1610,18 +1630,24 @@ export default function PlayView({ game, setGame, onExit, room }) {
             </Button>
           )}
         </div>
+        </div>
       </div>
     );
   }
 
+  const stageW = pres ? "max-w-7xl" : "max-w-6xl";
   return (
-    <div className={`mx-auto px-6 pb-36 pt-6 ${pres ? "max-w-5xl qn-present" : "max-w-3xl"}`}>
-      {Header}
-      {BuzzerBar}
-      <div key={qKey} className="qn-fade-up">
+    // Viewport-fit column: header + scroll-free body that flexes to fill, with
+    // the scoreboard as a footer. Adapts to phone / tablet / monitor / TV.
+    <div className={`flex h-[100dvh] flex-col overflow-hidden ${pres ? "qn-present" : ""}`}>
+      <div className={`mx-auto w-full shrink-0 px-4 pt-3 ${stageW}`}>
+        {Header}
+        {BuzzerBar}
+      </div>
+      <div key={qKey} className={`qn-fade-up mx-auto flex w-full min-h-0 flex-1 flex-col overflow-y-auto px-4 ${stageW}`}>
         {body}
       </div>
-      {!pres && Shortcuts}
+      {!pres && <div className={`mx-auto w-full shrink-0 px-4 pb-1 ${stageW}`}>{Shortcuts}</div>}
       <ScoreBar
         players={game.players}
         active={scoreActive}
@@ -1631,6 +1657,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         allowNegative={allowNegative}
         sign={sign}
         onSignChange={setSign}
+        fixed={false}
       />
     </div>
   );

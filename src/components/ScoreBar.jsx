@@ -13,7 +13,7 @@ import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const fmtDelta = (n) => `${n < 0 ? "−" : "+"}${Math.abs(n)}`;
 
-/** Fixed bottom score bar. */
+/** Bottom score bar. `fixed` (default) pins it to the viewport; pass false to use it as a flex footer. */
 export default function ScoreBar({
   players,
   active,
@@ -23,11 +23,16 @@ export default function ScoreBar({
   allowNegative = false,
   sign = 1,
   onSignChange,
+  fixed = true,
 }) {
   const { t } = useI18n();
   const signed = sign * value;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-stone-200 bg-white/90 backdrop-blur transition-colors dark:border-stone-800 dark:bg-stone-900/90">
+    <div
+      className={`z-20 border-t border-stone-200 bg-white/90 backdrop-blur transition-colors dark:border-stone-800 dark:bg-stone-900/90 ${
+        fixed ? "fixed inset-x-0 bottom-0" : "shrink-0"
+      }`}
+    >
       <div className="mx-auto max-w-3xl px-4 py-3">
         {active && (
           <div className="mb-2 flex items-center justify-center gap-3">
