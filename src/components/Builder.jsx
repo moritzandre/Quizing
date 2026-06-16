@@ -33,6 +33,8 @@ import {
   MORPH_EFFECTS,
   HINT_TYPES,
   makeAnyChar,
+  anyCellValue,
+  ANYTHINGLE_TRAITS,
 } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, optionsFor } from "./ui.jsx";
 import { TraitForm, LibraryPicker } from "./anythingleTraits.jsx";
@@ -632,6 +634,138 @@ function HintsField({ hints, onChange, t }) {
         {t("builder.hintsSummary", { count, pts: (count || 1) * 10 })}
       </p>
     </div>
+  );
+}
+
+/** A picked Anythingle character shown as a tidy read-only card (traits at a glance). */
+function AnyTargetCard({ char, onEdit, onClear, t }) {
+  return (
+    <div className="rounded-xl border border-pink-200 bg-pink-50/60 p-3 dark:border-pink-500/30 dark:bg-pink-500/10">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="truncate text-base font-semibold">{char.name}</p>
+          {char.franchise && char.franchise !== "Standalone" && (
+            <p className="truncate text-xs text-stone-500 dark:text-stone-400">{char.franchise}</p>
+          )}
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <Button variant="outline" className="px-2.5 py-1 text-xs" onClick={onEdit}>
+            {t("builder.anyEditTraits")}
+          </Button>
+          <Button variant="outline" className="px-2.5 py-1 text-xs" onClick={onClear}>
+            {t("builder.anyChange")}
+          </Button>
+        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {ANYTHINGLE_TRAITS.map((tr) => {
+          const v = anyCellValue(char, tr.key);
+          if (!v) return null;
+          return (
+            <span
+              key={tr.key}
+              className="rounded-md border border-stone-200 bg-white px-2 py-0.5 text-[11px] text-stone-600 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300"
+            >
+              <span className="text-stone-400 dark:text-stone-500">{t(`any.trait.${tr.key}`)}:</span> {v}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Anythingle question editor: prompt + scoring, then a search-the-library-first
+ * secret picker. Pick a character from the ~1500-row DB (its traits fill in and
+ * show as a card), or create a custom one with the full trait form. No pool —
+ * the DB + in-play manual-add cover guessing.
+ */
+function AnythingleQ({ q, onPatch }) {
+  const { t } = useI18n();
+  const [editing, setEditing] = useState(false);
+  const target = q.target || makeAnyChar();
+  const hasTarget = !!(target.name || "").trim();
+  return (
+    <>
+      <input
+        className={inputCls}
+        placeholder={t("builder.question")}
+        value={q.q || ""}
+        onChange={(e) => onPatch({ q: e.target.value })}
+      />
+      <div className="mt-2 flex flex-wrap items-end gap-4">
+        <label className="text-xs text-stone-500 dark:text-stone-400">
+          {t("builder.points")}
+          <input
+            type="number"
+            className={`${inputCls} mt-1 w-24`}
+            value={q.points ?? 30}
+            onChange={(e) => onPatch({ points: Math.max(1, Math.floor(+e.target.value || 30)) })}
+          />
+        </label>
+        <label className="text-xs text-stone-500 dark:text-stone-400">
+          {t("builder.anyMaxGuesses")}
+          <input
+            type="number"
+            className={`${inputCls} mt-1 w-24`}
+            value={q.maxGuesses ?? 8}
+            onChange={(e) => onPatch({ maxGuesses: Math.max(1, Math.min(20, Math.floor(+e.target.value || 8))) })}
+          />
+        </label>
+      </div>
+
+      <div className="mt-3">
+        <p className="text-sm font-semibold">{t("builder.anyTarget")}</p>
+        <p className="mb-2 text-xs text-stone-400 dark:text-stone-500">{t("builder.anySecretHint")}</p>
+        {editing ? (
+          <div className="rounded-xl border border-pink-200 bg-pink-50/40 p-3 dark:border-pink-500/30 dark:bg-pink-500/10">
+            <TraitForm value={target} onChange={(c) => onPatch({ target: c })} franchises={ANYTHINGLE_FRANCHISES} />
+            <div className="mt-2 flex gap-2">
+              <Button className="px-3 py-1.5 text-sm" disabled={!hasTarget} onClick={() => setEditing(false)}>
+                {t("builder.anyDone")}
+              </Button>
+              <Button
+                variant="outline"
+                className="px-3 py-1.5 text-sm"
+                onClick={() => {
+                  onPatch({ target: makeAnyChar() });
+                  setEditing(false);
+                }}
+              >
+                {t("builder.anyChange")}
+              </Button>
+            </div>
+          </div>
+        ) : hasTarget ? (
+          <AnyTargetCard
+            char={target}
+            t={t}
+            onEdit={() => setEditing(true)}
+            onClear={() => onPatch({ target: makeAnyChar() })}
+          />
+        ) : (
+          <div className="space-y-2">
+            <LibraryPicker
+              entries={ANYTHINGLE_DB}
+              placeholder={t("builder.anySearchLib")}
+              className="max-w-md"
+              onPick={(n) => {
+                const hit = findAnyChar(n);
+                if (hit) onPatch({ target: { ...hit, id: target.id } });
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="text-xs font-medium text-pink-600 hover:underline dark:text-pink-400"
+            >
+              {t("builder.anyCreateCustom")}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -1584,124 +1718,17 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     getKey={(x) => x.id}
                     onReorder={(f, to) => reorderQuestions(r, f, to)}
                   >
-                    {(item, i, hp) => {
-                      const target = item.target || makeAnyChar();
-                      const pool = Array.isArray(item.pool) ? item.pool : [];
-                      return (
-                        <div className={panelCls}>
-                          <div className={rowLabelCls}>
-                            <span className="flex items-center gap-1">
-                              <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
-                            </span>
-                            <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
-                          </div>
-                          <input
-                            className={inputCls}
-                            placeholder={t("builder.question")}
-                            value={item.q || ""}
-                            onChange={(e) => qRow(r, item, { q: e.target.value })}
-                          />
-                          <div className="mt-2 flex flex-wrap items-end gap-4">
-                            <label className="text-xs text-stone-500 dark:text-stone-400">
-                              {t("builder.points")}
-                              <input
-                                type="number"
-                                className={`${inputCls} mt-1 w-24`}
-                                value={item.points ?? 30}
-                                onChange={(e) =>
-                                  qRow(r, item, { points: Math.max(1, Math.floor(+e.target.value || 30)) })
-                                }
-                              />
-                            </label>
-                            <label className="text-xs text-stone-500 dark:text-stone-400">
-                              {t("builder.anyMaxGuesses")}
-                              <input
-                                type="number"
-                                className={`${inputCls} mt-1 w-24`}
-                                value={item.maxGuesses ?? 8}
-                                onChange={(e) =>
-                                  qRow(r, item, {
-                                    maxGuesses: Math.max(1, Math.min(20, Math.floor(+e.target.value || 8))),
-                                  })
-                                }
-                              />
-                            </label>
-                          </div>
-
-                          {/* the secret target */}
-                          <div className="mt-3 rounded-xl border border-pink-200 bg-pink-50/50 p-3 dark:border-pink-500/30 dark:bg-pink-500/10">
-                            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                              <span className="text-sm font-semibold">{t("builder.anyTarget")}</span>
-                              <LibraryPicker
-                                entries={ANYTHINGLE_DB}
-                                placeholder={t("builder.anyUseAsTarget")}
-                                className="w-56"
-                                onPick={(n) => {
-                                  const hit = findAnyChar(n);
-                                  if (hit) qRow(r, item, { target: { ...hit, id: target.id } });
-                                }}
-                              />
-                            </div>
-                            <TraitForm
-                              value={target}
-                              onChange={(next) => qRow(r, item, { target: next })}
-                              franchises={ANYTHINGLE_FRANCHISES}
-                            />
-                          </div>
-
-                          {/* optional guess pool (pre-tagged likely guesses) */}
-                          <div className="mt-3">
-                            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                              <span className="text-sm font-semibold">{t("builder.anyPool")}</span>
-                              <LibraryPicker
-                                entries={ANYTHINGLE_DB}
-                                placeholder={t("builder.anyAddChar")}
-                                className="w-56"
-                                onPick={(n) => {
-                                  const hit = findAnyChar(n);
-                                  if (hit) qRow(r, item, { pool: [...pool, { ...hit, id: uid() }] });
-                                }}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              {pool.map((c, pi) => (
-                                <div
-                                  key={c.id || pi}
-                                  className="rounded-xl border border-stone-200 p-2.5 dark:border-stone-700"
-                                >
-                                  <div className="mb-1 flex items-center justify-between">
-                                    <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
-                                      {c.name || t("builder.anyName")}
-                                    </span>
-                                    <button
-                                      onClick={() => qRow(r, item, { pool: pool.filter((_, j) => j !== pi) })}
-                                      aria-label={t("builder.deleteOption")}
-                                      className={`rounded-md border border-stone-200 p-1 text-stone-400 hover:text-red-500 dark:border-stone-700 ${FOCUS}`}
-                                    >
-                                      <X size={14} />
-                                    </button>
-                                  </div>
-                                  <TraitForm
-                                    value={c}
-                                    onChange={(next) =>
-                                      qRow(r, item, { pool: pool.map((x, j) => (j === pi ? next : x)) })
-                                    }
-                                    franchises={ANYTHINGLE_FRANCHISES}
-                                    compact
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                            <button
-                              onClick={() => qRow(r, item, { pool: [...pool, makeAnyChar()] })}
-                              className={`mt-2 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
-                            >
-                              <Plus size={13} /> {t("builder.anyAddChar")}
-                            </button>
-                          </div>
+                    {(item, i, hp) => (
+                      <div className={panelCls}>
+                        <div className={rowLabelCls}>
+                          <span className="flex items-center gap-1">
+                            <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                          </span>
+                          <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
                         </div>
-                      );
-                    }}
+                        <AnythingleQ q={item} onPatch={(patch) => qRow(r, item, patch)} />
+                      </div>
+                    )}
                   </SortableList>
                   <button
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("anythingle")] })}
