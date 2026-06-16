@@ -930,6 +930,37 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                 </>
               )}
 
+              {/* what-connects: typed clues + the common link */}
+              {r.type === "connect" && (
+                <>
+                  <SortableList items={r.questions} getKey={(x) => x.id} onReorder={(f, to) => reorderQuestions(r, f, to)}>
+                    {(item, i, hp) => (
+                      <div className={panelCls}>
+                        <div className={rowLabelCls}>
+                          <span className="flex items-center gap-1">
+                            <DragHandle {...hp} /> {t("builder.itemN", { n: i + 1 })}
+                          </span>
+                          <ConfirmDelete label={t("builder.deleteItem")} onConfirm={() => qDel(r, item)} />
+                        </div>
+                        <input
+                          className={`${inputCls} mb-2`}
+                          placeholder={t("builder.theConnection")}
+                          value={item.answer}
+                          onChange={(e) => qRow(r, item, { answer: e.target.value })}
+                        />
+                        <HintsField hints={item.clues} onChange={(c) => qRow(r, item, { clues: c })} t={t} />
+                      </div>
+                    )}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("connect")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addItem", {})}
+                  </button>
+                </>
+              )}
+
               {/* video + clip ladder (clip adds the step count below) */}
               {(r.type === "video" || r.type === "clip") && (
                 <>

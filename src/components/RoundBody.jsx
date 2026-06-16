@@ -85,6 +85,28 @@ export default function RoundBody({
     );
   }
 
+  if (type === "connect") {
+    const shown = (Array.isArray(q.clues) ? q.clues : []).filter(hintHasContent).slice(0, Math.max(1, hintsShown));
+    return (
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col justify-center overflow-y-auto">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {shown.map((c, i) => (
+            <div
+              key={i}
+              className="qn-fade-up relative rounded-2xl border-2 border-blue-200 bg-white p-4 dark:border-blue-500/30 dark:bg-stone-900"
+            >
+              <span className="absolute -left-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 font-pixel text-[10px] text-white shadow">
+                {i + 1}
+              </span>
+              <HintMedia hint={c} />
+            </div>
+          ))}
+        </div>
+        {revealed && reveal?.answer != null && <p className={`${answerCls} mt-4 text-center`}>{reveal.answer}</p>}
+      </div>
+    );
+  }
+
   if (type === "video" || type === "clip") {
     return (
       <div className="flex h-full min-h-0 flex-col text-center">

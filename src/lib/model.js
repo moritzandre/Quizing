@@ -13,6 +13,7 @@ export const ROUND_TYPES = [
   "classic",
   "jeopardy",
   "hints",
+  "connect",
   "video",
   "clip",
   "image",
@@ -241,6 +242,8 @@ export function makeQuestion(type) {
       return { id: uid(), q: "", a: "", points: 10 };
     case "hints":
       return { id: uid(), answer: "", hints: ["", "", ""] };
+    case "connect":
+      return { id: uid(), answer: "", clues: ["", "", ""] };
     case "video":
       return {
         id: uid(),
@@ -346,6 +349,11 @@ export function normalizeQuiz(raw) {
             Object.assign(it, {
               answer: str(q?.answer),
               hints: (Array.isArray(q?.hints) ? q.hints : [""]).map(normalizeHint),
+            });
+          if (r.type === "connect")
+            Object.assign(it, {
+              answer: str(q?.answer),
+              clues: (Array.isArray(q?.clues) ? q.clues : [""]).map(normalizeHint),
             });
           if (r.type === "video")
             Object.assign(it, {
@@ -799,6 +807,8 @@ function presentQ(type, q) {
       return { clue: str(q.clue), points: num(q.points, 100) };
     case "hints":
       return { hints: (Array.isArray(q.hints) ? q.hints : []).map(normalizeHint) };
+    case "connect":
+      return { clues: (Array.isArray(q.clues) ? q.clues : []).map(normalizeHint) };
     case "video":
       return {
         q: str(q.q),
@@ -881,6 +891,7 @@ function revealData(type, q) {
   switch (type) {
     case "hints":
     case "jeopardy":
+    case "connect":
       return { answer: str(q.answer) };
     case "classic":
     case "image":
@@ -1041,6 +1052,7 @@ export function normalizePresent(raw) {
     if (q.end != null) o.end = numOrNull(q.end);
     if (Array.isArray(q.options)) o.options = q.options.map(str).slice(0, 8);
     if (Array.isArray(q.hints)) o.hints = q.hints.map(normalizeHint);
+    if (Array.isArray(q.clues)) o.clues = q.clues.map(normalizeHint);
     out.q = o;
   }
   return out;

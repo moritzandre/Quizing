@@ -253,6 +253,32 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[3].categories[0].questions[0].points).toBe(100);
   });
 
+  it("normalizes a connect round: typed clues + the connection answer", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "connect",
+          questions: [
+            {
+              answer: "All red",
+              clues: ["Apple", { type: "image", url: "x.png" }, { type: "audio", url: "a.mp3", start: "2" }],
+            },
+            { answer: "X", clues: "not-an-array" },
+          ],
+        },
+      ],
+    });
+    const r = q.rounds[0];
+    expect(r.type).toBe("connect");
+    expect(r.questions[0].answer).toBe("All red");
+    expect(r.questions[0].clues).toEqual([
+      "Apple",
+      { type: "image", url: "x.png" },
+      { type: "audio", url: "a.mp3", start: 2, end: null },
+    ]);
+    expect(r.questions[1].clues).toEqual([""]); // junk clues → [""]
+  });
+
   it("normalizes new fields: timer, audioOnly, image type", () => {
     const q = normalizeQuiz({
       rounds: [

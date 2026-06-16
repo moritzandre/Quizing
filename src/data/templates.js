@@ -71,6 +71,24 @@ export const ROUND_TEMPLATES = [
     },
   },
   {
+    key: "what-connects",
+    type: "connect",
+    round: {
+      type: "connect",
+      title: "What's the Connection?",
+      questions: [
+        {
+          answer: "They're all types of knots",
+          clues: ["Granny", "Windsor", "Bow", "Reef"],
+        },
+        {
+          answer: "Famous Toms (Hanks, Cruise, Hardy, Holland)",
+          clues: ["Cast Away", "Top Gun", "Mad Max: Fury Road", "Spider-Man"],
+        },
+      ],
+    },
+  },
+  {
     key: "video-clip",
     type: "video",
     round: {

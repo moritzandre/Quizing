@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Eye,
   Lightbulb,
+  Share2,
   Sparkles,
   MapPin,
   TimerReset,
@@ -172,6 +173,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const q = round.questions[game.qi];
     if (!q) return 0;
     if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
+    if (round.type === "connect") return Math.max(1, realHints(q.clues).length - game.hintsShown + 1) * 10;
     if (round.type === "morph" || round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
     if ((round.type === "video" || round.type === "clip") && clipLadderActive(q))
       return morphValue(q.points, q.steps, morphStep);
@@ -583,6 +585,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
         if (game.stage === "question" && !game.revealed && cq) {
           if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
             upd({ hintsShown: game.hintsShown + 1 });
+          else if (round.type === "connect" && game.hintsShown < realHints(cq.clues).length)
+            upd({ hintsShown: game.hintsShown + 1 });
           else if (round.type === "morph" || round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
           else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq)) extendClip(cq.steps);
         }
@@ -671,6 +675,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
         else reveal();
       } else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
+        upd({ hintsShown: game.hintsShown + 1 });
+      else if (k === "h" && !game.revealed && round.type === "connect" && game.hintsShown < realHints(q.clues).length)
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
         setMorphStep((s) => Math.min(q.steps, s + 1));
@@ -1197,6 +1203,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         keys: [
           t("play.scReveal"),
           round.type === "hints" ? t("play.scHint") : null,
+          round.type === "connect" ? t("play.scClue") : null,
           round.type === "morph" ? t("play.scDemorph") : null,
           round.type === "fusion" ? t("play.scDefuse") : null,
           round.type === "clip" && clipLadderActive(q) ? t("play.scExtend") : null,
@@ -1304,6 +1311,60 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {game.revealed && (
           <>
             <p className="qn-pop qn-answer mt-8 text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+              {q.answer}
+            </p>
+            <div className="mt-8">{NextBtn}</div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  if (round.type === "connect") {
+    const clues = realHints(q.clues);
+    const shown = clues.slice(0, game.hintsShown);
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <div className="mb-5 flex items-center justify-center gap-3">
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("play.whatConnects")}</h2>
+          <span className={`rounded-full px-3 py-1 text-sm font-bold ${accentFor(round.type).soft}`}>
+            {t("play.worth", { value })}
+          </span>
+        </div>
+        {/* clues as a revealed grid (a SET to link), distinct from the hint ladder */}
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
+          {shown.map((c, i) => (
+            <div
+              key={i}
+              className="qn-fade-up relative rounded-xl border-2 border-blue-200 bg-white p-3 dark:border-blue-500/30 dark:bg-stone-900"
+            >
+              <span className="absolute -left-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 font-pixel text-[10px] text-white shadow">
+                {i + 1}
+              </span>
+              <HintMedia hint={c} />
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          {!game.revealed && game.hintsShown < clues.length && (
+            <Button
+              variant="outline"
+              className="px-5 py-3 text-base"
+              onClick={() => upd({ hintsShown: game.hintsShown + 1 })}
+            >
+              <Share2 size={18} /> {t("play.nextClue")} <span className="text-sm text-stone-400">(−10)</span>
+            </Button>
+          )}
+          {!game.revealed && RevealBtn}
+        </div>
+        {game.revealed && (
+          <>
+            <p className="mt-8 font-pixel text-[10px] uppercase tracking-widest text-stone-400">
+              {t("play.theConnection")}
+            </p>
+            <p className="qn-pop qn-answer mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400 md:text-4xl">
               {q.answer}
             </p>
             <div className="mt-8">{NextBtn}</div>

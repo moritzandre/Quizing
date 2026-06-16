@@ -12,6 +12,7 @@ import {
   MessageSquare,
   LayoutGrid,
   Lightbulb,
+  Share2,
   Video,
   FastForward,
   Image as ImageIcon,
@@ -56,6 +57,12 @@ export const TYPES = {
     icon: Lightbulb,
     dot: "bg-amber-500",
     desc: "The answer starts at full value. Every extra hint lowers it. Reveal when someone calls it out.",
+  },
+  connect: {
+    label: "What Connects?",
+    icon: Share2,
+    dot: "bg-blue-500",
+    desc: "Reveal clues (text, image, audio or video) one by one — players work out what they all have in common. Fewer points the more clues it takes.",
   },
   video: {
     label: "Video",
@@ -133,6 +140,7 @@ const ACCENT = {
     solid: "bg-indigo-500",
   },
   hints: { soft: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", solid: "bg-amber-500" },
+  connect: { soft: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300", solid: "bg-blue-500" },
   video: { soft: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", solid: "bg-rose-500" },
   clip: { soft: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300", solid: "bg-red-500" },
   image: { soft: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", solid: "bg-sky-500" },

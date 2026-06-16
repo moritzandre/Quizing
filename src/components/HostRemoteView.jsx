@@ -53,10 +53,14 @@ export default function HostRemoteView({ code }) {
   const wkAnswers = hostAux?.whoknows?.answers || [];
   const wkPickedIdx = new Set((wkk?.picked || []).map((p) => p.i));
   const wkClaimed = wkk?.claimed ?? 1;
-  // Rounds with a ladder to advance via the "hint" ctrl: hint/morph/fusion always,
-  // and clip only while its ladder is live (steps + a real trim window).
+  // Rounds with a ladder to advance via the "hint" ctrl: hint/connect/morph/fusion
+  // always, and clip only while its ladder is live (steps + a real trim window).
   const hasLadder =
-    type === "hints" || type === "morph" || type === "fusion" || (type === "clip" && clipLadderActive(present?.q));
+    type === "hints" ||
+    type === "connect" ||
+    type === "morph" ||
+    type === "fusion" ||
+    (type === "clip" && clipLadderActive(present?.q));
   const standings = live?.standings || [];
 
   const btn =
@@ -318,7 +322,8 @@ export default function HostRemoteView({ code }) {
                 onClick={() => sendCtrl("hint")}
                 className={`bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 ${btn} ${FOCUS}`}
               >
-                <Lightbulb size={18} /> {type === "clip" ? t("play.extendClip") : t("host.hint")}
+                <Lightbulb size={18} />{" "}
+                {type === "clip" ? t("play.extendClip") : type === "connect" ? t("play.nextClue") : t("host.hint")}
               </button>
             )}
             <button
