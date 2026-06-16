@@ -37,9 +37,6 @@ import { CharacterField } from "./anythingleTraits.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import RoundBody from "./RoundBody.jsx";
 
-/** All DB character names (autocomplete source for the host-remote guess field). */
-const ANY_NAMES = ANYTHINGLE_DB.map((c) => c.name);
-
 /**
  * @param {object} props
  * @param {string} props.code Room code from the URL (#/host/<code>).
@@ -294,7 +291,7 @@ export default function HostRemoteView({ code }) {
               }}
             >
               <CharacterField
-                names={ANY_NAMES}
+                entries={ANYTHINGLE_DB}
                 value={anyGuess}
                 onChange={setAnyGuess}
                 onSelect={(n) => {
@@ -303,6 +300,7 @@ export default function HostRemoteView({ code }) {
                 }}
                 placeholder={t("play.anyGuessPlaceholder")}
                 className="flex-1"
+                showStatus
               />
               <button type="submit" disabled={!anyGuess.trim()} className={`bg-pink-600 text-white ${btn} ${FOCUS}`}>
                 {t("play.anyGuess")}
@@ -314,7 +312,7 @@ export default function HostRemoteView({ code }) {
             >
               <ArrowRight size={18} /> {t("play.anyAdvance")}
             </button>
-            <p className="text-center text-[11px] text-stone-400 dark:text-stone-500">{t("play.anyAddHint")}</p>
+            <p className="text-center text-[11px] text-stone-400 dark:text-stone-500">{t("play.anyRemoteHint")}</p>
           </div>
         )}
         {stage === "question" && type !== "whoknows" && (

@@ -37,9 +37,6 @@ import {
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, optionsFor } from "./ui.jsx";
 import { TraitForm, LibraryPicker } from "./anythingleTraits.jsx";
 import { ANYTHINGLE_DB, ANYTHINGLE_FRANCHISES, findAnyChar } from "../data/anythingle.js";
-
-/** DB character names for the Builder's "load from library" autocomplete. */
-const ANY_LIB_NAMES = ANYTHINGLE_DB.map((c) => c.name);
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { ROUND_TEMPLATES, roundCreatorPrompt } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
@@ -1636,7 +1633,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                               <span className="text-sm font-semibold">{t("builder.anyTarget")}</span>
                               <LibraryPicker
-                                names={ANY_LIB_NAMES}
+                                entries={ANYTHINGLE_DB}
                                 placeholder={t("builder.anyUseAsTarget")}
                                 className="w-56"
                                 onPick={(n) => {
@@ -1657,7 +1654,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                               <span className="text-sm font-semibold">{t("builder.anyPool")}</span>
                               <LibraryPicker
-                                names={ANY_LIB_NAMES}
+                                entries={ANYTHINGLE_DB}
                                 placeholder={t("builder.anyAddChar")}
                                 className="w-56"
                                 onPick={(n) => {

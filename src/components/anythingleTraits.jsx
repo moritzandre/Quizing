@@ -9,8 +9,8 @@
    author or host still produces comparable values.
    ==================================================================== */
 
-import { useState, useRef, useEffect, useId } from "react";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { useState, useRef, useEffect, useId, useMemo } from "react";
+import { ArrowUp, ArrowDown, Check, Plus } from "lucide-react";
 import { ANYTHINGLE_TRAITS, normText } from "../lib/model.js";
 import { Avatar, inputCls, FOCUS } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
@@ -243,25 +243,47 @@ export function TraitLegend() {
 }
 
 /**
- * A name field with type-to-filter autocomplete. Suggestions appear ONLY once
- * something is typed (≥1 char) — never on an empty click — so a huge pool
- * doesn't dump every name on focus. Controlled (value/onChange); onSelect(name)
- * fires when a suggestion is clicked.
- * @param {{names:string[], value:string, onChange:(s:string)=>void, onSelect:(name:string)=>void, placeholder?:string, className?:string, autoFocus?:boolean}} props
+ * A character search field with type-to-filter autocomplete over the DB/pool.
+ * Suggestions appear ONLY once something is typed (≥1 char) — never on an empty
+ * click. Searches the canonical NAME *and* aliases (so "Peter Parker" finds
+ * Spider-Man), ranks prefix matches first, and shows each match's franchise so
+ * same-named characters are distinguishable. `entries` are character objects
+ * ({name, aliases?, franchise?}); onSelect(name) fires with the canonical name.
+ * With showStatus, a ✓/＋ badge signals whether the typed text is a known DB/pool
+ * character (will resolve) or a brand-new one.
+ * @param {{entries:object[], value:string, onChange:(s:string)=>void, onSelect:(name:string)=>void, placeholder?:string, className?:string, autoFocus?:boolean, showStatus?:boolean}} props
  */
 export function CharacterField({
-  names = [],
+  entries = [],
   value,
   onChange,
   onSelect,
   placeholder,
   className = "",
   autoFocus = false,
+  showStatus = false,
 }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
   const q = normText(value);
-  const matches = q.length >= 1 ? names.filter((n) => normText(n).includes(q)).slice(0, 8) : [];
+  const matches = useMemo(() => {
+    if (q.length < 1) return [];
+    const out = [];
+    for (const e of entries) {
+      const n = normText(e?.name);
+      const nameHit = n.includes(q);
+      const aliasHit = !nameHit && (e?.aliases || []).some((a) => normText(a).includes(q));
+      if (!nameHit && !aliasHit) continue;
+      out.push({ e, rank: n.startsWith(q) ? 0 : nameHit ? 1 : 2 });
+    }
+    out.sort((a, b) => a.rank - b.rank || String(a.e.name || "").length - String(b.e.name || "").length);
+    return out.slice(0, 12).map((x) => x.e);
+  }, [entries, q]);
+  const resolved =
+    showStatus && q.length >= 1
+      ? entries.find((e) => normText(e?.name) === q || (e?.aliases || []).some((a) => normText(a) === q)) || null
+      : null;
   useEffect(() => {
     const onDoc = (e) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
@@ -272,7 +294,7 @@ export function CharacterField({
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
       <input
-        className={inputCls}
+        className={`${inputCls} ${showStatus ? "pr-9" : ""}`}
         placeholder={placeholder}
         value={value}
         autoFocus={autoFocus}
@@ -283,20 +305,33 @@ export function CharacterField({
         }}
         onFocus={() => setOpen(true)}
       />
+      {showStatus && q.length >= 1 && (
+        <span
+          className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2"
+          title={resolved ? t("play.anyInLibrary") : t("play.anyNewChar")}
+        >
+          {resolved ? <Check size={16} className="text-emerald-500" /> : <Plus size={16} className="text-amber-500" />}
+        </span>
+      )}
       {open && matches.length > 0 && (
-        <ul className="absolute z-30 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-stone-200 bg-white py-1 text-left shadow-lg dark:border-stone-700 dark:bg-stone-900">
-          {matches.map((n) => (
-            <li key={n}>
+        <ul className="absolute z-30 mt-1 max-h-72 w-full overflow-y-auto rounded-xl border border-stone-200 bg-white py-1 text-left shadow-lg dark:border-stone-700 dark:bg-stone-900">
+          {matches.map((e) => (
+            <li key={e.id || e.name}>
               <button
                 type="button"
-                onMouseDown={(e) => e.preventDefault()}
+                onMouseDown={(ev) => ev.preventDefault()}
                 onClick={() => {
-                  onSelect(n);
+                  onSelect(e.name);
                   setOpen(false);
                 }}
-                className={`block w-full px-3 py-1.5 text-left text-sm hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
+                className={`flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-sm hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
               >
-                {n}
+                <span className="truncate">{e.name}</span>
+                {e.franchise && e.franchise !== "Standalone" && (
+                  <span className="ml-2 max-w-[45%] shrink-0 truncate text-xs text-stone-400 dark:text-stone-500">
+                    {e.franchise}
+                  </span>
+                )}
               </button>
             </li>
           ))}
@@ -309,13 +344,13 @@ export function CharacterField({
 /**
  * Self-contained "pick a character from the library" field (its own text state).
  * Used by the Builder to load a known character into the target/pool.
- * @param {{names:string[], onPick:(name:string)=>void, placeholder?:string, className?:string}} props
+ * @param {{entries:object[], onPick:(name:string)=>void, placeholder?:string, className?:string}} props
  */
-export function LibraryPicker({ names = [], onPick, placeholder, className = "" }) {
+export function LibraryPicker({ entries = [], onPick, placeholder, className = "" }) {
   const [text, setText] = useState("");
   return (
     <CharacterField
-      names={names}
+      entries={entries}
       value={text}
       onChange={setText}
       onSelect={(n) => {

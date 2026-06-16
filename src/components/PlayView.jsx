@@ -2092,11 +2092,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
       return { name: g.name, by: by ? { name: by.name, color: by.color, emoji: by.emoji } : null, cells: g.cells };
     });
     const dbList = anyDbReady ? anyDbRef.current?.ANYTHINGLE_DB || [] : [];
-    const poolNames = (q.pool || []).map((c) => c.name);
-    const nameSuggestions = [...new Set([...poolNames, ...dbList.map((c) => c.name)])].slice(0, 600);
-    const franchises = [...new Set([...(q.pool || []).map((c) => c.franchise), ...dbList.map((c) => c.franchise)])]
-      .filter(Boolean)
-      .sort();
+    // Searchable entries = the round's pool first (authored decoys + target) then
+    // the bundled DB, de-duped by name; CharacterField searches names + aliases.
+    const anySeen = new Set();
+    const anyEntries = [...(q.pool || []), ...dbList].filter((c) => {
+      const k = normText(c?.name);
+      if (!k || anySeen.has(k)) return false;
+      anySeen.add(k);
+      return true;
+    });
+    const franchises = [...new Set(anyEntries.map((c) => c.franchise))].filter(Boolean).sort();
     body = (
       <div className="flex h-full min-h-0 flex-col text-center">
         <div className="shrink-0">
@@ -2157,12 +2162,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
               }}
             >
               <CharacterField
-                names={nameSuggestions}
+                entries={anyEntries}
                 value={anyInput}
                 onChange={setAnyInput}
                 onSelect={(n) => anySubmit(n)}
                 placeholder={t("play.anyGuessPlaceholder")}
-                className="w-full max-w-xs"
+                className="w-full max-w-sm"
+                showStatus
               />
               <Button type="submit" className="px-5 py-2.5" disabled={!anyInput.trim()}>
                 {t("play.anyGuess")}
