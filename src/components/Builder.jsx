@@ -32,8 +32,11 @@ import {
   roundsFromImport,
   MORPH_EFFECTS,
   HINT_TYPES,
+  makeAnyChar,
 } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, optionsFor } from "./ui.jsx";
+import { TraitForm } from "./anythingleTraits.jsx";
+import { ANYTHINGLE_DB, ANYTHINGLE_FRANCHISES, findAnyChar } from "../data/anythingle.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { ROUND_TEMPLATES, roundCreatorPrompt } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
@@ -1565,6 +1568,155 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                   </SortableList>
                   <button
                     onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("whoknows")] })}
+                    className={`mt-3 ${addBtnCls}`}
+                  >
+                    <Plus size={15} /> {t("builder.addQuestion")}
+                  </button>
+                </>
+              )}
+
+              {/* anythingle (Wordle x Guess-Who) */}
+              {r.type === "anythingle" && (
+                <>
+                  <p className="mb-3 text-xs text-stone-500 dark:text-stone-400">{t("round.anythingle.desc")}</p>
+                  <datalist id="any-lib-names">
+                    {ANYTHINGLE_DB.map((c) => (
+                      <option key={c.id} value={c.name} />
+                    ))}
+                  </datalist>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
+                    {(item, i, hp) => {
+                      const target = item.target || makeAnyChar();
+                      const pool = Array.isArray(item.pool) ? item.pool : [];
+                      const loadFromLib = (name, apply) => {
+                        const hit = findAnyChar(name);
+                        if (hit) apply(hit);
+                      };
+                      return (
+                        <div className={panelCls}>
+                          <div className={rowLabelCls}>
+                            <span className="flex items-center gap-1">
+                              <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                            </span>
+                            <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                          </div>
+                          <input
+                            className={inputCls}
+                            placeholder={t("builder.question")}
+                            value={item.q || ""}
+                            onChange={(e) => qRow(r, item, { q: e.target.value })}
+                          />
+                          <div className="mt-2 flex flex-wrap items-end gap-4">
+                            <label className="text-xs text-stone-500 dark:text-stone-400">
+                              {t("builder.points")}
+                              <input
+                                type="number"
+                                className={`${inputCls} mt-1 w-24`}
+                                value={item.points ?? 30}
+                                onChange={(e) =>
+                                  qRow(r, item, { points: Math.max(1, Math.floor(+e.target.value || 30)) })
+                                }
+                              />
+                            </label>
+                            <label className="text-xs text-stone-500 dark:text-stone-400">
+                              {t("builder.anyMaxGuesses")}
+                              <input
+                                type="number"
+                                className={`${inputCls} mt-1 w-24`}
+                                value={item.maxGuesses ?? 8}
+                                onChange={(e) =>
+                                  qRow(r, item, {
+                                    maxGuesses: Math.max(1, Math.min(20, Math.floor(+e.target.value || 8))),
+                                  })
+                                }
+                              />
+                            </label>
+                          </div>
+
+                          {/* the secret target */}
+                          <div className="mt-3 rounded-xl border border-pink-200 bg-pink-50/50 p-3 dark:border-pink-500/30 dark:bg-pink-500/10">
+                            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                              <span className="text-sm font-semibold">{t("builder.anyTarget")}</span>
+                              <input
+                                list="any-lib-names"
+                                placeholder={t("builder.anyUseAsTarget")}
+                                className={`${inputCls} w-48 py-1`}
+                                onChange={(e) =>
+                                  loadFromLib(e.target.value, (hit) =>
+                                    qRow(r, item, { target: { ...hit, id: target.id } }),
+                                  )
+                                }
+                              />
+                            </div>
+                            <TraitForm
+                              value={target}
+                              onChange={(next) => qRow(r, item, { target: next })}
+                              franchises={ANYTHINGLE_FRANCHISES}
+                            />
+                          </div>
+
+                          {/* optional guess pool (pre-tagged likely guesses) */}
+                          <div className="mt-3">
+                            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                              <span className="text-sm font-semibold">{t("builder.anyPool")}</span>
+                              <input
+                                list="any-lib-names"
+                                placeholder={t("builder.anyAddChar")}
+                                className={`${inputCls} w-48 py-1`}
+                                onChange={(e) =>
+                                  loadFromLib(e.target.value, (hit) => {
+                                    qRow(r, item, { pool: [...pool, { ...hit, id: uid() }] });
+                                    e.target.value = "";
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              {pool.map((c, pi) => (
+                                <div
+                                  key={c.id || pi}
+                                  className="rounded-xl border border-stone-200 p-2.5 dark:border-stone-700"
+                                >
+                                  <div className="mb-1 flex items-center justify-between">
+                                    <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
+                                      {c.name || t("builder.anyName")}
+                                    </span>
+                                    <button
+                                      onClick={() => qRow(r, item, { pool: pool.filter((_, j) => j !== pi) })}
+                                      aria-label={t("builder.deleteOption")}
+                                      className={`rounded-md border border-stone-200 p-1 text-stone-400 hover:text-red-500 dark:border-stone-700 ${FOCUS}`}
+                                    >
+                                      <X size={14} />
+                                    </button>
+                                  </div>
+                                  <TraitForm
+                                    value={c}
+                                    onChange={(next) =>
+                                      qRow(r, item, { pool: pool.map((x, j) => (j === pi ? next : x)) })
+                                    }
+                                    franchises={ANYTHINGLE_FRANCHISES}
+                                    compact
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                            <button
+                              onClick={() => qRow(r, item, { pool: [...pool, makeAnyChar()] })}
+                              className={`mt-2 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
+                            >
+                              <Plus size={13} /> {t("builder.anyAddChar")}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </SortableList>
+                  <button
+                    onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("anythingle")] })}
                     className={`mt-3 ${addBtnCls}`}
                   >
                     <Plus size={15} /> {t("builder.addQuestion")}

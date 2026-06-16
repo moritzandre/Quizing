@@ -12,6 +12,7 @@
 import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { optionsFor, Avatar } from "./ui.jsx";
+import { GuessGrid, TraitLegend } from "./anythingleTraits.jsx";
 import { Check, Target, Volume2 } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
@@ -55,6 +56,7 @@ export default function RoundBody({
   qKey = "",
   volume = 100,
   whoknows = null,
+  anythingle = null,
 }) {
   const { t } = useI18n();
 
@@ -351,6 +353,41 @@ export default function RoundBody({
               </div>
             )}
           </>
+        )}
+      </div>
+    );
+  }
+
+  if (type === "anythingle") {
+    const a = anythingle || {};
+    const guesses = a.guesses || [];
+    const solved = a.solvedBy;
+    return (
+      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
+        <Q>{q.q}</Q>
+        {a.active && !revealed && !solved && (
+          <p className="mt-2 inline-flex items-center gap-2 text-lg font-semibold text-pink-600 dark:text-pink-400">
+            <Avatar color={a.active.color} emoji={a.active.emoji} name={a.active.name} size={26} />
+            {t("play.anyTurn", { name: a.active.name })}
+          </p>
+        )}
+        {guesses.length > 0 ? (
+          <>
+            <div className="mt-5 w-full max-w-5xl">
+              <GuessGrid guesses={guesses} big={!compact} />
+            </div>
+            <div className="mt-3">
+              <TraitLegend />
+            </div>
+          </>
+        ) : (
+          <p className="mt-8 text-stone-400 dark:text-stone-500">{t("play.anyNoGuesses")}</p>
+        )}
+        {(revealed || solved) && a.target?.name && (
+          <p className={answerCls}>
+            {solved ? `${t("play.anySolvedBy", { name: solved.name })} ` : `${t("play.anySecret")}: `}
+            {a.target.name}
+          </p>
         )}
       </div>
     );

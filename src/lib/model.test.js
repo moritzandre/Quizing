@@ -33,6 +33,15 @@ import {
   summarizeGamesFromResults,
   mapillaryEmbedUrl,
   roundsFromImport,
+  normText,
+  makeAnyChar,
+  normalizeAnyChar,
+  matchAnyEntity,
+  gradeAnythingle,
+  anyAllGreen,
+  isAnyTarget,
+  anyTurnOrder,
+  ANYTHINGLE_TRAITS,
 } from "./model.js";
 
 const ID = "dQw4w9WgXcQ";
@@ -1309,5 +1318,208 @@ describe("roundsFromImport", () => {
     expect(roundsFromImport(42)).toEqual([]);
     expect(roundsFromImport("nope")).toEqual([]);
     expect(roundsFromImport({})).toEqual([]);
+  });
+});
+
+describe("Anythingle", () => {
+  const LUKE = {
+    name: "Luke Skywalker",
+    aliases: ["Luke"],
+    species: "Human",
+    gender: "Male",
+    alignment: "Hero/Good",
+    powers: ["Magic/Sorcery", "Telepathy/Mind", "Weapon mastery"],
+    franchise: "Star Wars",
+    medium: "Film/TV (live-action)",
+    country: "USA",
+    year: 1977,
+  };
+  const LUFFY = {
+    name: "Monkey D. Luffy",
+    species: "Human",
+    gender: "Male",
+    alignment: "Hero/Good",
+    powers: ["Elasticity/Stretch", "Martial arts", "Super strength"],
+    franchise: "One Piece",
+    medium: "Manga",
+    country: "Japan",
+    year: 1997,
+  };
+  const cellFor = (cells, key) => cells.find((c) => c.key === key);
+
+  it("normText folds case, diacritics and whitespace", () => {
+    expect(normText("  Lúke   Skywalker ")).toBe("luke skywalker");
+    expect(normText("GÉRALT")).toBe("geralt");
+    expect(normText(null)).toBe("");
+  });
+
+  it("makeAnyChar produces a valid, normalizable empty entry shape", () => {
+    const c = makeAnyChar();
+    expect(c.powers).toEqual(["None"]);
+    expect(ANYTHINGLE_TRAITS).toHaveLength(8);
+  });
+
+  it("normalizeAnyChar clamps vocab, dedupes/caps powers, keeps None exclusive, drops nameless", () => {
+    expect(normalizeAnyChar({ name: "" })).toBeNull();
+    const c = normalizeAnyChar({
+      name: " Goku ",
+      species: "Saiyan", // not in vocab -> Object/Other
+      gender: "male", // wrong case -> default None/Genderless
+      powers: ["Flight", "Flight", "Bogus", "Energy/Beams", "Super strength", "Super speed"],
+      franchise: "",
+      medium: "OVA",
+      country: "Japan",
+      year: "1984",
+    });
+    expect(c.species).toBe("Object/Other");
+    expect(c.gender).toBe("None/Genderless");
+    expect(c.powers).toHaveLength(3); // capped, deduped, "Bogus" dropped
+    expect(c.powers).not.toContain("Bogus");
+    expect(c.franchise).toBe("Standalone");
+    expect(c.medium).toBe("Web/Other");
+    expect(c.year).toBe(1984);
+    // None is exclusive
+    expect(normalizeAnyChar({ name: "X", powers: ["None", "Flight"] }).powers).toEqual(["None"]);
+    expect(normalizeAnyChar({ name: "X", powers: [] }).powers).toEqual(["None"]);
+  });
+
+  it("gradeAnythingle returns one cell per trait in matrix order", () => {
+    const cells = gradeAnythingle(LUKE, LUFFY);
+    expect(cells.map((c) => c.key)).toEqual(ANYTHINGLE_TRAITS.map((t) => t.key));
+  });
+
+  it("grades exact matches green and misses grey (guess Luffy vs secret Luke)", () => {
+    const cells = gradeAnythingle(LUKE, LUFFY);
+    expect(cellFor(cells, "species").result).toBe("green");
+    expect(cellFor(cells, "gender").result).toBe("green");
+    expect(cellFor(cells, "alignment").result).toBe("green");
+    expect(cellFor(cells, "powers").result).toBe("grey"); // no shared ability
+    expect(cellFor(cells, "franchise").result).toBe("grey");
+    expect(cellFor(cells, "medium").result).toBe("grey");
+    expect(cellFor(cells, "country").result).toBe("grey");
+  });
+
+  it("powers yields yellow on partial overlap, green on equal set", () => {
+    const goku = { ...LUFFY, powers: ["Super strength", "Energy/Beams", "Flight"] };
+    const p = cellFor(gradeAnythingle(goku, LUFFY), "powers"); // share Super strength
+    expect(p.result).toBe("yellow");
+    expect(p.shared).toContain("Super strength");
+    expect(cellFor(gradeAnythingle(LUKE, { ...LUFFY, powers: LUKE.powers }), "powers").result).toBe("green");
+  });
+
+  it("None powers green only against None, never via overlap", () => {
+    const hamlet = { ...LUKE, powers: ["None"] };
+    expect(cellFor(gradeAnythingle(hamlet, { ...LUFFY, powers: ["None"] }), "powers").result).toBe("green");
+    expect(cellFor(gradeAnythingle(hamlet, LUFFY), "powers").result).toBe("grey");
+  });
+
+  it("debut year gives the up/down arrow + a yellow close-band", () => {
+    // secret 1977, guess 1997 -> secret OLDER -> down, beyond 15y -> grey
+    const far = cellFor(gradeAnythingle(LUKE, LUFFY), "year");
+    expect(far.result).toBe("grey");
+    expect(far.dir).toBe("down");
+    // within 15 years -> yellow, secret newer -> up
+    const near = cellFor(gradeAnythingle({ ...LUKE, year: 1990 }, { ...LUFFY, year: 1980 }), "year");
+    expect(near.result).toBe("yellow");
+    expect(near.dir).toBe("up");
+    // exact -> green, no arrow
+    const exact = cellFor(gradeAnythingle(LUKE, { ...LUFFY, year: 1977 }), "year");
+    expect(exact.result).toBe("green");
+    expect(exact.dir).toBeUndefined();
+  });
+
+  it("anyAllGreen / isAnyTarget detect a solve by all-green and by identity", () => {
+    expect(anyAllGreen(gradeAnythingle(LUKE, LUKE))).toBe(true);
+    expect(anyAllGreen(gradeAnythingle(LUKE, LUFFY))).toBe(false);
+    expect(isAnyTarget(LUKE, { name: "luke skywalker" })).toBe(true); // case-insensitive
+    expect(isAnyTarget(LUKE, { name: "Luke" })).toBe(true); // via target alias
+    expect(isAnyTarget(LUKE, { name: "Han Solo" })).toBe(false);
+  });
+
+  it("matchAnyEntity resolves by name + alias, accent/case-insensitive", () => {
+    const pool = [normalizeAnyChar(LUKE), normalizeAnyChar(LUFFY)];
+    expect(matchAnyEntity(pool, "LUKE SKYWALKER").name).toBe("Luke Skywalker");
+    expect(matchAnyEntity(pool, "luke").name).toBe("Luke Skywalker"); // alias
+    expect(matchAnyEntity(pool, "Mónkey D. Lúffy").name).toBe("Monkey D. Luffy");
+    expect(matchAnyEntity(pool, "Gandalf")).toBeNull();
+  });
+
+  it("anyTurnOrder puts the trailing player first, tie-broken by seed index", () => {
+    const order = anyTurnOrder([
+      { id: "a", score: 5 },
+      { id: "b", score: 1 },
+      { id: "c", score: 1 },
+    ]);
+    expect(order).toEqual(["b", "c", "a"]);
+  });
+
+  it("normalizeQuiz validates an anythingle round (target, pool, clamps)", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "anythingle",
+          questions: [{ q: "Guess", target: LUKE, pool: [LUFFY, { name: "" }], points: 30, maxGuesses: 99 }],
+        },
+      ],
+    });
+    const r = q.rounds[0].questions[0];
+    expect(r.target.name).toBe("Luke Skywalker");
+    expect(r.pool).toHaveLength(1); // nameless dropped
+    expect(r.maxGuesses).toBe(20); // clamped to <=20
+  });
+
+  // ---- reveal-safety: the secret target + traits must never reach present/pre-reveal live ----
+  const anyGame = (over = {}) =>
+    normalizeGame({
+      quiz: {
+        title: "T",
+        rounds: [{ type: "anythingle", title: "R", questions: [{ q: "Guess", target: LUKE, pool: [LUFFY] }] }],
+      },
+      players: [{ id: "a", name: "Ann" }],
+      ri: 0,
+      qi: 0,
+      stage: "question",
+      anythingle: {
+        order: ["a"],
+        turn: 0,
+        guesses: [{ name: "Monkey D. Luffy", by: "a", cells: gradeAnythingle(LUKE, LUFFY) }],
+        solvedBy: null,
+      },
+      ...over,
+    });
+
+  it("present payload carries only the prompt + pool size, never the secret", () => {
+    const g = anyGame();
+    const present = buildPresentQ(g);
+    expect(present.q.poolSize).toBe(1);
+    expect("target" in present.q).toBe(false);
+    expect(JSON.stringify(present)).not.toContain("Luke Skywalker");
+  });
+
+  it("pre-reveal live carries graded rows but NOT the secret target; reveal adds it", () => {
+    const g = anyGame();
+    const live = buildLive(g);
+    expect(live.anythingle.guesses[0].name).toBe("Monkey D. Luffy"); // public guess
+    expect(live.anythingle.target).toBeNull();
+    expect(JSON.stringify(live.anythingle)).not.toContain("Luke Skywalker");
+    // once revealed, the target name is exposed via live
+    const revealed = buildLive(anyGame({ revealed: true }));
+    expect(revealed.anythingle.target.name).toBe("Luke Skywalker");
+  });
+
+  it("host-only aux carries the secret target + pool (for the host remote)", () => {
+    const aux = buildHostAux(anyGame());
+    expect(aux.anythingle.target.name).toBe("Luke Skywalker");
+    expect(aux.anythingle.pool[0].name).toBe("Monkey D. Luffy");
+    // and it round-trips through the untrusted-input validator
+    expect(normalizeHostAux(aux).anythingle.target.name).toBe("Luke Skywalker");
+  });
+
+  it("normalizeGame defaults the anythingle block to null on old saves", () => {
+    const g = normalizeGame({
+      quiz: { rounds: [{ type: "classic", questions: [{ q: "Q", a: "A", points: 10 }] }] },
+      players: [{ id: "a", name: "Ann" }],
+    });
+    expect(g.anythingle).toBeNull();
   });
 });

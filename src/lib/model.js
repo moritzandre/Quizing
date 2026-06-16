@@ -25,10 +25,105 @@ export const ROUND_TYPES = [
   "higherlower",
   "number",
   "whoknows",
+  "anythingle",
 ];
 
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
 export const BINARY_TYPES = ["choice", "truefalse", "higherlower"];
+
+/* ---- Anythingle (Wordle x Guess-Who) — fictional-character trait matrix ----
+   A secret fictional character is broken down across a fixed, objective 8-column
+   matrix; a guessed character is graded trait-by-trait against the secret. Every
+   column except Debut Year is a CLOSED vocabulary (so a curated DB / a host
+   manual-add can only ever produce comparable, deterministic values). Franchise
+   is a normalized free string (curated canonical names) with "Standalone" the
+   catch-all for one-off works. These tokens double as data + display (quiz
+   content, not translated — like question text). */
+export const ANY_SPECIES = [
+  "Human",
+  "Humanoid",
+  "Animal",
+  "Creature/Monster",
+  "Robot/AI",
+  "Cyborg/Augmented",
+  "Alien",
+  "Deity/Spirit",
+  "Undead",
+  "Object/Other",
+];
+export const ANY_GENDERS = ["Male", "Female", "Non-binary/Fluid", "None/Genderless"];
+export const ANY_ALIGNMENTS = ["Hero/Good", "Villain/Evil", "Neutral/Anti-hero"];
+export const ANY_POWERS = [
+  "None",
+  "Super strength",
+  "Super speed",
+  "Flight",
+  "Magic/Sorcery",
+  "Elemental",
+  "Electric/Lightning",
+  "Energy/Beams",
+  "Telepathy/Mind",
+  "Shapeshifting",
+  "Healing/Regeneration",
+  "Elasticity/Stretch",
+  "Stealth/Invisibility",
+  "Weapon mastery",
+  "Martial arts",
+  "Tech/Gadgets",
+  "Immortality",
+  "Summoning",
+  "Size-change",
+  "Peak human/Genius",
+];
+export const ANY_MEDIA = [
+  "Stage/Theatre",
+  "Novel/Prose",
+  "Comic (Western)",
+  "Manga",
+  "Anime",
+  "Animation/Cartoon",
+  "Film/TV (live-action)",
+  "Video game",
+  "Mythology/Folklore",
+  "Web/Other",
+];
+export const ANY_COUNTRIES = [
+  "USA",
+  "UK",
+  "Japan",
+  "France",
+  "Germany",
+  "Italy",
+  "Spain",
+  "China",
+  "South Korea",
+  "Canada",
+  "Other Europe",
+  "Other Asia",
+  "Other",
+];
+/** Max abilities per character so the set-overlap "yellow" stays meaningful. */
+export const ANY_MAX_POWERS = 3;
+/** Debut-year window (years) that still tints the cell yellow ("right era"). */
+export const ANY_CLOSE_BAND = 15;
+/** Soft per-round guess cap (display only; the host reveals when ready). */
+export const ANY_MAX_GUESSES = 8;
+
+/**
+ * The fixed 8-column comparison matrix. `type` drives both the editor control
+ * and the grading: single = exact, multi = set-overlap (yellow on partial),
+ * text = normalized exact (franchise), number = higher/lower arrow (debut year).
+ */
+export const ANYTHINGLE_TRAITS = [
+  { key: "species", label: "Species", type: "single", values: ANY_SPECIES },
+  { key: "gender", label: "Gender", type: "single", values: ANY_GENDERS },
+  { key: "alignment", label: "Alignment", type: "single", values: ANY_ALIGNMENTS },
+  { key: "powers", label: "Powers", type: "multi", values: ANY_POWERS, max: ANY_MAX_POWERS },
+  { key: "franchise", label: "Franchise", type: "text" },
+  { key: "medium", label: "Origin medium", type: "single", values: ANY_MEDIA },
+  { key: "country", label: "Origin country", type: "single", values: ANY_COUNTRIES },
+  { key: "year", label: "Debut year", type: "number", band: ANY_CLOSE_BAND },
+];
 
 /** Between-rounds recap minigame skins; the host picks one at random per round. */
 export const RECAP_VARIANTS = ["invaders", "race", "stacker", "pellet", "bricks"];
@@ -192,6 +287,152 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
+/* ---- Anythingle helpers (pure, unit-tested) ---- */
+
+/** Fold a name to a match key: strip diacritics, lowercase, collapse whitespace. */
+export const normText = (s) =>
+  str(s)
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+
+/** Create an empty Anythingle character entry (one row of the matrix). */
+export function makeAnyChar() {
+  return {
+    id: uid(),
+    name: "",
+    aliases: [],
+    species: "Human",
+    gender: "Male",
+    alignment: "Hero/Good",
+    powers: ["None"],
+    franchise: "Standalone",
+    medium: "Film/TV (live-action)",
+    country: "USA",
+    year: null,
+  };
+}
+
+/**
+ * Coerce untrusted data into a valid Anythingle character, or null if nameless.
+ * Every categorical is clamped to its closed vocabulary; powers de-duped, made
+ * None-exclusive and capped; year coerced to an integer or null.
+ * @param {*} raw
+ * @returns {object|null}
+ */
+export function normalizeAnyChar(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const name = str(raw.name).trim();
+  if (!name) return null;
+  const pick = (v, set, d) => (set.includes(v) ? v : d);
+  let powers = (Array.isArray(raw.powers) ? raw.powers : []).map((p) => str(p)).filter((p) => ANY_POWERS.includes(p));
+  powers = [...new Set(powers)];
+  if (!powers.length || powers.includes("None"))
+    powers = ["None"]; // None is exclusive
+  else powers = powers.slice(0, ANY_MAX_POWERS);
+  return {
+    id: str(raw.id) || uid(),
+    name,
+    aliases: (Array.isArray(raw.aliases) ? raw.aliases : [])
+      .map((a) => str(a).trim())
+      .filter(Boolean)
+      .slice(0, 12),
+    species: pick(str(raw.species), ANY_SPECIES, "Object/Other"),
+    gender: pick(str(raw.gender), ANY_GENDERS, "None/Genderless"),
+    alignment: pick(str(raw.alignment), ANY_ALIGNMENTS, "Neutral/Anti-hero"),
+    powers,
+    franchise: str(raw.franchise).trim() || "Standalone",
+    medium: pick(str(raw.medium), ANY_MEDIA, "Web/Other"),
+    country: pick(str(raw.country), ANY_COUNTRIES, "Other"),
+    year: numOrNull(raw.year),
+  };
+}
+
+/** Find the pool entry whose name/alias matches a typed guess (accent/case-insensitive). */
+export function matchAnyEntity(pool, name) {
+  const key = normText(name);
+  if (!key) return null;
+  for (const e of Array.isArray(pool) ? pool : []) {
+    if (normText(e?.name) === key) return e;
+    if (Array.isArray(e?.aliases) && e.aliases.some((a) => normText(a) === key)) return e;
+  }
+  return null;
+}
+
+/**
+ * Grade a guessed character against the secret across ANYTHINGLE_TRAITS.
+ * @returns {Array<{key:string, result:"green"|"yellow"|"grey", dir?:"up"|"down", shared?:string[]}>}
+ *   green = exact; yellow = partial overlap (multi) or within the close-band (year);
+ *   grey = miss. dir on the numeric column: "up" = secret is higher/newer than the guess.
+ */
+export function gradeAnythingle(target, guess) {
+  return ANYTHINGLE_TRAITS.map((t) => {
+    const tv = target?.[t.key];
+    const gv = guess?.[t.key];
+    if (t.type === "multi") {
+      const ts = new Set((Array.isArray(tv) ? tv : []).map((x) => str(x)));
+      const gs = [...new Set((Array.isArray(gv) ? gv : []).map((x) => str(x)))];
+      const shared = gs.filter((x) => ts.has(x));
+      if (ts.size === gs.length && shared.length === ts.size) return { key: t.key, result: "green" };
+      if (shared.length > 0) return { key: t.key, result: "yellow", shared };
+      return { key: t.key, result: "grey" };
+    }
+    if (t.type === "number") {
+      const a = numOrNull(tv);
+      const b = numOrNull(gv);
+      if (a == null || b == null) return { key: t.key, result: "grey" };
+      if (a === b) return { key: t.key, result: "green" };
+      const dir = a > b ? "up" : "down"; // up = secret newer/higher than the guess
+      return { key: t.key, result: Math.abs(a - b) <= (t.band || ANY_CLOSE_BAND) ? "yellow" : "grey", dir };
+    }
+    // single + text (text normalized): exact match on non-empty values only
+    const same =
+      t.type === "text" ? normText(tv) !== "" && normText(tv) === normText(gv) : str(tv) !== "" && str(tv) === str(gv);
+    return { key: t.key, result: same ? "green" : "grey" };
+  });
+}
+
+/** Display text for one of a character's trait values (arrays joined, numbers stringified). */
+export function anyCellValue(char, key) {
+  const v = char?.[key];
+  if (Array.isArray(v)) return v.join(", ");
+  if (v == null) return "";
+  return String(v);
+}
+
+/** True once a graded row is all-green (every trait matched). */
+export const anyAllGreen = (cells) =>
+  Array.isArray(cells) && cells.length > 0 && cells.every((c) => c.result === "green");
+
+/** True if a guessed character IS the secret target (by id, name, or alias). */
+export function isAnyTarget(target, guess) {
+  if (!target || !guess) return false;
+  if (target.id && guess.id && target.id === guess.id) return true;
+  const k = normText(target.name);
+  if (
+    k &&
+    (normText(guess.name) === k || (Array.isArray(guess.aliases) && guess.aliases.some((a) => normText(a) === k)))
+  )
+    return true;
+  return Array.isArray(target.aliases) && target.aliases.some((a) => normText(a) === normText(guess.name));
+}
+
+/**
+ * Turn order for an Anythingle round: trailing player (lowest score) first as a
+ * comeback mechanic, tie-broken by seed index so host + TV agree without sync.
+ * @param {Array<{id:string,score:number}>} players
+ * @returns {string[]} ordered player ids
+ */
+export function anyTurnOrder(players) {
+  return (Array.isArray(players) ? players : [])
+    .map((p, i) => ({ id: str(p?.id), i, score: num(p?.score, 0) }))
+    .filter((p) => p.id)
+    .sort((a, b) => a.score - b.score || a.i - b.i)
+    .map((p) => p.id);
+}
+
 /**
  * Read an image file into a data URL, downscaling large images to keep
  * quiz exports and localStorage small (browser only).
@@ -293,6 +534,18 @@ export function makeQuestion(type) {
       // at least as many correct answers as they claimed. `answers` is the full
       // list (for clicking + showcase); `ordered` shows them numbered on reveal.
       return { id: uid(), q: "", answers: ["", "", "", "", ""], ordered: false };
+    case "anythingle":
+      // Wordle x Guess-Who: a secret fictional character (target) the room
+      // narrows down by guessing other characters; `pool` is an optional seed
+      // set of likely guesses (with traits) — players may still guess anything.
+      return {
+        id: uid(),
+        q: "Guess the secret character.",
+        target: makeAnyChar(),
+        pool: [],
+        points: 30,
+        maxGuesses: ANY_MAX_GUESSES,
+      };
     default:
       return { id: uid() };
   }
@@ -436,6 +689,15 @@ export function normalizeQuiz(raw) {
               tileLayer: q?.tileLayer === "satellite" ? "satellite" : "map",
               street: str(q?.street),
             });
+          if (r.type === "anythingle")
+            Object.assign(it, {
+              q: str(q?.q) || "Guess the secret character.",
+              target: normalizeAnyChar(q?.target) || makeAnyChar(),
+              // pool is a comparison/warm-cache set, NOT a closed guess-list — empty is fine.
+              pool: (Array.isArray(q?.pool) ? q.pool : []).map(normalizeAnyChar).filter(Boolean).slice(0, 300),
+              points: num(q?.points, 30),
+              maxGuesses: Math.max(1, Math.min(20, num(q?.maxGuesses, ANY_MAX_GUESSES))),
+            });
           return it;
         });
       }
@@ -493,11 +755,43 @@ export function normalizeGame(raw) {
     // between-rounds recap can animate from start-of-round to end-of-round.
     roundStartScores: scoreMap(raw.roundStartScores),
   };
+  // Anythingle round state (turn order + shared guess board). Additive/optional:
+  // null on old saves so they load byte-for-byte.
+  g.anythingle = normalizeAnyState(raw.anythingle, g.players);
   // Coherence guard: a jeopardy question needs an open tile. A corrupted/edited
   // save with stage "question" but no tile would crash the question render, so
   // fall back to the board.
   if (g.quiz.rounds[g.ri]?.type === "jeopardy" && g.stage === "question" && !g.tile) g.stage = "board";
   return g;
+}
+
+/**
+ * Validate the persisted Anythingle round state (turn order + shared guess
+ * board). Returns null when absent (old saves). Stores only name + grade + the
+ * guessing player's id per guess — never the resolved traits (the board renders
+ * from the precomputed cells).
+ */
+function normalizeAnyState(raw, players) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const ids = new Set((Array.isArray(players) ? players : []).map((p) => p.id));
+  return {
+    order: (Array.isArray(raw.order) ? raw.order : []).map(str).filter((id) => ids.has(id)),
+    turn: Math.max(0, num(raw.turn, 0)),
+    guesses: (Array.isArray(raw.guesses) ? raw.guesses : [])
+      .slice(0, 80)
+      .map((gss) => ({
+        name: str(gss?.name),
+        by: ids.has(str(gss?.by)) ? str(gss?.by) : null,
+        cells: (Array.isArray(gss?.cells) ? gss.cells : []).slice(0, 12).map((c) => ({
+          key: str(c?.key),
+          result: ["green", "yellow", "grey"].includes(c?.result) ? c.result : "grey",
+          val: str(c?.val).slice(0, 60),
+          ...(c?.dir === "up" || c?.dir === "down" ? { dir: c.dir } : {}),
+        })),
+      }))
+      .filter((gss) => gss.name),
+    solvedBy: ids.has(str(raw.solvedBy)) ? str(raw.solvedBy) : null,
+  };
 }
 
 /** Coerce an untrusted {id: score} object to a clean {id: number} map. */
@@ -861,6 +1155,11 @@ function presentQ(type, q) {
       // The full answer list is NEVER sent here (it would leak); the picked /
       // showcased answers travel in the live payload (whoknows) instead.
       return { q: str(q.q), total: (Array.isArray(q.answers) ? q.answers : []).length, ordered: !!q.ordered };
+    case "anythingle":
+      // REVEAL-SAFE: only the prompt + pool size. The secret target + its traits
+      // ride the host-only aux topic; the matrix columns are a shared constant
+      // (ANYTHINGLE_TRAITS) so they need not be sent. Guesses + grades travel in live.
+      return { q: str(q.q), poolSize: (Array.isArray(q.pool) ? q.pool : []).length };
     default:
       return {};
   }
@@ -901,6 +1200,35 @@ function normalizeWhoknows(raw) {
   };
 }
 
+/** Validate the live Anythingle sub-payload (host ↔ TV). Carries no trait values. */
+function normalizeAnyLive(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const info = (x) =>
+    x && typeof x === "object" && !Array.isArray(x)
+      ? {
+          name: str(x.name),
+          color: typeof x.color === "string" ? x.color : null,
+          emoji: typeof x.emoji === "string" ? x.emoji : null,
+        }
+      : null;
+  return {
+    turn: Math.max(0, num(raw.turn, 0)),
+    active: info(raw.active),
+    guesses: (Array.isArray(raw.guesses) ? raw.guesses : []).slice(0, 60).map((g) => ({
+      name: str(g?.name),
+      by: info(g?.by),
+      cells: (Array.isArray(g?.cells) ? g.cells : []).slice(0, 12).map((c) => ({
+        key: str(c?.key),
+        result: ["green", "yellow", "grey"].includes(c?.result) ? c.result : "grey",
+        val: str(c?.val).slice(0, 60),
+        ...(c?.dir === "up" || c?.dir === "down" ? { dir: c.dir } : {}),
+      })),
+    })),
+    solvedBy: info(raw.solvedBy),
+    target: raw.target && typeof raw.target === "object" ? { name: str(raw.target.name) } : null,
+  };
+}
+
 /** The answer/reveal fields for the TV (only emitted once the host reveals). */
 function revealData(type, q) {
   switch (type) {
@@ -924,6 +1252,8 @@ function revealData(type, q) {
       return { correct: num(q.correct, 0) === 1 ? 1 : 0, note: str(q.note) };
     case "number":
       return { answer: numOrNull(q.answer), unit: str(q.unit) };
+    case "anythingle":
+      return { answer: str(q.target?.name) };
     default:
       return {};
   }
@@ -1003,6 +1333,47 @@ export function recapStory(entities) {
  * @param {object} game A valid game.
  * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object, recapVariant?:string, recapRound?:number, recapTotal?:number, transport?:object, soundOnTv?:boolean}} [opts]
  */
+/**
+ * Build the Anythingle live sub-payload for the TV (host → present/live). Carries
+ * the active player, the shared graded guess board (names + colour/arrow codes —
+ * the public Wordle-tile information), and the solver. The secret target name is
+ * included ONLY once the round is revealed. Never carries trait VALUES.
+ */
+function buildAnyLive(game) {
+  const round = game.quiz?.rounds?.[game.ri];
+  if (round?.type !== "anythingle" || !game.anythingle) return null;
+  const a = game.anythingle;
+  const players = Array.isArray(game.players) ? game.players : [];
+  const info = (id) => {
+    const p = players.find((x) => x.id === id);
+    return p
+      ? {
+          name: str(p.name),
+          color: typeof p.color === "string" ? p.color : null,
+          emoji: typeof p.emoji === "string" ? p.emoji : null,
+        }
+      : null;
+  };
+  const order = Array.isArray(a.order) ? a.order : [];
+  const q = currentQuestion(game);
+  return {
+    turn: num(a.turn, 0),
+    active: order.length ? info(order[num(a.turn, 0) % order.length]) : null,
+    guesses: (Array.isArray(a.guesses) ? a.guesses : []).slice(-40).map((g) => ({
+      name: str(g.name),
+      by: info(g.by),
+      cells: (Array.isArray(g.cells) ? g.cells : []).map((c) => ({
+        key: str(c.key),
+        result: ["green", "yellow", "grey"].includes(c.result) ? c.result : "grey",
+        val: str(c.val).slice(0, 60),
+        ...(c.dir === "up" || c.dir === "down" ? { dir: c.dir } : {}),
+      })),
+    })),
+    solvedBy: info(a.solvedBy),
+    target: game.revealed && q ? { name: str(q.target?.name) } : null,
+  };
+}
+
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
   const standings = (Array.isArray(game.players) ? game.players : []).map((p) => ({
@@ -1036,6 +1407,7 @@ export function buildLive(game, opts = {}) {
     soundOnTv: !!opts.soundOnTv,
     volume: Math.max(0, Math.min(100, num(opts.volume, 100))),
     whoknows: opts.whoknows ? normalizeWhoknows(opts.whoknows) : null,
+    anythingle: buildAnyLive(game),
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -1139,6 +1511,7 @@ export function normalizeLive(raw) {
     soundOnTv: !!raw.soundOnTv,
     volume: Math.max(0, Math.min(100, num(raw.volume, 100))),
     whoknows: raw.whoknows ? normalizeWhoknows(raw.whoknows) : null,
+    anythingle: normalizeAnyLive(raw.anythingle),
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",
@@ -1160,13 +1533,23 @@ export function normalizeLive(raw) {
  */
 export function buildHostAux(game) {
   const round = game.quiz?.rounds?.[game.ri];
-  const out = { v: 1, whoknows: null };
+  const out = { v: 1, whoknows: null, anythingle: null };
   if (game.stage === "question" && round?.type === "whoknows") {
     const q = currentQuestion(game);
     if (q)
       out.whoknows = {
         answers: (Array.isArray(q.answers) ? q.answers : []).map(str).slice(0, 200),
         ordered: !!q.ordered,
+      };
+  }
+  // Anythingle: the secret target + the traited pool ride the host-only topic so
+  // the host remote can resolve/grade guesses; the TV never subscribes to it.
+  if (game.stage === "question" && round?.type === "anythingle") {
+    const q = currentQuestion(game);
+    if (q)
+      out.anythingle = {
+        target: normalizeAnyChar(q.target),
+        pool: (Array.isArray(q.pool) ? q.pool : []).map(normalizeAnyChar).filter(Boolean),
       };
   }
   return out;
@@ -1200,6 +1583,7 @@ export function normalizePhoneScores(raw) {
 export function normalizeHostAux(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const wk = raw.whoknows;
+  const an = raw.anythingle;
   return {
     whoknows:
       wk && typeof wk === "object" && !Array.isArray(wk)
@@ -1208,6 +1592,13 @@ export function normalizeHostAux(raw) {
               .map((a) => (typeof a === "number" ? String(a) : str(a)))
               .slice(0, 200),
             ordered: !!wk.ordered,
+          }
+        : null,
+    anythingle:
+      an && typeof an === "object" && !Array.isArray(an)
+        ? {
+            target: normalizeAnyChar(an.target),
+            pool: (Array.isArray(an.pool) ? an.pool : []).map(normalizeAnyChar).filter(Boolean),
           }
         : null,
   };

@@ -49,10 +49,18 @@ import {
   BINARY_TYPES,
   RECAP_VARIANTS,
   mapillaryEmbedUrl,
+  anyTurnOrder,
+  gradeAnythingle,
+  anyCellValue,
+  matchAnyEntity,
+  normText,
+  isAnyTarget,
+  makeAnyChar,
 } from "../lib/model.js";
 import {
   TYPES,
   FOCUS,
+  inputCls,
   Button,
   IconButton,
   Confetti,
@@ -74,6 +82,7 @@ import MediaPlayer from "./MediaPlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
+import { TraitForm, GuessGrid, TraitLegend } from "./anythingleTraits.jsx";
 
 /** Map marker color for a player (their chosen color, else by index). */
 const colorFor = (p, i) => p?.color || colorAt(i);
@@ -153,6 +162,30 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* map round: show the Mapillary street view instead of the map (UI-only) */
   const [streetOn, setStreetOn] = useState(false);
 
+  /* Anythingle (Wordle x Guess-Who): the host's guess input + the inline
+     "add unknown character" form (UI-only). Resolution + grading is host-side. */
+  const [anyInput, setAnyInput] = useState("");
+  const [anyAdd, setAnyAdd] = useState(null); // a char being added when a guess isn't known, else null
+  const anyCacheRef = useRef({}); // per-round resolved-entity cache (normText(name) → char)
+  const anyDbRef = useRef(null); // lazily-loaded bundled character DB module
+  const [anyDbReady, setAnyDbReady] = useState(false);
+  // Lazy-load the curated character DB the first time an anythingle round renders.
+  useEffect(() => {
+    if (round?.type !== "anythingle" || anyDbRef.current) return;
+    let live = true;
+    import("../data/anythingle.js")
+      .then((m) => {
+        if (live) {
+          anyDbRef.current = m;
+          setAnyDbReady(true);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [round?.type]);
+
   /* host UI toggles (not persisted): projector layout + score/round panels */
   const [pres, setPres] = useState(false);
   const [editScores, setEditScores] = useState(false);
@@ -184,6 +217,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
     if ((round.type === "video" || round.type === "clip") && clipLadderActive(q))
       return morphValue(q.points, q.steps, morphStep);
+    if (round.type === "anythingle") return ptsOr(q.points, 30);
     return ptsOr(q.points, 10);
   })();
 
@@ -200,6 +234,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setStreetOn(false);
     setRecap(false);
     setGuessFor(game.players[0]?.id ?? null);
+    // Anythingle: clear the host input + per-round cache, and seed a fresh turn
+    // order (by current standings) + empty board for this question.
+    setAnyInput("");
+    setAnyAdd(null);
+    anyCacheRef.current = {};
+    if (round?.type === "anythingle" && game.stage === "question") {
+      upd({ anythingle: { order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null } });
+    } else if (game.anythingle) {
+      upd({ anythingle: null });
+    }
   }, [qKey, timerSecs]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A buzz auto-pauses the clip on whichever screen is the stage (host or TV).
@@ -228,8 +272,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
     } else if (round?.type === "number") {
       room.collectAnswers(qKey, { phase: "number" });
-    } else if (round?.type === "whoknows") {
-      room.idle(); // host-driven auction round — phones aren't used
+    } else if (round?.type === "whoknows" || round?.type === "anythingle") {
+      room.idle(); // host-driven rounds — phones aren't used for input
     } else {
       room.arm(qKey);
     }
@@ -457,6 +501,62 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const adjustScore = (pid, delta) =>
     upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
 
+  /* ---- Anythingle handlers (host-driven, turn-based) ---- */
+  // Resolve a typed guess to a character: per-round cache → round pool/target → bundled DB.
+  const anyResolve = (name) => {
+    const q = round.questions[game.qi];
+    const key = normText(name);
+    if (anyCacheRef.current[key]) return anyCacheRef.current[key];
+    const local = matchAnyEntity([...(q?.pool || []), q?.target].filter(Boolean), name);
+    if (local) return local;
+    return anyDbRef.current?.findAnyChar?.(name) || null;
+  };
+  // Grade a resolved guess against the secret, append it to the shared board, and
+  // advance the turn — or, if it IS the secret, award the guesser (first to solve).
+  const anyCommit = (char) => {
+    const q = round.questions[game.qi];
+    if (!q || game.revealed) return;
+    const a = game.anythingle || { order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null };
+    const order = a.order.length ? a.order : anyTurnOrder(game.players);
+    const byId = order[a.turn % (order.length || 1)] || null;
+    const cells = gradeAnythingle(q.target, char).map((c) => ({ ...c, val: anyCellValue(char, c.key) }));
+    anyCacheRef.current[normText(char.name)] = char;
+    const guesses = [...a.guesses, { name: char.name, by: byId, cells }];
+    if (isAnyTarget(q.target, char)) {
+      const pts = ptsOr(q.points, 30);
+      const awarded = byId ? { [byId]: pts } : {};
+      const players = byId
+        ? game.players.map((p) => (p.id === byId ? { ...p, score: p.score + pts } : p))
+        : game.players;
+      playSound("reveal");
+      upd({ anythingle: { ...a, order, guesses, solvedBy: byId }, awarded, players, revealed: true });
+    } else {
+      playSound("correct");
+      upd({ anythingle: { ...a, order, guesses, turn: a.turn + 1 } });
+    }
+    setAnyInput("");
+    setAnyAdd(null);
+  };
+  // Host submits the typed guess: grade if known, else open the inline add-form.
+  const anySubmit = (name) => {
+    const n = (name ?? anyInput).trim();
+    if (!n || game.revealed || round?.type !== "anythingle") return;
+    const found = anyResolve(n);
+    if (found) anyCommit(found);
+    else setAnyAdd({ ...makeAnyChar(), name: n });
+  };
+  // Move to the next player without a guess (a stumped / skipped turn).
+  const anyAdvance = () => {
+    const a = game.anythingle;
+    if (!a || game.revealed) return;
+    upd({ anythingle: { ...a, turn: a.turn + 1 } });
+  };
+  // Give up / out of guesses: reveal the secret with no auto-award (host can adjust).
+  const revealAnythingle = () => {
+    playSound("reveal");
+    upd({ revealed: true });
+  };
+
   /* ---- "Who Knows More" handlers ---- */
   // Award the category to the auction winner and start their per-answer clock.
   const wkAward = () => {
@@ -610,6 +710,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
             else if (round.type === "number") revealNumber(cq);
             else if (round.type === "map") revealMap(cq);
+            else if (round.type === "anythingle") revealAnythingle();
             else reveal();
           }
           break;
@@ -686,6 +787,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
         case "wkShowAll":
           if (round?.type === "whoknows") setWk((w) => ({ ...w, showAll: !!a.on }));
           break;
+        // ---- Anythingle (host remote can name a guess / skip the turn) ----
+        case "anyGuess":
+          if (round?.type === "anythingle" && typeof a.name === "string") anySubmit(a.name);
+          break;
+        case "anyAdvance":
+          if (round?.type === "anythingle") anyAdvance();
+          break;
         default:
           break;
       }
@@ -710,6 +818,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         if (BINARY_TYPES.includes(round.type)) revealChoice(q);
         else if (round.type === "number") revealNumber(q);
         else if (round.type === "map") revealMap(q);
+        else if (round.type === "anythingle") revealAnythingle();
         else reveal();
       } else if ((k === "n" || k === "arrowright") && game.revealed) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
@@ -1259,7 +1368,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const buzzName = room?.buzz ? entityForDevice(room.buzz.deviceId)?.name || room.buzz.name : "";
   const BuzzerBar = buzzerOn &&
     !game.revealed &&
-    !["map", "number", "whoknows", ...BINARY_TYPES].includes(round.type) && (
+    !["map", "number", "whoknows", "anythingle", ...BINARY_TYPES].includes(round.type) && (
       <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
         {room.buzz ? (
           <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
@@ -1941,6 +2050,115 @@ export default function PlayView({ game, setGame, onExit, room }) {
             </div>
           </>
         )}
+      </div>
+    );
+  }
+
+  if (round.type === "anythingle") {
+    const a = game.anythingle || { order: [], turn: 0, guesses: [], solvedBy: null };
+    const order = a.order.length ? a.order : anyTurnOrder(game.players);
+    const activeId = order[a.turn % (order.length || 1)];
+    const active = game.players.find((p) => p.id === activeId) || null;
+    const liveGuesses = (a.guesses || []).map((g) => {
+      const by = game.players.find((p) => p.id === g.by);
+      return { name: g.name, by: by ? { name: by.name, color: by.color, emoji: by.emoji } : null, cells: g.cells };
+    });
+    const dbList = anyDbReady ? anyDbRef.current?.ANYTHINGLE_DB || [] : [];
+    const poolNames = (q.pool || []).map((c) => c.name);
+    const nameSuggestions = [...new Set([...poolNames, ...dbList.map((c) => c.name)])].slice(0, 600);
+    const franchises = [...new Set([...(q.pool || []).map((c) => c.franchise), ...dbList.map((c) => c.franchise)])]
+      .filter(Boolean)
+      .sort();
+    body = (
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+          {!game.revealed && active && !a.solvedBy && (
+            <p className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-pink-600 dark:text-pink-400">
+              <Avatar color={active.color} emoji={active.emoji} name={active.name} size={20} />
+              {t("play.anyTurn", { name: active.name })}
+            </p>
+          )}
+        </div>
+
+        {/* shared guess board */}
+        <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
+          {liveGuesses.length ? (
+            <>
+              <GuessGrid guesses={liveGuesses} />
+              <div className="mt-3">
+                <TraitLegend />
+              </div>
+            </>
+          ) : (
+            <p className="mt-6 text-stone-400 dark:text-stone-500">{t("play.anyNoGuesses")}</p>
+          )}
+          {game.revealed && q.target?.name && (
+            <p className="mt-5 text-2xl font-bold text-pink-600 dark:text-pink-400">
+              {a.solvedBy
+                ? `${t("play.anySolvedBy", { name: game.players.find((p) => p.id === a.solvedBy)?.name || "" })} `
+                : `${t("play.anySecret")}: `}
+              {q.target.name}
+            </p>
+          )}
+        </div>
+
+        {/* host controls: guess input, or the inline add-form for an unknown character */}
+        {!game.revealed &&
+          (anyAdd ? (
+            <div className="mx-auto mt-3 w-full max-w-2xl shrink-0 rounded-2xl border border-pink-200 bg-pink-50/60 p-3 text-left dark:border-pink-500/30 dark:bg-pink-500/10">
+              <p className="mb-1 text-sm font-semibold">{t("play.anyAddTitle", { name: anyAdd.name })}</p>
+              <p className="mb-3 text-xs text-stone-500 dark:text-stone-400">{t("play.anyAddHint")}</p>
+              <TraitForm value={anyAdd} onChange={setAnyAdd} franchises={franchises} />
+              <div className="mt-3 flex gap-2">
+                <Button className="px-4 py-2" disabled={!anyAdd.name.trim()} onClick={() => anyCommit(anyAdd)}>
+                  <Check size={16} /> {t("play.anyAddGrade")}
+                </Button>
+                <Button variant="outline" className="px-4 py-2" onClick={() => setAnyAdd(null)}>
+                  {t("common.cancel")}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <form
+              className="mt-3 flex shrink-0 items-center justify-center gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                anySubmit();
+              }}
+            >
+              <input
+                list="any-db-names"
+                className={`${inputCls} max-w-xs`}
+                placeholder={t("play.anyGuessPlaceholder")}
+                value={anyInput}
+                onChange={(e) => setAnyInput(e.target.value)}
+              />
+              <datalist id="any-db-names">
+                {nameSuggestions.map((n) => (
+                  <option key={n} value={n} />
+                ))}
+              </datalist>
+              <Button type="submit" className="px-5 py-2.5" disabled={!anyInput.trim()}>
+                {t("play.anyGuess")}
+              </Button>
+            </form>
+          ))}
+
+        <div className="mt-3 flex shrink-0 flex-wrap justify-center gap-2">
+          {!game.revealed && !anyAdd && (
+            <>
+              <Button variant="outline" className="px-4 py-2.5" onClick={anyAdvance}>
+                <ArrowRight size={16} /> {t("play.anyAdvance")}
+              </Button>
+              <Button variant="outline" className="px-4 py-2.5" onClick={revealAnythingle}>
+                <Eye size={16} /> {t("play.anyReveal")}
+              </Button>
+            </>
+          )}
+          {game.revealed && NextBtn}
+        </div>
       </div>
     );
   }

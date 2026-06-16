@@ -263,6 +263,67 @@ export const ROUND_TEMPLATES = [
       ],
     },
   },
+  {
+    key: "anythingle-characters",
+    type: "anythingle",
+    round: {
+      type: "anythingle",
+      title: "Guess the Character",
+      questions: [
+        {
+          q: "Guess the secret fictional character.",
+          points: 30,
+          maxGuesses: 8,
+          target: {
+            name: "Luke Skywalker",
+            species: "Human",
+            gender: "Male",
+            alignment: "Hero/Good",
+            powers: ["Magic/Sorcery", "Telepathy/Mind", "Weapon mastery"],
+            franchise: "Star Wars",
+            medium: "Film/TV (live-action)",
+            country: "USA",
+            year: 1977,
+          },
+          pool: [
+            {
+              name: "Harry Potter",
+              species: "Human",
+              gender: "Male",
+              alignment: "Hero/Good",
+              powers: ["Magic/Sorcery"],
+              franchise: "Harry Potter",
+              medium: "Novel/Prose",
+              country: "UK",
+              year: 1997,
+            },
+            {
+              name: "Goku",
+              species: "Alien",
+              gender: "Male",
+              alignment: "Hero/Good",
+              powers: ["Super strength", "Energy/Beams", "Flight"],
+              franchise: "Dragon Ball",
+              medium: "Manga",
+              country: "Japan",
+              year: 1984,
+            },
+            {
+              name: "Batman",
+              species: "Human",
+              gender: "Male",
+              alignment: "Neutral/Anti-hero",
+              powers: ["Tech/Gadgets", "Martial arts", "Peak human/Genius"],
+              franchise: "DC",
+              medium: "Comic (Western)",
+              country: "USA",
+              year: 1939,
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 /** The starter round for a given ROUND_TEMPLATES key (by key so order can change freely). */
@@ -322,6 +383,8 @@ const ROUND_SHAPES = {
     'questions: [{ "q": string (e.g. "X is N. Is Y higher or lower?"), "correct": 0|1 (0 = Higher, 1 = Lower), "points": number, "note": string (optional fact shown on reveal) }]',
   whoknows:
     'top-level may add "timer": number (seconds per answer). questions: [{ "q": string (the category prompt), "answers": [string, ...] (ALL correct answers), "ordered": boolean (true = a ranked list, shown numbered) }]   // the host auctions the category; the winner must name as many as they claimed',
+  anythingle:
+    'questions: [{ "q": string, "points": number, "maxGuesses": number, "target": <CHAR>, "pool": [<CHAR>, ...] }]   // a Wordle x Guess-Who game for FICTIONAL characters. <CHAR> = { "name": string, "aliases": [string], "species": one of [Human,Humanoid,Animal,Creature/Monster,Robot/AI,Cyborg/Augmented,Alien,Deity/Spirit,Undead,Object/Other], "gender": one of [Male,Female,Non-binary/Fluid,None/Genderless], "alignment": one of [Hero/Good,Villain/Evil,Neutral/Anti-hero], "powers": up to 3 of [None,Super strength,Super speed,Flight,Magic/Sorcery,Elemental,Electric/Lightning,Energy/Beams,Telepathy/Mind,Shapeshifting,Healing/Regeneration,Elasticity/Stretch,Stealth/Invisibility,Weapon mastery,Martial arts,Tech/Gadgets,Immortality,Summoning,Size-change,Peak human/Genius] (or ["None"]), "franchise": string (canonical name, or "Standalone"), "medium": one of [Stage/Theatre,Novel/Prose,Comic (Western),Manga,Anime,Animation/Cartoon,Film/TV (live-action),Video game,Mythology/Folklore,Web/Other], "country": origin country (USA/UK/Japan/France/…), "year": number (first appearance) }. "target" is the secret; "pool" is OPTIONAL pre-tagged likely guesses. Tag every trait ACCURATELY — a wrong value breaks the deduction.',
   number: 'questions: [{ "q": string, "answer": number, "unit": string, "points": number }]',
 };
 
@@ -365,6 +428,7 @@ Round types and their question shapes:
 - "truefalse": questions: [{ "q": string (a statement), "correct": 0|1 (0=True, 1=False), "points": number, "note": string (optional, shown on reveal) }]
 - "higherlower": questions: [{ "q": string (e.g. "X is N. Is Y higher or lower?"), "correct": 0|1 (0=Higher, 1=Lower), "points": number, "note": string (optional fact) }]
 - "whoknows":  top-level may add "timer": number (seconds per answer). questions: [{ "q": string (the category prompt), "answers": [string, ...] (ALL correct answers), "ordered": boolean (true = ranked, shown numbered) }]   // an auction: the winner must name as many as they claim
+- "anythingle": questions: [{ "q": string, "points": number, "maxGuesses": number, "target": <CHAR>, "pool": [<CHAR>] }]   // Wordle x Guess-Who for FICTIONAL characters. <CHAR> = { name, aliases:[string], species (Human/Alien/Robot/AI/Creature/Monster/Cyborg/Augmented/Deity/Spirit/Animal/Humanoid/Undead/Object/Other), gender (Male/Female/Non-binary/Fluid/None/Genderless), alignment (Hero/Good, Villain/Evil, Neutral/Anti-hero), powers (up to 3 of: Magic/Sorcery, Super strength, Flight, Tech/Gadgets, Martial arts, Weapon mastery, Peak human/Genius, Energy/Beams, Telepathy/Mind, Elemental, Electric/Lightning, Healing/Regeneration, Shapeshifting, Elasticity/Stretch, Immortality, Summoning, Stealth/Invisibility, Super speed, Size-change — or ["None"]), franchise (canonical, or "Standalone"), medium (Manga/Anime/Film/TV (live-action)/Novel/Prose/Comic (Western)/Animation/Cartoon/Video game/Stage/Theatre/Mythology/Folklore/Web/Other), country (USA/UK/Japan/…), year (first appearance) }. target = the secret; pool = optional likely guesses. Tag traits ACCURATELY.
 - "number":   questions: [{ "q": string, "answer": number, "unit": string, "points": number }]
 
 Rules: omit "id" fields (they are generated). Use real, publicly reachable image/video URLs, or leave url empty for the host to fill in. Keep 3-6 questions per round. Make answers unambiguous.`;

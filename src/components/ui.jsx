@@ -24,6 +24,7 @@ import {
   ArrowUpDown,
   Hash,
   Gavel,
+  Drama,
   Trash2,
   Sun,
   Moon,
@@ -130,6 +131,12 @@ export const TYPES = {
     dot: "bg-violet-500",
     desc: "Auction a category: players claim how many they know; the winner must deliver that many answers against a per-answer clock, or bust.",
   },
+  anythingle: {
+    label: "Anythingle",
+    icon: Drama,
+    dot: "bg-pink-500",
+    desc: "Guess the secret fictional character. Each guess reveals how its traits compare — Wordle-style. Players take turns by standings; first to name it wins.",
+  },
 };
 
 /** Per-round accent classes (full literals so Tailwind keeps them). */
@@ -161,6 +168,7 @@ const ACCENT = {
     soft: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
     solid: "bg-violet-500",
   },
+  anythingle: { soft: "bg-pink-100 text-pink-700 dark:bg-pink-500/20 dark:text-pink-300", solid: "bg-pink-500" },
 };
 /** Accent class set for a round type (soft chip bg/text + solid dot). */
 export const accentFor = (type) => ACCENT[type] || ACCENT.classic;

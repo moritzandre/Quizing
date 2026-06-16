@@ -193,6 +193,7 @@ export default function PresenterView({ code }) {
       qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
       volume={live?.volume ?? 100}
       whoknows={live?.whoknows || null}
+      anythingle={live?.anythingle || null}
     />,
   );
 }

@@ -28,9 +28,11 @@ import {
   Gavel,
   Check,
 } from "lucide-react";
+import { useState } from "react";
 import { usePresenterRoom } from "./useRoom.js";
-import { TYPES, FOCUS, Avatar } from "./ui.jsx";
+import { TYPES, FOCUS, inputCls, Avatar } from "./ui.jsx";
 import { clipLadderActive } from "../lib/model.js";
+import { ANYTHINGLE_DB } from "../data/anythingle.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import RoundBody from "./RoundBody.jsx";
 
@@ -41,6 +43,7 @@ import RoundBody from "./RoundBody.jsx";
 export default function HostRemoteView({ code }) {
   const { t } = useI18n();
   const { status, present, live, alive, hostAux, sendCtrl } = usePresenterRoom(code, { host: true });
+  const [anyGuess, setAnyGuess] = useState(""); // anythingle: the name the host is naming
   const online = status === "connected";
   const stage = live?.stage || present?.stage || "idle";
   const type = present?.roundType;
@@ -137,6 +140,7 @@ export default function HostRemoteView({ code }) {
               compact
               qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
               whoknows={live?.whoknows || null}
+              anythingle={live?.anythingle || null}
             />
           </div>
         </div>
@@ -271,6 +275,43 @@ export default function HostRemoteView({ code }) {
             >
               <SkipForward size={18} /> {t("host.skipRound")}
             </button>
+          </div>
+        )}
+        {stage === "question" && type === "anythingle" && !revealed && (
+          <div className="col-span-2 space-y-2">
+            <form
+              className="flex gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const n = anyGuess.trim();
+                if (!n) return;
+                sendCtrl("anyGuess", { name: n });
+                setAnyGuess("");
+              }}
+            >
+              <input
+                list="any-remote-names"
+                className={`${inputCls} flex-1`}
+                placeholder={t("play.anyGuessPlaceholder")}
+                value={anyGuess}
+                onChange={(e) => setAnyGuess(e.target.value)}
+              />
+              <datalist id="any-remote-names">
+                {ANYTHINGLE_DB.map((c) => (
+                  <option key={c.id} value={c.name} />
+                ))}
+              </datalist>
+              <button type="submit" disabled={!anyGuess.trim()} className={`bg-pink-600 text-white ${btn} ${FOCUS}`}>
+                {t("play.anyGuess")}
+              </button>
+            </form>
+            <button
+              onClick={() => sendCtrl("anyAdvance")}
+              className={`w-full border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+            >
+              <ArrowRight size={18} /> {t("play.anyAdvance")}
+            </button>
+            <p className="text-center text-[11px] text-stone-400 dark:text-stone-500">{t("play.anyAddHint")}</p>
           </div>
         )}
         {stage === "question" && type !== "whoknows" && (
