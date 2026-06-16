@@ -29,6 +29,7 @@ import {
   normalizePresent,
   normalizeLive,
   recapStory,
+  summarizeGamesFromResults,
   mapillaryEmbedUrl,
   roundsFromImport,
 } from "./model.js";
@@ -1003,20 +1004,51 @@ describe("presenter payloads", () => {
     expect(normalizeLive({ recapRound: 3 }).recapRound).toBe(0); // no showRecap → 0
   });
 
+  describe("summarizeGamesFromResults (admin past-games)", () => {
+    it("groups result rows by game, newest first, entries by score desc", () => {
+      const games = summarizeGamesFromResults([
+        { game_id: "g1", quiz_title: "Q1", room_code: "AAA", score: 5, won: false, profile_id: "p1", played_at: "2026-01-01T10:00:00Z" },
+        { game_id: "g1", quiz_title: "Q1", room_code: "AAA", score: 9, won: true, profile_id: "p2", played_at: "2026-01-01T10:05:00Z" },
+        { game_id: "g2", quiz_title: "Q2", room_code: "BBB", score: 3, won: true, profile_id: "p1", played_at: "2026-02-02T20:00:00Z" },
+        { junk: true },
+        { game_id: "", score: 1 },
+      ]);
+      expect(games.map((g) => g.gameId)).toEqual(["g2", "g1"]); // newest first
+      const g1 = games.find((g) => g.gameId === "g1");
+      expect(g1.entries.map((e) => e.profileId)).toEqual(["p2", "p1"]); // score desc
+      expect(g1.entries[0]).toMatchObject({ score: 9, won: true });
+      expect(g1.playedAt).toBe("2026-01-01T10:05:00Z"); // latest entry's timestamp
+      expect(g1.quizTitle).toBe("Q1");
+    });
+
+    it("returns an empty array for junk", () => {
+      expect(summarizeGamesFromResults(null)).toEqual([]);
+      expect(summarizeGamesFromResults([{ no: "game_id" }])).toEqual([]);
+    });
+  });
+
   describe("recapStory (between-rounds commentary)", () => {
     it("returns nothing for an empty field", () => {
       expect(recapStory([])).toEqual({ mid: null, winner: null });
     });
 
-    it("crowns the entity with the highest final score", () => {
+    it("names the ROUND winner = biggest positive mover, not the overall leader", () => {
       const s = recapStory([
-        { id: "a", name: "Ann", from: 0, to: 10 },
-        { id: "b", name: "Bo", from: 0, to: 5 },
+        { id: "a", name: "Ann", from: 30, to: 35 }, // overall leader, only +5
+        { id: "b", name: "Bo", from: 0, to: 12 }, // biggest mover this round, +12
       ]);
-      expect(s.winner).toEqual({ key: "recapStory.winner", vars: { name: "Ann" } });
+      expect(s.winner).toEqual({ key: "recapStory.winner", vars: { name: "Bo", delta: 12 } });
     });
 
-    it("calls out a lead change as an overtake", () => {
+    it("has no round winner when nobody gained points", () => {
+      const s = recapStory([
+        { id: "a", name: "Ann", from: 30, to: 30 },
+        { id: "b", name: "Bo", from: 5, to: 5 },
+      ]);
+      expect(s.winner).toBeNull();
+    });
+
+    it("calls out a lead change as an overtake (mid)", () => {
       const s = recapStory([
         { id: "a", name: "Ann", from: 2, to: 10 },
         { id: "b", name: "Bo", from: 8, to: 9 },
@@ -1024,29 +1056,12 @@ describe("presenter payloads", () => {
       expect(s.mid).toEqual({ key: "recapStory.overtake", vars: { name: "Ann", prev: "Bo" } });
     });
 
-    it("flags a photo finish when the top two are within a hair", () => {
+    it("flags a photo finish when the top two are within a hair (mid)", () => {
       const s = recapStory([
         { id: "a", name: "Ann", from: 0, to: 10 },
         { id: "b", name: "Bo", from: 0, to: 9 },
       ]);
       expect(s.mid).toEqual({ key: "recapStory.photoFinish", vars: {} });
-    });
-
-    it("otherwise spotlights the biggest positive mover (leader unchanged, not close)", () => {
-      const s = recapStory([
-        { id: "a", name: "Ann", from: 30, to: 50 }, // already ahead, stays ahead
-        { id: "b", name: "Bo", from: 0, to: 10 },
-      ]);
-      expect(s.mid).toEqual({ key: "recapStory.onFire", vars: { name: "Ann", delta: 20 } });
-    });
-
-    it("has no mid beat when nobody gained and the field isn't close", () => {
-      const s = recapStory([
-        { id: "a", name: "Ann", from: 30, to: 30 },
-        { id: "b", name: "Bo", from: 5, to: 5 },
-      ]);
-      expect(s.mid).toBeNull();
-      expect(s.winner.vars.name).toBe("Ann");
     });
   });
 

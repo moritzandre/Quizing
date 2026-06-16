@@ -15,10 +15,9 @@ import { Avatar, Confetti } from "../ui.jsx";
 import { useI18n } from "../../i18n/I18nProvider.jsx";
 import { recapStory } from "../../lib/model.js";
 import { playSound } from "../../lib/sound.js";
-import { useRecapProgress, rankRecap } from "./recapShared.js";
+import { useRecapProgress, rankRecap, recapDuration } from "./recapShared.js";
 import RecapBoard from "./RecapBoard.jsx";
 
-const DURATION = 6000; // ms: intro (~0.7s) → play → leaderboard finish
 const PLAY_START = 0.12;
 const PLAY_END = 0.72; // minigame is done; the leaderboard finish takes over
 
@@ -32,9 +31,10 @@ const PLAY_END = 0.72; // minigame is done; the leaderboard finish takes over
  */
 export default function RecapShow({ Variant, entities = [], present = false, round = 0, total = 0 }) {
   const { t } = useI18n();
-  const p = useRecapProgress(DURATION);
-  const { ranked } = rankRecap(entities);
-  const leader = ranked[0];
+  // pace the whole recap by how many points were scored this round (slower + proportional)
+  const p = useRecapProgress(recapDuration(entities));
+  const { topMoverId } = rankRecap(entities);
+  const roundWinner = entities.find((e) => e.id === topMoverId) || null; // who scored most THIS round
   const story = recapStory(entities);
 
   const playP = Math.max(0, Math.min(1, (p - PLAY_START) / (PLAY_END - PLAY_START)));
@@ -63,11 +63,20 @@ export default function RecapShow({ Variant, entities = [], present = false, rou
     return (
       <div className="relative mx-auto w-full max-w-2xl">
         <Confetti count={present ? 140 : 80} />
-        {leader && (
+        {roundWinner && (
           <div className="qn-pop mb-3 flex items-center justify-center gap-2">
             <span className={`qn-bob ${present ? "text-2xl" : "text-base"}`}>👑</span>
+            <Avatar
+              color={roundWinner.color}
+              emoji={roundWinner.emoji}
+              name={roundWinner.name}
+              size={present ? 30 : 22}
+            />
             <span className={`font-pixel text-amber-300 ${present ? "text-base" : "text-[10px]"}`}>
-              {t("recapStory.winner", { name: leader.name })}
+              {t("recapStory.winner", {
+                name: roundWinner.name,
+                delta: Math.round(roundWinner.to - roundWinner.from),
+              })}
             </span>
           </div>
         )}

@@ -271,20 +271,21 @@ export const inputCls =
 /** Shared card surface (border + background, both themes). */
 export const cardCls = "rounded-2xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900";
 
-/** Standard button with dark / accent / outline / ghost / danger variants. */
+/** Standard button with dark / accent / outline / ghost / danger variants.
+    Subtly 8-bit: blocky corners + a hard "arcade" shadow that presses flat. */
 export function Button({ variant = "dark", className = "", children, ...props }) {
   const variants = {
-    dark: "bg-stone-900 text-white shadow-sm hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white",
+    dark: "bg-stone-900 text-white shadow-[0_2px_0_0_rgba(0,0,0,0.4)] hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:shadow-[0_2px_0_0_rgba(0,0,0,0.35)] dark:hover:bg-white",
     accent:
-      "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/25 hover:from-indigo-400 hover:to-violet-500",
+      "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-[0_3px_0_0_#3730a3] hover:from-indigo-400 hover:to-violet-500",
     outline:
       "border border-stone-300 text-stone-900 hover:bg-stone-100 dark:border-stone-700 dark:text-stone-100 dark:hover:bg-stone-800",
     ghost: "text-stone-500 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200",
-    danger: "bg-red-600 text-white shadow-sm hover:bg-red-500",
+    danger: "bg-red-600 text-white shadow-[0_3px_0_0_#7f1d1d] hover:bg-red-500",
   };
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-150 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-[.96] disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-30 ${FOCUS} ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition duration-100 motion-safe:active:translate-y-[2px] active:shadow-none disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-30 ${FOCUS} ${variants[variant]} ${className}`}
       {...props}
     >
       {children}
@@ -306,16 +307,16 @@ export function IconButton({ label, className = "", children, ...props }) {
   );
 }
 
-/** Pill badge showing a round type's accent dot and localized label. */
+/** Blocky 8-bit tag showing a round type's accent pixel + localized label. */
 export function TypeBadge({ type }) {
   const { t } = useI18n();
   const meta = TYPES[type];
   if (!meta) return null;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${accentFor(type).soft}`}
+      className={`inline-flex items-center gap-1.5 rounded-[5px] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 ring-inset ring-black/5 dark:ring-white/10 ${accentFor(type).soft}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+      <span className={`h-1.5 w-1.5 ${meta.dot}`} />
       {t(`round.${type}.label`)}
     </span>
   );

@@ -24,6 +24,7 @@ import {
   LogOut,
   ShieldCheck,
   UserPlus,
+  LayoutDashboard,
   Loader2,
 } from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
@@ -68,6 +69,7 @@ const PresenterView = lazy(() => import("./components/PresenterView.jsx"));
 const HostRemoteView = lazy(() => import("./components/HostRemoteView.jsx"));
 const LeaderboardView = lazy(() => import("./components/LeaderboardView.jsx"));
 const StatsView = lazy(() => import("./components/StatsView.jsx"));
+const AdminView = lazy(() => import("./components/AdminView.jsx"));
 import { useI18n, LanguageToggle } from "./i18n/I18nProvider.jsx";
 
 const APP_VERSION = "1.2.0";
@@ -81,6 +83,7 @@ const hashFor = (v) => {
   if (v.name === "present") return `#/present/${v.code}`;
   if (v.name === "host") return `#/host/${v.code}`;
   if (v.name === "me") return "#/me";
+  if (v.name === "admin") return "#/admin";
   return "#/";
 };
 
@@ -498,6 +501,8 @@ function App() {
         setView(quiz ? { name: "setup", quiz } : { name: "home" });
       } else if (seg === "leaderboard") {
         setView({ name: "leaderboard" });
+      } else if (seg === "admin") {
+        setView({ name: "admin" });
       } else if (seg === "builder") {
         if (viewRef.current.name === "builder") return; // keep the live draft
         if (window.location.hash !== "#/") window.history.replaceState(null, "", "#/");
@@ -729,6 +734,9 @@ function App() {
               </IconButton>
               {admin.isAdmin && (
                 <>
+                  <IconButton label={t("admin.consoleTitle")} onClick={() => go({ name: "admin" })}>
+                    <LayoutDashboard size={18} />
+                  </IconButton>
                   <IconButton label={t("admin.addTitle")} onClick={() => setGrantOpen(true)}>
                     <UserPlus size={18} />
                   </IconButton>
@@ -888,6 +896,8 @@ function App() {
           {view.name === "leaderboard" && (
             <LeaderboardView results={leaderboard} onBack={() => go({ name: "home" })} onClear={clearLeaderboard} />
           )}
+
+          {view.name === "admin" && <AdminView admin={admin} onBack={() => go({ name: "home" })} />}
         </Suspense>
       )}
     </div>

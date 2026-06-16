@@ -283,6 +283,67 @@ export async function revokeAdmin(userId) {
   }
 }
 
+/* ---- admin player management (admin-gated server-side; see 0005) ---- */
+
+/** Admin: edit any player's name + avatar (no PIN). Returns the row or null. */
+export async function adminUpdatePlayer(id, fields) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !id) return null;
+    const { data, error } = await sb.rpc("admin_update_player", {
+      p_id: id,
+      p_name: fields?.name ?? null,
+      p_emoji: fields?.emoji ?? null,
+      p_color: fields?.color ?? null,
+    });
+    if (error) return null;
+    return data || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin: set/clear any player's PIN (empty newPin = unlock). Returns true on success. */
+export async function adminSetPin(id, newPin) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !id) return false;
+    const { data, error } = await sb.rpc("admin_set_pin", { p_id: id, p_new_pin: newPin || "" });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Admin: delete a player (their results cascade). Returns true on success. */
+export async function adminDeletePlayer(id) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !id) return false;
+    const { data, error } = await sb.rpc("admin_delete_player", { p_id: id });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Recent result rows across the whole playerbase, newest first (for the admin "past games" view). */
+export async function loadRecentResults(limit = 400) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return [];
+    const { data, error } = await sb
+      .from("results")
+      .select("*")
+      .order("played_at", { ascending: false })
+      .limit(limit);
+    if (error) return [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
 /** A player's own result rows, newest first. Returns an array (never throws). */
 export async function loadPlayerStats(id) {
   try {

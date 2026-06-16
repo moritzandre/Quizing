@@ -17,6 +17,20 @@ import { playSound } from "../../lib/sound.js";
 export const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 
 /**
+ * How long the whole recap runs (ms): a little slower overall, and scaled by how
+ * many points were scored THIS round — a big round counts up over more time, a
+ * quiet round is quick. Clamped to a sensible floor/ceiling.
+ * @param {Array<{from?:number,to?:number}>} entities
+ */
+export function recapDuration(entities) {
+  const points = (Array.isArray(entities) ? entities : []).reduce((sum, e) => {
+    const d = Math.round((Number(e?.to) || 0) - (Number(e?.from) || 0));
+    return sum + (d > 0 ? d : 0);
+  }, 0);
+  return Math.max(3500, Math.min(10000, 3000 + points * 140));
+}
+
+/**
  * A 0→1 progress value over `duration` ms, driven by requestAnimationFrame.
  * Honors prefers-reduced-motion (starts and stays at 1, i.e. the final state).
  * @param {number} [duration]

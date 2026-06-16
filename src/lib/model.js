@@ -728,6 +728,37 @@ export function summarizeResults(rows) {
 }
 
 /**
+ * Group raw `results` rows into games (for the admin "past games" view). Each
+ * game aggregates its player entries; the caller joins profile_id → name via the
+ * player directory. Returns games newest-first. Pure.
+ * @param {Array<object>} rows raw result rows (profile_id, game_id, quiz_title, score, won, team_name, room_code, played_at)
+ */
+export function summarizeGamesFromResults(rows) {
+  const byGame = new Map();
+  for (const r of Array.isArray(rows) ? rows : []) {
+    const gameId = str(r?.game_id);
+    if (!gameId) continue;
+    const playedAt = str(r?.played_at);
+    let g = byGame.get(gameId);
+    if (!g) {
+      g = { gameId, quizTitle: str(r?.quiz_title), roomCode: str(r?.room_code), playedAt, entries: [] };
+      byGame.set(gameId, g);
+    }
+    g.entries.push({
+      profileId: str(r?.profile_id),
+      score: num(r?.score, 0),
+      won: !!r?.won,
+      teamName: r?.team_name ? str(r.team_name) : null,
+    });
+    if (!g.quizTitle && r?.quiz_title) g.quizTitle = str(r.quiz_title);
+    if (playedAt > g.playedAt) g.playedAt = playedAt; // latest write wins as the game's timestamp
+  }
+  return [...byGame.values()]
+    .map((g) => ({ ...g, entries: g.entries.sort((a, b) => b.score - a.score) }))
+    .sort((a, b) => (a.playedAt < b.playedAt ? 1 : a.playedAt > b.playedAt ? -1 : 0));
+}
+
+/**
  * Build the result row a phone writes for ITSELF at game end. Finds the phone's
  * scoring entity via its deviceId; returns null if it isn't part of the game.
  * The caller adds profile_id + room_code (which the phone knows from its URL).
@@ -918,26 +949,25 @@ export function recapStory(entities) {
   const nameOf = (e) => str(e?.name) || "Player";
   const byTo = [...list].sort((a, b) => num(b.to, 0) - num(a.to, 0));
   const byFrom = [...list].sort((a, b) => num(b.from, 0) - num(a.from, 0));
-  const winner = { key: "recapStory.winner", vars: { name: nameOf(byTo[0]) } };
 
+  // The ROUND winner is whoever scored the most THIS round (biggest positive
+  // delta) — NOT the overall leader. Null if nobody gained points.
+  const mover = list.reduce(
+    (b, e) => (num(e.to, 0) - num(e.from, 0) > (b ? num(b.to, 0) - num(b.from, 0) : 0) ? e : b),
+    null,
+  );
+  const moverDelta = mover ? num(mover.to, 0) - num(mover.from, 0) : 0;
+  const winner =
+    mover && moverDelta > 0 ? { key: "recapStory.winner", vars: { name: nameOf(mover), delta: moverDelta } } : null;
+
+  // The mid-recap caption: a lead change, else a photo finish (else none).
   let mid = null;
-  // 1) a lead change this round trumps everything
   if (list.length >= 2 && byTo[0].id !== byFrom[0].id && num(byTo[0].to, 0) > num(byFrom[0].from, 0)) {
     mid = { key: "recapStory.overtake", vars: { name: nameOf(byTo[0]), prev: nameOf(byFrom[0]) } };
   } else if (list.length >= 2) {
-    // 2) photo finish — top two within a hair
     const gap = num(byTo[0].to, 0) - num(byTo[1].to, 0);
     const maxTo = Math.max(1, num(byTo[0].to, 0));
     if (gap <= Math.max(2, Math.round(maxTo * 0.04))) mid = { key: "recapStory.photoFinish", vars: {} };
-  }
-  // 3) otherwise spotlight the biggest positive mover
-  if (!mid) {
-    const mover = list.reduce(
-      (b, e) => (num(e.to, 0) - num(e.from, 0) > (b ? num(b.to, 0) - num(b.from, 0) : 0) ? e : b),
-      null,
-    );
-    const delta = mover ? num(mover.to, 0) - num(mover.from, 0) : 0;
-    if (mover && delta > 0) mid = { key: "recapStory.onFire", vars: { name: nameOf(mover), delta } };
   }
   return { mid, winner };
 }
