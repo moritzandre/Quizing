@@ -10,7 +10,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
-import { ANYTHINGLE_TRAITS, ANY_POWERS, ANY_MAX_POWERS, normText } from "../lib/model.js";
+import { ANYTHINGLE_TRAITS, normText } from "../lib/model.js";
 import { Avatar, inputCls, FOCUS } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
@@ -37,14 +37,18 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
   const { t } = useI18n();
   const v = value || {};
   const set = (key, val) => onChange({ ...v, [key]: val });
-  const togglePower = (p) => {
-    let cur = Array.isArray(v.powers) ? v.powers : [];
-    if (p === "None") return set("powers", ["None"]);
-    cur = cur.filter((x) => x !== "None");
-    if (cur.includes(p)) cur = cur.filter((x) => x !== p);
-    else if (cur.length < ANY_MAX_POWERS) cur = [...cur, p];
-    set("powers", cur.length ? cur : ["None"]);
+  // Toggle a token in a capped multi-value trait. `noneToken` (powers' "None")
+  // is mutually exclusive with every other token.
+  const toggleMulti = (key, token, max, noneToken) => {
+    let cur = Array.isArray(v[key]) ? v[key] : [];
+    if (noneToken && token === noneToken) return set(key, [noneToken]);
+    if (noneToken) cur = cur.filter((x) => x !== noneToken);
+    if (cur.includes(token)) cur = cur.filter((x) => x !== token);
+    else if (cur.length < max) cur = [...cur, token];
+    set(key, noneToken && !cur.length ? [noneToken] : cur);
   };
+  const singles = ANYTHINGLE_TRAITS.filter((tr) => tr.type !== "multi");
+  const multis = ANYTHINGLE_TRAITS.filter((tr) => tr.type === "multi");
 
   return (
     <div className="space-y-3">
@@ -74,7 +78,7 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
       </datalist>
 
       <div className={`grid grid-cols-2 gap-2 ${compact ? "" : "lg:grid-cols-4"}`}>
-        {ANYTHINGLE_TRAITS.map((tr) => {
+        {singles.map((tr) => {
           const label = t(`any.trait.${tr.key}`);
           if (tr.type === "single")
             return (
@@ -95,54 +99,58 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
                 <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">{label}</span>
                 <input
                   className={inputCls}
-                  list="any-franchises"
+                  list={tr.key === "franchise" ? "any-franchises" : undefined}
                   value={v[tr.key] || ""}
                   onChange={(e) => set(tr.key, e.target.value)}
                 />
               </label>
             );
-          if (tr.type === "number")
-            return (
-              <label key={tr.key} className="block">
-                <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">{label}</span>
-                <input
-                  type="number"
-                  className={inputCls}
-                  value={v[tr.key] ?? ""}
-                  onChange={(e) => set(tr.key, e.target.value === "" ? null : +e.target.value)}
-                />
-              </label>
-            );
-          return null; // powers rendered full-width below
+          return (
+            <label key={tr.key} className="block">
+              <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">{label}</span>
+              <input
+                type="number"
+                className={inputCls}
+                value={v[tr.key] ?? ""}
+                onChange={(e) => set(tr.key, e.target.value === "" ? null : +e.target.value)}
+              />
+            </label>
+          );
         })}
       </div>
 
-      {/* powers: capped multi-select chips */}
-      <div>
-        <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">
-          {t("any.trait.powers")} · {(Array.isArray(v.powers) ? v.powers : []).filter((p) => p !== "None").length}/
-          {ANY_MAX_POWERS}
-        </span>
-        <div className="flex flex-wrap gap-1.5">
-          {ANY_POWERS.map((p) => {
-            const on = (Array.isArray(v.powers) ? v.powers : []).includes(p);
-            return (
-              <button
-                key={p}
-                type="button"
-                onClick={() => togglePower(p)}
-                className={`rounded-full border px-2.5 py-1 text-xs font-medium transition ${FOCUS} ${
-                  on
-                    ? "border-pink-500 bg-pink-500 text-white"
-                    : "border-stone-300 text-stone-600 hover:border-stone-400 dark:border-stone-600 dark:text-stone-300"
-                }`}
-              >
-                {p}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* multi-value traits (role, powers): capped chip pickers */}
+      {multis.map((tr) => {
+        const cur = Array.isArray(v[tr.key]) ? v[tr.key] : [];
+        const noneToken = tr.values.includes("None") ? "None" : null;
+        const used = cur.filter((x) => x !== noneToken).length;
+        return (
+          <div key={tr.key}>
+            <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">
+              {t(`any.trait.${tr.key}`)} · {used}/{tr.max}
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {tr.values.map((opt) => {
+                const on = cur.includes(opt);
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => toggleMulti(tr.key, opt, tr.max, noneToken)}
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition ${FOCUS} ${
+                      on
+                        ? "border-pink-500 bg-pink-500 text-white"
+                        : "border-stone-300 text-stone-600 hover:border-stone-400 dark:border-stone-600 dark:text-stone-300"
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -172,10 +180,10 @@ function Cell({ cell, big, index = 0 }) {
 export function GuessGrid({ guesses = [], big = false }) {
   const { t } = useI18n();
   const cols = ANYTHINGLE_TRAITS;
-  const template = `minmax(7rem, 1.4fr) repeat(${cols.length}, minmax(4.5rem, 1fr))`;
+  const template = `minmax(6.5rem, 1.3fr) repeat(${cols.length}, minmax(4.75rem, 1fr))`;
   return (
     <div className="w-full overflow-x-auto">
-      <div className="min-w-[44rem] space-y-1.5">
+      <div className="min-w-[58rem] space-y-1.5">
         {/* header */}
         <div className="grid gap-1 text-center" style={{ gridTemplateColumns: template }}>
           <div />

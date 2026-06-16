@@ -87,41 +87,54 @@ export const ANY_MEDIA = [
   "Mythology/Folklore",
   "Web/Other",
 ];
-export const ANY_COUNTRIES = [
-  "USA",
-  "UK",
-  "Japan",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "China",
-  "South Korea",
-  "Canada",
-  "Other Europe",
-  "Other Asia",
-  "Other",
+/** Occupation/role buckets (multi-value, set-overlap → yellow). */
+export const ANY_ROLES = [
+  "Warrior",
+  "Royalty",
+  "Leader",
+  "Detective",
+  "Mage",
+  "Outlaw",
+  "Scientist",
+  "Student",
+  "Soldier",
+  "Adventurer",
+  "Pilot",
+  "Artist",
+  "Healer",
+  "Spy",
+  "Monster",
+  "Athlete",
+  "Worker",
+  "Politician",
+  "Mystic",
+  "Civilian",
 ];
-/** Max abilities per character so the set-overlap "yellow" stays meaningful. */
+/** Max abilities / roles per character so the set-overlap "yellow" stays meaningful. */
 export const ANY_MAX_POWERS = 3;
+export const ANY_MAX_ROLES = 3;
 /** Debut-year window (years) that still tints the cell yellow ("right era"). */
 export const ANY_CLOSE_BAND = 15;
 /** Soft per-round guess cap (display only; the host reveals when ready). */
 export const ANY_MAX_GUESSES = 8;
 
 /**
- * The fixed 8-column comparison matrix. `type` drives both the editor control
+ * The fixed 10-column comparison matrix. `type` drives both the editor control
  * and the grading: single = exact, multi = set-overlap (yellow on partial),
- * text = normalized exact (franchise), number = higher/lower arrow (debut year).
+ * text = normalized exact (franchise/affiliation/origin — free strings, e.g. a
+ * real nationality OR a fictional realm like "Hyrule"), number = higher/lower
+ * arrow (debut year).
  */
 export const ANYTHINGLE_TRAITS = [
   { key: "species", label: "Species", type: "single", values: ANY_SPECIES },
   { key: "gender", label: "Gender", type: "single", values: ANY_GENDERS },
   { key: "alignment", label: "Alignment", type: "single", values: ANY_ALIGNMENTS },
+  { key: "role", label: "Role", type: "multi", values: ANY_ROLES, max: ANY_MAX_ROLES },
   { key: "powers", label: "Powers", type: "multi", values: ANY_POWERS, max: ANY_MAX_POWERS },
   { key: "franchise", label: "Franchise", type: "text" },
+  { key: "affiliation", label: "Affiliation", type: "text" },
+  { key: "origin", label: "Origin", type: "text" },
   { key: "medium", label: "Origin medium", type: "single", values: ANY_MEDIA },
-  { key: "country", label: "Origin country", type: "single", values: ANY_COUNTRIES },
   { key: "year", label: "Debut year", type: "number", band: ANY_CLOSE_BAND },
 ];
 
@@ -307,10 +320,12 @@ export function makeAnyChar() {
     species: "Human",
     gender: "Male",
     alignment: "Hero/Good",
+    role: [],
     powers: ["None"],
     franchise: "Standalone",
+    affiliation: "",
+    origin: "",
     medium: "Film/TV (live-action)",
-    country: "USA",
     year: null,
   };
 }
@@ -332,6 +347,9 @@ export function normalizeAnyChar(raw) {
   if (!powers.length || powers.includes("None"))
     powers = ["None"]; // None is exclusive
   else powers = powers.slice(0, ANY_MAX_POWERS);
+  const role = [
+    ...new Set((Array.isArray(raw.role) ? raw.role : []).map((r) => str(r)).filter((r) => ANY_ROLES.includes(r))),
+  ].slice(0, ANY_MAX_ROLES);
   return {
     id: str(raw.id) || uid(),
     name,
@@ -342,10 +360,14 @@ export function normalizeAnyChar(raw) {
     species: pick(str(raw.species), ANY_SPECIES, "Object/Other"),
     gender: pick(str(raw.gender), ANY_GENDERS, "None/Genderless"),
     alignment: pick(str(raw.alignment), ANY_ALIGNMENTS, "Neutral/Anti-hero"),
+    role,
     powers,
     franchise: str(raw.franchise).trim() || "Standalone",
+    // Free strings (real nationality OR fictional realm) — compared as normalized
+    // exact match, so a blank never falsely greens.
+    affiliation: str(raw.affiliation).trim(),
+    origin: str(raw.origin).trim(),
     medium: pick(str(raw.medium), ANY_MEDIA, "Web/Other"),
-    country: pick(str(raw.country), ANY_COUNTRIES, "Other"),
     year: numOrNull(raw.year),
   };
 }
@@ -375,7 +397,8 @@ export function gradeAnythingle(target, guess) {
       const ts = new Set((Array.isArray(tv) ? tv : []).map((x) => str(x)));
       const gs = [...new Set((Array.isArray(gv) ? gv : []).map((x) => str(x)))];
       const shared = gs.filter((x) => ts.has(x));
-      if (ts.size === gs.length && shared.length === ts.size) return { key: t.key, result: "green" };
+      // Equal NON-EMPTY sets = green; two empties never green (nothing to match).
+      if (ts.size > 0 && ts.size === gs.length && shared.length === ts.size) return { key: t.key, result: "green" };
       if (shared.length > 0) return { key: t.key, result: "yellow", shared };
       return { key: t.key, result: "grey" };
     }

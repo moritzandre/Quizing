@@ -1328,10 +1328,12 @@ describe("Anythingle", () => {
     species: "Human",
     gender: "Male",
     alignment: "Hero/Good",
+    role: ["Warrior", "Mystic"],
     powers: ["Magic/Sorcery", "Telepathy/Mind", "Weapon mastery"],
     franchise: "Star Wars",
+    affiliation: "Jedi Order",
+    origin: "Tatooine",
     medium: "Film/TV (live-action)",
-    country: "USA",
     year: 1977,
   };
   const LUFFY = {
@@ -1339,10 +1341,12 @@ describe("Anythingle", () => {
     species: "Human",
     gender: "Male",
     alignment: "Hero/Good",
+    role: ["Adventurer", "Outlaw"],
     powers: ["Elasticity/Stretch", "Martial arts", "Super strength"],
     franchise: "One Piece",
+    affiliation: "Straw Hat Pirates",
+    origin: "East Blue",
     medium: "Manga",
-    country: "Japan",
     year: 1997,
   };
   const cellFor = (cells, key) => cells.find((c) => c.key === key);
@@ -1356,26 +1360,32 @@ describe("Anythingle", () => {
   it("makeAnyChar produces a valid, normalizable empty entry shape", () => {
     const c = makeAnyChar();
     expect(c.powers).toEqual(["None"]);
-    expect(ANYTHINGLE_TRAITS).toHaveLength(8);
+    expect(ANYTHINGLE_TRAITS).toHaveLength(10);
   });
 
-  it("normalizeAnyChar clamps vocab, dedupes/caps powers, keeps None exclusive, drops nameless", () => {
+  it("normalizeAnyChar clamps vocab, dedupes/caps powers+role, keeps None exclusive, drops nameless", () => {
     expect(normalizeAnyChar({ name: "" })).toBeNull();
     const c = normalizeAnyChar({
       name: " Goku ",
       species: "Saiyan", // not in vocab -> Object/Other
       gender: "male", // wrong case -> default None/Genderless
+      role: ["Warrior", "Warrior", "Bogus", "Athlete", "Adventurer", "Leader"],
       powers: ["Flight", "Flight", "Bogus", "Energy/Beams", "Super strength", "Super speed"],
       franchise: "",
+      affiliation: "  Z Fighters  ",
+      origin: "  Earth  ",
       medium: "OVA",
-      country: "Japan",
       year: "1984",
     });
     expect(c.species).toBe("Object/Other");
     expect(c.gender).toBe("None/Genderless");
     expect(c.powers).toHaveLength(3); // capped, deduped, "Bogus" dropped
     expect(c.powers).not.toContain("Bogus");
+    expect(c.role).toHaveLength(3); // capped + "Bogus" dropped
+    expect(c.role).not.toContain("Bogus");
     expect(c.franchise).toBe("Standalone");
+    expect(c.affiliation).toBe("Z Fighters"); // free text, trimmed
+    expect(c.origin).toBe("Earth");
     expect(c.medium).toBe("Web/Other");
     expect(c.year).toBe(1984);
     // None is exclusive
@@ -1394,9 +1404,11 @@ describe("Anythingle", () => {
     expect(cellFor(cells, "gender").result).toBe("green");
     expect(cellFor(cells, "alignment").result).toBe("green");
     expect(cellFor(cells, "powers").result).toBe("grey"); // no shared ability
+    expect(cellFor(cells, "role").result).toBe("grey"); // no shared role
     expect(cellFor(cells, "franchise").result).toBe("grey");
+    expect(cellFor(cells, "affiliation").result).toBe("grey");
+    expect(cellFor(cells, "origin").result).toBe("grey");
     expect(cellFor(cells, "medium").result).toBe("grey");
-    expect(cellFor(cells, "country").result).toBe("grey");
   });
 
   it("powers yields yellow on partial overlap, green on equal set", () => {
