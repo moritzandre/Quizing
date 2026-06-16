@@ -776,6 +776,7 @@ export default function JoinView({ code }) {
                 </div>
                 <div className="min-h-0 flex-1">
                   <LeafletMap
+                    key={qKey}
                     answer={myPin ? { lat: myPin.lat, lng: myPin.lng, label: room.name } : undefined}
                     onPick={placePin}
                     className="h-full w-full"

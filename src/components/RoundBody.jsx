@@ -3,8 +3,8 @@
    --------------------------------------------------------------------
    Renders the clean, audience-facing view of the current question from the
    streamed present/live payload (see lib/model buildPresentQ / buildLive).
-   It is purely presentational: no controls, no awarding, and — crucially —
-   no map pins (guess coordinates are never sent until reveal). Reuses the
+   It is purely presentational: no controls, no awarding; map pins appear only
+   on reveal (guess coordinates aren't sent until then). Reuses the
    pure media children (MorphImage / FusionImage / HintMedia / YouTubePlayer
    / LeafletMap). The host screen keeps its own interactive rendering.
    ==================================================================== */
@@ -199,9 +199,12 @@ export default function RoundBody({
             <MapillaryEmbed street={q.street} className="h-full w-full" />
           ) : (
             <LeafletMap
+              key={qKey}
               answer={
                 ans && ans.lat != null && ans.lng != null ? { lat: ans.lat, lng: ans.lng, label: ans.name } : undefined
               }
+              guesses={revealed ? reveal?.guesses || [] : []}
+              showLines={revealed}
               tileLayer={q.tileLayer}
               className="h-full w-full"
             />

@@ -4,14 +4,15 @@
    Opened on a TV/second screen at #/present/<code> on the same Wi-Fi. It
    subscribes to the host's present/live MQTT topics and renders a clean,
    enlarged, audience-facing view: question + media, the answer once the
-   host reveals, and the animated live podium. Map pins are never shown
-   (coordinates aren't sent until reveal). No controls, no answers early.
+   host reveals, a live score strip, and the animated podium. Map pins stay
+   hidden until reveal, then everyone's pins + guess→answer lines are shown
+   (coords aren't sent until reveal). No controls, no answers early.
    ==================================================================== */
 
 import { useState } from "react";
 import { Trophy, Wifi, WifiOff, Tv, Volume2 } from "lucide-react";
 import { usePresenterRoom } from "./useRoom.js";
-import { TYPES, accentFor, ThemeToggle, Confetti } from "./ui.jsx";
+import { TYPES, accentFor, ThemeToggle, Confetti, Avatar, AnimatedNumber } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import RoundBody from "./RoundBody.jsx";
 import PodiumClimb from "./PodiumClimb.jsx";
@@ -30,6 +31,15 @@ export default function PresenterView({ code }) {
   const [soundOn, setSoundOn] = useState(false);
   const needsSound = !!live?.soundOnTv && !soundOn;
   const standings = live?.standings || [];
+  const sortedStandings = [...standings].sort((a, b) => b.score - a.score);
+  // A persistent score strip during play (the host has one at the bottom too);
+  // hidden on the screens that already show full standings (recap/standings/end).
+  const showScoreStrip =
+    !!present &&
+    present.stage !== "end" &&
+    !live?.showRecap &&
+    !live?.showStandings &&
+    sortedStandings.length > 0;
 
   // A plain function (not a component) so children reconcile by type instead of
   // remounting the map/player subtree on every live update.
@@ -54,6 +64,24 @@ export default function PresenterView({ code }) {
         </div>
       </div>
       <div className="flex min-h-0 flex-1 flex-col justify-center">{children}</div>
+      {showScoreStrip && (
+        <div className="mt-3 flex shrink-0 flex-wrap items-center justify-center gap-2">
+          {sortedStandings.map((s, i) => (
+            <span
+              key={s.id}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-sm ${
+                i === 0
+                  ? "border-amber-300 bg-amber-50 dark:border-amber-500/40 dark:bg-amber-500/10"
+                  : "border-stone-200 bg-white/70 dark:border-stone-800 dark:bg-stone-900/60"
+              }`}
+            >
+              <Avatar color={s.color} emoji={s.emoji} name={s.name} size={22} />
+              <span className="max-w-[8rem] truncate font-medium">{s.name}</span>
+              <AnimatedNumber value={s.score} className="font-pixel text-xs tabular-nums" />
+            </span>
+          ))}
+        </div>
+      )}
       {needsSound && (
         <button
           onClick={() => setSoundOn(true)}

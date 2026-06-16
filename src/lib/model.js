@@ -1035,6 +1035,19 @@ export function buildLive(game, opts = {}) {
   if (game.revealed && game.stage === "question" && round) {
     const q = currentQuestion(game);
     if (q) live.reveal = revealData(round.type, q);
+    // On a revealed map round, also send everyone's pins (coords are safe now)
+    // so the TV can show where each player guessed + draw the lines.
+    if (round.type === "map" && live.reveal) {
+      const guesses = game.guesses && typeof game.guesses === "object" ? game.guesses : {};
+      live.reveal.guesses = (Array.isArray(game.players) ? game.players : [])
+        .map((p) => {
+          const g = guesses[p?.id];
+          return g && typeof g.lat === "number" && typeof g.lng === "number"
+            ? { lat: g.lat, lng: g.lng, color: typeof p.color === "string" ? p.color : null, label: str(p.name) }
+            : null;
+        })
+        .filter(Boolean);
+    }
   }
   return live;
 }
@@ -1083,6 +1096,17 @@ export function normalizeLive(raw) {
     if (Array.isArray(r.options)) reveal.options = r.options.map(str).slice(0, 8);
     if (typeof r.unit === "string") reveal.unit = r.unit;
     if (typeof r.note === "string") reveal.note = r.note; // true/false + higher/lower reveal fact
+    if (Array.isArray(r.guesses))
+      reveal.guesses = r.guesses
+        .filter((g) => g && typeof g === "object")
+        .map((g) => ({
+          lat: numOrNull(g.lat),
+          lng: numOrNull(g.lng),
+          color: typeof g.color === "string" ? g.color : null,
+          label: str(g.label),
+        }))
+        .filter((g) => g.lat != null && g.lng != null)
+        .slice(0, 64); // the map round's revealed guess pins
   }
   return {
     stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",

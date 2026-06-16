@@ -434,8 +434,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const revealMap = (q) => {
     let awarded = {};
     let players = game.players;
+    // Lock in every pin (host-placed + phone-submitted) so the closest wins and
+    // the persisted guesses can be mirrored to the TV on reveal.
+    const combined = { ...(game.guesses || {}), ...(buzzerOn ? mapByEntity(room.pins) : {}) };
     if (q.lat != null && q.lng != null) {
-      const combined = { ...(game.guesses || {}), ...(buzzerOn ? mapByEntity(room.pins) : {}) };
       const ranked = game.players
         .map((p) => ({ p, g: combined[p.id] }))
         .filter((x) => x.g)
@@ -448,7 +450,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       }
     }
     playSound(Object.keys(awarded).length ? "correct" : "reveal");
-    upd({ revealed: true, players, awarded });
+    upd({ revealed: true, players, awarded, guesses: combined });
   };
 
   const adjustScore = (pid, delta) =>
@@ -2036,6 +2038,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <MapillaryEmbed street={q.street} className="h-full w-full" />
           ) : (
             <LeafletMap
+              key={qKey}
               answer={game.revealed && hasAnswer ? { lat: q.lat, lng: q.lng, label: q.name } : undefined}
               guesses={markers}
               showLines={game.revealed}

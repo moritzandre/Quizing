@@ -909,6 +909,14 @@ describe("presenter payloads", () => {
     expect(revealed.reveal.answer).toEqual({ lat: 48.85, lng: 2.35, name: "Paris" });
   });
 
+  it("buildLive sends map guess pins only after reveal (TV mirrors everyone's pins)", () => {
+    // pre-reveal there's no reveal payload at all, so no coords leak
+    expect(buildLive(game({ guesses: { a: { lat: 1, lng: 2 } } })).reveal).toBeUndefined();
+    // on reveal, each player who guessed becomes a marker (colour/label from the player)
+    const revealed = buildLive(game({ revealed: true, guesses: { a: { lat: 1, lng: 2 } } }));
+    expect(revealed.reveal.guesses).toEqual([{ lat: 1, lng: 2, color: "#6366f1", label: "Ann" }]);
+  });
+
   it("buildLive strips standings to id/name/score/color/emoji", () => {
     const live = buildLive(game());
     expect(live.standings).toEqual([
