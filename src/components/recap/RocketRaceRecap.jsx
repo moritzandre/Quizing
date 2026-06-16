@@ -81,7 +81,6 @@ export default function RocketRaceRecap({ entities = [], present = false, progre
                 <Avatar
                   color={entity.color}
                   emoji={entity.emoji}
-                  photo={entity.photo}
                   name={entity.name}
                   size={present ? 34 : 24}
                 />

@@ -3,7 +3,8 @@
    --------------------------------------------------------------------
    Owns the single master clock and stages the recap as a little show:
    a "ROUND N" intro splash → the chosen arcade minigame (driven by a
-   `progress` 0→1 for its play window) → a winner finale (crown + confetti).
+   `progress` 0→1 for its play window) → and ALWAYS finishes on a ranked
+   leaderboard with confetti and a crowned winner before the host advances.
    A live commentary caption reacts to the round (overtake / photo finish /
    on-fire / winner). Pure props; only ever rendered when motion is allowed
    (RoundRecap swaps in the static board for prefers-reduced-motion).
@@ -15,15 +16,16 @@ import { useI18n } from "../../i18n/I18nProvider.jsx";
 import { recapStory } from "../../lib/model.js";
 import { playSound } from "../../lib/sound.js";
 import { useRecapProgress, rankRecap } from "./recapShared.js";
+import RecapBoard from "./RecapBoard.jsx";
 
-const DURATION = 5200; // ms: intro (~0.6s) → play → finale
+const DURATION = 6000; // ms: intro (~0.7s) → play → leaderboard finish
 const PLAY_START = 0.12;
-const PLAY_END = 0.9;
+const PLAY_END = 0.72; // minigame is done; the leaderboard finish takes over
 
 /**
  * @param {object} props
  * @param {React.ComponentType} props.Variant The chosen minigame component.
- * @param {Array<{id,name,color?,emoji?,photo?,from,to}>} props.entities
+ * @param {Array<{id,name,color?,emoji?,from,to}>} props.entities
  * @param {boolean} [props.present] Larger sizing for the TV.
  * @param {number} [props.round] 1-based round number (0 = unknown).
  * @param {number} [props.total] Total rounds (0 = unknown).
@@ -37,24 +39,47 @@ export default function RecapShow({ Variant, entities = [], present = false, rou
 
   const playP = Math.max(0, Math.min(1, (p - PLAY_START) / (PLAY_END - PLAY_START)));
   const introOpacity = p < 0.07 ? 1 : p < 0.15 ? Math.max(0, (0.15 - p) / 0.08) : 0;
-  const finale = p >= PLAY_END;
+  const showBoard = p >= PLAY_END; // the recap always ends on the standings
 
-  // Crown the winner with a sparkle — host only (the TV stays silent unless the
-  // viewer opted into sound), and only once per recap.
+  // Sparkle when the winner board lands — host only (the TV stays silent unless
+  // the viewer opted into sound), once per recap.
   const dinged = useRef(false);
   useEffect(() => {
-    if (finale && !present && !dinged.current) {
+    if (showBoard && !present && !dinged.current) {
       dinged.current = true;
       playSound("sparkle");
     }
-  }, [finale, present]);
+  }, [showBoard, present]);
 
-  let caption = null;
-  if (finale && story.winner) caption = { k: "win", text: "🏆 " + t(story.winner.key, story.winner.vars) };
-  else if (p >= 0.42 && story.mid) caption = { k: "mid", text: t(story.mid.key, story.mid.vars) };
+  const introTitle =
+    round && total
+      ? t("recapShow.roundOf", { n: round, total })
+      : round
+        ? t("recapShow.round", { n: round })
+        : t("recapShow.results");
 
-  const introTitle = round && total ? t("recapShow.roundOf", { n: round, total }) : round ? t("recapShow.round", { n: round }) : t("recapShow.results");
+  // ---- the leaderboard finish (always shown last) ----
+  if (showBoard) {
+    return (
+      <div className="relative mx-auto w-full max-w-2xl">
+        <Confetti count={present ? 140 : 80} />
+        {leader && (
+          <div className="qn-pop mb-3 flex items-center justify-center gap-2">
+            <span className={`qn-bob ${present ? "text-2xl" : "text-base"}`}>👑</span>
+            <span className={`font-pixel text-amber-300 ${present ? "text-base" : "text-[10px]"}`}>
+              {t("recapStory.winner", { name: leader.name })}
+            </span>
+          </div>
+        )}
+        <div className="qn-fade-up">
+          <RecapBoard entities={entities} present={present} />
+        </div>
+      </div>
+    );
+  }
 
+  // ---- the animated minigame (intro + play) ----
+  const caption = p >= 0.42 && story.mid ? t(story.mid.key, story.mid.vars) : null;
   return (
     <div className="relative mx-auto w-full max-w-2xl">
       <Variant entities={entities} present={present} progress={playP} />
@@ -63,12 +88,11 @@ export default function RecapShow({ Variant, entities = [], present = false, rou
       <div className={`mt-3 flex justify-center ${present ? "h-9" : "h-7"}`}>
         {caption && (
           <span
-            key={caption.k}
             className={`qn-fade-up inline-block max-w-full truncate rounded-full border border-amber-300/40 bg-amber-400/10 px-3 py-1 text-center font-pixel text-amber-300 ${
               present ? "text-sm" : "text-[10px]"
             }`}
           >
-            {caption.text}
+            {caption}
           </span>
         )}
       </div>
@@ -86,26 +110,6 @@ export default function RecapShow({ Variant, entities = [], present = false, rou
             </p>
           </div>
         </div>
-      )}
-
-      {/* winner finale — confetti + a crowned spotlight on the round leader */}
-      {finale && leader && (
-        <>
-          <Confetti count={present ? 140 : 80} />
-          <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 flex justify-center">
-            <div className="qn-pop flex items-center gap-2 rounded-full border-2 border-amber-300 bg-stone-950/85 px-3.5 py-1.5 shadow-[0_0_30px_rgba(251,191,36,0.5)]">
-              <span className={`qn-bob ${present ? "text-2xl" : "text-base"}`}>👑</span>
-              <Avatar
-                color={leader.color}
-                emoji={leader.emoji}
-                photo={leader.photo}
-                name={leader.name}
-                size={present ? 34 : 24}
-              />
-              <span className={`font-pixel text-amber-200 ${present ? "text-base" : "text-[10px]"}`}>{leader.name}</span>
-            </div>
-          </div>
-        </>
       )}
     </div>
   );

@@ -62,7 +62,6 @@ export default function PodiumClimb({ standings = [], present = false }) {
             <Avatar
               color={s.color}
               emoji={s.emoji}
-              photo={s.photo}
               name={s.name}
               size={avatarSize}
               className={gained ? "qn-hop" : ""}

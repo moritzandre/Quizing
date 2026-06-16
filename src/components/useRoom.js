@@ -12,13 +12,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { connectRoom, roomTopics, newRoomCode } from "../lib/realtime.js";
 import { uid, str, normalizePresent, normalizeLive, normalizeHostAux, normalizePhoneScores } from "../lib/model.js";
 import { createPlayer, isSupabaseConfigured } from "../lib/supabase.js";
-import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
+import { PLAYER_COLORS, PLAYER_SPRITES } from "./ui.jsx";
 
-/** Keep only a palette emoji/color from an (untrusted) phone join message. */
-const safeEmoji = (e) => (typeof e === "string" && PLAYER_EMOJI.includes(e) ? e : null);
+/** Keep only a palette sprite-key/color from an (untrusted) phone join message. */
+const safeSprite = (e) => (typeof e === "string" && PLAYER_SPRITES.includes(e) ? e : null);
 const safeColor = (c) => (typeof c === "string" && PLAYER_COLORS.includes(c) ? c : null);
-// Accept a small inline avatar photo only (data: image, capped so the broker payload stays sane).
-const safePhoto = (p) => (typeof p === "string" && /^data:image\//.test(p) && p.length <= 120000 ? p : null);
 
 const joinLink = (code) => `${window.location.origin}${window.location.pathname}#/join/${code}`;
 
@@ -199,9 +197,8 @@ export function useHostRoom() {
             [msg.deviceId]: {
               name: str(msg.name) || "Player",
               teamId: msg.teamId ? str(msg.teamId) : null,
-              emoji: safeEmoji(msg.emoji),
+              emoji: safeSprite(msg.emoji),
               color: safeColor(msg.color),
-              photo: safePhoto(msg.photo),
               profileId: typeof msg.profileId === "string" ? msg.profileId : null,
             },
           }));
@@ -262,9 +259,8 @@ export function useHostRoom() {
             createdRef.current = { ...createdRef.current, [dev]: { reqId, id: null } };
             const fields = {
               name: str(msg.name).trim() || "Player",
-              emoji: safeEmoji(msg.emoji),
+              emoji: safeSprite(msg.emoji),
               color: safeColor(msg.color),
-              photo: safePhoto(msg.photo),
             };
             createPlayer(fields).then((profile) => {
               createdRef.current = { ...createdRef.current, [dev]: { reqId, id: profile?.id || null } };
@@ -522,7 +518,6 @@ export function usePlayerRoom(code) {
         teamId: teamId || null,
         emoji: avatar?.emoji || null,
         color: avatar?.color || null,
-        photo: avatar?.photo || null,
         profileId: profileId || null, // links this phone to a persistent player profile (optional)
         pass: pass || null, // optional room passphrase (no-login join gate)
       });
@@ -548,7 +543,6 @@ export function usePlayerRoom(code) {
         name: fields?.name || "",
         emoji: fields?.emoji || null,
         color: fields?.color || null,
-        photo: fields?.photo || null,
       });
       return reqId;
     },

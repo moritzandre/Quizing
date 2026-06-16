@@ -90,7 +90,7 @@ export default function ScoreBar({
                     {i + 1}
                   </span>
                 )}
-                <Avatar color={p.color || colorAt(i)} emoji={p.emoji} photo={p.photo} name={p.name} size={20} />
+                <Avatar color={p.color || colorAt(i)} emoji={p.emoji} name={p.name} size={20} />
                 <span className="font-medium">{p.name}</span>
                 <AnimatedNumber
                   value={p.score}

@@ -82,7 +82,6 @@ export default function PelletMuncherRecap({ entities = [], present = false, pro
                   <Avatar
                     color={entity.color}
                     emoji={entity.emoji}
-                    photo={entity.photo}
                     name={entity.name}
                     size={present ? 32 : 24}
                   />

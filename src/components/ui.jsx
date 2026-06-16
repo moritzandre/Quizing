@@ -6,6 +6,8 @@
    ==================================================================== */
 
 import { useState, useEffect, useRef } from "react";
+import { PixelSprite } from "./pixelAvatar.jsx";
+import { SPRITE_KEYS } from "./pixelSprites.js";
 import {
   MessageSquare,
   LayoutGrid,
@@ -169,7 +171,7 @@ export const binaryOptions = (type, t) =>
 /** Display options for a choice-style round: synthesized for binary types, else the question's own. */
 export const optionsFor = (type, q, t) => binaryOptions(type, t) || (Array.isArray(q?.options) ? q.options : []);
 
-/** Player avatar palette — colors + matching emoji, cycled by index. */
+/** Player avatar palette — colors + pixel-art character sprites, cycled by index. */
 export const PLAYER_COLORS = [
   "#6366f1",
   "#f43f5e",
@@ -184,27 +186,28 @@ export const PLAYER_COLORS = [
   "#eab308",
   "#ef4444",
 ];
-export const PLAYER_EMOJI = ["🦊", "🐼", "🐧", "🦄", "🐸", "🐙", "🦁", "🐢", "🐝", "🦉", "🐬", "🐲"];
+// An avatar's character is a pixel-sprite KEY (see pixelAvatar.jsx). It rides
+// the player `emoji` field for back-compat, so PLAYER_EMOJI/emojiAt are kept as
+// aliases of the sprite list/cycler (the value is a sprite key, not an emoji).
+export const PLAYER_SPRITES = SPRITE_KEYS;
+export const PLAYER_EMOJI = SPRITE_KEYS;
 export const colorAt = (i) => PLAYER_COLORS[((i % PLAYER_COLORS.length) + PLAYER_COLORS.length) % PLAYER_COLORS.length];
-export const emojiAt = (i) => PLAYER_EMOJI[((i % PLAYER_EMOJI.length) + PLAYER_EMOJI.length) % PLAYER_EMOJI.length];
+export const spriteAt = (i) => SPRITE_KEYS[((i % SPRITE_KEYS.length) + SPRITE_KEYS.length) % SPRITE_KEYS.length];
+export const emojiAt = spriteAt;
 
-/** Round avatar: an uploaded photo, else an emoji on a colored disc, else the name's initial. */
-export function Avatar({ color, emoji, photo, name, size = 28, className = "" }) {
-  const base = `inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold leading-none text-white shadow-sm ring-2 ring-white/70 dark:ring-white/15 ${className}`;
-  if (photo) {
-    return (
-      <span aria-hidden className={base} style={{ width: size, height: size, backgroundColor: color || "#78716c" }}>
-        <img src={photo} alt="" className="h-full w-full object-cover" />
-      </span>
-    );
-  }
+/** Player avatar: a pixel-art character (sprite key in `emoji`) on a colored tile, else the name's initial. */
+export function Avatar({ color, emoji, name, size = 28, className = "" }) {
+  const tile = color || "#78716c";
+  const base = `inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full leading-none shadow-sm ring-2 ring-white/70 dark:ring-white/15 ${className}`;
   return (
-    <span
-      aria-hidden
-      className={base}
-      style={{ width: size, height: size, backgroundColor: color || "#78716c", fontSize: Math.round(size * 0.52) }}
-    >
-      {emoji || (name ? name.trim().charAt(0).toUpperCase() : "?")}
+    <span aria-hidden className={base} style={{ width: size, height: size, backgroundColor: tile }}>
+      {SPRITE_KEYS.includes(emoji) ? (
+        <PixelSprite name={emoji} color={tile} size={Math.round(size * 0.82)} />
+      ) : (
+        <span className="font-semibold text-white" style={{ fontSize: Math.round(size * 0.5) }}>
+          {name ? name.trim().charAt(0).toUpperCase() : "?"}
+        </span>
+      )}
     </span>
   );
 }

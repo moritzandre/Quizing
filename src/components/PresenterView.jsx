@@ -29,10 +29,7 @@ export default function PresenterView({ code }) {
   // host routes clip sound to the TV, we show a one-time tap to unlock audio.
   const [soundOn, setSoundOn] = useState(false);
   const needsSound = !!live?.soundOnTv && !soundOn;
-  // Avatar photos arrive on the heavy/present channel; merge them into the
-  // light live standings so the podium/recap can show them on the TV.
-  const photos = present?.photos || {};
-  const standings = (live?.standings || []).map((s) => (photos[s.id] ? { ...s, photo: photos[s.id] } : s));
+  const standings = live?.standings || [];
 
   // A plain function (not a component) so children reconcile by type instead of
   // remounting the map/player subtree on every live update.
@@ -100,7 +97,6 @@ export default function PresenterView({ code }) {
             name: s.name,
             color: s.color,
             emoji: s.emoji,
-            photo: s.photo,
             from: from[s.id] ?? s.score,
             to: s.score,
           }))}

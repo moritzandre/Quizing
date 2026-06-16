@@ -715,23 +715,19 @@ describe("player profiles (Supabase)", () => {
   it("normalizeProfile coerces a row, requires an id, and carries `locked`", () => {
     expect(normalizeProfile(null)).toBe(null);
     expect(normalizeProfile({ name: "x" })).toBe(null); // no id
-    expect(
-      normalizeProfile({
-        id: "u1",
-        name: "Ann",
-        emoji: "🦊",
-        color: "#f00",
-        photo: "data:image/png;base64,AAA",
-        locked: true,
-      }),
-    ).toEqual({ id: "u1", name: "Ann", emoji: "🦊", color: "#f00", photo: "data:image/png;base64,AAA", locked: true });
-    // junk types coerced to null; a non-image photo dropped; locked defaults false
-    expect(normalizeProfile({ id: "u2", name: 7, emoji: 5, color: {}, photo: "http://x/y.png" })).toEqual({
+    expect(normalizeProfile({ id: "u1", name: "Ann", emoji: "ghost", color: "#f00", locked: true })).toEqual({
+      id: "u1",
+      name: "Ann",
+      emoji: "ghost",
+      color: "#f00",
+      locked: true,
+    });
+    // junk types coerced to null; locked defaults false
+    expect(normalizeProfile({ id: "u2", name: 7, emoji: 5, color: {} })).toEqual({
       id: "u2",
       name: "",
       emoji: null,
       color: null,
-      photo: null,
       locked: false,
     });
   });
@@ -1178,19 +1174,19 @@ describe("presenter payloads", () => {
     expect(n.q.correct).toBeUndefined(); // the correct index is never in the present payload
   });
 
-  it("carries avatar photos on the heavy present channel, not the light live one", () => {
+  it("no longer carries avatar photos (the photo feature was removed)", () => {
     const g = game();
     g.players = [
-      { id: "a", name: "Ann", score: 1, photo: "data:image/png;base64,AAA" },
+      { id: "a", name: "Ann", score: 1 },
       { id: "b", name: "Bob", score: 0 },
     ];
-    expect(buildPresentQ(g).photos).toEqual({ a: "data:image/png;base64,AAA" });
+    expect("photos" in buildPresentQ(g)).toBe(false);
     expect(buildLive(g).standings.every((s) => !("photo" in s))).toBe(true);
   });
 
-  it("normalizePresent keeps only small data: image avatar photos", () => {
-    const n = normalizePresent({ stage: "intro", photos: { a: "data:image/png;base64,Z", b: "http://evil", c: 5 } });
-    expect(n.photos).toEqual({ a: "data:image/png;base64,Z" });
+  it("normalizePresent ignores any incoming avatar photos", () => {
+    const n = normalizePresent({ stage: "intro", photos: { a: "data:image/png;base64,Z" } });
+    expect("photos" in n).toBe(false);
   });
 });
 

@@ -84,7 +84,7 @@ export default function StatsView() {
             {me ? (
               <div className={`${cardCls} mb-6 p-4`}>
                 <div className="mb-4 flex items-center gap-3">
-                  <Avatar color={me.color} emoji={me.emoji} photo={me.photo} name={me.name} size={48} />
+                  <Avatar color={me.color} emoji={me.emoji} name={me.name} size={48} />
                   <div className="min-w-0">
                     <p className="truncate text-lg font-bold">{me.name}</p>
                     <p className="font-pixel text-[8px] uppercase tracking-widest text-stone-400">{t("stats.you")}</p>
@@ -147,7 +147,7 @@ export default function StatsView() {
                       }`}
                     >
                       <span className={`w-6 shrink-0 text-center font-pixel text-xs ${rankColor(i)}`}>{i + 1}</span>
-                      <Avatar color={e.color} emoji={e.emoji} photo={e.photo} name={e.name} size={28} />
+                      <Avatar color={e.color} emoji={e.emoji} name={e.name} size={28} />
                       <span className="min-w-0 flex-1 truncate text-sm font-semibold">{e.name}</span>
                       <span className="shrink-0 text-right">
                         <span className="font-pixel text-xs text-amber-600 dark:text-amber-400">{e.wins}</span>

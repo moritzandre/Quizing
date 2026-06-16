@@ -70,7 +70,6 @@ export default function BlockStackerRecap({ entities = [], present = false, prog
                 <Avatar
                   color={entity.color}
                   emoji={entity.emoji}
-                  photo={entity.photo}
                   name={entity.name}
                   size={present ? 32 : 24}
                 />

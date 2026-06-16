@@ -745,7 +745,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <div className="space-y-2">
               {game.players.map((p, i) => (
                 <div key={p.id} className="flex items-center gap-1.5">
-                  <Avatar color={colorFor(p, i)} emoji={p.emoji} photo={p.photo} name={p.name} size={26} />
+                  <Avatar color={colorFor(p, i)} emoji={p.emoji} name={p.name} size={26} />
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">{p.name}</span>
                   <button onClick={() => adjustScore(p.id, -5)} className={stepperCls}>
                     −5
@@ -924,7 +924,6 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   name: p.name,
                   color: colorFor(p, i),
                   emoji: p.emoji,
-                  photo: p.photo,
                   from: game.roundStartScores?.[p.id] ?? p.score,
                   to: p.score,
                 }))}
@@ -994,7 +993,6 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 <Avatar
                   color={colorFor(p, idxOf(p))}
                   emoji={p.emoji}
-                  photo={p.photo}
                   name={p.name}
                   size={rank === 0 ? 56 : 44}
                   className="shadow-md"
@@ -1026,7 +1024,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               >
                 <div className="flex items-center gap-2.5">
                   <span className="w-5 text-sm font-bold text-stone-400">{i + 4}</span>
-                  <Avatar color={colorFor(p, idxOf(p))} emoji={p.emoji} photo={p.photo} name={p.name} size={24} />
+                  <Avatar color={colorFor(p, idxOf(p))} emoji={p.emoji} name={p.name} size={24} />
                   <span className="font-medium">{p.name}</span>
                 </div>
                 <span className="font-bold tabular-nums">{p.score}</span>
@@ -1647,7 +1645,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 }`}
               >
                 <span className="flex items-center gap-2 font-medium">
-                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} photo={x.p.photo} name={x.p.name} size={22} />
+                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
                   {x.p.name}
                   <span className="text-stone-400">
                     {x.g}
@@ -1697,7 +1695,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                       : "border-stone-200 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200"
                   }`}
                 >
-                  <Avatar color={colorFor(p, i)} emoji={p.emoji} photo={p.photo} name={p.name} size={20} /> {p.name}
+                  <Avatar color={colorFor(p, i)} emoji={p.emoji} name={p.name} size={20} /> {p.name}
                 </button>
               ))}
             </div>
@@ -1728,13 +1726,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <div className="mt-2 flex shrink-0 items-center justify-center gap-2 text-sm">
               {winner && (
                 <span className="inline-flex items-center gap-1.5 font-semibold">
-                  <Avatar
-                    color={colorFor(winner, winnerIdx)}
-                    emoji={winner.emoji}
-                    photo={winner.photo}
-                    name={winner.name}
-                    size={22}
-                  />
+                  <Avatar color={colorFor(winner, winnerIdx)} emoji={winner.emoji} name={winner.name} size={22} />
                   {winner.name}
                 </span>
               )}
@@ -1974,7 +1966,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   }`}
                 >
                   <span className="flex items-center gap-2 font-medium">
-                    <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} photo={x.p.photo} name={x.p.name} size={22} />
+                    <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
                     {x.p.name}
                     {idx === 0 && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">

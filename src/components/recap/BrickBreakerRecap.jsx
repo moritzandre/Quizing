@@ -49,7 +49,6 @@ export default function BrickBreakerRecap({ entities = [], present = false, prog
               <Avatar
                 color={entity.color}
                 emoji={entity.emoji}
-                photo={entity.photo}
                 name={entity.name}
                 size={present ? 34 : 24}
               />

@@ -57,9 +57,7 @@ export default function HostRemoteView({ code }) {
   // and clip only while its ladder is live (steps + a real trim window).
   const hasLadder =
     type === "hints" || type === "morph" || type === "fusion" || (type === "clip" && clipLadderActive(present?.q));
-  // Photos ride the heavy present channel; merge them into the light live standings.
-  const photos = present?.photos || {};
-  const standings = (live?.standings || []).map((s) => (photos[s.id] ? { ...s, photo: photos[s.id] } : s));
+  const standings = live?.standings || [];
 
   const btn =
     "flex items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold transition active:scale-[.97] disabled:opacity-30";
@@ -172,7 +170,7 @@ export default function HostRemoteView({ code }) {
                           : "border-stone-300 dark:border-stone-700"
                       }`}
                     >
-                      <Avatar color={s.color} emoji={s.emoji} photo={s.photo} name={s.name} size={20} /> {s.name}
+                      <Avatar color={s.color} emoji={s.emoji} name={s.name} size={20} /> {s.name}
                     </button>
                   ))}
                 </div>
@@ -394,7 +392,7 @@ export default function HostRemoteView({ code }) {
                 key={s.id}
                 className="flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-2.5 py-2 dark:border-stone-800 dark:bg-stone-900"
               >
-                <Avatar color={s.color} emoji={s.emoji} photo={s.photo} name={s.name} size={24} />
+                <Avatar color={s.color} emoji={s.emoji} name={s.name} size={24} />
                 <span className="min-w-0 flex-1 truncate text-sm font-medium">{s.name}</span>
                 <span className="w-7 shrink-0 text-center text-sm font-bold tabular-nums">{s.score}</span>
                 {/* fine tweak ±1 */}

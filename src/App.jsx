@@ -571,7 +571,6 @@ function App() {
           score: 0,
           color: p.color || colorAt(i),
           emoji: p.emoji || emojiAt(i),
-          ...(p.photo ? { photo: p.photo } : {}),
           ...(p.profileId ? { profileId: p.profileId } : {}),
         };
         if (deviceIds.length) base.deviceIds = deviceIds;

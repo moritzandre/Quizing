@@ -17,7 +17,6 @@ import {
   MapPin,
   ListChecks,
   Hash,
-  Camera,
   Loader2,
   X,
   Trophy,
@@ -29,8 +28,8 @@ import {
 } from "lucide-react";
 import { usePlayerRoom } from "./useRoom.js";
 import { usePlayerbase } from "./usePlayerbase.js";
-import { FOCUS, inputCls, Button, Avatar, AnimatedNumber, PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
-import { fileToDataUrl, buildResultRow } from "../lib/model.js";
+import { FOCUS, inputCls, Button, Avatar, AnimatedNumber, PLAYER_COLORS, PLAYER_SPRITES } from "./ui.jsx";
+import { buildResultRow } from "../lib/model.js";
 import { loadJSON, saveJSON, removeKey } from "../lib/storage.js";
 import { playSound } from "../lib/sound.js";
 import LeafletMap from "./LeafletMap.jsx";
@@ -54,11 +53,8 @@ export default function JoinView({ code }) {
   const pb = usePlayerbase(); // optional shared playerbase (Supabase, gated)
   const [draftName, setDraftName] = useState("");
   const [teamId, setTeamId] = useState(null);
-  const [pickedEmoji, setPickedEmoji] = useState(() => PLAYER_EMOJI[hashIdx(room.deviceId, PLAYER_EMOJI.length)]);
+  const [pickedEmoji, setPickedEmoji] = useState(() => PLAYER_SPRITES[hashIdx(room.deviceId, PLAYER_SPRITES.length)]);
   const [pickedColor, setPickedColor] = useState(() => PLAYER_COLORS[hashIdx(room.deviceId, PLAYER_COLORS.length)]);
-  const [pickedPhoto, setPickedPhoto] = useState("");
-  const [photoBusy, setPhotoBusy] = useState(false);
-  const photoRef = useRef(null);
   const [joined, setJoined] = useState(false);
   const [lastJoin, setLastJoin] = useState(null); // cached join for reconnect-on-reload
   const [myPin, setMyPin] = useState(null);
@@ -145,13 +141,10 @@ export default function JoinView({ code }) {
     autoRef.current = true;
     const cur = pb.configured ? pb.current : null;
     const name = (cur ? cur.name : lastJoin.name) || lastJoin.name || "";
-    const av = cur
-      ? { emoji: cur.emoji, color: cur.color, photo: cur.photo }
-      : { emoji: lastJoin.emoji, color: lastJoin.color, photo: lastJoin.photo };
+    const av = cur ? { emoji: cur.emoji, color: cur.color } : { emoji: lastJoin.emoji, color: lastJoin.color };
     setDraftName(name);
     if (av.emoji) setPickedEmoji(av.emoji);
     if (av.color) setPickedColor(av.color);
-    if (av.photo) setPickedPhoto(av.photo);
     setTeamId(lastJoin.teamId || null);
     if (lastJoin.pass) setPassInput(lastJoin.pass); // so a re-prompt is prefilled if the pass changed
     room.join(name, lastJoin.teamId || null, teamsList ? null : av, cur ? cur.id : null, lastJoin.pass || null);
@@ -215,20 +208,6 @@ export default function JoinView({ code }) {
     setJoined(false);
     if (pb.configured) setReselect(true);
   };
-  const onPhoto = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    setPhotoBusy(true);
-    try {
-      // Avatars are tiny — downscale hard so the photo stays small on the wire.
-      setPickedPhoto(await fileToDataUrl(file, { maxDim: 160, keepBelow: 0, quality: 0.72 }));
-    } catch {
-      /* ignore — keep the emoji avatar */
-    } finally {
-      setPhotoBusy(false);
-    }
-  };
 
   // ---- playerbase pre-join handlers (configured only) ----
   const selectExisting = (player) => {
@@ -252,10 +231,7 @@ export default function JoinView({ code }) {
   // it with a PIN afterwards — that call goes straight to Supabase over TLS, so
   // the PIN never crosses the public broker.
   const finishCreated = async (id) => {
-    pb.adopt(
-      { id, name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto, locked: !!newPin },
-      { unlock: true },
-    );
+    pb.adopt({ id, name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, locked: !!newPin }, { unlock: true });
     if (newPin && /^[0-9]{6,8}$/.test(newPin)) await pb.lockWithPin(id, newPin);
     setCreating(false);
     setReselect(false);
@@ -266,14 +242,7 @@ export default function JoinView({ code }) {
   // block the join: play as a local guest (stats just won't be recorded).
   const finishGuest = () => {
     pb.adopt(
-      {
-        id: "guest-" + room.deviceId,
-        name: draftName.trim() || "Player",
-        emoji: pickedEmoji,
-        color: pickedColor,
-        photo: pickedPhoto,
-        locked: false,
-      },
+      { id: "guest-" + room.deviceId, name: draftName.trim() || "Player", emoji: pickedEmoji, color: pickedColor, locked: false },
       { unlock: true },
     );
     setGuestNote(true);
@@ -288,7 +257,7 @@ export default function JoinView({ code }) {
     if (!draftName.trim() || createBusy) return;
     setGuestNote(false);
     setCreateBusy(true);
-    room.requestCreate({ name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto });
+    room.requestCreate({ name: draftName.trim(), emoji: pickedEmoji, color: pickedColor });
     if (createTimerRef.current) clearTimeout(createTimerRef.current);
     createTimerRef.current = setTimeout(() => {
       createTimerRef.current = null;
@@ -327,18 +296,16 @@ export default function JoinView({ code }) {
     setDraftName(c.name);
     setPickedEmoji(c.emoji);
     setPickedColor(c.color);
-    setPickedPhoto(c.photo || "");
     saveJSON("lastJoin", {
       code,
       name: c.name,
       teamId: needsTeam ? teamId : null,
       emoji: c.emoji,
       color: c.color,
-      photo: c.photo,
       playerId: c.id,
       pass,
     });
-    room.join(c.name, teamId, needsTeam ? null : { emoji: c.emoji, color: c.color, photo: c.photo }, c.id, pass);
+    room.join(c.name, teamId, needsTeam ? null : { emoji: c.emoji, color: c.color }, c.id, pass);
     setJoined(true);
   };
   // Classic (unconfigured) join.
@@ -351,29 +318,21 @@ export default function JoinView({ code }) {
       teamId: needsTeam ? teamId : null,
       emoji: pickedEmoji,
       color: pickedColor,
-      photo: pickedPhoto,
       pass,
     });
-    room.join(
-      draftName,
-      teamId,
-      needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto },
-      null,
-      pass,
-    );
+    room.join(draftName, teamId, needsTeam ? null : { emoji: pickedEmoji, color: pickedColor }, null, pass);
     setJoined(true);
   };
   // Re-send the join with the current passphrase (after a "wrong passphrase" reject).
   const retryPass = () => {
     if (!pass) return;
-    const avatar = needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto };
+    const avatar = needsTeam ? null : { emoji: pickedEmoji, color: pickedColor };
     saveJSON("lastJoin", {
       code,
       name: room.name || draftName.trim(),
       teamId: needsTeam ? teamId : null,
       emoji: pickedEmoji,
       color: pickedColor,
-      photo: pickedPhoto,
       playerId: pb.configured ? pb.currentId : undefined,
       pass,
     });
@@ -386,50 +345,25 @@ export default function JoinView({ code }) {
   const avatarPicker = (
     <div className="mt-5">
       <div className="mb-3 flex items-center gap-3">
-        <Avatar
-          color={pickedColor}
-          emoji={pickedEmoji}
-          photo={pickedPhoto}
-          name={draftName}
-          size={48}
-          className="shadow-sm"
-        />
+        <Avatar color={pickedColor} emoji={pickedEmoji} name={draftName} size={48} className="shadow-sm" />
         <p className="text-sm font-medium text-stone-600 dark:text-stone-300">{t("join.pickAvatar")}</p>
-        <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
-        {pickedPhoto ? (
-          <button
-            type="button"
-            onClick={() => setPickedPhoto("")}
-            className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
-          >
-            <X size={14} /> {t("join.removePhoto")}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => photoRef.current?.click()}
-            disabled={photoBusy}
-            className={`ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-100 disabled:opacity-50 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
-          >
-            {photoBusy ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />} {t("join.usePhoto")}
-          </button>
-        )}
       </div>
+      {/* pixel-character grid — each tile previews the sprite in the chosen colour */}
       <div className="flex flex-wrap gap-1.5">
-        {PLAYER_EMOJI.map((em) => (
+        {PLAYER_SPRITES.map((key) => (
           <button
             type="button"
-            key={em}
-            onClick={() => setPickedEmoji(em)}
-            aria-label={em}
-            aria-pressed={pickedEmoji === em}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl text-lg transition active:scale-90 ${FOCUS} ${
-              pickedEmoji === em
+            key={key}
+            onClick={() => setPickedEmoji(key)}
+            aria-label={key}
+            aria-pressed={pickedEmoji === key}
+            className={`rounded-xl p-0.5 transition active:scale-90 ${FOCUS} ${
+              pickedEmoji === key
                 ? "bg-stone-900 ring-2 ring-stone-900 dark:bg-stone-100 dark:ring-stone-100"
                 : "bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700"
             }`}
           >
-            {em}
+            <Avatar color={pickedColor} emoji={key} name="" size={34} />
           </button>
         ))}
       </div>
@@ -505,7 +439,7 @@ export default function JoinView({ code }) {
             <ChevronLeft size={16} /> {t("playerbase.back")}
           </button>
           <div className="mb-4 flex items-center gap-3">
-            <Avatar color={pinFor.color} emoji={pinFor.emoji} photo={pinFor.photo} name={pinFor.name} size={44} />
+            <Avatar color={pinFor.color} emoji={pinFor.emoji} name={pinFor.name} size={44} />
             <h2 className="text-xl font-bold tracking-tight">{t("playerbase.enterPin", { name: pinFor.name })}</h2>
           </div>
           <input
@@ -546,7 +480,7 @@ export default function JoinView({ code }) {
             <span className="text-sm font-medium uppercase tracking-wide">{t("join.joinRoom", { code })}</span>
           </div>
           <div className="mb-5 flex items-center gap-3 rounded-2xl border-2 border-stone-200 bg-white/70 p-3 dark:border-stone-800 dark:bg-stone-900/60">
-            <Avatar color={c.color} emoji={c.emoji} photo={c.photo} name={c.name} size={48} />
+            <Avatar color={c.color} emoji={c.emoji} name={c.name} size={48} />
             <div className="min-w-0 flex-1">
               <p className="font-pixel text-[8px] uppercase tracking-widest text-stone-400">
                 {t("playerbase.playingAs")}
@@ -641,7 +575,7 @@ export default function JoinView({ code }) {
               onClick={() => selectExisting(p)}
               className={`flex items-center gap-2 rounded-xl border-2 border-stone-200 bg-white px-3 py-2.5 text-left transition active:scale-[.98] dark:border-stone-700 dark:bg-stone-900 ${FOCUS}`}
             >
-              <Avatar color={p.color} emoji={p.emoji} photo={p.photo} name={p.name} size={32} />
+              <Avatar color={p.color} emoji={p.emoji} name={p.name} size={32} />
               <span className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</span>
               {p.locked && <Lock size={13} className="shrink-0 text-stone-400" />}
             </button>
@@ -768,7 +702,6 @@ export default function JoinView({ code }) {
               <Avatar
                 color={myEntity?.color || pickedColor}
                 emoji={needsTeam ? myEntity?.emoji : pickedEmoji}
-                photo={needsTeam ? null : pickedPhoto}
                 name={room.name}
                 size={40}
               />

@@ -27,7 +27,7 @@ const VARIANTS = {
 
 /**
  * @param {object} props
- * @param {Array<{id:string,name:string,color?:string,emoji?:string,photo?:string,from:number,to:number}>} props.entities
+ * @param {Array<{id:string,name:string,color?:string,emoji?:string,from:number,to:number}>} props.entities
  * @param {boolean} [props.present] Larger sizing for the TV.
  * @param {string} [props.variant] One of RECAP_VARIANTS (model.js).
  * @param {number} [props.round] 1-based round number for the intro card (0 = unknown).

@@ -460,9 +460,6 @@ export function normalizeGame(raw) {
       if (p?.color) player.color = str(p.color);
       if (p?.emoji) player.emoji = str(p.emoji);
       if (p?.profileId) player.profileId = str(p.profileId); // links the entity to a persistent player profile
-      // an uploaded avatar photo: keep only a small data: image
-      if (typeof p?.photo === "string" && /^data:image\//.test(p.photo) && p.photo.length <= 200000)
-        player.photo = p.photo;
       return player;
     }),
     ri: num(raw.ri, 0),
@@ -638,20 +635,17 @@ export function aggregateLeaderboard(results) {
 /**
  * Validate a player profile (from Supabase or local cache). Requires an id.
  * @param {*} raw
- * @returns {{id:string,name:string,emoji:string|null,color:string|null,photo:string|null}|null}
+ * @returns {{id:string,name:string,emoji:string|null,color:string|null,locked:boolean}|null} (emoji = a pixel-sprite key)
  */
 export function normalizeProfile(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const id = str(raw.id);
   if (!id) return null;
-  const photo =
-    typeof raw.photo === "string" && /^data:image\//.test(raw.photo) && raw.photo.length <= 200000 ? raw.photo : null;
   return {
     id,
     name: str(raw.name),
-    emoji: typeof raw.emoji === "string" ? raw.emoji : null,
+    emoji: typeof raw.emoji === "string" ? raw.emoji : null, // a pixel-sprite key
     color: typeof raw.color === "string" ? raw.color : null,
-    photo,
     locked: !!raw.locked,
   };
 }
@@ -669,7 +663,6 @@ export function normalizeLeaderboard(rows) {
       name: str(r?.name) || "Player",
       emoji: typeof r?.emoji === "string" ? r.emoji : null,
       color: typeof r?.color === "string" ? r.color : null,
-      photo: typeof r?.photo === "string" ? r.photo : null,
       games: Math.max(0, num(r?.games, 0)),
       wins: Math.max(0, num(r?.wins, 0)),
       totalScore: num(r?.total_score, 0),
@@ -905,11 +898,6 @@ export function buildPresentQ(game) {
     roundType: round ? str(round.type) : null,
     roundTitle: round ? str(round.title) : "",
   };
-  // Avatar photos ride the heavy/per-question channel (not the frequent live one).
-  const photos = {};
-  for (const p of Array.isArray(game.players) ? game.players : [])
-    if (typeof p.photo === "string") photos[p.id] = p.photo;
-  if (Object.keys(photos).length) base.photos = photos;
   if (game.stage === "question" && round) {
     const q = currentQuestion(game);
     if (q) base.q = presentQ(round.type, q);
@@ -1011,12 +999,6 @@ export function normalizePresent(raw) {
     roundType: ROUND_TYPES.includes(raw.roundType) ? raw.roundType : null,
     roundTitle: str(raw.roundTitle),
   };
-  if (raw.photos && typeof raw.photos === "object" && !Array.isArray(raw.photos)) {
-    const photos = {};
-    for (const [k, v] of Object.entries(raw.photos))
-      if (typeof v === "string" && /^data:image\//.test(v) && v.length <= 200000) photos[str(k)] = v;
-    if (Object.keys(photos).length) out.photos = photos;
-  }
   if (raw.q && typeof raw.q === "object" && !Array.isArray(raw.q)) {
     const q = raw.q;
     const o = { audioOnly: !!q.audioOnly };

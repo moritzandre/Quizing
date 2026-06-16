@@ -11,7 +11,7 @@ import { rankRecap } from "./recapShared.js";
 
 /**
  * @param {object} props
- * @param {Array<{id:string,name:string,color?:string,emoji?:string,photo?:string,from:number,to:number}>} props.entities
+ * @param {Array<{id:string,name:string,color?:string,emoji?:string,from:number,to:number}>} props.entities
  * @param {boolean} [props.present] Larger sizing for the TV.
  */
 export default function RecapBoard({ entities = [], present = false }) {
@@ -32,7 +32,7 @@ export default function RecapBoard({ entities = [], present = false }) {
             <span className={`w-6 shrink-0 text-center font-pixel ${present ? "text-sm" : "text-xs"} text-stone-400`}>
               {rank + 1}
             </span>
-            <Avatar color={e.color} emoji={e.emoji} photo={e.photo} name={e.name} size={present ? 38 : 28} />
+            <Avatar color={e.color} emoji={e.emoji} name={e.name} size={present ? 38 : 28} />
             <span className={`min-w-0 flex-1 truncate font-semibold ${present ? "text-xl" : "text-sm"}`}>
               {e.name}
               {e.id === topMoverId && <Star size={13} className="ml-1 inline fill-amber-400 text-amber-400" />}
