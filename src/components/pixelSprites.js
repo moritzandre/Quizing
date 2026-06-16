@@ -28,7 +28,13 @@ export const SPRITE_KEYS = Object.keys(SPRITES);
 /** Lighten (amt>0, toward white) or darken (amt<0, toward black) a #rrggbb colour. */
 export function shade(hex, amt) {
   const h = String(hex || "").replace("#", "");
-  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const full =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h;
   const n = parseInt(full, 16);
   if (Number.isNaN(n)) return hex;
   let r = (n >> 16) & 255,
@@ -44,7 +50,10 @@ export function shade(hex, amt) {
     g += (255 - g) * amt;
     b += (255 - b) * amt;
   }
-  const to = (v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0");
+  const to = (v) =>
+    Math.max(0, Math.min(255, Math.round(v)))
+      .toString(16)
+      .padStart(2, "0");
   return "#" + to(r) + to(g) + to(b);
 }
 

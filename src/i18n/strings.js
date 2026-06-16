@@ -329,7 +329,8 @@ const en = {
   "playerbase.enterPin": "Enter {name}'s PIN",
   "playerbase.unlock": "Unlock",
   "playerbase.wrongPin": "Wrong PIN",
-  "playerbase.guestFallback": "Couldn't save your player right now — you're playing as a guest (stats won't be recorded).",
+  "playerbase.guestFallback":
+    "Couldn't save your player right now — you're playing as a guest (stats won't be recorded).",
   "admin.title": "Host sign-in",
   "admin.signInIntro": "Sign in to host games and manage players.",
   "admin.signUpIntro": "Create the host account for this Quiz Night.",
@@ -460,7 +461,8 @@ const en = {
   "round.hints.label": "Hint Ladder",
   "round.hints.desc": "The answer starts at full value. Every extra hint lowers it. Reveal when someone calls it out.",
   "round.connect.label": "What Connects?",
-  "round.connect.desc": "Reveal clues (text, image, audio or video) one by one — players work out what they all have in common. Fewer points the more clues it takes.",
+  "round.connect.desc":
+    "Reveal clues (text, image, audio or video) one by one — players work out what they all have in common. Fewer points the more clues it takes.",
   "round.video.label": "Video",
   "round.video.desc": "Play the clip together, then reveal the answer and award the points.",
   "round.clip.label": "Clip Ladder",
@@ -865,7 +867,8 @@ const de = {
   "admin.claimFailed": "Nicht möglich — es gibt bereits einen Admin. Bitte einen bestehenden Admin, dich hinzuzufügen.",
   "admin.signOut": "Abmelden",
   "admin.signedInAs": "angemeldet als {email}",
-  "admin.lockedBody": "Dies ist ein privates Quiz Night. Frag den Host nach QR-Code oder Beitritts-Link, um mitzuspielen.",
+  "admin.lockedBody":
+    "Dies ist ein privates Quiz Night. Frag den Host nach QR-Code oder Beitritts-Link, um mitzuspielen.",
   "admin.hostSignIn": "Host-Anmeldung",
   "admin.addTitle": "Admin hinzufügen",
   "admin.addIntro": "Füge einen weiteren Host per E-Mail hinzu. Die Person muss vorher ein Konto erstellt haben.",

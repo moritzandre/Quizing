@@ -78,12 +78,7 @@ export default function RocketRaceRecap({ entities = [], present = false, progre
                 {flying && (
                   <span className={`qn-flicker text-orange-400 ${present ? "text-base" : "text-[11px]"}`}>🔥</span>
                 )}
-                <Avatar
-                  color={entity.color}
-                  emoji={entity.emoji}
-                  name={entity.name}
-                  size={present ? 34 : 24}
-                />
+                <Avatar color={entity.color} emoji={entity.emoji} name={entity.name} size={present ? 34 : 24} />
                 <span className={present ? "text-lg" : "text-sm"}>🚀</span>
                 <span className={`font-pixel text-sky-300 ${present ? "text-base" : "text-[10px]"}`}>{score}</span>
               </div>

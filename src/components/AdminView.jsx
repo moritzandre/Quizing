@@ -137,7 +137,9 @@ function EditPlayerModal({ player, onClose, onChanged, t }) {
               aria-pressed={color === c}
               style={{ backgroundColor: c }}
               className={`h-8 w-8 rounded-full transition active:scale-90 ${FOCUS} ${
-                color === c ? "ring-2 ring-stone-900 ring-offset-2 ring-offset-white dark:ring-stone-100 dark:ring-offset-stone-950" : ""
+                color === c
+                  ? "ring-2 ring-stone-900 ring-offset-2 ring-offset-white dark:ring-stone-100 dark:ring-offset-stone-950"
+                  : ""
               }`}
             />
           ))}
@@ -207,11 +209,17 @@ function PlayerStatsModal({ player, onClose, t }) {
             </div>
             {s.recent.length > 0 && (
               <div className="mt-4">
-                <p className="mb-2 font-pixel text-[8px] uppercase tracking-widest text-stone-400">{t("stats.recent")}</p>
+                <p className="mb-2 font-pixel text-[8px] uppercase tracking-widest text-stone-400">
+                  {t("stats.recent")}
+                </p>
                 <div className="space-y-1">
                   {s.recent.map((r, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm">
-                      {r.won ? <Trophy size={13} className="shrink-0 text-amber-500" /> : <span className="w-[13px] shrink-0" />}
+                      {r.won ? (
+                        <Trophy size={13} className="shrink-0 text-amber-500" />
+                      ) : (
+                        <span className="w-[13px] shrink-0" />
+                      )}
                       <span className="min-w-0 flex-1 truncate text-stone-600 dark:text-stone-300">{r.quiz_title}</span>
                       <span className="shrink-0 font-pixel text-xs tabular-nums">{r.score}</span>
                     </div>
@@ -345,7 +353,9 @@ export default function AdminView({ admin, onBack }) {
                               {p.locked && <Lock size={12} className="shrink-0 text-stone-400" />}
                             </p>
                             <p className="font-pixel text-[8px] uppercase tracking-widest text-stone-400">
-                              {b ? `${b.games} ${t("stats.games")} · ${b.wins} ${t("stats.wins")}` : t("admin.neverPlayed")}
+                              {b
+                                ? `${b.games} ${t("stats.games")} · ${b.wins} ${t("stats.wins")}`
+                                : t("admin.neverPlayed")}
                             </p>
                           </div>
                           <IconButton label={t("admin.stats")} onClick={() => setStatsOf(p)}>
@@ -372,7 +382,9 @@ export default function AdminView({ admin, onBack }) {
                   return (
                     <div key={g.gameId} className={`${cardCls} p-3`}>
                       <div className="flex items-center justify-between gap-2">
-                        <p className="min-w-0 truncate text-sm font-semibold">{g.quizTitle || t("admin.untitledQuiz")}</p>
+                        <p className="min-w-0 truncate text-sm font-semibold">
+                          {g.quizTitle || t("admin.untitledQuiz")}
+                        </p>
                         <span className="shrink-0 font-pixel text-[8px] uppercase tracking-widest text-stone-400">
                           {fmtDate(g.playedAt)}
                         </span>
@@ -385,9 +397,7 @@ export default function AdminView({ admin, onBack }) {
                         {winner && (
                           <span className="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
                             <Trophy size={12} />
-                            {wp ? (
-                              <Avatar color={wp.color} emoji={wp.emoji} name={wp.name} size={16} />
-                            ) : null}
+                            {wp ? <Avatar color={wp.color} emoji={wp.emoji} name={wp.name} size={16} /> : null}
                             <span className="font-medium">{wp ? wp.name : "—"}</span>
                             <span className="font-pixel text-[10px]">{winner.score}</span>
                           </span>
@@ -402,9 +412,7 @@ export default function AdminView({ admin, onBack }) {
         )}
       </div>
 
-      {editing && (
-        <EditPlayerModal player={editing} t={t} onClose={() => setEditing(null)} onChanged={reload} />
-      )}
+      {editing && <EditPlayerModal player={editing} t={t} onClose={() => setEditing(null)} onChanged={reload} />}
       {statsOf && <PlayerStatsModal player={statsOf} t={t} onClose={() => setStatsOf(null)} />}
     </div>
   );

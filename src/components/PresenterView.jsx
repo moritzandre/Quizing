@@ -35,11 +35,7 @@ export default function PresenterView({ code }) {
   // A persistent score strip during play (the host has one at the bottom too);
   // hidden on the screens that already show full standings (recap/standings/end).
   const showScoreStrip =
-    !!present &&
-    present.stage !== "end" &&
-    !live?.showRecap &&
-    !live?.showStandings &&
-    sortedStandings.length > 0;
+    !!present && present.stage !== "end" && !live?.showRecap && !live?.showStandings && sortedStandings.length > 0;
 
   // A plain function (not a component) so children reconcile by type instead of
   // remounting the map/player subtree on every live update.

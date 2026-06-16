@@ -79,12 +79,7 @@ export default function PelletMuncherRecap({ entities = [], present = false, pro
               {/* the muncher — pops on each pellet eaten */}
               <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${muncherPct}%` }}>
                 <div key={eaten} className="qn-pop">
-                  <Avatar
-                    color={entity.color}
-                    emoji={entity.emoji}
-                    name={entity.name}
-                    size={present ? 32 : 24}
-                  />
+                  <Avatar color={entity.color} emoji={entity.emoji} name={entity.name} size={present ? 32 : 24} />
                 </div>
               </div>
               <span

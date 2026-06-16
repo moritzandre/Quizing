@@ -67,12 +67,7 @@ export default function BlockStackerRecap({ entities = [], present = false, prog
           return (
             <div key={entity.id} className="flex w-16 shrink-0 flex-col items-center sm:w-20">
               <div className="flex flex-col items-center justify-end" style={{ height: areaH + 8 }}>
-                <Avatar
-                  color={entity.color}
-                  emoji={entity.emoji}
-                  name={entity.name}
-                  size={present ? 32 : 24}
-                />
+                <Avatar color={entity.color} emoji={entity.emoji} name={entity.name} size={present ? 32 : 24} />
                 <span className={`mb-0.5 mt-0.5 font-pixel text-emerald-300 ${present ? "text-sm" : "text-[10px]"}`}>
                   {score}
                 </span>

@@ -46,12 +46,7 @@ export default function BrickBreakerRecap({ entities = [], present = false, prog
                 entity.id === topMoverId ? "border-amber-400/70 bg-amber-400/10" : "border-white/10 bg-white/5"
               }`}
             >
-              <Avatar
-                color={entity.color}
-                emoji={entity.emoji}
-                name={entity.name}
-                size={present ? 34 : 24}
-              />
+              <Avatar color={entity.color} emoji={entity.emoji} name={entity.name} size={present ? 34 : 24} />
               <span
                 className={`min-w-0 max-w-[7rem] flex-shrink truncate font-semibold ${present ? "text-lg" : "text-xs"}`}
               >
@@ -76,7 +71,10 @@ export default function BrickBreakerRecap({ entities = [], present = false, prog
                   // debris puff on the brick that just shattered (re-keyed each break)
                   if (i === broken - 1 && localP < 1)
                     return (
-                      <span key={`d${broken}`} className={`qn-burst leading-none ${present ? "text-sm" : "text-[10px]"}`}>
+                      <span
+                        key={`d${broken}`}
+                        className={`qn-burst leading-none ${present ? "text-sm" : "text-[10px]"}`}
+                      >
                         ✦
                       </span>
                     );

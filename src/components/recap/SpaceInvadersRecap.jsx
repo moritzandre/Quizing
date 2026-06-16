@@ -69,12 +69,7 @@ export default function SpaceInvadersRecap({ entities = [], present = false, pro
               }`}
             >
               <div className="relative shrink-0">
-                <Avatar
-                  color={entity.color}
-                  emoji={entity.emoji}
-                  name={entity.name}
-                  size={present ? 36 : 26}
-                />
+                <Avatar color={entity.color} emoji={entity.emoji} name={entity.name} size={present ? 36 : 26} />
                 {firing && (
                   <span
                     className={`qn-blink absolute -right-1.5 top-1/2 -translate-y-1/2 text-cyan-300 ${present ? "text-sm" : "text-[10px]"}`}

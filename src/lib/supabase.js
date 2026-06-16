@@ -201,7 +201,10 @@ export async function signInAdmin(email, password) {
   try {
     const sb = await getSupabaseClient();
     if (!sb) return null;
-    const { data, error } = await sb.auth.signInWithPassword({ email: String(email || "").trim(), password: password || "" });
+    const { data, error } = await sb.auth.signInWithPassword({
+      email: String(email || "").trim(),
+      password: password || "",
+    });
     if (error) return null;
     return data?.user || null;
   } catch {
@@ -332,11 +335,7 @@ export async function loadRecentResults(limit = 400) {
   try {
     const sb = await getSupabaseClient();
     if (!sb) return [];
-    const { data, error } = await sb
-      .from("results")
-      .select("*")
-      .order("played_at", { ascending: false })
-      .limit(limit);
+    const { data, error } = await sb.from("results").select("*").order("played_at", { ascending: false }).limit(limit);
     if (error) return [];
     return Array.isArray(data) ? data : [];
   } catch {
