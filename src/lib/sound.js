@@ -96,11 +96,29 @@ const SEQUENCES = {
     { freq: 784, start: 0.08, dur: 0.08, type: "square", gain: 0.12 },
     { freq: 1047, start: 0.16, dur: 0.2, type: "square", gain: 0.13 },
   ],
+  // Recap minigame event blips — kept short + quiet since many fire in quick
+  // succession as scores count up (throttled by the caller).
+  zap: [
+    { freq: 760, dur: 0.05, type: "square", gain: 0.07 },
+    { freq: 380, start: 0.02, dur: 0.06, type: "square", gain: 0.06 },
+  ],
+  shatter: [
+    { freq: 540, dur: 0.04, type: "square", gain: 0.06 },
+    { freq: 230, start: 0.02, dur: 0.06, type: "square", gain: 0.06 },
+  ],
+  chomp: [{ freq: 300, dur: 0.05, type: "square", gain: 0.08 }],
+  thud: [{ freq: 140, dur: 0.09, type: "square", gain: 0.09 }],
+  // A bright sparkle when the round winner is crowned at the recap finale.
+  sparkle: [
+    { freq: 988, dur: 0.08, type: "triangle", gain: 0.13 },
+    { freq: 1319, start: 0.08, dur: 0.08, type: "triangle", gain: 0.13 },
+    { freq: 1568, start: 0.16, dur: 0.28, type: "triangle", gain: 0.14 },
+  ],
 };
 
 /**
  * Play a named cue. No-op when muted or WebAudio is unavailable.
- * @param {"reveal"|"correct"|"wrong"|"timeup"|"buzz"|"win"|"fanfare"|"select"|"coin"|"levelup"} kind
+ * @param {"reveal"|"correct"|"wrong"|"timeup"|"buzz"|"win"|"fanfare"|"select"|"coin"|"levelup"|"zap"|"shatter"|"chomp"|"thud"|"sparkle"} kind
  */
 export function playSound(kind) {
   if (muted) return;

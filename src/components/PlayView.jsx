@@ -255,6 +255,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
         recap,
         recapFrom: game.roundStartScores,
         recapVariant,
+        recapRound: game.ri + 1,
+        recapTotal: game.quiz.rounds.length,
         transport,
         soundOnTv,
         volume,
@@ -915,6 +917,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <div className="flex flex-1 flex-col justify-center">
               <RoundRecap
                 variant={recapVariant}
+                round={game.ri + 1}
+                total={game.quiz.rounds.length}
                 entities={game.players.map((p, i) => ({
                   id: p.id,
                   name: p.name,

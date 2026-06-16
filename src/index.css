@@ -170,6 +170,90 @@ h2 {
   }
 }
 
+/* ---- recap minigame scenery + juice ---- */
+/* Twinkling starfield dots behind a recap scene. */
+@keyframes qn-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* Slow parallax drift (planets / clouds / asteroids gliding across a scene). */
+@keyframes qn-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-140%);
+  }
+}
+
+/* Flickering rocket / jet flame. */
+@keyframes qn-flicker {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scaleY(0.7);
+  }
+}
+
+/* One-shot particle burst — explosions, shatter shards, landing dust. */
+@keyframes qn-burst {
+  0% {
+    opacity: 0.95;
+    transform: scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+/* A block squashing as it lands on the tower. */
+@keyframes qn-squash {
+  0% {
+    transform: scaleY(0.5) scaleX(1.2);
+  }
+  55% {
+    transform: scaleY(1.08) scaleX(0.95);
+  }
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+}
+
+/* Gentle idle bob — waiting invaders, a chasing ghost, the winner's crown. */
+@keyframes qn-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18%);
+  }
+}
+
+/* Soft glow pulse for the leader spotlight / finale highlight. */
+@keyframes qn-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
 .qn-eq-bar {
   transform-origin: bottom;
   animation: qn-eq 0.8s ease-in-out infinite;
@@ -201,6 +285,31 @@ h2 {
 
 .qn-shake {
   animation: qn-shake 0.4s ease-in-out both;
+}
+
+/* recap scenery + juice (durations/delays often overridden inline per sprite) */
+.qn-twinkle {
+  animation: qn-twinkle 1.6s ease-in-out infinite;
+}
+.qn-drift {
+  animation: qn-drift 9s linear infinite;
+}
+.qn-flicker {
+  animation: qn-flicker 0.16s steps(2) infinite;
+  transform-origin: top center;
+}
+.qn-burst {
+  animation: qn-burst 0.45s ease-out forwards;
+}
+.qn-squash {
+  animation: qn-squash 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: bottom;
+}
+.qn-bob {
+  animation: qn-bob 0.9s ease-in-out infinite;
+}
+.qn-pulse {
+  animation: qn-pulse 1.4s ease-in-out infinite;
 }
 
 /* Crisp pixel edges for the retro font (no blurry upscaling). Layered so it
@@ -240,7 +349,14 @@ h2 {
   .qn-score-pop,
   .qn-float-up,
   .qn-blink,
-  .qn-shake {
+  .qn-shake,
+  .qn-twinkle,
+  .qn-drift,
+  .qn-flicker,
+  .qn-burst,
+  .qn-squash,
+  .qn-bob,
+  .qn-pulse {
     animation: none;
   }
   .qn-climb-row {

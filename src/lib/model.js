@@ -918,9 +918,46 @@ export function buildPresentQ(game) {
 }
 
 /**
+ * Derive between-rounds commentary beats from the recap entities (pure; returns
+ * i18n keys + vars, translated by the caller). `mid` is the single most
+ * interesting mid-recap caption; `winner` is the round leader for the finale.
+ * @param {Array<{id:string,name:string,from:number,to:number}>} entities
+ * @returns {{mid: ({key:string, vars:object}|null), winner: ({key:string, vars:object}|null)}}
+ */
+export function recapStory(entities) {
+  const list = Array.isArray(entities) ? entities.filter((e) => e && typeof e === "object") : [];
+  if (!list.length) return { mid: null, winner: null };
+  const nameOf = (e) => str(e?.name) || "Player";
+  const byTo = [...list].sort((a, b) => num(b.to, 0) - num(a.to, 0));
+  const byFrom = [...list].sort((a, b) => num(b.from, 0) - num(a.from, 0));
+  const winner = { key: "recapStory.winner", vars: { name: nameOf(byTo[0]) } };
+
+  let mid = null;
+  // 1) a lead change this round trumps everything
+  if (list.length >= 2 && byTo[0].id !== byFrom[0].id && num(byTo[0].to, 0) > num(byFrom[0].from, 0)) {
+    mid = { key: "recapStory.overtake", vars: { name: nameOf(byTo[0]), prev: nameOf(byFrom[0]) } };
+  } else if (list.length >= 2) {
+    // 2) photo finish — top two within a hair
+    const gap = num(byTo[0].to, 0) - num(byTo[1].to, 0);
+    const maxTo = Math.max(1, num(byTo[0].to, 0));
+    if (gap <= Math.max(2, Math.round(maxTo * 0.04))) mid = { key: "recapStory.photoFinish", vars: {} };
+  }
+  // 3) otherwise spotlight the biggest positive mover
+  if (!mid) {
+    const mover = list.reduce(
+      (b, e) => (num(e.to, 0) - num(e.from, 0) > (b ? num(b.to, 0) - num(b.from, 0) : 0) ? e : b),
+      null,
+    );
+    const delta = mover ? num(mover.to, 0) - num(mover.from, 0) : 0;
+    if (mover && delta > 0) mid = { key: "recapStory.onFire", vars: { name: nameOf(mover), delta } };
+  }
+  return { mid, winner };
+}
+
+/**
  * Build the light, frequently-changing presenter payload (topic: live).
  * @param {object} game A valid game.
- * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object, recapVariant?:string, transport?:object, soundOnTv?:boolean}} [opts]
+ * @param {{step?:number, showStandings?:boolean, value?:number, allowNegative?:boolean, recap?:boolean, recapFrom?:object, recapVariant?:string, recapRound?:number, recapTotal?:number, transport?:object, soundOnTv?:boolean}} [opts]
  */
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
@@ -943,6 +980,8 @@ export function buildLive(game, opts = {}) {
     showRecap: !!opts.recap,
     recapFrom: opts.recap ? scoreMap(opts.recapFrom) : null,
     recapVariant: RECAP_VARIANTS.includes(opts.recapVariant) ? opts.recapVariant : RECAP_VARIANTS[0],
+    recapRound: opts.recap ? Math.max(0, Math.round(num(opts.recapRound, 0))) : 0,
+    recapTotal: opts.recap ? Math.max(0, Math.round(num(opts.recapTotal, 0))) : 0,
     // Remote media transport (the TV/host followers play/pause/restart from this).
     transport:
       opts.transport && typeof opts.transport === "object"
@@ -1021,6 +1060,8 @@ export function normalizeLive(raw) {
     showRecap: !!raw.showRecap,
     recapFrom: raw.showRecap ? scoreMap(raw.recapFrom) : null,
     recapVariant: RECAP_VARIANTS.includes(raw.recapVariant) ? raw.recapVariant : RECAP_VARIANTS[0],
+    recapRound: raw.showRecap ? Math.max(0, Math.round(num(raw.recapRound, 0))) : 0,
+    recapTotal: raw.showRecap ? Math.max(0, Math.round(num(raw.recapTotal, 0))) : 0,
     transport:
       raw.transport && typeof raw.transport === "object"
         ? {

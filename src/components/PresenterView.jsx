@@ -93,6 +93,8 @@ export default function PresenterView({ code }) {
         <RoundRecap
           present
           variant={live.recapVariant}
+          round={live.recapRound}
+          total={live.recapTotal}
           entities={standings.map((s) => ({
             id: s.id,
             name: s.name,

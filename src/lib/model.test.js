@@ -28,6 +28,7 @@ import {
   normalizePhoneScores,
   normalizePresent,
   normalizeLive,
+  recapStory,
   mapillaryEmbedUrl,
   roundsFromImport,
 } from "./model.js";
@@ -994,6 +995,63 @@ describe("presenter payloads", () => {
   it("buildLive carries the recap variant only sanely (defaults bad input)", () => {
     expect(buildLive(game(), { recapVariant: "bricks" }).recapVariant).toBe("bricks");
     expect(buildLive(game(), { recapVariant: "nope" }).recapVariant).toBe("invaders");
+  });
+
+  it("buildLive/normalizeLive round-trip the recap round number (only when recapping)", () => {
+    const l = buildLive(game(), { recap: true, recapRound: 2, recapTotal: 5 });
+    expect(l.recapRound).toBe(2);
+    expect(l.recapTotal).toBe(5);
+    expect(buildLive(game(), { recapRound: 2, recapTotal: 5 }).recapRound).toBe(0); // not recapping → 0
+    expect(normalizeLive({ showRecap: true, recapRound: "3", recapTotal: "8" }).recapRound).toBe(3);
+    expect(normalizeLive({ showRecap: true, recapRound: "3", recapTotal: "8" }).recapTotal).toBe(8);
+    expect(normalizeLive({ recapRound: 3 }).recapRound).toBe(0); // no showRecap → 0
+  });
+
+  describe("recapStory (between-rounds commentary)", () => {
+    it("returns nothing for an empty field", () => {
+      expect(recapStory([])).toEqual({ mid: null, winner: null });
+    });
+
+    it("crowns the entity with the highest final score", () => {
+      const s = recapStory([
+        { id: "a", name: "Ann", from: 0, to: 10 },
+        { id: "b", name: "Bo", from: 0, to: 5 },
+      ]);
+      expect(s.winner).toEqual({ key: "recapStory.winner", vars: { name: "Ann" } });
+    });
+
+    it("calls out a lead change as an overtake", () => {
+      const s = recapStory([
+        { id: "a", name: "Ann", from: 2, to: 10 },
+        { id: "b", name: "Bo", from: 8, to: 9 },
+      ]);
+      expect(s.mid).toEqual({ key: "recapStory.overtake", vars: { name: "Ann", prev: "Bo" } });
+    });
+
+    it("flags a photo finish when the top two are within a hair", () => {
+      const s = recapStory([
+        { id: "a", name: "Ann", from: 0, to: 10 },
+        { id: "b", name: "Bo", from: 0, to: 9 },
+      ]);
+      expect(s.mid).toEqual({ key: "recapStory.photoFinish", vars: {} });
+    });
+
+    it("otherwise spotlights the biggest positive mover (leader unchanged, not close)", () => {
+      const s = recapStory([
+        { id: "a", name: "Ann", from: 30, to: 50 }, // already ahead, stays ahead
+        { id: "b", name: "Bo", from: 0, to: 10 },
+      ]);
+      expect(s.mid).toEqual({ key: "recapStory.onFire", vars: { name: "Ann", delta: 20 } });
+    });
+
+    it("has no mid beat when nobody gained and the field isn't close", () => {
+      const s = recapStory([
+        { id: "a", name: "Ann", from: 30, to: 30 },
+        { id: "b", name: "Bo", from: 5, to: 5 },
+      ]);
+      expect(s.mid).toBeNull();
+      expect(s.winner.vars.name).toBe("Ann");
+    });
   });
 
   it("normalizeLive round-trips a true/false reveal (correct + note for the TV)", () => {

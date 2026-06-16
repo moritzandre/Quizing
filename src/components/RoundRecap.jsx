@@ -10,6 +10,7 @@
 
 import { prefersReducedMotion } from "./ui.jsx";
 import RecapBoard from "./recap/RecapBoard.jsx";
+import RecapShow from "./recap/RecapShow.jsx";
 import SpaceInvadersRecap from "./recap/SpaceInvadersRecap.jsx";
 import RocketRaceRecap from "./recap/RocketRaceRecap.jsx";
 import BlockStackerRecap from "./recap/BlockStackerRecap.jsx";
@@ -29,10 +30,12 @@ const VARIANTS = {
  * @param {Array<{id:string,name:string,color?:string,emoji?:string,photo?:string,from:number,to:number}>} props.entities
  * @param {boolean} [props.present] Larger sizing for the TV.
  * @param {string} [props.variant] One of RECAP_VARIANTS (model.js).
+ * @param {number} [props.round] 1-based round number for the intro card (0 = unknown).
+ * @param {number} [props.total] Total rounds (0 = unknown).
  */
-export default function RoundRecap({ entities = [], present = false, variant = "invaders" }) {
+export default function RoundRecap({ entities = [], present = false, variant = "invaders", round = 0, total = 0 }) {
   if (!entities.length) return null;
   if (prefersReducedMotion()) return <RecapBoard entities={entities} present={present} />;
-  const Comp = VARIANTS[variant] || SpaceInvadersRecap;
-  return <Comp entities={entities} present={present} />;
+  const Variant = VARIANTS[variant] || SpaceInvadersRecap;
+  return <RecapShow Variant={Variant} entities={entities} present={present} round={round} total={total} />;
 }
