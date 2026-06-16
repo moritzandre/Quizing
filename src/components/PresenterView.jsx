@@ -162,6 +162,7 @@ export default function PresenterView({ code }) {
       revealed={!!live?.revealed}
       hintsShown={live?.hintsShown || 1}
       step={live?.step || 0}
+      morphProgress={live?.morphProgress || 0}
       reveal={live?.reveal || null}
       transport={live?.transport || null}
       stage={!!live?.soundOnTv && soundOn}

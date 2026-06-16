@@ -9,6 +9,7 @@ import {
   moveItem,
   haversineKm,
   morphValue,
+  morphValueAt,
   clipLadderActive,
   clipEnd,
   summarizeGame,
@@ -647,6 +648,19 @@ describe("morphValue", () => {
 
   it("never drops below 1", () => {
     expect(morphValue(2, 8, 8)).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("morphValueAt (continuous demorph)", () => {
+  it("is full value at progress 0 and decays to a floor of 1 at progress 1", () => {
+    expect(morphValueAt(30, 0)).toBe(30);
+    expect(morphValueAt(30, 0.5)).toBe(15);
+    expect(morphValueAt(30, 1)).toBe(1); // floored
+  });
+  it("clamps out-of-range progress and never drops below 1", () => {
+    expect(morphValueAt(30, -1)).toBe(30);
+    expect(morphValueAt(30, 2)).toBe(1);
+    expect(morphValueAt(2, 0.99)).toBeGreaterThanOrEqual(1);
   });
 });
 

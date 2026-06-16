@@ -572,6 +572,16 @@ export const morphValue = (points, steps, step) =>
   Math.max(1, Math.round((num(points, 10) * (steps - step + 1)) / (steps + 1)));
 
 /**
+ * Points for the continuous morph demorph: full value while fully morphed
+ * (progress 0), decaying linearly to a floor of 1 as it clears (progress 1).
+ * The earlier a player buzzes, the more it's worth.
+ * @param {number} points Base points.
+ * @param {number} progress 0 (morphed) → 1 (clear).
+ */
+export const morphValueAt = (points, progress) =>
+  Math.max(1, Math.round(num(points, 10) * (1 - Math.max(0, Math.min(1, num(progress, 0))))));
+
+/**
  * Video/audio "clip ladder": the host plays a short slice of the trimmed
  * [start,end] window and extends it step by step (like the hint ladder),
  * awarding fewer points each extension. Active only when `steps` > 0 and the
@@ -1003,6 +1013,7 @@ export function buildLive(game, opts = {}) {
     revealed: !!game.revealed,
     hintsShown: Math.max(1, num(game.hintsShown, 1)),
     step: Math.max(0, num(opts.step, 0)),
+    morphProgress: Math.max(0, Math.min(1, num(opts.morphProgress, 0))),
     showStandings: !!opts.showStandings,
     value: num(opts.value, 0),
     allowNegative: !!opts.allowNegative,
@@ -1078,6 +1089,7 @@ export function normalizeLive(raw) {
     revealed: !!raw.revealed,
     hintsShown: Math.max(1, num(raw.hintsShown, 1)),
     step: Math.max(0, num(raw.step, 0)),
+    morphProgress: Math.max(0, Math.min(1, num(raw.morphProgress, 0))),
     showStandings: !!raw.showStandings,
     value: num(raw.value, 0),
     allowNegative: !!raw.allowNegative,

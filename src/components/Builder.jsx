@@ -1148,18 +1148,6 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                               </option>
                             ))}
                           </select>
-                          <label className="inline-flex items-center gap-1 rounded-xl border border-stone-200 px-2 text-xs text-stone-500 dark:border-stone-700 dark:text-stone-400">
-                            {t("builder.steps")}
-                            <input
-                              type="number"
-                              min="1"
-                              max="8"
-                              aria-label={t("builder.morphSteps")}
-                              className="w-12 bg-transparent py-2 text-center focus:outline-none"
-                              value={item.steps}
-                              onChange={(e) => qRow(r, item, { steps: Math.max(1, Math.min(8, +e.target.value || 4)) })}
-                            />
-                          </label>
                           <input
                             type="number"
                             aria-label={t("builder.points")}

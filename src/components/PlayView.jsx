@@ -39,6 +39,7 @@ import {
   nextNonEmpty,
   haversineKm,
   morphValue,
+  morphValueAt,
   clipLadderActive,
   clipEnd,
   hintHasContent,
@@ -89,6 +90,8 @@ const fmtKm = (km) => (km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km).toLoc
 // value math and the displayed ladder match the builder's hint count.
 const realHints = (hints) => (hints || []).filter(hintHasContent);
 const ptsOr = (n, d) => (Number.isFinite(n) ? n : d);
+const MORPH_DEMORPH_MS = 24000; // full continuous demorph runs over ~24s (slow); buzzing pauses it
+const MORPH_TICK_MS = 200;
 
 /** Host-facing game screen; drives a game object via setGame (persisted by the app shell). */
 export default function PlayView({ game, setGame, onExit, room }) {
@@ -123,8 +126,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* whose pin is being placed in a map round (host-side) */
   const [guessFor, setGuessFor] = useState(null);
 
-  /* morph round reveal step (0 = fully obscured); also the clip-ladder step */
+  /* morph round reveal step (0 = fully obscured); also the clip-ladder step + fusion defuse step */
   const [morphStep, setMorphStep] = useState(0);
+  /* morph round continuous demorph: progress 0→1 (0 = fully morphed) + whether it's auto-running */
+  const [morphP, setMorphP] = useState(0);
+  const [morphRunning, setMorphRunning] = useState(false);
 
   /* media transport for clips/video: the stage (this screen or the TV) plays/
      pauses/restarts from this. `soundOnTv` moves the stage (audio) to the TV. */
@@ -174,7 +180,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (!q) return 0;
     if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
     if (round.type === "connect") return Math.max(1, realHints(q.clues).length - game.hintsShown + 1) * 10;
-    if (round.type === "morph" || round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
+    if (round.type === "morph") return morphValueAt(q.points, morphP);
+    if (round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
     if ((round.type === "video" || round.type === "clip") && clipLadderActive(q))
       return morphValue(q.points, q.steps, morphStep);
     return ptsOr(q.points, 10);
@@ -185,6 +192,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setTimeLeft(timerSecs);
     setPaused(false);
     setMorphStep(0);
+    setMorphP(0);
+    setMorphRunning(false);
     setTransport({ n: 0, action: "idle" });
     setWk(WK_INIT);
     setWkLeft(0);
@@ -197,6 +206,15 @@ export default function PlayView({ game, setGame, onExit, room }) {
   useEffect(() => {
     if (room?.buzz) sendTransport("pause");
   }, [room?.buzz?.deviceId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Morph round: while the demorph is running, slowly reveal the image on a timer.
+  // It pauses whenever a player has buzzed (freezing the points), and stops once
+  // revealed or fully clear; clearing the buzzer resumes it.
+  useEffect(() => {
+    if (round?.type !== "morph" || !morphRunning || game.revealed || room?.buzz || morphP >= 1) return;
+    const id = setInterval(() => setMorphP((p) => Math.min(1, p + MORPH_TICK_MS / MORPH_DEMORPH_MS)), MORPH_TICK_MS);
+    return () => clearInterval(id);
+  }, [round?.type, morphRunning, game.revealed, room?.buzz, morphP >= 1]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Buzzer/pin orchestration: tell phones what to show for the current question.
   useEffect(() => {
@@ -246,11 +264,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   // Stream the light, frequently-changing presenter payload (reveal/step/scores).
   const scoreSig = game.players.map((p) => `${p.id}:${p.score}:${p.name}:${p.color}:${p.emoji}`).join(",");
+  // quantize the morph demorph for the TV (smooth via CSS transition; ~50 updates max)
+  const morphStreamP = Math.round(morphP * 50) / 50;
   useEffect(() => {
     if (!buzzerOn) return;
     room.pushLive(
       buildLive(game, {
         step: morphStep,
+        morphProgress: morphStreamP,
         showStandings,
         value,
         allowNegative,
@@ -266,7 +287,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, showStandings, recap, recapVariant, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, showStandings, recap, recapVariant, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -477,6 +498,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const jumpToRound = (ri) => {
     if (!Number.isInteger(ri) || ri < 0 || ri >= quiz.rounds.length) return; // guard untrusted ctrl/jump input
     setMorphStep(0);
+    setMorphP(0);
+    setMorphRunning(false);
     upd({ ri, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
     setNav(false);
   };
@@ -507,6 +530,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   const beginRound = () => {
     setMorphStep(0); // reset now so a morph question never flashes the previous (clear) step
+    setMorphP(0);
+    setMorphRunning(false);
     upd({
       stage: round.type === "jeopardy" ? "board" : "question",
       qi: 0,
@@ -541,6 +566,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const nextQuestion = () => {
     if (game.qi + 1 < round.questions.length) {
       setMorphStep(0);
+      setMorphP(0);
+      setMorphRunning(false);
       upd({ qi: game.qi + 1, revealed: false, hintsShown: 1, awarded: {}, guesses: {} });
     } else endRound();
   };
@@ -587,7 +614,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
             upd({ hintsShown: game.hintsShown + 1 });
           else if (round.type === "connect" && game.hintsShown < realHints(cq.clues).length)
             upd({ hintsShown: game.hintsShown + 1 });
-          else if (round.type === "morph" || round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
+          else if (round.type === "morph") setMorphRunning(true); // start/keep the auto-demorph running
+          else if (round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
           else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq)) extendClip(cq.steps);
         }
         break;
@@ -678,7 +706,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && round.type === "connect" && game.hintsShown < realHints(q.clues).length)
         upd({ hintsShown: game.hintsShown + 1 });
-      else if (k === "h" && !game.revealed && (round.type === "morph" || round.type === "fusion"))
+      else if (k === "h" && !game.revealed && round.type === "morph") setMorphRunning(true);
+      else if (k === "h" && !game.revealed && round.type === "fusion")
         setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (k === "h" && !game.revealed && (round.type === "video" || round.type === "clip") && clipLadderActive(q))
         extendClip(q.steps);
@@ -1500,7 +1529,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   if (round.type === "morph") {
-    const atEnd = morphStep >= q.steps;
+    const cleared = morphP >= 1;
     body = (
       <div className="flex h-full min-h-0 flex-col text-center">
         <div className="shrink-0">
@@ -1517,22 +1546,25 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         <div className="flex min-h-0 flex-1 items-center justify-center">
           <div className="w-full max-w-3xl">
-            <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={morphStep} revealed={game.revealed} />
+            <MorphImage url={q.url} effect={q.effect} progress={morphP} revealed={game.revealed} />
           </div>
         </div>
         <div className="shrink-0">
-          <div className="mt-3 flex flex-wrap justify-center gap-3">
-            {!game.revealed && !atEnd && (
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+            {!game.revealed && !cleared && (
               <Button
                 variant="outline"
                 className="px-5 py-3 text-base"
-                onClick={() => setMorphStep((s) => Math.min(q.steps, s + 1))}
+                onClick={() => setMorphRunning((r) => !r)}
               >
-                <Sparkles size={18} /> {t("play.demorph")}{" "}
-                <span className="text-sm text-stone-400">
-                  ({morphStep + 1}/{q.steps + 1})
-                </span>
+                <Sparkles size={18} />{" "}
+                {morphRunning ? t("play.pauseDemorph") : morphP > 0 ? t("play.resumeDemorph") : t("play.startDemorph")}
               </Button>
+            )}
+            {!game.revealed && morphRunning && room?.buzz && (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
+                {t("play.demorphPaused")}
+              </span>
             )}
             {!game.revealed && RevealBtn}
           </div>

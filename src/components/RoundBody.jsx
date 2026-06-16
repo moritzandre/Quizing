@@ -47,6 +47,7 @@ export default function RoundBody({
   revealed = false,
   hintsShown = 1,
   step = 0,
+  morphProgress = 0,
   reveal = null,
   transport = null,
   stage = false,
@@ -166,7 +167,7 @@ export default function RoundBody({
   if (type === "morph") {
     return (
       <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col items-center justify-center text-center">
-        <MorphImage url={q.url} effect={q.effect} steps={q.steps} step={step} revealed={revealed} />
+        <MorphImage url={q.url} effect={q.effect} progress={morphProgress} revealed={revealed} />
         {revealed && reveal?.answer != null && <p className={`${answerCls} shrink-0`}>{reveal.answer}</p>}
       </div>
     );

@@ -130,6 +130,7 @@ export default function HostRemoteView({ code }) {
               revealed={revealed}
               hintsShown={live?.hintsShown || 1}
               step={live?.step || 0}
+              morphProgress={live?.morphProgress || 0}
               reveal={live?.reveal || null}
               compact
               qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
@@ -323,7 +324,13 @@ export default function HostRemoteView({ code }) {
                 className={`bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 ${btn} ${FOCUS}`}
               >
                 <Lightbulb size={18} />{" "}
-                {type === "clip" ? t("play.extendClip") : type === "connect" ? t("play.nextClue") : t("host.hint")}
+                {type === "clip"
+                  ? t("play.extendClip")
+                  : type === "connect"
+                    ? t("play.nextClue")
+                    : type === "morph"
+                      ? t("play.startDemorph")
+                      : t("host.hint")}
               </button>
             )}
             <button
