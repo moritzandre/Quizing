@@ -30,11 +30,15 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { usePresenterRoom } from "./useRoom.js";
-import { TYPES, FOCUS, inputCls, Avatar } from "./ui.jsx";
+import { TYPES, FOCUS, Avatar } from "./ui.jsx";
 import { clipLadderActive } from "../lib/model.js";
 import { ANYTHINGLE_DB } from "../data/anythingle.js";
+import { CharacterField } from "./anythingleTraits.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import RoundBody from "./RoundBody.jsx";
+
+/** All DB character names (autocomplete source for the host-remote guess field). */
+const ANY_NAMES = ANYTHINGLE_DB.map((c) => c.name);
 
 /**
  * @param {object} props
@@ -289,18 +293,17 @@ export default function HostRemoteView({ code }) {
                 setAnyGuess("");
               }}
             >
-              <input
-                list="any-remote-names"
-                className={`${inputCls} flex-1`}
-                placeholder={t("play.anyGuessPlaceholder")}
+              <CharacterField
+                names={ANY_NAMES}
                 value={anyGuess}
-                onChange={(e) => setAnyGuess(e.target.value)}
+                onChange={setAnyGuess}
+                onSelect={(n) => {
+                  sendCtrl("anyGuess", { name: n });
+                  setAnyGuess("");
+                }}
+                placeholder={t("play.anyGuessPlaceholder")}
+                className="flex-1"
               />
-              <datalist id="any-remote-names">
-                {ANYTHINGLE_DB.map((c) => (
-                  <option key={c.id} value={c.name} />
-                ))}
-              </datalist>
               <button type="submit" disabled={!anyGuess.trim()} className={`bg-pink-600 text-white ${btn} ${FOCUS}`}>
                 {t("play.anyGuess")}
               </button>

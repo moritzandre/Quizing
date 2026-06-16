@@ -8,8 +8,9 @@
    author or host can only ever produce comparable, valid values.
    ==================================================================== */
 
+import { useState, useRef, useEffect } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
-import { ANYTHINGLE_TRAITS, ANY_POWERS, ANY_MAX_POWERS } from "../lib/model.js";
+import { ANYTHINGLE_TRAITS, ANY_POWERS, ANY_MAX_POWERS, normText } from "../lib/model.js";
 import { Avatar, inputCls, FOCUS } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
@@ -146,12 +147,14 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
   );
 }
 
-/** A single graded cell: the guessed character's trait value, tinted by result. */
-function Cell({ cell, big }) {
+/** A single graded cell: the guessed character's trait value, tinted by result.
+ * `index` staggers the reveal so a new guess's cells flip in one-after-another. */
+function Cell({ cell, big, index = 0 }) {
   const tone = CELL[cell?.result] || CELL.grey;
   return (
     <div
-      className={`flex items-center justify-center gap-0.5 rounded-md border px-1 text-center font-semibold ${tone} ${
+      style={{ animationDelay: `${index * 0.12}s` }}
+      className={`qn-cell-in flex items-center justify-center gap-0.5 rounded-md border px-1 text-center font-semibold ${tone} ${
         big ? "h-14 text-sm" : "h-11 text-[11px]"
       }`}
     >
@@ -187,18 +190,23 @@ export function GuessGrid({ guesses = [], big = false }) {
             </div>
           ))}
         </div>
-        {/* rows (newest first) */}
-        {[...guesses].reverse().map((g, i) => (
-          <div key={i} className="grid items-center gap-1" style={{ gridTemplateColumns: template }}>
-            <div className="flex min-w-0 items-center gap-1.5">
-              {g.by && <Avatar color={g.by.color} emoji={g.by.emoji} name={g.by.name} size={big ? 26 : 20} />}
-              <span className={`min-w-0 truncate font-semibold ${big ? "text-sm" : "text-xs"}`}>{g.name}</span>
+        {/* rows newest-first, but keyed by ORIGINAL position so adding a guess
+            doesn't remount (and re-animate) the older rows — only the new top row
+            mounts fresh and its cells flip in one-after-another via the stagger. */}
+        {guesses
+          .map((g, idx) => ({ g, idx }))
+          .reverse()
+          .map(({ g, idx }) => (
+            <div key={idx} className="grid items-center gap-1" style={{ gridTemplateColumns: template }}>
+              <div className="flex min-w-0 items-center gap-1.5">
+                {g.by && <Avatar color={g.by.color} emoji={g.by.emoji} name={g.by.name} size={big ? 26 : 20} />}
+                <span className={`min-w-0 truncate font-semibold ${big ? "text-sm" : "text-xs"}`}>{g.name}</span>
+              </div>
+              {cols.map((c, ci) => (
+                <Cell key={c.key} cell={(g.cells || []).find((x) => x.key === c.key)} big={big} index={ci} />
+              ))}
             </div>
-            {cols.map((c) => (
-              <Cell key={c.key} cell={(g.cells || []).find((x) => x.key === c.key)} big={big} />
-            ))}
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
@@ -220,5 +228,91 @@ export function TraitLegend() {
       {item(CELL.grey, t("play.anyMiss"))}
       <span>{t("play.anyHigherLower")}</span>
     </div>
+  );
+}
+
+/**
+ * A name field with type-to-filter autocomplete. Suggestions appear ONLY once
+ * something is typed (≥1 char) — never on an empty click — so a huge pool
+ * doesn't dump every name on focus. Controlled (value/onChange); onSelect(name)
+ * fires when a suggestion is clicked.
+ * @param {{names:string[], value:string, onChange:(s:string)=>void, onSelect:(name:string)=>void, placeholder?:string, className?:string, autoFocus?:boolean}} props
+ */
+export function CharacterField({
+  names = [],
+  value,
+  onChange,
+  onSelect,
+  placeholder,
+  className = "",
+  autoFocus = false,
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  const q = normText(value);
+  const matches = q.length >= 1 ? names.filter((n) => normText(n).includes(q)).slice(0, 8) : [];
+  useEffect(() => {
+    const onDoc = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+  return (
+    <div ref={wrapRef} className={`relative ${className}`}>
+      <input
+        className={inputCls}
+        placeholder={placeholder}
+        value={value}
+        autoFocus={autoFocus}
+        autoComplete="off"
+        onChange={(e) => {
+          onChange(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+      />
+      {open && matches.length > 0 && (
+        <ul className="absolute z-30 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-stone-200 bg-white py-1 text-left shadow-lg dark:border-stone-700 dark:bg-stone-900">
+          {matches.map((n) => (
+            <li key={n}>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onSelect(n);
+                  setOpen(false);
+                }}
+                className={`block w-full px-3 py-1.5 text-left text-sm hover:bg-stone-100 dark:hover:bg-stone-800 ${FOCUS}`}
+              >
+                {n}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Self-contained "pick a character from the library" field (its own text state).
+ * Used by the Builder to load a known character into the target/pool.
+ * @param {{names:string[], onPick:(name:string)=>void, placeholder?:string, className?:string}} props
+ */
+export function LibraryPicker({ names = [], onPick, placeholder, className = "" }) {
+  const [text, setText] = useState("");
+  return (
+    <CharacterField
+      names={names}
+      value={text}
+      onChange={setText}
+      onSelect={(n) => {
+        onPick(n);
+        setText("");
+      }}
+      placeholder={placeholder}
+      className={className}
+    />
   );
 }

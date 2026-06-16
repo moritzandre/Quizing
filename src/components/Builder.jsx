@@ -35,8 +35,11 @@ import {
   makeAnyChar,
 } from "../lib/model.js";
 import { TYPES, FOCUS, inputCls, cardCls, Button, IconButton, TypeBadge, ConfirmDelete, optionsFor } from "./ui.jsx";
-import { TraitForm } from "./anythingleTraits.jsx";
+import { TraitForm, LibraryPicker } from "./anythingleTraits.jsx";
 import { ANYTHINGLE_DB, ANYTHINGLE_FRANCHISES, findAnyChar } from "../data/anythingle.js";
+
+/** DB character names for the Builder's "load from library" autocomplete. */
+const ANY_LIB_NAMES = ANYTHINGLE_DB.map((c) => c.name);
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { ROUND_TEMPLATES, roundCreatorPrompt } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
@@ -1579,11 +1582,6 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               {r.type === "anythingle" && (
                 <>
                   <p className="mb-3 text-xs text-stone-500 dark:text-stone-400">{t("round.anythingle.desc")}</p>
-                  <datalist id="any-lib-names">
-                    {ANYTHINGLE_DB.map((c) => (
-                      <option key={c.id} value={c.name} />
-                    ))}
-                  </datalist>
                   <SortableList
                     items={r.questions}
                     getKey={(x) => x.id}
@@ -1592,10 +1590,6 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                     {(item, i, hp) => {
                       const target = item.target || makeAnyChar();
                       const pool = Array.isArray(item.pool) ? item.pool : [];
-                      const loadFromLib = (name, apply) => {
-                        const hit = findAnyChar(name);
-                        if (hit) apply(hit);
-                      };
                       return (
                         <div className={panelCls}>
                           <div className={rowLabelCls}>
@@ -1641,15 +1635,14 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           <div className="mt-3 rounded-xl border border-pink-200 bg-pink-50/50 p-3 dark:border-pink-500/30 dark:bg-pink-500/10">
                             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                               <span className="text-sm font-semibold">{t("builder.anyTarget")}</span>
-                              <input
-                                list="any-lib-names"
+                              <LibraryPicker
+                                names={ANY_LIB_NAMES}
                                 placeholder={t("builder.anyUseAsTarget")}
-                                className={`${inputCls} w-48 py-1`}
-                                onChange={(e) =>
-                                  loadFromLib(e.target.value, (hit) =>
-                                    qRow(r, item, { target: { ...hit, id: target.id } }),
-                                  )
-                                }
+                                className="w-56"
+                                onPick={(n) => {
+                                  const hit = findAnyChar(n);
+                                  if (hit) qRow(r, item, { target: { ...hit, id: target.id } });
+                                }}
                               />
                             </div>
                             <TraitForm
@@ -1663,16 +1656,14 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           <div className="mt-3">
                             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                               <span className="text-sm font-semibold">{t("builder.anyPool")}</span>
-                              <input
-                                list="any-lib-names"
+                              <LibraryPicker
+                                names={ANY_LIB_NAMES}
                                 placeholder={t("builder.anyAddChar")}
-                                className={`${inputCls} w-48 py-1`}
-                                onChange={(e) =>
-                                  loadFromLib(e.target.value, (hit) => {
-                                    qRow(r, item, { pool: [...pool, { ...hit, id: uid() }] });
-                                    e.target.value = "";
-                                  })
-                                }
+                                className="w-56"
+                                onPick={(n) => {
+                                  const hit = findAnyChar(n);
+                                  if (hit) qRow(r, item, { pool: [...pool, { ...hit, id: uid() }] });
+                                }}
                               />
                             </div>
                             <div className="space-y-2">

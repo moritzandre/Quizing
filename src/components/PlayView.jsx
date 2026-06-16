@@ -60,7 +60,6 @@ import {
 import {
   TYPES,
   FOCUS,
-  inputCls,
   Button,
   IconButton,
   Confetti,
@@ -82,7 +81,7 @@ import MediaPlayer from "./MediaPlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
-import { TraitForm, GuessGrid, TraitLegend } from "./anythingleTraits.jsx";
+import { TraitForm, GuessGrid, TraitLegend, CharacterField } from "./anythingleTraits.jsx";
 
 /** Map marker color for a player (their chosen color, else by index). */
 const colorFor = (p, i) => p?.color || colorAt(i);
@@ -2128,18 +2127,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 anySubmit();
               }}
             >
-              <input
-                list="any-db-names"
-                className={`${inputCls} max-w-xs`}
-                placeholder={t("play.anyGuessPlaceholder")}
+              <CharacterField
+                names={nameSuggestions}
                 value={anyInput}
-                onChange={(e) => setAnyInput(e.target.value)}
+                onChange={setAnyInput}
+                onSelect={(n) => anySubmit(n)}
+                placeholder={t("play.anyGuessPlaceholder")}
+                className="w-full max-w-xs"
               />
-              <datalist id="any-db-names">
-                {nameSuggestions.map((n) => (
-                  <option key={n} value={n} />
-                ))}
-              </datalist>
               <Button type="submit" className="px-5 py-2.5" disabled={!anyInput.trim()}>
                 {t("play.anyGuess")}
               </Button>
