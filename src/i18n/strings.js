@@ -55,6 +55,9 @@ const en = {
   "buzzer.scanToJoin": "Scan to join · code",
   "buzzer.joined": "Joined ({n})",
   "buzzer.waiting": "Waiting for players to scan in…",
+  "buzzer.passLabel": "Join passphrase (optional)",
+  "buzzer.passPlaceholder": "leave empty for open join",
+  "buzzer.passHint": "Players must enter this to join — say it out loud, it's not in the QR.",
   "buzzer.localhostWarn":
     "Phones can't reach “localhost”. Open this app via the Network URL shown in your terminal (your computer's IP) so the QR works.",
 
@@ -324,6 +327,10 @@ const en = {
   "stats.viewMine": "View my stats",
   "join.connected": "Connected",
   "join.connecting": "Connecting…",
+  "join.passLabel": "Room passphrase",
+  "join.passPlaceholder": "ask the host",
+  "join.passWrong": "Wrong passphrase — try again",
+  "join.passChecking": "Checking passphrase…",
 
   "leaderboard.title": "Leaderboard",
   "leaderboard.gamesPlayed": "{n} games played on this device",
@@ -494,6 +501,9 @@ const de = {
   "buzzer.scanToJoin": "Zum Beitreten scannen · Code",
   "buzzer.joined": "Beigetreten ({n})",
   "buzzer.waiting": "Warte, dass Spieler scannen…",
+  "buzzer.passLabel": "Beitritts-Passwort (optional)",
+  "buzzer.passPlaceholder": "leer = offener Beitritt",
+  "buzzer.passHint": "Spieler müssen das zum Beitreten eingeben — sag es laut, es steht nicht im QR-Code.",
   "buzzer.localhostWarn":
     "Handys erreichen „localhost“ nicht. Öffne die App über die Netzwerk-URL aus deinem Terminal (die IP deines Computers), damit der QR-Code funktioniert.",
 
@@ -769,6 +779,10 @@ const de = {
   "stats.viewMine": "Meine Statistik ansehen",
   "join.connected": "Verbunden",
   "join.connecting": "Verbinde…",
+  "join.passLabel": "Raum-Passwort",
+  "join.passPlaceholder": "frag den Host",
+  "join.passWrong": "Falsches Passwort — nochmal versuchen",
+  "join.passChecking": "Passwort wird geprüft…",
 
   "leaderboard.title": "Bestenliste",
   "leaderboard.gamesPlayed": "{n} Spiele auf diesem Gerät gespielt",

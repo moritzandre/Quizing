@@ -107,6 +107,8 @@ The Vite `base` is relative and routing is hash-based, so the build also works u
 
 > **Cross-network play:** because the join QR encodes wherever the host loaded the app and the buzzer broker is public internet, players reach the host **from any network** when everyone uses the deployed URL (the same-Wi-Fi requirement only applies to the local `npm run dev` server, whose QR points at the host's LAN IP).
 
+> **Keeping a game private:** the host can set an optional **join passphrase** (in the buzzer panel) that players must enter to join — the host only admits correct-passphrase devices and ignores everyone else, and the passphrase is never put in the QR or broadcast (share it out loud). Note this is a _soft_ gate for a friends game, not hard security: the app itself is publicly loadable (any free static host is), and the passphrase rides the public broker in the join message, so a determined sniffer could capture it. For true access control you'd need gated hosting (e.g. Cloudflare Access) or real auth.
+
 ## Persistent players + stats (optional)
 
 By default the app is fully backendless and each player types a name per game. You can **optionally** add a shared **playerbase** — a persistent roster everyone picks from across games and devices — plus per-player stats and an all-time leaderboard, by pointing it at a free [Supabase](https://supabase.com) project. The frontend stays static on GitHub Pages and talks to Supabase from the browser. **No login, email, or accounts** of any kind.

@@ -4,8 +4,8 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { Radio, X, Loader2, AlertTriangle } from "lucide-react";
-import { cardCls, Button, IconButton } from "./ui.jsx";
+import { Radio, X, Loader2, AlertTriangle, Lock } from "lucide-react";
+import { cardCls, inputCls, Button, IconButton } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
 const STATUS_KEY = {
@@ -30,6 +30,7 @@ const isLocalhost = () => {
 export default function BuzzerPanel({ room }) {
   const { t } = useI18n();
   const [qr, setQr] = useState("");
+  const [pass, setPass] = useState(""); // optional join passphrase (applied on blur)
 
   useEffect(() => {
     if (!room.link) return setQr("");
@@ -119,6 +120,22 @@ export default function BuzzerPanel({ room }) {
             <p className="text-sm text-stone-400 dark:text-stone-500">{t("buzzer.waiting")}</p>
           )}
         </div>
+      </div>
+
+      {/* optional no-login join gate: players must enter this passphrase to join */}
+      <div className="mt-4 border-t border-stone-100 pt-3 dark:border-stone-800">
+        <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-stone-400 dark:text-stone-500">
+          <Lock size={13} /> {t("buzzer.passLabel")}
+        </label>
+        <input
+          type="text"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          onBlur={() => room.setRoomPass(pass)}
+          placeholder={t("buzzer.passPlaceholder")}
+          className={`${inputCls} mt-1.5 max-w-xs`}
+        />
+        <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("buzzer.passHint")}</p>
       </div>
     </div>
   );

@@ -53,6 +53,9 @@ export function useHostRoom() {
   const lockedRef = useRef(null);
   const scoresRef = useRef(null); // latest standings to mirror onto phones
   const endInfoRef = useRef(null); // {gameId, quizTitle, mode} while the game is over, for phone stat-writing
+  const roomPassRef = useRef(null); // optional join passphrase (host-set, never broadcast)
+  const admittedRef = useRef(new Set()); // deviceIds that passed the passphrase
+  const rejectedRef = useRef(new Set()); // deviceIds that sent a wrong passphrase
   const participantsRef = useRef({});
   participantsRef.current = participants;
 
@@ -66,6 +69,11 @@ export function useHostRoom() {
         lockedBy: lockedRef.current,
         ...(scoresRef.current ? { scores: scoresRef.current } : {}),
         ...(endInfoRef.current ? { ended: true, ...endInfoRef.current } : {}),
+        // never broadcast the passphrase itself — only that one is required, plus
+        // which devices have been admitted/rejected (random deviceIds, not sensitive).
+        ...(roomPassRef.current
+          ? { needsPass: true, admitted: [...admittedRef.current], rejected: [...rejectedRef.current] }
+          : {}),
       },
       { retain: true },
     );
@@ -89,6 +97,15 @@ export function useHostRoom() {
             mode: meta.mode === "teams" ? "teams" : "solo",
           }
         : null;
+    pushStateRef.current();
+  }, []);
+  // Set/clear the optional join passphrase (a no-login gate). Resets who's been
+  // admitted/rejected so everyone (re)enters against the new value.
+  const setRoomPass = useCallback((pass) => {
+    const p = (pass || "").trim();
+    roomPassRef.current = p || null;
+    admittedRef.current = new Set();
+    rejectedRef.current = new Set();
     pushStateRef.current();
   }, []);
 
@@ -118,6 +135,9 @@ export function useHostRoom() {
     lockedRef.current = null;
     scoresRef.current = null;
     endInfoRef.current = null;
+    roomPassRef.current = null;
+    admittedRef.current = new Set();
+    rejectedRef.current = new Set();
     setParticipants({});
     setBuzz(null);
     setPins({});
@@ -134,7 +154,34 @@ export function useHostRoom() {
       },
       onMessage: (_topic, msg) => {
         if (!msg || !msg.deviceId) return;
+        // Optional passphrase gate: ignore player actions from devices that
+        // haven't been admitted (joined with the correct passphrase).
+        if (
+          roomPassRef.current &&
+          !admittedRef.current.has(msg.deviceId) &&
+          (msg.type === "buzz" || msg.type === "pin" || msg.type === "answer")
+        )
+          return;
         if (msg.type === "join") {
+          // Passphrase check: a wrong passphrase is rejected — drop from admitted
+          // AND from the roster, so a device that lost access (e.g. the host
+          // changed the passphrase) can't linger and get seeded as an entity.
+          if (roomPassRef.current && str(msg.pass) !== roomPassRef.current) {
+            admittedRef.current.delete(msg.deviceId);
+            rejectedRef.current.add(msg.deviceId);
+            setParticipants((p) => {
+              if (!(msg.deviceId in p)) return p;
+              const n = { ...p };
+              delete n[msg.deviceId];
+              return n;
+            });
+            pushStateRef.current();
+            return;
+          }
+          if (roomPassRef.current) {
+            admittedRef.current.add(msg.deviceId);
+            rejectedRef.current.delete(msg.deviceId);
+          }
           // A re-join (e.g. reload) cancels a just-fired `leave` for this device,
           // so a stale pagehide `leave` arriving after the new `join` can't drop us.
           if (leaveTimersRef.current[msg.deviceId]) {
@@ -212,6 +259,9 @@ export function useHostRoom() {
     lockedRef.current = null;
     scoresRef.current = null;
     endInfoRef.current = null;
+    roomPassRef.current = null;
+    admittedRef.current = new Set();
+    rejectedRef.current = new Set();
     Object.values(leaveTimersRef.current).forEach(clearTimeout);
     leaveTimersRef.current = {};
     setEnabled(false);
@@ -313,6 +363,7 @@ export function useHostRoom() {
     pushHost,
     pushScores,
     setEnded,
+    setRoomPass,
   };
 }
 
@@ -405,6 +456,9 @@ export function usePlayerRoom(code) {
                 gameId: str(msg.gameId),
                 quizTitle: str(msg.quizTitle),
                 mode: msg.mode === "teams" ? "teams" : "solo",
+                needsPass: !!msg.needsPass,
+                admitted: Array.isArray(msg.admitted) ? msg.admitted.map(str) : [],
+                rejected: Array.isArray(msg.rejected) ? msg.rejected.map(str) : [],
               }
             : null,
         ),
@@ -419,7 +473,7 @@ export function usePlayerRoom(code) {
   }, []);
 
   const join = useCallback(
-    (n, teamId, avatar, profileId = null) => {
+    (n, teamId, avatar, profileId = null, pass = null) => {
       const clean = str(n).trim() || "Player";
       setName(clean);
       send({
@@ -430,6 +484,7 @@ export function usePlayerRoom(code) {
         color: avatar?.color || null,
         photo: avatar?.photo || null,
         profileId: profileId || null, // links this phone to a persistent player profile (optional)
+        pass: pass || null, // optional room passphrase (no-login join gate)
       });
     },
     [send],

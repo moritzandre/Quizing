@@ -65,6 +65,7 @@ export default function JoinView({ code }) {
   const [pinSent, setPinSent] = useState(false);
   const [answer, setAnswer] = useState(null);
   const [answerSent, setAnswerSent] = useState(false);
+  const [passInput, setPassInput] = useState(""); // room join passphrase the player types
   // playerbase pre-join flow
   const [reselect, setReselect] = useState(false); // show the picker even if a player is chosen
   const [creating, setCreating] = useState(false); // in the "new player" sub-form
@@ -149,7 +150,8 @@ export default function JoinView({ code }) {
     if (av.color) setPickedColor(av.color);
     if (av.photo) setPickedPhoto(av.photo);
     setTeamId(lastJoin.teamId || null);
-    room.join(name, lastJoin.teamId || null, teamsList ? null : av, cur ? cur.id : null);
+    if (lastJoin.pass) setPassInput(lastJoin.pass); // so a re-prompt is prefilled if the pass changed
+    room.join(name, lastJoin.teamId || null, teamsList ? null : av, cur ? cur.id : null, lastJoin.pass || null);
     setJoined(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room.state, joined, lastJoin, pb.ready, pb.configured, pb.current, code]);
@@ -177,7 +179,11 @@ export default function JoinView({ code }) {
   const iLocked = lockedBy && lockedBy === room.deviceId;
   const online = room.status === "connected";
   const needsTeam = !!teams;
-  const canJoin = draftName.trim() && (!needsTeam || teamId);
+  // Optional no-login join gate: the host set a passphrase; we must enter it.
+  const needsPass = !!room.state?.needsPass;
+  const admitted = (room.state?.admitted || []).includes(room.deviceId);
+  const rejected = (room.state?.rejected || []).includes(room.deviceId);
+  const canJoin = draftName.trim() && (!needsTeam || teamId) && (!needsPass || passInput.trim());
 
   const placePin = (lat, lng) => {
     setMyPin({ lat, lng });
@@ -254,10 +260,11 @@ export default function JoinView({ code }) {
       setNewPin("");
     }
   };
+  const pass = passInput.trim() || null;
   // Join as the chosen playerbase player.
   const joinAsCurrent = () => {
     const c = pb.current;
-    if (!c || (needsTeam && !teamId)) return;
+    if (!c || (needsTeam && !teamId) || (needsPass && !pass)) return;
     setDraftName(c.name);
     setPickedEmoji(c.emoji);
     setPickedColor(c.color);
@@ -270,8 +277,9 @@ export default function JoinView({ code }) {
       color: c.color,
       photo: c.photo,
       playerId: c.id,
+      pass,
     });
-    room.join(c.name, teamId, needsTeam ? null : { emoji: c.emoji, color: c.color, photo: c.photo }, c.id);
+    room.join(c.name, teamId, needsTeam ? null : { emoji: c.emoji, color: c.color, photo: c.photo }, c.id, pass);
     setJoined(true);
   };
   // Classic (unconfigured) join.
@@ -285,14 +293,32 @@ export default function JoinView({ code }) {
       emoji: pickedEmoji,
       color: pickedColor,
       photo: pickedPhoto,
+      pass,
     });
     room.join(
       draftName,
       teamId,
       needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto },
       null,
+      pass,
     );
     setJoined(true);
+  };
+  // Re-send the join with the current passphrase (after a "wrong passphrase" reject).
+  const retryPass = () => {
+    if (!pass) return;
+    const avatar = needsTeam ? null : { emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto };
+    saveJSON("lastJoin", {
+      code,
+      name: room.name || draftName.trim(),
+      teamId: needsTeam ? teamId : null,
+      emoji: pickedEmoji,
+      color: pickedColor,
+      photo: pickedPhoto,
+      playerId: pb.configured ? pb.currentId : undefined,
+      pass,
+    });
+    room.join(room.name || draftName.trim(), teamId, avatar, pb.configured ? pb.currentId : null, pass);
   };
 
   const letters = ["A", "B", "C", "D", "E", "F"];
@@ -392,6 +418,22 @@ export default function JoinView({ code }) {
     </div>
   );
 
+  // optional room passphrase field (shown only when the host set one)
+  const passField = needsPass && (
+    <div className="mt-4">
+      <label className="mb-1 flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-300">
+        <Lock size={14} /> {t("join.passLabel")}
+      </label>
+      <input
+        type="text"
+        value={passInput}
+        onChange={(e) => setPassInput(e.target.value)}
+        placeholder={t("join.passPlaceholder")}
+        className={`${inputCls} text-lg`}
+      />
+    </div>
+  );
+
   // ---- the configured (playerbase) pre-join flow ----
   const renderPlayerbaseJoin = () => {
     if (pinFor) {
@@ -460,10 +502,11 @@ export default function JoinView({ code }) {
             </button>
           </div>
           {needsTeam && teamPicker}
+          {passField}
           <Button
             variant="accent"
             className="mt-4 w-full px-6 py-3.5 text-base"
-            disabled={needsTeam && !teamId}
+            disabled={(needsTeam && !teamId) || (needsPass && !passInput.trim())}
             onClick={joinAsCurrent}
           >
             {t("join.joinGame")}
@@ -617,6 +660,7 @@ export default function JoinView({ code }) {
                 />
                 {!needsTeam && avatarPicker}
                 {needsTeam && teamPicker}
+                {passField}
                 <Button
                   type="submit"
                   variant="accent"
@@ -628,6 +672,30 @@ export default function JoinView({ code }) {
               </form>
             </div>
           )
+        ) : needsPass && !admitted ? (
+          // passphrase gate: we sent a join but the host hasn't admitted us yet
+          // (wrong passphrase, or still checking). Let the player re-enter.
+          <div className="flex flex-1 flex-col justify-center text-center">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
+              <Lock size={34} className={rejected ? "text-red-500" : "text-stone-400"} />
+            </div>
+            <p className="text-lg font-semibold">{rejected ? t("join.passWrong") : t("join.passChecking")}</p>
+            <input
+              type="text"
+              value={passInput}
+              onChange={(e) => setPassInput(e.target.value)}
+              placeholder={t("join.passPlaceholder")}
+              className={`${inputCls} mt-4 text-center text-lg`}
+            />
+            <Button
+              variant="accent"
+              className="mt-3 w-full px-6 py-3.5 text-base"
+              disabled={!passInput.trim()}
+              onClick={retryPass}
+            >
+              {t("playerbase.unlock")}
+            </Button>
+          </div>
         ) : (
           <div className="flex flex-1 flex-col">
             {/* persistent arcade HUD: avatar + name, plus live score + rank once
