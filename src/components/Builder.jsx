@@ -933,7 +933,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               {/* what-connects: typed clues + the common link */}
               {r.type === "connect" && (
                 <>
-                  <SortableList items={r.questions} getKey={(x) => x.id} onReorder={(f, to) => reorderQuestions(r, f, to)}>
+                  <SortableList
+                    items={r.questions}
+                    getKey={(x) => x.id}
+                    onReorder={(f, to) => reorderQuestions(r, f, to)}
+                  >
                     {(item, i, hp) => (
                       <div className={panelCls}>
                         <div className={rowLabelCls}>
@@ -1287,7 +1291,12 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                   label={t("builder.deleteOption")}
                                   onConfirm={() => {
                                     const options = item.options.filter((_, j) => j !== oi);
-                                    qRow(r, item, { options, correct: Math.min(item.correct, options.length - 1) });
+                                    // Keep `correct` pointing at the SAME answer: shift it down when a
+                                    // preceding option is removed (a plain max-clamp would silently
+                                    // re-point it at a different answer and corrupt auto-scoring).
+                                    const correct =
+                                      oi < item.correct ? item.correct - 1 : Math.min(item.correct, options.length - 1);
+                                    qRow(r, item, { options, correct });
                                   }}
                                 />
                               )}

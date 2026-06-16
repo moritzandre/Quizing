@@ -304,6 +304,8 @@ const ROUND_SHAPES = {
   jeopardy: 'categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]',
   hints:
     'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
+  connect:
+    'questions: [{ "answer": string (the common link), "clues": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // players guess what ALL the clues have in common',
   video:
     'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // url may be YouTube, a Spotify track (open.spotify.com/track/…), or a direct .mp3/.mp4 link; start/end (seconds) optionally trim it; pauses automatically when a player buzzes',
   clip: 'questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // the clip ladder: url may be YouTube, Spotify (great for music — dodges YouTube embed blocks), or a direct .mp3/.mp4; start/end is the FULL window; the host plays the first 1/(steps+1) of it and extends step by step for fewer points (like the hint ladder)',
@@ -352,6 +354,7 @@ Round types and their question shapes:
 - "classic":  questions: [{ "q": string, "a": string, "points": number }]
 - "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]
 - "hints":    questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder
+- "connect":  questions: [{ "answer": string (the common link), "clues": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // players guess what ALL the clues have in common
 - "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // url: YouTube, Spotify track, or direct .mp3/.mp4; start/end (seconds) optionally trim the clip
 - "clip":     questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": number, "end": number, "steps": 1-8 }]   // clip ladder; url: YouTube, Spotify (best for music), or direct .mp3/.mp4; host plays the first 1/(steps+1) of [start,end] and extends for fewer points
 - "image":    questions: [{ "url": "https://.../pic.jpg", "q": string, "a": string, "points": number }]

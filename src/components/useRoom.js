@@ -43,7 +43,7 @@ export function useHostRoom() {
   const [buzz, setBuzz] = useState(null); // { deviceId, name } | null
   const [pins, setPins] = useState({}); // deviceId -> { lat, lng }
   const [answers, setAnswers] = useState({}); // deviceId -> value (choice index / number)
-  const [command, setCommand] = useState(null); // { id, action, args } from a host-remote phone
+  const [commands, setCommands] = useState([]); // FIFO of { id, action, args } from a host-remote phone
 
   const connRef = useRef(null);
   const cmdIdRef = useRef(0);
@@ -55,7 +55,8 @@ export function useHostRoom() {
   const roomPassRef = useRef(null); // optional join passphrase (host-set, never broadcast)
   const admittedRef = useRef(new Set()); // deviceIds that passed the passphrase
   const rejectedRef = useRef(new Set()); // deviceIds that sent a wrong passphrase
-  const createdRef = useRef({}); // deviceId -> { reqId, id } for relayed player creation
+  const createdRef = useRef({}); // deviceId -> { reqId, id } | { reqId, id:null, failed:true } — RESOLVED relayed creates
+  const inFlightCreatesRef = useRef({}); // deviceId -> reqId currently mid-create (NOT broadcast, idempotency only)
   const participantsRef = useRef({});
   participantsRef.current = participants;
 
@@ -109,6 +110,13 @@ export function useHostRoom() {
     roomPassRef.current = p || null;
     admittedRef.current = new Set();
     rejectedRef.current = new Set();
+    // Setting a passphrase mid-lobby: nobody is admitted any more, so clear the
+    // roster too. Otherwise already-joined phones would linger as phantom entities
+    // (SetupView still seeds them, the host roster still lists them) even though
+    // their buzz/pin/answer are now ignored and they must re-enter the passphrase.
+    // They re-appear when they re-join with the correct pass. (Clearing the pass
+    // leaves the roster intact — already-joined players stay.)
+    if (p) setParticipants({});
     pushStateRef.current();
   }, []);
 
@@ -142,6 +150,7 @@ export function useHostRoom() {
     admittedRef.current = new Set();
     rejectedRef.current = new Set();
     createdRef.current = {};
+    inFlightCreatesRef.current = {};
     setParticipants({});
     setBuzz(null);
     setPins({});
@@ -235,14 +244,17 @@ export function useHostRoom() {
         } else if (msg.type === "answer" && typeof msg.value !== "undefined") {
           setAnswers((a) => ({ ...a, [msg.deviceId]: msg.value }));
         } else if (msg.type === "ctrl" && typeof msg.action === "string") {
-          // A host-remote phone is driving the game; surface the command (with a
-          // bumped id so repeated identical actions still re-fire on the host).
+          // A host-remote phone is driving the game; APPEND to a FIFO (bumped id so
+          // repeated identical actions still re-fire). A queue — not a single slot —
+          // so two commands delivered in the same tick (e.g. coalesced WS frames)
+          // are both applied in order rather than the first being overwritten/lost.
           cmdIdRef.current += 1;
-          setCommand({
+          const cmd = {
             id: cmdIdRef.current,
             action: msg.action,
             args: msg.args && typeof msg.args === "object" ? msg.args : {},
-          });
+          };
+          setCommands((cs) => [...cs, cmd].slice(-50)); // bounded so it can't grow unbounded
         } else if (msg.type === "createPlayer" && isSupabaseConfigured) {
           // Relay player creation through the host. create_player is admin-only
           // server-side, so this only ever succeeds because the host is signed in
@@ -251,21 +263,41 @@ export function useHostRoom() {
           // the public broker); the phone sets it afterwards directly over TLS.
           const reqId = str(msg.reqId);
           const dev = msg.deviceId;
-          const existing = createdRef.current[dev];
-          // Idempotent: ignore a repeat/redelivered request for the same reqId
-          // (MQTT can redeliver) so one logical create never inserts twice. A new
-          // reqId from the same device (a genuine re-create) is still honoured.
-          if (reqId && !(existing && existing.reqId === reqId)) {
-            createdRef.current = { ...createdRef.current, [dev]: { reqId, id: null } };
+          const resolved = createdRef.current[dev];
+          const inflight = inFlightCreatesRef.current[dev];
+          // Idempotent: ignore a repeat/redelivered request for a reqId that's
+          // already in flight or already resolved (MQTT can redeliver) so one
+          // logical create never inserts twice. A new reqId from the same device
+          // (a genuine re-create) is still honoured.
+          if (reqId && inflight !== reqId && !(resolved && resolved.reqId === reqId)) {
+            // Track the in-flight reqId in a NON-broadcast ref. We must NOT put a
+            // placeholder { id: null } into the broadcast `createdRef` here: any
+            // unrelated state push (another phone joining, a buzz, pushScores…)
+            // during the Supabase round-trip would echo that null and make the
+            // phone give up to guest mode prematurely. Only a TERMINAL result
+            // (real id, or an explicit failure) is ever broadcast.
+            inFlightCreatesRef.current = { ...inFlightCreatesRef.current, [dev]: reqId };
             const fields = {
               name: str(msg.name).trim() || "Player",
               emoji: safeSprite(msg.emoji),
               color: safeColor(msg.color),
             };
-            createPlayer(fields).then((profile) => {
-              createdRef.current = { ...createdRef.current, [dev]: { reqId, id: profile?.id || null } };
+            const settle = (id) => {
+              if (inFlightCreatesRef.current[dev] === reqId) {
+                const n = { ...inFlightCreatesRef.current };
+                delete n[dev];
+                inFlightCreatesRef.current = n;
+              }
+              createdRef.current = {
+                ...createdRef.current,
+                [dev]: id ? { reqId, id } : { reqId, id: null, failed: true },
+              };
               pushStateRef.current();
-            });
+            };
+            createPlayer(fields).then(
+              (profile) => settle(profile?.id || null),
+              () => settle(null),
+            );
           }
         }
       },
@@ -290,6 +322,7 @@ export function useHostRoom() {
     admittedRef.current = new Set();
     rejectedRef.current = new Set();
     createdRef.current = {};
+    inFlightCreatesRef.current = {};
     Object.values(leaveTimersRef.current).forEach(clearTimeout);
     leaveTimersRef.current = {};
     setEnabled(false);
@@ -299,7 +332,7 @@ export function useHostRoom() {
     setBuzz(null);
     setPins({});
     setAnswers({});
-    setCommand(null);
+    setCommands([]);
     cmdIdRef.current = 0;
   }, []);
 
@@ -376,7 +409,7 @@ export function useHostRoom() {
     buzz,
     pins,
     answers,
-    command,
+    commands,
     enable,
     disable,
     arm,
@@ -493,10 +526,21 @@ export function usePlayerRoom(code) {
               }
             : null,
         );
-        // relayed player-creation result addressed to THIS device (matched by reqId)
+        // relayed player-creation result addressed to THIS device (matched by reqId).
+        // The host only ever broadcasts a TERMINAL result — a real id, or an
+        // explicit { failed:true } — so this never fires mid-flight.
         const mine = obj && obj.created ? obj.created[id.current] : null;
-        if (mine && typeof mine === "object" && pendingCreateRef.current && str(mine.reqId) === pendingCreateRef.current)
-          setCreated({ reqId: pendingCreateRef.current, id: typeof mine.id === "string" ? mine.id : null });
+        if (
+          mine &&
+          typeof mine === "object" &&
+          pendingCreateRef.current &&
+          str(mine.reqId) === pendingCreateRef.current
+        )
+          setCreated({
+            reqId: pendingCreateRef.current,
+            id: typeof mine.id === "string" ? mine.id : null,
+            failed: !!mine.failed,
+          });
       },
     });
     connRef.current = conn;

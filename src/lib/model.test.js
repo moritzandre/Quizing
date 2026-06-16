@@ -945,6 +945,14 @@ describe("presenter payloads", () => {
     expect(t.volume).toBe(40);
   });
 
+  it("buildLive/normalizeLive mirror morphRunning (so the host remote can label/toggle the demorph)", () => {
+    expect(buildLive(game()).morphRunning).toBe(false); // off by default
+    expect(buildLive(game(), { morphRunning: true }).morphRunning).toBe(true);
+    expect(normalizeLive({}).morphRunning).toBe(false);
+    expect(normalizeLive({ morphRunning: 1 }).morphRunning).toBe(true); // coerced
+    expect(normalizeLive({ morphRunning: true }).morphRunning).toBe(true);
+  });
+
   it("normalizeLive validates the transport action + soundOnTv + volume against junk", () => {
     expect(normalizeLive({}).transport).toEqual({ n: 0, action: "idle" });
     expect(normalizeLive({}).volume).toBe(100);
@@ -1057,9 +1065,33 @@ describe("presenter payloads", () => {
   describe("summarizeGamesFromResults (admin past-games)", () => {
     it("groups result rows by game, newest first, entries by score desc", () => {
       const games = summarizeGamesFromResults([
-        { game_id: "g1", quiz_title: "Q1", room_code: "AAA", score: 5, won: false, profile_id: "p1", played_at: "2026-01-01T10:00:00Z" },
-        { game_id: "g1", quiz_title: "Q1", room_code: "AAA", score: 9, won: true, profile_id: "p2", played_at: "2026-01-01T10:05:00Z" },
-        { game_id: "g2", quiz_title: "Q2", room_code: "BBB", score: 3, won: true, profile_id: "p1", played_at: "2026-02-02T20:00:00Z" },
+        {
+          game_id: "g1",
+          quiz_title: "Q1",
+          room_code: "AAA",
+          score: 5,
+          won: false,
+          profile_id: "p1",
+          played_at: "2026-01-01T10:00:00Z",
+        },
+        {
+          game_id: "g1",
+          quiz_title: "Q1",
+          room_code: "AAA",
+          score: 9,
+          won: true,
+          profile_id: "p2",
+          played_at: "2026-01-01T10:05:00Z",
+        },
+        {
+          game_id: "g2",
+          quiz_title: "Q2",
+          room_code: "BBB",
+          score: 3,
+          won: true,
+          profile_id: "p1",
+          played_at: "2026-02-02T20:00:00Z",
+        },
         { junk: true },
         { game_id: "", score: 1 },
       ]);

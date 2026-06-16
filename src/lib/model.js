@@ -1019,6 +1019,7 @@ export function buildLive(game, opts = {}) {
     hintsShown: Math.max(1, num(game.hintsShown, 1)),
     step: Math.max(0, num(opts.step, 0)),
     morphProgress: Math.max(0, Math.min(1, num(opts.morphProgress, 0))),
+    morphRunning: !!opts.morphRunning, // mirror the auto-demorph clock so the host remote can label/toggle it
     showStandings: !!opts.showStandings,
     value: num(opts.value, 0),
     allowNegative: !!opts.allowNegative,
@@ -1119,6 +1120,7 @@ export function normalizeLive(raw) {
     hintsShown: Math.max(1, num(raw.hintsShown, 1)),
     step: Math.max(0, num(raw.step, 0)),
     morphProgress: Math.max(0, Math.min(1, num(raw.morphProgress, 0))),
+    morphRunning: !!raw.morphRunning,
     showStandings: !!raw.showStandings,
     value: num(raw.value, 0),
     allowNegative: !!raw.allowNegative,

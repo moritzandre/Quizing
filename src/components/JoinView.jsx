@@ -69,6 +69,8 @@ export default function JoinView({ code }) {
   const [createBusy, setCreateBusy] = useState(false); // awaiting the host's relayed creation
   const [guestNote, setGuestNote] = useState(false); // creation couldn't be saved → playing as guest
   const createTimerRef = useRef(null); // relay timeout (host offline / not admin)
+  const pendingReqRef = useRef(null); // the reqId of the create we're awaiting
+  const resolvedReqRef = useRef(null); // the reqId we've already finished (created or guest)
   const [pinFor, setPinFor] = useState(null); // a locked player awaiting its PIN
   const [pinInput, setPinInput] = useState("");
   const [pinError, setPinError] = useState(false);
@@ -231,7 +233,10 @@ export default function JoinView({ code }) {
   // it with a PIN afterwards — that call goes straight to Supabase over TLS, so
   // the PIN never crosses the public broker.
   const finishCreated = async (id) => {
-    pb.adopt({ id, name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, locked: !!newPin }, { unlock: true });
+    pb.adopt(
+      { id, name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, locked: !!newPin },
+      { unlock: true },
+    );
     if (newPin && /^[0-9]{6,8}$/.test(newPin)) await pb.lockWithPin(id, newPin);
     setCreating(false);
     setReselect(false);
@@ -242,7 +247,13 @@ export default function JoinView({ code }) {
   // block the join: play as a local guest (stats just won't be recorded).
   const finishGuest = () => {
     pb.adopt(
-      { id: "guest-" + room.deviceId, name: draftName.trim() || "Player", emoji: pickedEmoji, color: pickedColor, locked: false },
+      {
+        id: "guest-" + room.deviceId,
+        name: draftName.trim() || "Player",
+        emoji: pickedEmoji,
+        color: pickedColor,
+        locked: false,
+      },
       { unlock: true },
     );
     setGuestNote(true);
@@ -257,25 +268,49 @@ export default function JoinView({ code }) {
     if (!draftName.trim() || createBusy) return;
     setGuestNote(false);
     setCreateBusy(true);
-    room.requestCreate({ name: draftName.trim(), emoji: pickedEmoji, color: pickedColor });
+    pendingReqRef.current = room.requestCreate({ name: draftName.trim(), emoji: pickedEmoji, color: pickedColor });
+    resolvedReqRef.current = null;
     if (createTimerRef.current) clearTimeout(createTimerRef.current);
+    // Backstop only: if no terminal reply arrives, play as a guest. Crucially we
+    // do NOT mark the reqId resolved here, so a slow-but-successful relay that
+    // lands AFTER the timeout can still upgrade the guest to the real profile
+    // (as long as we haven't joined the game yet).
     createTimerRef.current = setTimeout(() => {
       createTimerRef.current = null;
       finishGuest();
-    }, 6000);
+    }, 8000);
   };
 
-  // Resolve a relayed creation: the host echoes { reqId, id } back on the state.
+  // Resolve a relayed creation. The host only echoes a TERMINAL result back on
+  // the state — a real { reqId, id } (success) or { reqId, failed:true }. A
+  // transient null never arrives, so the only guest trigger is the timeout above
+  // or an explicit failure; an unrelated state push can't bust us to guest.
   useEffect(() => {
-    if (!createBusy || !room.created) return;
-    if (createTimerRef.current) {
-      clearTimeout(createTimerRef.current);
-      createTimerRef.current = null;
+    const c = room.created;
+    if (!c || !c.reqId || c.reqId !== pendingReqRef.current) return;
+    if (resolvedReqRef.current === c.reqId) return; // already handled this result
+    if (c.id) {
+      // Success. Adopt the real profile — even if the 8s timeout already dropped
+      // us to a guest, upgrade as long as we haven't joined the game yet (so a
+      // slow relay never strands an orphan DB row + a guest-only stat session).
+      if (joined) return;
+      resolvedReqRef.current = c.reqId;
+      if (createTimerRef.current) {
+        clearTimeout(createTimerRef.current);
+        createTimerRef.current = null;
+      }
+      finishCreated(c.id);
+    } else if (c.failed && createBusy) {
+      // The host reported the create failed → guest now (don't wait out the timeout).
+      resolvedReqRef.current = c.reqId;
+      if (createTimerRef.current) {
+        clearTimeout(createTimerRef.current);
+        createTimerRef.current = null;
+      }
+      finishGuest();
     }
-    if (room.created.id) finishCreated(room.created.id);
-    else finishGuest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [room.created, createBusy]);
+  }, [room.created, createBusy, joined]);
 
   // Clear a pending relay timeout if the page unmounts mid-create (e.g. tapping
   // the #/me link) so finishGuest never fires on an unmounted component.
@@ -284,6 +319,7 @@ export default function JoinView({ code }) {
   const cancelCreate = () => {
     clearTimeout(createTimerRef.current);
     createTimerRef.current = null;
+    pendingReqRef.current = null; // a late relayed result for this create is now ignored
     setCreateBusy(false);
     setGuestNote(false);
     setCreating(false);

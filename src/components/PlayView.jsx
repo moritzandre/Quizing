@@ -272,6 +272,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       buildLive(game, {
         step: morphStep,
         morphProgress: morphStreamP,
+        morphRunning,
         showStandings,
         value,
         allowNegative,
@@ -287,7 +288,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, showStandings, recap, recapVariant, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -586,103 +587,110 @@ export default function PlayView({ game, setGame, onExit, room }) {
      current question here (the render-scope `q` only exists in the question path).
      Seed from the buffered command so a host re-mount (navigate away & back)
      doesn't replay the last command — the room outlives this component. */
-  const lastCmdRef = useRef(room?.command?.id ?? 0);
+  const lastCmdRef = useRef(room?.commands?.length ? room.commands[room.commands.length - 1].id : 0);
   useEffect(() => {
-    const cmd = room?.command;
-    if (!cmd || cmd.id <= lastCmdRef.current) return;
-    lastCmdRef.current = cmd.id;
-    const a = cmd.args || {};
-    // While the recap is up, "advance" continues past it; ignore other actions.
-    if (recap) {
-      if (cmd.action === "advance") continueAfterRecap();
-      return;
+    const cmds = room?.commands;
+    if (!cmds || !cmds.length) return;
+    const pending = cmds.filter((c) => c.id > lastCmdRef.current);
+    if (!pending.length) return;
+    lastCmdRef.current = cmds[cmds.length - 1].id;
+    // Drain the FIFO in order, so a coalesced burst of remote taps (two ctrl
+    // messages in one tick) all apply instead of only the last surviving.
+    for (const cmd of pending) {
+      const a = cmd.args || {};
+      // While the recap is up, "advance" continues past it; ignore other actions.
+      if (recap) {
+        if (cmd.action === "advance") continueAfterRecap();
+        continue;
+      }
+      const cq = isJeop ? round?.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] : round?.questions?.[game.qi];
+      switch (cmd.action) {
+        case "reveal":
+          if (game.stage === "question" && !game.revealed && cq) {
+            if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
+            else if (round.type === "number") revealNumber(cq);
+            else if (round.type === "map") revealMap(cq);
+            else reveal();
+          }
+          break;
+        case "advance":
+          if (game.stage === "question") advance();
+          break;
+        case "hint":
+          if (game.stage === "question" && !game.revealed && cq) {
+            if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
+              upd({ hintsShown: game.hintsShown + 1 });
+            else if (round.type === "connect" && game.hintsShown < realHints(cq.clues).length)
+              upd({ hintsShown: game.hintsShown + 1 });
+            else if (round.type === "morph")
+              setMorphRunning((r) => !r); // toggle the auto-demorph (start/pause) — parity with the laptop button
+            else if (round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
+            else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq)) extendClip(cq.steps);
+          }
+          break;
+        case "media":
+          if (["play", "pause", "restart"].includes(a.action)) sendTransport(a.action);
+          break;
+        case "soundOnTv":
+          setSoundOnTv(!!a.on);
+          break;
+        case "volume":
+          if (Number.isFinite(+a.value)) setVolume(Math.max(0, Math.min(100, +a.value)));
+          break;
+        case "sign":
+          setSign(a.sign === -1 ? -1 : 1);
+          break;
+        case "award":
+          if (a.id && game.players.some((p) => p.id === a.id)) toggleAward(a.id);
+          break;
+        case "adjust":
+          if (a.id && Number.isFinite(+a.delta) && game.players.some((p) => p.id === a.id)) adjustScore(a.id, +a.delta);
+          break;
+        case "startRound":
+          if (game.stage === "intro") beginRound();
+          break;
+        case "jump":
+          if (Number.isFinite(+a.ri)) jumpToRound(+a.ri);
+          break;
+        case "skipRound":
+          goNextRound(); // jump straight to the next round (or the end)
+          break;
+        case "standings":
+          setShowStandings(!!a.on);
+          break;
+        case "resetBuzz":
+          if (buzzerOn) room.resetBuzz();
+          break;
+        // ---- Who Knows More (host remote drives the auction + answer reveal) ----
+        case "wkWinner":
+          if (round?.type === "whoknows" && a.id && game.players.some((p) => p.id === a.id))
+            setWk((w) => ({ ...w, winnerId: a.id }));
+          break;
+        case "wkClaim":
+          // Cap the claim at the number of answers — claiming more than exist would
+          // make delivery impossible and strand the round in the answering phase.
+          if (round?.type === "whoknows" && Number.isFinite(+a.n))
+            setWk((w) => ({ ...w, claimed: Math.max(1, Math.min(cq?.answers?.length || 1, Math.floor(+a.n))) }));
+          break;
+        case "wkAward":
+          if (round?.type === "whoknows") wkAward();
+          break;
+        case "wkPick":
+          // Guard the index against the current question's answer list.
+          if (round?.type === "whoknows" && Number.isInteger(+a.i) && +a.i >= 0 && +a.i < (cq?.answers?.length || 0))
+            wkPick(+a.i);
+          break;
+        case "wkBust":
+          if (round?.type === "whoknows") wkBustNow();
+          break;
+        case "wkShowAll":
+          if (round?.type === "whoknows") setWk((w) => ({ ...w, showAll: !!a.on }));
+          break;
+        default:
+          break;
+      }
     }
-    const cq = isJeop ? round?.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] : round?.questions?.[game.qi];
-    switch (cmd.action) {
-      case "reveal":
-        if (game.stage === "question" && !game.revealed && cq) {
-          if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
-          else if (round.type === "number") revealNumber(cq);
-          else if (round.type === "map") revealMap(cq);
-          else reveal();
-        }
-        break;
-      case "advance":
-        if (game.stage === "question") advance();
-        break;
-      case "hint":
-        if (game.stage === "question" && !game.revealed && cq) {
-          if (round.type === "hints" && game.hintsShown < realHints(cq.hints).length)
-            upd({ hintsShown: game.hintsShown + 1 });
-          else if (round.type === "connect" && game.hintsShown < realHints(cq.clues).length)
-            upd({ hintsShown: game.hintsShown + 1 });
-          else if (round.type === "morph") setMorphRunning(true); // start/keep the auto-demorph running
-          else if (round.type === "fusion") setMorphStep((s) => Math.min(cq.steps, s + 1));
-          else if ((round.type === "video" || round.type === "clip") && clipLadderActive(cq)) extendClip(cq.steps);
-        }
-        break;
-      case "media":
-        if (["play", "pause", "restart"].includes(a.action)) sendTransport(a.action);
-        break;
-      case "soundOnTv":
-        setSoundOnTv(!!a.on);
-        break;
-      case "volume":
-        if (Number.isFinite(+a.value)) setVolume(Math.max(0, Math.min(100, +a.value)));
-        break;
-      case "sign":
-        setSign(a.sign === -1 ? -1 : 1);
-        break;
-      case "award":
-        if (a.id && game.players.some((p) => p.id === a.id)) toggleAward(a.id);
-        break;
-      case "adjust":
-        if (a.id && Number.isFinite(+a.delta) && game.players.some((p) => p.id === a.id)) adjustScore(a.id, +a.delta);
-        break;
-      case "startRound":
-        if (game.stage === "intro") beginRound();
-        break;
-      case "jump":
-        if (Number.isFinite(+a.ri)) jumpToRound(+a.ri);
-        break;
-      case "skipRound":
-        goNextRound(); // jump straight to the next round (or the end)
-        break;
-      case "standings":
-        setShowStandings(!!a.on);
-        break;
-      case "resetBuzz":
-        if (buzzerOn) room.resetBuzz();
-        break;
-      // ---- Who Knows More (host remote drives the auction + answer reveal) ----
-      case "wkWinner":
-        if (round?.type === "whoknows" && a.id && game.players.some((p) => p.id === a.id))
-          setWk((w) => ({ ...w, winnerId: a.id }));
-        break;
-      case "wkClaim":
-        // Cap the claim at the number of answers — claiming more than exist would
-        // make delivery impossible and strand the round in the answering phase.
-        if (round?.type === "whoknows" && Number.isFinite(+a.n))
-          setWk((w) => ({ ...w, claimed: Math.max(1, Math.min(cq?.answers?.length || 1, Math.floor(+a.n))) }));
-        break;
-      case "wkAward":
-        if (round?.type === "whoknows") wkAward();
-        break;
-      case "wkPick":
-        // Guard the index against the current question's answer list.
-        if (round?.type === "whoknows" && Number.isInteger(+a.i) && +a.i >= 0 && +a.i < (cq?.answers?.length || 0))
-          wkPick(+a.i);
-        break;
-      case "wkBust":
-        if (round?.type === "whoknows") wkBustNow();
-        break;
-      case "wkShowAll":
-        if (round?.type === "whoknows") setWk((w) => ({ ...w, showAll: !!a.on }));
-        break;
-      default:
-        break;
-    }
-  }, [room?.command]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [room?.commands]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* host keyboard shortcuts: R reveal · H hint · N/→ next · +/- sign · 1–9 award */
   useEffect(() => {
@@ -708,9 +716,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && round.type === "connect" && game.hintsShown < realHints(q.clues).length)
         upd({ hintsShown: game.hintsShown + 1 });
-      else if (k === "h" && !game.revealed && round.type === "morph") setMorphRunning(true);
-      else if (k === "h" && !game.revealed && round.type === "fusion")
-        setMorphStep((s) => Math.min(q.steps, s + 1));
+      else if (k === "h" && !game.revealed && round.type === "morph") setMorphRunning((r) => !r);
+      else if (k === "h" && !game.revealed && round.type === "fusion") setMorphStep((s) => Math.min(q.steps, s + 1));
       else if (k === "h" && !game.revealed && (round.type === "video" || round.type === "clip") && clipLadderActive(q))
         extendClip(q.steps);
       else if (allowNegative && game.revealed && (e.key === "-" || e.key === "_")) setSign(-1);
@@ -1554,11 +1561,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <div className="shrink-0">
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
             {!game.revealed && !cleared && (
-              <Button
-                variant="outline"
-                className="px-5 py-3 text-base"
-                onClick={() => setMorphRunning((r) => !r)}
-              >
+              <Button variant="outline" className="px-5 py-3 text-base" onClick={() => setMorphRunning((r) => !r)}>
                 <Sparkles size={18} />{" "}
                 {morphRunning ? t("play.pauseDemorph") : morphP > 0 ? t("play.resumeDemorph") : t("play.startDemorph")}
               </Button>

@@ -46,6 +46,8 @@ export default function HostRemoteView({ code }) {
   const type = present?.roundType;
   const revealed = !!live?.revealed;
   const value = live?.value || 0;
+  const morphRunning = !!live?.morphRunning; // mirrored auto-demorph clock (for the start/pause label below)
+  const morphProgress = live?.morphProgress || 0;
   // Who Knows More: the auction state rides `live`; the full answer list rides the
   // host-only topic (`hostAux`) so the host can tap correct answers from the phone.
   const wkk = live?.whoknows || null;
@@ -329,7 +331,11 @@ export default function HostRemoteView({ code }) {
                   : type === "connect"
                     ? t("play.nextClue")
                     : type === "morph"
-                      ? t("play.startDemorph")
+                      ? morphRunning
+                        ? t("play.pauseDemorph")
+                        : morphProgress > 0
+                          ? t("play.resumeDemorph")
+                          : t("play.startDemorph")
                       : t("host.hint")}
               </button>
             )}
@@ -422,8 +428,11 @@ export default function HostRemoteView({ code }) {
                 >
                   <Plus size={13} />
                 </button>
-                {/* take / give the round's points */}
-                {value > 0 && (
+                {/* take / give the round's points — only after reveal, mirroring the
+                    main screen's ScoreBar (scoreActive = question && revealed). This
+                    also hides the bogus flat ±10 during a whoknows auction, where the
+                    laptop never enables it (whoknows never sets revealed). */}
+                {revealed && value > 0 && (
                   <>
                     <button
                       onClick={() => sendCtrl("adjust", { id: s.id, delta: -value })}
