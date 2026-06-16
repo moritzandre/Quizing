@@ -674,17 +674,19 @@ describe("clip ladder (video/audio)", () => {
     expect(clipLadderActive(null)).toBe(false);
   });
 
-  it("grows the out-point from the first slice to the full end across steps", () => {
-    const q = { steps: 2, start: 0, end: 30 }; // 3 slices: 10, 20, 30
-    expect(clipEnd(q, 0)).toBeCloseTo(10);
-    expect(clipEnd(q, 1)).toBeCloseTo(20);
-    expect(clipEnd(q, 2)).toBeCloseTo(30);
+  it("grows the out-point progressively — short first slice, bigger later jumps", () => {
+    const q = { steps: 2, start: 0, end: 30 }; // power-2 curve over a 30s window
+    expect(clipEnd(q, 0)).toBeCloseTo(30 * (1 / 3) ** 2); // ~3.3s — short first reveal
+    expect(clipEnd(q, 1)).toBeCloseTo(30 * (2 / 3) ** 2); // ~13.3s
+    expect(clipEnd(q, 2)).toBeCloseTo(30); // final step = the whole window
     expect(clipEnd(q, 99)).toBeCloseTo(30); // clamps to the full window
+    // each extension reveals MORE than the previous one
+    expect(clipEnd(q, 2) - clipEnd(q, 1)).toBeGreaterThan(clipEnd(q, 1) - clipEnd(q, 0));
   });
 
   it("honors a non-zero start offset", () => {
-    const q = { steps: 1, start: 60, end: 120 }; // 2 slices over a 60s window
-    expect(clipEnd(q, 0)).toBeCloseTo(90);
+    const q = { steps: 1, start: 60, end: 120 }; // 60s window
+    expect(clipEnd(q, 0)).toBeCloseTo(60 + 60 * (1 / 2) ** 2); // 75
     expect(clipEnd(q, 1)).toBeCloseTo(120);
   });
 
@@ -976,7 +978,7 @@ describe("presenter payloads", () => {
     expect(n.roundType).toBe("clip");
     expect(n.q).toMatchObject({ start: 10, end: 40, steps: 2 });
     expect(n.q.url).toBe("https://youtu.be/x");
-    expect(clipEnd(n.q, 0)).toBeCloseTo(20); // (40-10)/3 + 10
+    expect(clipEnd(n.q, 0)).toBeCloseTo(10 + 30 * (1 / 3) ** 2); // progressive: short first slice
   });
 
   it("plain video present payload carries no clip-ladder steps", () => {

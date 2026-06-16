@@ -134,6 +134,7 @@ const en = {
   "builder.importBad": "No valid rounds found in that JSON",
   "builder.importAdd": "Add {n}",
   "builder.creatorRound": "Creator Room",
+  "builder.roundType": "Round type",
   "builder.creatorRoundHint": "Pick a round type, copy the prompt into your AI, then paste the JSON it returns.",
   "play.roundRecap": "Points this round",
   "play.biggestMover": "Biggest mover",
@@ -646,6 +647,7 @@ const de = {
   "builder.importBad": "Keine gültigen Runden in diesem JSON",
   "builder.importAdd": "{n} hinzufügen",
   "builder.creatorRound": "Creator Room",
+  "builder.roundType": "Rundentyp",
   "builder.creatorRoundHint":
     "Wähle einen Rundentyp, kopiere den Prompt in deine KI und füge das zurückgegebene JSON ein.",
   "play.roundRecap": "Punkte diese Runde",

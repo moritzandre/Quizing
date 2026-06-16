@@ -591,9 +591,11 @@ export const morphValueAt = (points, progress) =>
 export const clipLadderActive = (q) => num(q?.steps, 0) > 0 && q?.end != null && q.end > num(q?.start, 0);
 
 /**
- * Out-point (in seconds) of the clip for the current ladder step. Step 0 plays
- * the first 1/(steps+1) of the window; the final step plays to `end`. Returns
- * the question's plain `end` when the ladder isn't active.
+ * Out-point (in seconds) of the clip for the current ladder step. The reveal is
+ * PROGRESSIVE (a power curve): the first slice is tiny (~half a second for a
+ * typical clip) and each extension adds more than the last, with the final step
+ * playing the whole window. Returns the question's plain `end` when the ladder
+ * isn't active.
  * @param {object} q A video question.
  * @param {number} step Current ladder step (0-based).
  */
@@ -602,7 +604,10 @@ export const clipEnd = (q, step) => {
   const lo = num(q.start, 0);
   const steps = num(q.steps, 0);
   const span = q.end - lo;
-  return lo + (span * Math.min(num(step, 0) + 1, steps + 1)) / (steps + 1);
+  // played fraction = (k / (steps+1))^2 → small first slice, bigger later jumps;
+  // k=steps+1 at the final step gives the whole window.
+  const k = Math.min(num(step, 0) + 1, steps + 1);
+  return lo + span * Math.pow(k / (steps + 1), 2);
 };
 
 /* ---- persistent leaderboard ---- */
