@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connectRoom, roomTopics, newRoomCode } from "../lib/realtime.js";
 import { uid, str, normalizePresent, normalizeLive, normalizeHostAux, normalizePhoneScores } from "../lib/model.js";
+import { createPlayer, isSupabaseConfigured } from "../lib/supabase.js";
 import { PLAYER_COLORS, PLAYER_EMOJI } from "./ui.jsx";
 
 /** Keep only a palette emoji/color from an (untrusted) phone join message. */
@@ -56,6 +57,7 @@ export function useHostRoom() {
   const roomPassRef = useRef(null); // optional join passphrase (host-set, never broadcast)
   const admittedRef = useRef(new Set()); // deviceIds that passed the passphrase
   const rejectedRef = useRef(new Set()); // deviceIds that sent a wrong passphrase
+  const createdRef = useRef({}); // deviceId -> { reqId, id } for relayed player creation
   const participantsRef = useRef({});
   participantsRef.current = participants;
 
@@ -74,6 +76,9 @@ export function useHostRoom() {
         ...(roomPassRef.current
           ? { needsPass: true, admitted: [...admittedRef.current], rejected: [...rejectedRef.current] }
           : {}),
+        // results of relayed player-creation, keyed by the requesting deviceId
+        // (just { reqId, id } — no PII; the PIN never travels through the broker).
+        ...(Object.keys(createdRef.current).length ? { created: createdRef.current } : {}),
       },
       { retain: true },
     );
@@ -138,6 +143,7 @@ export function useHostRoom() {
     roomPassRef.current = null;
     admittedRef.current = new Set();
     rejectedRef.current = new Set();
+    createdRef.current = {};
     setParticipants({});
     setBuzz(null);
     setPins({});
@@ -240,6 +246,31 @@ export function useHostRoom() {
             action: msg.action,
             args: msg.args && typeof msg.args === "object" ? msg.args : {},
           });
+        } else if (msg.type === "createPlayer" && isSupabaseConfigured) {
+          // Relay player creation through the host. create_player is admin-only
+          // server-side, so this only ever succeeds because the host is signed in
+          // as an admin — i.e. players can self-create, but only inside a room an
+          // admin is hosting. The PIN is intentionally NOT relayed (it would cross
+          // the public broker); the phone sets it afterwards directly over TLS.
+          const reqId = str(msg.reqId);
+          const dev = msg.deviceId;
+          const existing = createdRef.current[dev];
+          // Idempotent: ignore a repeat/redelivered request for the same reqId
+          // (MQTT can redeliver) so one logical create never inserts twice. A new
+          // reqId from the same device (a genuine re-create) is still honoured.
+          if (reqId && !(existing && existing.reqId === reqId)) {
+            createdRef.current = { ...createdRef.current, [dev]: { reqId, id: null } };
+            const fields = {
+              name: str(msg.name).trim() || "Player",
+              emoji: safeEmoji(msg.emoji),
+              color: safeColor(msg.color),
+              photo: safePhoto(msg.photo),
+            };
+            createPlayer(fields).then((profile) => {
+              createdRef.current = { ...createdRef.current, [dev]: { reqId, id: profile?.id || null } };
+              pushStateRef.current();
+            });
+          }
         }
       },
     });
@@ -262,6 +293,7 @@ export function useHostRoom() {
     roomPassRef.current = null;
     admittedRef.current = new Set();
     rejectedRef.current = new Set();
+    createdRef.current = {};
     Object.values(leaveTimersRef.current).forEach(clearTimeout);
     leaveTimersRef.current = {};
     setEnabled(false);
@@ -426,6 +458,8 @@ export function usePlayerRoom(code) {
   const [status, setStatus] = useState("connecting");
   const [state, setState] = useState(null); // { phase, qKey, lockedBy }
   const [name, setName] = useState("");
+  const [created, setCreated] = useState(null); // relayed player-creation result { reqId, id } | null
+  const pendingCreateRef = useRef(null); // reqId we're awaiting back from the host
   const connRef = useRef(null);
   const id = useRef(deviceId());
 
@@ -442,26 +476,32 @@ export function usePlayerRoom(code) {
       subscribe: [roomTopics(validCode).state],
       onStatus: setStatus,
       // null = cleared retained state (host left) → fall back to the lobby screen.
-      onMessage: (_topic, msg) =>
+      onMessage: (_topic, msg) => {
+        const obj = msg && typeof msg === "object" && !Array.isArray(msg) ? msg : null;
         setState(
-          msg && typeof msg === "object" && !Array.isArray(msg)
+          obj
             ? {
-                phase: str(msg.phase) || "idle",
-                qKey: msg.qKey ?? null,
-                lockedBy: msg.lockedBy ?? null,
-                teams: Array.isArray(msg.teams) ? msg.teams : null,
-                options: Array.isArray(msg.options) ? msg.options : null,
-                scores: normalizePhoneScores(msg.scores),
-                ended: !!msg.ended,
-                gameId: str(msg.gameId),
-                quizTitle: str(msg.quizTitle),
-                mode: msg.mode === "teams" ? "teams" : "solo",
-                needsPass: !!msg.needsPass,
-                admitted: Array.isArray(msg.admitted) ? msg.admitted.map(str) : [],
-                rejected: Array.isArray(msg.rejected) ? msg.rejected.map(str) : [],
+                phase: str(obj.phase) || "idle",
+                qKey: obj.qKey ?? null,
+                lockedBy: obj.lockedBy ?? null,
+                teams: Array.isArray(obj.teams) ? obj.teams : null,
+                options: Array.isArray(obj.options) ? obj.options : null,
+                scores: normalizePhoneScores(obj.scores),
+                ended: !!obj.ended,
+                gameId: str(obj.gameId),
+                quizTitle: str(obj.quizTitle),
+                mode: obj.mode === "teams" ? "teams" : "solo",
+                needsPass: !!obj.needsPass,
+                admitted: Array.isArray(obj.admitted) ? obj.admitted.map(str) : [],
+                rejected: Array.isArray(obj.rejected) ? obj.rejected.map(str) : [],
               }
             : null,
-        ),
+        );
+        // relayed player-creation result addressed to THIS device (matched by reqId)
+        const mine = obj && obj.created ? obj.created[id.current] : null;
+        if (mine && typeof mine === "object" && pendingCreateRef.current && str(mine.reqId) === pendingCreateRef.current)
+          setCreated({ reqId: pendingCreateRef.current, id: typeof mine.id === "string" ? mine.id : null });
+      },
     });
     connRef.current = conn;
     return () => conn.close();
@@ -494,5 +534,26 @@ export function usePlayerRoom(code) {
   const sendAnswer = useCallback((value) => send({ type: "answer", value }), [send]);
   const leave = useCallback(() => send({ type: "leave" }), [send]);
 
-  return { status, state, name, deviceId: id.current, join, buzz, sendPin, sendAnswer, leave };
+  // Ask the (admin-authed) host to create a player on our behalf — the only path
+  // that can create a profile when the admin gate is on. The PIN is set later,
+  // directly over TLS, never here (the broker is public). Returns the reqId.
+  const requestCreate = useCallback(
+    (fields) => {
+      const reqId = uid();
+      pendingCreateRef.current = reqId;
+      setCreated(null);
+      send({
+        type: "createPlayer",
+        reqId,
+        name: fields?.name || "",
+        emoji: fields?.emoji || null,
+        color: fields?.color || null,
+        photo: fields?.photo || null,
+      });
+      return reqId;
+    },
+    [send],
+  );
+
+  return { status, state, name, deviceId: id.current, created, join, buzz, sendPin, sendAnswer, leave, requestCreate };
 }

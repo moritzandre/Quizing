@@ -70,6 +70,9 @@ export default function JoinView({ code }) {
   const [reselect, setReselect] = useState(false); // show the picker even if a player is chosen
   const [creating, setCreating] = useState(false); // in the "new player" sub-form
   const [newPin, setNewPin] = useState(""); // optional PIN when creating
+  const [createBusy, setCreateBusy] = useState(false); // awaiting the host's relayed creation
+  const [guestNote, setGuestNote] = useState(false); // creation couldn't be saved → playing as guest
+  const createTimerRef = useRef(null); // relay timeout (host offline / not admin)
   const [pinFor, setPinFor] = useState(null); // a locked player awaiting its PIN
   const [pinInput, setPinInput] = useState("");
   const [pinError, setPinError] = useState(false);
@@ -245,20 +248,76 @@ export default function JoinView({ code }) {
       setReselect(false);
     } else setPinError(true);
   };
-  const createNew = async () => {
-    if (!draftName.trim()) return;
-    const row = await pb.create({
-      name: draftName.trim(),
-      emoji: pickedEmoji,
-      color: pickedColor,
-      photo: pickedPhoto,
-      pin: newPin || null,
-    });
-    if (row) {
-      setCreating(false);
-      setReselect(false);
-      setNewPin("");
+  // Become a freshly-created player (relayed through the host). Optionally lock
+  // it with a PIN afterwards — that call goes straight to Supabase over TLS, so
+  // the PIN never crosses the public broker.
+  const finishCreated = async (id) => {
+    pb.adopt(
+      { id, name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto, locked: !!newPin },
+      { unlock: true },
+    );
+    if (newPin && /^[0-9]{6,8}$/.test(newPin)) await pb.lockWithPin(id, newPin);
+    setCreating(false);
+    setReselect(false);
+    setNewPin("");
+    setCreateBusy(false);
+  };
+  // Creation couldn't be saved (host offline / not an admin / backend down) — never
+  // block the join: play as a local guest (stats just won't be recorded).
+  const finishGuest = () => {
+    pb.adopt(
+      {
+        id: "guest-" + room.deviceId,
+        name: draftName.trim() || "Player",
+        emoji: pickedEmoji,
+        color: pickedColor,
+        photo: pickedPhoto,
+        locked: false,
+      },
+      { unlock: true },
+    );
+    setGuestNote(true);
+    setCreating(false);
+    setReselect(false);
+    setCreateBusy(false);
+  };
+  // Players self-create exactly as before, but the actual DB write is RELAYED
+  // through the admin-authed host (create_player is admin-only). The host replies
+  // with the new id on the room state; a timeout falls back to a guest.
+  const createNew = () => {
+    if (!draftName.trim() || createBusy) return;
+    setGuestNote(false);
+    setCreateBusy(true);
+    room.requestCreate({ name: draftName.trim(), emoji: pickedEmoji, color: pickedColor, photo: pickedPhoto });
+    if (createTimerRef.current) clearTimeout(createTimerRef.current);
+    createTimerRef.current = setTimeout(() => {
+      createTimerRef.current = null;
+      finishGuest();
+    }, 6000);
+  };
+
+  // Resolve a relayed creation: the host echoes { reqId, id } back on the state.
+  useEffect(() => {
+    if (!createBusy || !room.created) return;
+    if (createTimerRef.current) {
+      clearTimeout(createTimerRef.current);
+      createTimerRef.current = null;
     }
+    if (room.created.id) finishCreated(room.created.id);
+    else finishGuest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room.created, createBusy]);
+
+  // Clear a pending relay timeout if the page unmounts mid-create (e.g. tapping
+  // the #/me link) so finishGuest never fires on an unmounted component.
+  useEffect(() => () => clearTimeout(createTimerRef.current), []);
+  // Leave the "new player" sub-form, cancelling any in-flight relayed create.
+  const cancelCreate = () => {
+    clearTimeout(createTimerRef.current);
+    createTimerRef.current = null;
+    setCreateBusy(false);
+    setGuestNote(false);
+    setCreating(false);
   };
   const pass = passInput.trim() || null;
   // Join as the chosen playerbase player.
@@ -501,6 +560,11 @@ export default function JoinView({ code }) {
               {t("playerbase.change")}
             </button>
           </div>
+          {guestNote && (
+            <p className="mb-4 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+              {t("playerbase.guestFallback")}
+            </p>
+          )}
           {needsTeam && teamPicker}
           {passField}
           <Button
@@ -520,7 +584,7 @@ export default function JoinView({ code }) {
         <div className="flex flex-1 flex-col justify-center">
           {pb.players.length > 0 && (
             <button
-              onClick={() => setCreating(false)}
+              onClick={cancelCreate}
               className={`mb-3 inline-flex items-center gap-1 self-start rounded-lg px-2 py-1.5 text-sm text-stone-500 ${FOCUS}`}
             >
               <ChevronLeft size={16} /> {t("playerbase.back")}
@@ -553,10 +617,10 @@ export default function JoinView({ code }) {
           <Button
             variant="accent"
             className="mt-4 w-full px-6 py-3.5 text-base"
-            disabled={!draftName.trim() || (!!newPin && !/^[0-9]{6,8}$/.test(newPin)) || !pb.ready}
+            disabled={!draftName.trim() || (!!newPin && !/^[0-9]{6,8}$/.test(newPin)) || !pb.ready || createBusy}
             onClick={createNew}
           >
-            <Plus size={16} /> {t("playerbase.create")}
+            {createBusy ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} {t("playerbase.create")}
           </Button>
         </div>
       );

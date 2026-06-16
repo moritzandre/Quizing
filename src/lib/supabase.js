@@ -34,7 +34,10 @@ export function getSupabaseClient() {
     clientPromise = import("@supabase/supabase-js")
       .then(({ createClient }) =>
         createClient(URL, ANON_KEY, {
-          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+          // detectSessionInUrl:false — the app routes off window.location.hash, and
+          // admins sign in with email+password (no magic-link/OAuth redirect), so we
+          // must NOT let the SDK consume/rewrite the hash and disrupt routing.
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
         }),
       )
       .catch(() => null);
@@ -163,6 +166,117 @@ export async function recordResult(row) {
       p_team_name: row.team_name ?? null,
       p_room_code: row.room_code ?? null,
     });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/* ====================================================================
+   ADMIN AUTH (optional "ultimate admin" gate)
+   --------------------------------------------------------------------
+   Unlike the invisible anonymous player session, an ADMIN signs in with
+   a real email/password. Their auth user must be listed in public.admins
+   (server-side allow-list) to host or to create players. One client = one
+   session: an admin login replaces the anon session on the host device,
+   which is fine — the host isn't a player and every RPC works as the
+   `authenticated` role. signOutAdmin() returns the device to anon mode.
+   All best-effort: failures resolve to null/false and never throw.
+   ==================================================================== */
+
+/** The current auth user ({ id, email } or null). Distinguishes an admin login from the anon session. */
+export async function getAuthUser() {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return null;
+    const { data } = await sb.auth.getSession();
+    return data?.session?.user || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Sign in as an admin with email/password. Returns the user or null. */
+export async function signInAdmin(email, password) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return null;
+    const { data, error } = await sb.auth.signInWithPassword({ email: String(email || "").trim(), password: password || "" });
+    if (error) return null;
+    return data?.user || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Create an admin auth account (first-time setup). Returns the user or null. */
+export async function signUpAdmin(email, password) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return null;
+    const { data, error } = await sb.auth.signUp({ email: String(email || "").trim(), password: password || "" });
+    if (error) return null;
+    return data?.user || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Sign out of the admin account and return the device to an anonymous player session. */
+export async function signOutAdmin() {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return false;
+    await sb.auth.signOut();
+    await ensureAnonSession();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** True if the current auth session belongs to an admin (server-checked). */
+export async function isAdmin() {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return false;
+    const { data, error } = await sb.rpc("is_admin");
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Bootstrap: claim the protected ultimate-admin slot (only works while the allow-list is empty). */
+export async function claimFirstAdmin() {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb) return false;
+    const { data, error } = await sb.rpc("claim_first_admin");
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Admin-only: add another admin by email (the target must have signed up once). */
+export async function grantAdmin(email) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !email) return false;
+    const { data, error } = await sb.rpc("grant_admin", { p_email: String(email).trim() });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Admin-only: remove an admin by auth user id (protected/last admin refused server-side). */
+export async function revokeAdmin(userId) {
+  try {
+    const sb = await getSupabaseClient();
+    if (!sb || !userId) return false;
+    const { data, error } = await sb.rpc("revoke_admin", { p_user_id: userId });
     return !error && data === true;
   } catch {
     return false;

@@ -8,8 +8,26 @@
    ==================================================================== */
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
-import { Play, Plus, X, Pencil, Copy, Download, Upload, Trophy, LayoutTemplate, Sparkles } from "lucide-react";
+import {
+  Play,
+  Plus,
+  X,
+  Pencil,
+  Copy,
+  Download,
+  Upload,
+  Trophy,
+  LayoutTemplate,
+  Sparkles,
+  Lock,
+  LogIn,
+  LogOut,
+  ShieldCheck,
+  UserPlus,
+  Loader2,
+} from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
+import { isSupabaseConfigured } from "./lib/supabase.js";
 import {
   uid,
   deepClone,
@@ -27,6 +45,7 @@ import { QUIZ_TEMPLATES, AI_SCHEMA_HELP } from "./data/templates.js";
 import {
   FOCUS,
   cardCls,
+  inputCls,
   Button,
   IconButton,
   TypeBadge,
@@ -37,6 +56,7 @@ import {
 } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { useHostRoom } from "./components/useRoom.js";
+import { useAdmin } from "./components/useAdmin.js";
 
 // Lazy-loaded so the heavy libraries they pull in (Leaflet, the YouTube/canvas
 // players, mqtt, qrcode, the builder) aren't in the initial home-screen bundle.
@@ -203,6 +223,201 @@ function AiModal({ onClose, onImport, t }) {
   );
 }
 
+/**
+ * Admin sign-in (email/password) — gates the host surfaces. A first-timer can
+ * create the account, then claim the (protected) ultimate-admin slot.
+ */
+function AdminLoginModal({ admin, onClose, t }) {
+  const [email, setEmail] = useState("");
+  const [pw, setPw] = useState("");
+  const [mode, setMode] = useState("signin"); // "signin" | "signup"
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [needsClaim, setNeedsClaim] = useState(false); // signed in, but not on the allow-list
+
+  const doSignIn = async () => {
+    setBusy(true);
+    setErr("");
+    const res = await admin.signIn(email, pw);
+    setBusy(false);
+    if (!res.signedIn) return setErr(t("admin.signInFailed"));
+    if (res.isAdmin) return onClose();
+    setNeedsClaim(true);
+  };
+
+  const doSignUp = async () => {
+    setBusy(true);
+    setErr("");
+    const user = await admin.signUp(email, pw);
+    if (!user) {
+      setBusy(false);
+      return setErr(t("admin.signUpFailed"));
+    }
+    // If email confirmation is off, the account is usable immediately — try to sign in.
+    const res = await admin.signIn(email, pw);
+    setBusy(false);
+    if (!res.signedIn) return setErr(t("admin.checkEmail")); // confirmation required
+    if (res.isAdmin) return onClose();
+    setNeedsClaim(true);
+  };
+
+  const doClaim = async () => {
+    setBusy(true);
+    setErr("");
+    const ok = await admin.claimFirst();
+    setBusy(false);
+    if (ok) return onClose();
+    setErr(t("admin.claimFailed")); // the table already has an admin → ask one of them
+  };
+
+  return (
+    <div className={modalWrap} onClick={onClose}>
+      <div className={modalCard} onClick={(e) => e.stopPropagation()}>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <ShieldCheck size={18} /> {t("admin.title")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+
+        {needsClaim ? (
+          <>
+            <p className="text-sm text-stone-500 dark:text-stone-400">{t("admin.claimIntro")}</p>
+            {err && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{err}</p>}
+            <div className="mt-3 flex justify-end gap-2">
+              <Button variant="outline" onClick={onClose}>
+                {t("common.done")}
+              </Button>
+              <Button onClick={doClaim} disabled={busy}>
+                {busy ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />} {t("admin.claim")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-sm text-stone-500 dark:text-stone-400">
+              {mode === "signin" ? t("admin.signInIntro") : t("admin.signUpIntro")}
+            </p>
+            <input
+              type="email"
+              autoComplete="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("admin.email")}
+              className={`${inputCls} mt-3`}
+            />
+            <input
+              type="password"
+              autoComplete={mode === "signin" ? "current-password" : "new-password"}
+              value={pw}
+              onChange={(e) => setPw(e.target.value)}
+              placeholder={t("admin.password")}
+              className={`${inputCls} mt-2`}
+              onKeyDown={(e) => e.key === "Enter" && (mode === "signin" ? doSignIn() : doSignUp())}
+            />
+            {err && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{err}</p>}
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(mode === "signin" ? "signup" : "signin");
+                  setErr("");
+                }}
+                className={`text-sm text-stone-500 underline-offset-2 hover:underline dark:text-stone-400 ${FOCUS}`}
+              >
+                {mode === "signin" ? t("admin.toSignUp") : t("admin.toSignIn")}
+              </button>
+              <Button onClick={mode === "signin" ? doSignIn : doSignUp} disabled={busy || !email || !pw}>
+                {busy ? <Loader2 size={16} className="animate-spin" /> : <LogIn size={16} />}{" "}
+                {mode === "signin" ? t("admin.signIn") : t("admin.signUp")}
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Admin-only: add another person to the admin allow-list by their (already signed-up) email. */
+function AdminGrantModal({ admin, onClose, t }) {
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const doGrant = async () => {
+    setBusy(true);
+    setMsg(null);
+    const ok = await admin.grantAdmin(email);
+    setBusy(false);
+    setMsg(ok ? { ok: true, text: t("admin.granted", { email }) } : { ok: false, text: t("admin.grantFailed") });
+    if (ok) setEmail("");
+  };
+  return (
+    <div className={modalWrap} onClick={onClose}>
+      <div className={modalCard} onClick={(e) => e.stopPropagation()}>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <UserPlus size={18} /> {t("admin.addTitle")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+        <p className="text-sm text-stone-500 dark:text-stone-400">{t("admin.addIntro")}</p>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t("admin.email")}
+          className={`${inputCls} mt-3`}
+          onKeyDown={(e) => e.key === "Enter" && email && doGrant()}
+        />
+        {msg && (
+          <p
+            className={`mt-2 text-sm ${msg.ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
+          >
+            {msg.text}
+          </p>
+        )}
+        <div className="mt-3 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            {t("common.done")}
+          </Button>
+          <Button onClick={doGrant} disabled={busy || !email}>
+            {busy ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />} {t("admin.add")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Player-facing landing shown when Supabase is configured but the visitor isn't a signed-in admin. */
+function LockedLanding({ onSignIn, t }) {
+  return (
+    <div className="qn-app-bg min-h-screen font-sans text-stone-900 antialiased transition-colors dark:text-stone-100">
+      <div className="fixed right-4 top-4 flex items-center gap-1">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
+      <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-6 text-center">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">
+          <Lock size={28} />
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Quiz Night<span className="text-indigo-600 dark:text-indigo-400">.</span>
+        </h1>
+        <p className="mt-3 text-stone-500 dark:text-stone-400">{t("admin.lockedBody")}</p>
+        <Button variant="outline" className="mt-6" onClick={onSignIn}>
+          <LogIn size={16} /> {t("admin.hostSignIn")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   // Initialise from the hash so a phone hitting #/join/<code> renders instantly.
   const [view, setView] = useState(() => {
@@ -221,10 +436,13 @@ function App() {
   const [importError, setImportError] = useState("");
   const [tplOpen, setTplOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
+  const [adminLoginOpen, setAdminLoginOpen] = useState(false);
+  const [grantOpen, setGrantOpen] = useState(false);
   const fileRef = useRef(null);
   const { t } = useI18n();
 
   const room = useHostRoom();
+  const admin = useAdmin();
 
   /* initial load (with migration from the first artifact version's keys) */
   useEffect(() => {
@@ -483,6 +701,18 @@ function App() {
 
   if (!loaded) return loadingFallback;
 
+  // Host surfaces (build / start / host a room) are gated behind admin sign-in
+  // ONLY when Supabase is configured. Unconfigured (offline/LAN) stays fully
+  // open, exactly as before — the SDK is tree-shaken out and admin is dormant.
+  if (isSupabaseConfigured && !admin.ready) return loadingFallback; // brief: avoids flashing host UI
+  if (isSupabaseConfigured && !admin.isAdmin)
+    return (
+      <>
+        <LockedLanding onSignIn={() => setAdminLoginOpen(true)} t={t} />
+        {adminLoginOpen && <AdminLoginModal admin={admin} onClose={() => setAdminLoginOpen(false)} t={t} />}
+      </>
+    );
+
   return (
     <div className="qn-app-bg min-h-screen font-sans text-stone-900 antialiased transition-colors dark:text-stone-100">
       {view.name === "home" && (
@@ -498,6 +728,16 @@ function App() {
               <IconButton label={t("home.leaderboard")} onClick={() => go({ name: "leaderboard" })}>
                 <Trophy size={18} />
               </IconButton>
+              {admin.isAdmin && (
+                <>
+                  <IconButton label={t("admin.addTitle")} onClick={() => setGrantOpen(true)}>
+                    <UserPlus size={18} />
+                  </IconButton>
+                  <IconButton label={t("admin.signOut")} onClick={() => admin.signOut()}>
+                    <LogOut size={18} />
+                  </IconButton>
+                </>
+              )}
               <LanguageToggle />
               <ThemeToggle />
             </div>
@@ -609,10 +849,12 @@ function App() {
             v{APP_VERSION} · {storage.name === "claude" && t("home.storageClaude")}
             {storage.name === "local" && t("home.storageLocal")}
             {storage.name === "memory" && <span className="font-medium text-amber-500">{t("home.storageMemory")}</span>}
+            {admin.isAdmin && admin.email && <> · {t("admin.signedInAs", { email: admin.email })}</>}
           </p>
 
           {tplOpen && <TemplateModal onClose={() => setTplOpen(false)} onPick={newFromTemplate} t={t} />}
           {aiOpen && <AiModal onClose={() => setAiOpen(false)} onImport={importAiJson} t={t} />}
+          {grantOpen && <AdminGrantModal admin={admin} onClose={() => setGrantOpen(false)} t={t} />}
         </div>
       )}
 

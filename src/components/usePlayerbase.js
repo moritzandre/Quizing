@@ -18,6 +18,7 @@ import {
   listPlayers,
   createPlayer,
   verifyPin,
+  setPin,
   recordResult,
   loadPlayerStats,
   loadGlobalLeaderboard,
@@ -95,6 +96,38 @@ export function usePlayerbase() {
     return row;
   };
 
+  /**
+   * Become a player that was created elsewhere (e.g. relayed through the host
+   * when the admin gate is on) — set + cache it WITHOUT calling the now
+   * admin-only create_player RPC. Pass { unlock } to skip future PIN prompts.
+   */
+  const adopt = (profile, { unlock = false } = {}) => {
+    const row = normalizeProfile(profile);
+    if (!row) return null;
+    if (unlock) {
+      unlockedRef.current.add(row.id);
+      persistUnlocked();
+    }
+    setPlayers((ps) => [...ps.filter((p) => p.id !== row.id), row]);
+    setCurrent(row);
+    saveJSON(PLAYER_KEY, row);
+    return row;
+  };
+
+  /**
+   * Lock a player with a numeric PIN AFTER creation, directly over TLS (so the
+   * PIN never crosses the public broker). Auto-unlocks it on this device.
+   */
+  const lockWithPin = async (id, pin) => {
+    if (!configured || !id || !pin) return false;
+    const ok = await setPin(id, "", pin);
+    if (ok) {
+      unlockedRef.current.add(id);
+      persistUnlocked();
+    }
+    return ok;
+  };
+
   /** True if this device may use the player without a PIN prompt. */
   const isUnlocked = (id) => unlockedRef.current.has(id);
 
@@ -116,6 +149,8 @@ export function usePlayerbase() {
     currentId: current?.id || null,
     select,
     create,
+    adopt,
+    lockWithPin,
     refresh,
     isUnlocked,
     recordResult: record,
