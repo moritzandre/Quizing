@@ -8,9 +8,11 @@
    regenerate/extend; this module validates every row through
    normalizeAnyChar at load (a stray value clamps to a valid one rather
    than breaking the comparison) and builds the name/alias resolver.
-   Lazy-loaded only when an anythingle round renders. The host can still
-   guess characters NOT in here — those fall through to the inline
-   manual-add. Framework-free named exports.
+   Dynamic-imported by PlayView only when an anythingle round renders; the
+   Builder + host-remote pull it statically, but those are themselves
+   code-split route chunks, so the home bundle never includes it. The host
+   can still guess characters NOT in here — those fall through to the
+   inline manual-add. Framework-free named exports.
 
    Trait conventions (kept consistent so feedback never lies):
    - debut year = first appearance in the ORIGINAL medium under the
@@ -35,9 +37,18 @@ let INDEX = null;
 function index() {
   if (INDEX) return INDEX;
   INDEX = new Map();
+  // Pass 1: PRIMARY names win (first occurrence keeps the key) — deterministic.
   for (const c of ANYTHINGLE_DB) {
-    INDEX.set(normText(c.name), c);
-    for (const a of c.aliases || []) INDEX.set(normText(a), c);
+    const k = normText(c.name);
+    if (k && !INDEX.has(k)) INDEX.set(k, c);
+  }
+  // Pass 2: aliases fill only still-free keys, so an alias (e.g. "Robin" for
+  // Nico Robin) can never shadow another character's primary name ("Robin").
+  for (const c of ANYTHINGLE_DB) {
+    for (const a of c.aliases || []) {
+      const k = normText(a);
+      if (k && !INDEX.has(k)) INDEX.set(k, c);
+    }
   }
   return INDEX;
 }

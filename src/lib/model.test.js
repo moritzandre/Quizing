@@ -43,6 +43,7 @@ import {
   anyTurnOrder,
   ANYTHINGLE_TRAITS,
 } from "./model.js";
+import { ANYTHINGLE_DB, findAnyChar } from "../data/anythingle.js";
 
 const ID = "dQw4w9WgXcQ";
 
@@ -1533,5 +1534,24 @@ describe("Anythingle", () => {
       players: [{ id: "a", name: "Ann" }],
     });
     expect(g.anythingle).toBeNull();
+  });
+});
+
+describe("Anythingle character DB integrity", () => {
+  it("ships a healthy pool with unique primary names", () => {
+    expect(ANYTHINGLE_DB.length).toBeGreaterThan(1000);
+    const keys = ANYTHINGLE_DB.map((c) => normText(c.name));
+    expect(new Set(keys).size).toBe(keys.length); // no duplicate characters
+  });
+
+  it("resolves every primary name to a row with that name (no alias shadows a primary)", () => {
+    const shadowed = ANYTHINGLE_DB.filter((c) => normText(findAnyChar(c.name)?.name) !== normText(c.name)).map(
+      (c) => c.name,
+    );
+    expect(shadowed).toEqual([]);
+  });
+
+  it("every row passes normalize without losing its name (valid tokens throughout)", () => {
+    expect(ANYTHINGLE_DB.every((c) => c && c.name)).toBe(true);
   });
 });

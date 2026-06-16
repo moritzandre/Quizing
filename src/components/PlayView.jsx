@@ -238,8 +238,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setAnyInput("");
     setAnyAdd(null);
     anyCacheRef.current = {};
+    // Seed a fresh board only for a genuinely NEW question — keyed by qKey so a
+    // reload/remount of the SAME question keeps the persisted board (guesses,
+    // turn, solve) instead of wiping it. `qKey` rides game.anythingle (and
+    // survives normalizeGame), so the restored board matches on remount.
     if (round?.type === "anythingle" && game.stage === "question") {
-      upd({ anythingle: { order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null } });
+      if (game.anythingle?.qKey !== qKey)
+        upd({ anythingle: { qKey, order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null } });
     } else if (game.anythingle) {
       upd({ anythingle: null });
     }
@@ -307,6 +312,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   // Stream the light, frequently-changing presenter payload (reveal/step/scores).
   const scoreSig = game.players.map((p) => `${p.id}:${p.score}:${p.name}:${p.color}:${p.emoji}`).join(",");
+  // Anythingle board signature: a wrong guess / skipped turn changes neither the
+  // score nor `revealed`, so without this the TV + host-remote freeze on a stale board.
+  const anySig = game.anythingle
+    ? `${game.anythingle.turn}:${game.anythingle.guesses.length}:${game.anythingle.solvedBy}`
+    : "";
   // quantize the morph demorph for the TV (smooth via CSS transition; ~50 updates max)
   const morphStreamP = Math.round(morphP * 50) / 50;
   useEffect(() => {
@@ -331,7 +341,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -419,19 +429,25 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }, []);
 
   const toggleAward = (pid) => {
-    const a = { ...(game.awarded || {}) };
-    let players;
-    if (a[pid] != null) {
-      const prev = a[pid];
-      players = game.players.map((p) => (p.id === pid ? { ...p, score: p.score - prev } : p));
-      delete a[pid];
-    } else {
-      const delta = sign * value;
-      a[pid] = delta;
-      players = game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p));
-      playSound(delta < 0 ? "wrong" : "correct");
-    }
-    upd({ players, awarded: a });
+    // Functional update so two coalesced host-remote award taps compose instead
+    // of clobbering on a stale `game` closure.
+    let sound = null;
+    setGame((prev) => {
+      const a = { ...(prev.awarded || {}) };
+      let players;
+      if (a[pid] != null) {
+        const d = a[pid];
+        players = prev.players.map((p) => (p.id === pid ? { ...p, score: p.score - d } : p));
+        delete a[pid];
+      } else {
+        const delta = sign * value;
+        a[pid] = delta;
+        players = prev.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p));
+        sound = delta < 0 ? "wrong" : "correct";
+      }
+      return { ...prev, players, awarded: a };
+    });
+    if (sound) playSound(sound);
   };
 
   const reveal = () => {
@@ -498,7 +514,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
   };
 
   const adjustScore = (pid, delta) =>
-    upd({ players: game.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)) });
+    setGame((prev) => ({
+      ...prev,
+      players: prev.players.map((p) => (p.id === pid ? { ...p, score: p.score + delta } : p)),
+    }));
 
   /* ---- Anythingle handlers (host-driven, turn-based) ---- */
   // Resolve a typed guess to a character: per-round cache → round pool/target → bundled DB.
@@ -512,43 +531,53 @@ export default function PlayView({ game, setGame, onExit, room }) {
   };
   // Grade a resolved guess against the secret, append it to the shared board, and
   // advance the turn — or, if it IS the secret, award the guesser (first to solve).
+  // Derives next state from `prev` (functional setGame) so a coalesced burst of
+  // host-remote commands composes instead of clobbering on a stale closure.
   const anyCommit = (char) => {
     const q = round.questions[game.qi];
     if (!q || game.revealed) return;
-    const a = game.anythingle || { order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null };
-    const order = a.order.length ? a.order : anyTurnOrder(game.players);
-    const byId = order[a.turn % (order.length || 1)] || null;
-    const cells = gradeAnythingle(q.target, char).map((c) => ({ ...c, val: anyCellValue(char, c.key) }));
     anyCacheRef.current[normText(char.name)] = char;
-    const guesses = [...a.guesses, { name: char.name, by: byId, cells }];
-    if (isAnyTarget(q.target, char)) {
-      const pts = ptsOr(q.points, 30);
-      const awarded = byId ? { [byId]: pts } : {};
-      const players = byId
-        ? game.players.map((p) => (p.id === byId ? { ...p, score: p.score + pts } : p))
-        : game.players;
-      playSound("reveal");
-      upd({ anythingle: { ...a, order, guesses, solvedBy: byId }, awarded, players, revealed: true });
-    } else {
-      playSound("correct");
-      upd({ anythingle: { ...a, order, guesses, turn: a.turn + 1 } });
-    }
+    let solved = false;
+    setGame((prev) => {
+      const a = prev.anythingle || { qKey, order: anyTurnOrder(prev.players), turn: 0, guesses: [], solvedBy: null };
+      const order = a.order.length ? a.order : anyTurnOrder(prev.players);
+      const byId = order[a.turn % (order.length || 1)] || null;
+      const cells = gradeAnythingle(q.target, char).map((c) => ({ ...c, val: anyCellValue(char, c.key) }));
+      const guesses = [...a.guesses, { name: char.name, by: byId, cells }];
+      if (isAnyTarget(q.target, char)) {
+        solved = true;
+        const pts = ptsOr(q.points, 30);
+        const awarded = { ...(prev.awarded || {}) };
+        if (byId) awarded[byId] = (awarded[byId] || 0) + pts;
+        const players = byId
+          ? prev.players.map((p) => (p.id === byId ? { ...p, score: p.score + pts } : p))
+          : prev.players;
+        return { ...prev, anythingle: { ...a, order, guesses, solvedBy: byId }, awarded, players, revealed: true };
+      }
+      return { ...prev, anythingle: { ...a, order, guesses, turn: a.turn + 1 } };
+    });
+    playSound(solved ? "reveal" : "correct");
     setAnyInput("");
     setAnyAdd(null);
   };
-  // Host submits the typed guess: grade if known, else open the inline add-form.
-  const anySubmit = (name) => {
+  // Host submits the typed guess: grade if known. A guess typed from the HOST
+  // REMOTE that isn't in the DB/pool can't open the laptop-only add-form, so it
+  // grades a blank character (all-grey) to advance the turn instead of stalling;
+  // on the laptop, an unknown guess opens the inline add-form for precise tagging.
+  const anySubmit = (name, { fromRemote = false } = {}) => {
     const n = (name ?? anyInput).trim();
     if (!n || game.revealed || round?.type !== "anythingle") return;
     const found = anyResolve(n);
     if (found) anyCommit(found);
+    else if (fromRemote) anyCommit({ ...makeAnyChar(), name: n, powers: [] });
     else setAnyAdd({ ...makeAnyChar(), name: n });
   };
   // Move to the next player without a guess (a stumped / skipped turn).
   const anyAdvance = () => {
-    const a = game.anythingle;
-    if (!a || game.revealed) return;
-    upd({ anythingle: { ...a, turn: a.turn + 1 } });
+    if (game.revealed) return;
+    setGame((prev) =>
+      prev.anythingle ? { ...prev, anythingle: { ...prev.anythingle, turn: prev.anythingle.turn + 1 } } : prev,
+    );
   };
   // Give up / out of guesses: reveal the secret with no auto-award (host can adjust).
   const revealAnythingle = () => {
@@ -788,7 +817,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
           break;
         // ---- Anythingle (host remote can name a guess / skip the turn) ----
         case "anyGuess":
-          if (round?.type === "anythingle" && typeof a.name === "string") anySubmit(a.name);
+          if (round?.type === "anythingle" && typeof a.name === "string") anySubmit(a.name, { fromRemote: true });
           break;
         case "anyAdvance":
           if (round?.type === "anythingle") anyAdvance();

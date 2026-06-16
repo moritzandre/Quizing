@@ -798,6 +798,7 @@ function normalizeAnyState(raw, players) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const ids = new Set((Array.isArray(players) ? players : []).map((p) => p.id));
   return {
+    qKey: str(raw.qKey), // which question this board belongs to (so a reload keeps it)
     order: (Array.isArray(raw.order) ? raw.order : []).map(str).filter((id) => ids.has(id)),
     turn: Math.max(0, num(raw.turn, 0)),
     guesses: (Array.isArray(raw.guesses) ? raw.guesses : [])

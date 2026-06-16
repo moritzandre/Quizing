@@ -3,12 +3,13 @@
    --------------------------------------------------------------------
    Pure, props-only building blocks shared by the Builder (authoring a
    character), PlayView (the host's inline add/grade panel) and the
-   read-only feedback grid (RoundBody → TV + host remote). All eight
-   trait controls are CLOSED (selects / capped chips / number) so an
-   author or host can only ever produce comparable, valid values.
+   read-only feedback grid (RoundBody → TV + host remote). Seven of the
+   ten trait controls are CLOSED (selects / capped chips / number);
+   franchise, affiliation and origin are normalized free text — so an
+   author or host still produces comparable values.
    ==================================================================== */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { ANYTHINGLE_TRAITS, normText } from "../lib/model.js";
 import { Avatar, inputCls, FOCUS } from "./ui.jsx";
@@ -30,11 +31,13 @@ const parseAliases = (s) =>
     .filter(Boolean);
 
 /**
- * Edit one Anythingle character (name + aliases + the 8 closed-vocab traits).
+ * Edit one Anythingle character (name + aliases + the 10 traits: 7 closed-vocab
+ * + 3 normalized free-text franchise/affiliation/origin).
  * @param {{value:object, onChange:(next:object)=>void, franchises?:string[], compact?:boolean}} props
  */
 export function TraitForm({ value, onChange, franchises = [], compact = false }) {
   const { t } = useI18n();
+  const dlId = useId(); // unique datalist id per instance (the Builder mounts many)
   const v = value || {};
   const set = (key, val) => onChange({ ...v, [key]: val });
   // Toggle a token in a capped multi-value trait. `noneToken` (powers' "None")
@@ -71,7 +74,7 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
         </label>
       </div>
 
-      <datalist id="any-franchises">
+      <datalist id={dlId}>
         {franchises.map((f) => (
           <option key={f} value={f} />
         ))}
@@ -99,7 +102,7 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
                 <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">{label}</span>
                 <input
                   className={inputCls}
-                  list={tr.key === "franchise" ? "any-franchises" : undefined}
+                  list={tr.key === "franchise" ? dlId : undefined}
                   value={v[tr.key] || ""}
                   onChange={(e) => set(tr.key, e.target.value)}
                 />
@@ -174,7 +177,7 @@ function Cell({ cell, big, index = 0 }) {
 }
 
 /**
- * Read-only Wordle-style feedback grid: rows = guesses, columns = the 8 traits.
+ * Read-only Wordle-style feedback grid: rows = guesses, columns = the 10 traits.
  * @param {{guesses:Array<{name:string,by?:object,cells:Array}>, big?:boolean}} props
  */
 export function GuessGrid({ guesses = [], big = false }) {
