@@ -38820,5 +38820,2570 @@
       "en": "I will hound you to your grave and dance upon the ashes of your soul.",
       "de": "Ich werde dich bis ins Grab jagen und auf der Asche deiner Seele tanzen."
     }
+  },
+  {
+    "id": "wraith",
+    "name": "Wraith",
+    "aliases": ["Renee Hope Blasey", "The Interdimensional Skirmisher", "Voidwalker"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Scientist", "Warrior"],
+    "powers": ["Stealth/Invisibility", "Tech/Gadgets"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Typhon (IMC research facility)",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "The Void is always with me. The voices guide my way.",
+      "de": "Die Leere ist immer bei mir. Die Stimmen weisen mir den Weg."
+    }
+  },
+  {
+    "id": "bloodhound",
+    "name": "Bloodhound",
+    "aliases": ["The Technological Tracker", "Blóðhundr", "Houndy"],
+    "species": "Human",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Mystic"],
+    "powers": ["Tech/Gadgets", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Outlands (a remote village near Mt. Forominha)",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "The Allfather guides my hand. The hunt is sacred.",
+      "de": "Der Allvater leitet meine Hand. Die Jagd ist heilig."
+    }
+  },
+  {
+    "id": "bangalore",
+    "name": "Bangalore",
+    "aliases": ["Anita Williams", "The Professional Soldier", "Sgt. Williams"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Gridiron",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "Stay frosty. Smoke 'em if you got 'em.",
+      "de": "Bleib wachsam. Vernebel sie, wenn du kannst."
+    }
+  },
+  {
+    "id": "octane",
+    "name": "Octane",
+    "aliases": ["Octavio Silva", "The High-Speed Daredevil", "Octa"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Athlete", "Adventurer", "Warrior"],
+    "powers": ["Super speed", "Healing/Regeneration", "Tech/Gadgets"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Psamathe",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "Slow down? No way, amigo. Go fast or go home!",
+      "de": "Langsamer machen? Auf keinen Fall, Amigo. Vollgas oder gar nicht!"
+    }
+  },
+  {
+    "id": "lifeline",
+    "name": "Lifeline",
+    "aliases": ["Ajay Che", "The Combat Medic", "Che"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Healer", "Warrior", "Civilian"],
+    "powers": ["Healing/Regeneration", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Psamathe",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "I got you. Stay with me, you're gonna be alright.",
+      "de": "Ich hab dich. Bleib bei mir, alles wird gut."
+    }
+  },
+  {
+    "id": "pathfinder",
+    "name": "Pathfinder",
+    "aliases": ["The Forward Scout", "MRVN", "Path"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Worker", "Warrior"],
+    "powers": ["Tech/Gadgets", "Super speed"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "An abandoned research facility in the Outlands",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "I am looking for my creator. Have you seen them, friend?",
+      "de": "Ich suche nach meinem Schöpfer. Hast du ihn gesehen, Freund?"
+    }
+  },
+  {
+    "id": "caustic",
+    "name": "Caustic",
+    "aliases": ["Alexander Maxwell Nox", "The Toxic Trapper", "Dr. Nox"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Outlaw", "Warrior"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Gridiron",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "Fascinating. Let us observe how the test subjects react to my gas.",
+      "de": "Faszinierend. Beobachten wir, wie die Testsubjekte auf mein Gas reagieren."
+    }
+  },
+  {
+    "id": "mirage",
+    "name": "Mirage",
+    "aliases": ["Elliott Witt", "The Holographic Trickster", "The Magnificent"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Artist", "Civilian"],
+    "powers": ["Tech/Gadgets", "Stealth/Invisibility"],
+    "franchise": "Apex Legends",
+    "affiliation": "Apex Games",
+    "origin": "Solace",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "Now you see me, now you... still kinda see me. There's a lot of me!",
+      "de": "Jetzt siehst du mich, jetzt... siehst du mich immer noch irgendwie. Es gibt viele von mir!"
+    }
+  },
+  {
+    "id": "ezio-auditore-da-firenze",
+    "name": "Ezio Auditore da Firenze",
+    "aliases": ["The Mentor", "L'Aquila", "Ezio"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Assassin Brotherhood",
+    "origin": "Florence, Italy",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Nothing is true, everything is permitted.",
+      "de": "Nichts ist wahr, alles ist erlaubt."
+    }
+  },
+  {
+    "id": "altair-ibn-la-ahad",
+    "name": "Altaïr Ibn-La'Ahad",
+    "aliases": ["Son of None", "The Eagle", "Altaïr"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Assassin Brotherhood",
+    "origin": "Masyaf, Syria",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "When other men blindly follow the truth, remember: nothing is true.",
+      "de": "Wenn andere blind der Wahrheit folgen, denk daran: nichts ist wahr."
+    }
+  },
+  {
+    "id": "bayek-of-siwa",
+    "name": "Bayek of Siwa",
+    "aliases": ["The Medjay", "The Last Medjay", "Bayek"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Healer", "Outlaw"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "The Hidden Ones",
+    "origin": "Siwa, Egypt",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "I am the protector of these lands and their people.",
+      "de": "Ich bin der Beschützer dieses Landes und seiner Menschen."
+    }
+  },
+  {
+    "id": "kassandra",
+    "name": "Kassandra",
+    "aliases": ["The Eagle Bearer", "Misthios", "Keeper of the Staff"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Adventurer", "Outlaw"],
+    "powers": ["Weapon mastery", "Immortality", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Spartans",
+    "origin": "Sparta, Greece",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "I make my own fate.",
+      "de": "Ich bestimme mein eigenes Schicksal."
+    }
+  },
+  {
+    "id": "eivor-varinsdottir",
+    "name": "Eivor Varinsdottir",
+    "aliases": ["Wolf-Kissed", "Wolf-Kissed Eivor", "Jarlskona"],
+    "species": "Human",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Adventurer"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Raven Clan",
+    "origin": "Norway",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "We carve our own path, with blade and blood.",
+      "de": "Wir bahnen uns unseren eigenen Weg, mit Klinge und Blut."
+    }
+  },
+  {
+    "id": "connor",
+    "name": "Connor",
+    "aliases": ["Ratonhnhaké:ton", "The Last Kanien'kehá:ka", "Connor Kenway"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Assassin Brotherhood",
+    "origin": "Kanatahséton, Colonial America",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "I will not abandon those who need me.",
+      "de": "Ich werde jene nicht im Stich lassen, die mich brauchen."
+    }
+  },
+  {
+    "id": "edward-kenway",
+    "name": "Edward Kenway",
+    "aliases": ["The Pirate Assassin", "Captain Kenway", "Edward"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Adventurer"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Assassin Brotherhood",
+    "origin": "Swansea, Wales",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "I've stolen, lied, and killed my way to this moment.",
+      "de": "Ich habe gestohlen, gelogen und mich bis zu diesem Augenblick durchgekämpft."
+    }
+  },
+  {
+    "id": "haytham-kenway",
+    "name": "Haytham Kenway",
+    "aliases": ["Grand Master", "The Templar", "Haytham"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Spy"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Templar Order",
+    "origin": "London, England",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "Do not believe that I take any pleasure in this.",
+      "de": "Glaub nicht, dass ich daran irgendein Vergnügen finde."
+    }
+  },
+  {
+    "id": "desmond-miles",
+    "name": "Desmond Miles",
+    "aliases": ["Subject 17", "Desmond"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer", "Warrior"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "Assassin Brotherhood",
+    "origin": "The Farm, United States",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "Everything is connected. We are all part of it.",
+      "de": "Alles ist miteinander verbunden. Wir sind alle ein Teil davon."
+    }
+  },
+  {
+    "id": "basim-ibn-ishaq",
+    "name": "Basim Ibn Ishaq",
+    "aliases": ["Loki", "The Hidden One", "Basim"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mystic", "Spy"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Immortality"],
+    "franchise": "Assassin's Creed",
+    "affiliation": "The Hidden Ones",
+    "origin": "Baghdad, Abbasid Caliphate",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "Patience. The cup will fill, drop by drop.",
+      "de": "Geduld. Der Becher füllt sich Tropfen für Tropfen."
+    }
+  },
+  {
+    "id": "gehrman-the-first-hunter",
+    "name": "Gehrman, the First Hunter",
+    "aliases": ["Gehrman", "The First Hunter", "Host of the Hunter's Dream"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Weapon mastery", "Martial arts", "Immortality"],
+    "franchise": "Bloodborne",
+    "affiliation": "Healing Church Workshop",
+    "origin": "The Hunter's Dream, Yharnam",
+    "medium": "Video game",
+    "year": 2015,
+    "quote": {
+      "en": "Dear oh dear, what was it? The hunt, the blood, or the horrible dream?",
+      "de": "Ach herrje, was war es bloß? Die Jagd, das Blut oder der grauenhafte Traum?"
+    }
+  },
+  {
+    "id": "lady-maria-of-the-astral-clocktower",
+    "name": "Lady Maria of the Astral Clocktower",
+    "aliases": ["Lady Maria", "Maria", "The Astral Clocktower Maria"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mystic", "Outlaw"],
+    "powers": ["Weapon mastery", "Martial arts", "Healing/Regeneration"],
+    "franchise": "Bloodborne",
+    "affiliation": "Healing Church",
+    "origin": "The Hunter's Village, Cainhurst lineage",
+    "medium": "Video game",
+    "year": 2015,
+    "quote": {
+      "en": "A corpse should be left well alone.",
+      "de": "Eine Leiche sollte man besser in Ruhe lassen."
+    }
+  },
+  {
+    "id": "eileen-the-crow",
+    "name": "Eileen the Crow",
+    "aliases": ["Eileen", "The Crow", "Hunter of Hunters"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Spy"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Martial arts"],
+    "franchise": "Bloodborne",
+    "affiliation": "Hunter of Hunters",
+    "origin": "Yharnam",
+    "medium": "Video game",
+    "year": 2015,
+    "quote": {
+      "en": "We're not so different, you and I. But you're young, and your sight is clear.",
+      "de": "Wir sind uns gar nicht so unähnlich, du und ich. Doch du bist jung, und dein Blick ist noch klar."
+    }
+  },
+  {
+    "id": "father-gascoigne",
+    "name": "Father Gascoigne",
+    "aliases": ["Gascoigne", "The Father", "Hunter Gascoigne"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Mystic"],
+    "powers": ["Weapon mastery", "Shapeshifting", "Super strength"],
+    "franchise": "Bloodborne",
+    "affiliation": "Healing Church",
+    "origin": "Yharnam",
+    "medium": "Video game",
+    "year": 2015,
+    "quote": {
+      "en": "Beasts all over the shop... you'll be one of them, sooner or later.",
+      "de": "Überall nur noch Bestien... früher oder später wirst du eine von ihnen sein."
+    }
+  },
+  {
+    "id": "plain-doll",
+    "name": "Plain Doll",
+    "aliases": ["The Doll", "Maiden of the Hunter's Dream"],
+    "species": "Object/Other",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Healer", "Civilian", "Mystic"],
+    "powers": ["Healing/Regeneration"],
+    "franchise": "Bloodborne",
+    "affiliation": "Hunter's Dream",
+    "origin": "The Hunter's Dream",
+    "medium": "Video game",
+    "year": 2015,
+    "quote": {
+      "en": "Good hunter, have you fought well, free from the clutches of the night?",
+      "de": "Guter Jäger, hast du tapfer gekämpft, befreit von den Klauen der Nacht?"
+    }
+  },
+  {
+    "id": "micolash-host-of-the-nightmare",
+    "name": "Micolash, Host of the Nightmare",
+    "aliases": ["Micolash", "Host of the Nightmare", "Mensis Scholar"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Summoning"],
+    "franchise": "Bloodborne",
+    "affiliation": "School of Mensis",
+    "origin": "Nightmare of Mensis",
+    "medium": "Video game",
+    "year": 2015,
+    "quote": {
+      "en": "Ahh, Kos, or some say Kosm... Do you hear our prayers?",
+      "de": "Ahh, Kos, oder wie manche sagen Kosm... Hörst du unsere Gebete?"
+    }
+  },
+  {
+    "id": "handsome-jack",
+    "name": "Handsome Jack",
+    "aliases": ["Jack", "The Hero of Hyperion", "John"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Scientist"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Borderlands",
+    "affiliation": "Hyperion",
+    "origin": "Helios station",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "You're not a hero. Heroes are decent people who deserve respect, and I'm going to kill every single one of them.",
+      "de": "Du bist kein Held. Helden sind anständige Leute, die Respekt verdienen, und ich werde sie alle eigenhändig umbringen."
+    }
+  },
+  {
+    "id": "claptrap",
+    "name": "Claptrap",
+    "aliases": ["CL4P-TP", "Fragtrap", "Minion"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["Tech/Gadgets"],
+    "franchise": "Borderlands",
+    "affiliation": "Crimson Raiders",
+    "origin": "Pandora",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Hey! Hey, you! Help me up and I'll be your best friend!",
+      "de": "Hey! He, du! Hilf mir hoch und ich werde dein bester Freund!"
+    }
+  },
+  {
+    "id": "tiny-tina",
+    "name": "Tiny Tina",
+    "aliases": ["Tina", "The Demolitions Expert", "Badass"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Civilian"],
+    "powers": ["Tech/Gadgets"],
+    "franchise": "Borderlands",
+    "affiliation": "Crimson Raiders",
+    "origin": "Pandora",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "I love the smell of napalm... any time of the day, really.",
+      "de": "Ich liebe den Geruch von Napalm... eigentlich zu jeder Tageszeit."
+    }
+  },
+  {
+    "id": "mordecai",
+    "name": "Mordecai",
+    "aliases": ["The Hunter", "Mordy"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Outlaw", "Adventurer"],
+    "powers": ["Weapon mastery", "Summoning"],
+    "franchise": "Borderlands",
+    "affiliation": "Crimson Raiders",
+    "origin": "Pandora",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Show 'em who's boss, buddy!",
+      "de": "Zeig ihnen, wer der Boss ist, Kumpel!"
+    }
+  },
+  {
+    "id": "krieg",
+    "name": "Krieg",
+    "aliases": ["The Psycho", "Psycho Hunter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Borderlands",
+    "affiliation": "Crimson Raiders",
+    "origin": "Pandora",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "I'm the conductor of the poop train!",
+      "de": "Ich bin der Schaffner des Kackzuges!"
+    }
+  },
+  {
+    "id": "makoto-naegi",
+    "name": "Makoto Naegi",
+    "aliases": ["Ultimate Lucky Student", "Ultimate Hope", "Luckster"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Leader"],
+    "powers": ["None"],
+    "franchise": "Danganronpa",
+    "affiliation": "Future Foundation",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "As long as we don't give up, hope will never disappear.",
+      "de": "Solange wir nicht aufgeben, wird die Hoffnung niemals verschwinden."
+    }
+  },
+  {
+    "id": "kyoko-kirigiri",
+    "name": "Kyoko Kirigiri",
+    "aliases": ["Ultimate Detective"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Danganronpa",
+    "affiliation": "Future Foundation",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "The truth doesn't change, no matter how much you try to hide it.",
+      "de": "Die Wahrheit ändert sich nicht, egal wie sehr man versucht, sie zu verbergen."
+    }
+  },
+  {
+    "id": "junko-enoshima",
+    "name": "Junko Enoshima",
+    "aliases": ["Ultimate Fashionista", "Ultimate Despair", "Ultimate Analyst"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Danganronpa",
+    "affiliation": "Ultimate Despair",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "The most despair-inducing thing of all is hope!",
+      "de": "Das Verzweiflungsvollste von allem ist die Hoffnung!"
+    }
+  },
+  {
+    "id": "monokuma",
+    "name": "Monokuma",
+    "aliases": ["The Headmaster", "Mr. Monokuma", "Black and White Bear"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Monster"],
+    "powers": ["Tech/Gadgets", "Weapon mastery"],
+    "franchise": "Danganronpa",
+    "affiliation": "Ultimate Despair",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Upupupu! Let the killing game begin!",
+      "de": "Upupupu! Lasst das Tötungsspiel beginnen!"
+    }
+  },
+  {
+    "id": "byakuya-togami",
+    "name": "Byakuya Togami",
+    "aliases": ["Ultimate Affluent Progeny", "The Heir"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Worker"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Danganronpa",
+    "affiliation": "Togami Conglomerate",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "I never lose. Remember that well.",
+      "de": "Ich verliere niemals. Merk dir das gut."
+    }
+  },
+  {
+    "id": "nagito-komaeda",
+    "name": "Nagito Komaeda",
+    "aliases": ["Ultimate Lucky Student", "Servant"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student"],
+    "powers": ["None"],
+    "franchise": "Danganronpa",
+    "affiliation": "",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "I believe that hope will always triumph over despair.",
+      "de": "Ich glaube, dass die Hoffnung immer über die Verzweiflung siegen wird."
+    }
+  },
+  {
+    "id": "hajime-hinata",
+    "name": "Hajime Hinata",
+    "aliases": ["Ultimate Hope", "Reserve Course Student", "Izuru Kamukura"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Leader"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Danganronpa",
+    "affiliation": "Remnants of Despair",
+    "origin": "Hope's Peak Academy",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "I'm not going to run away anymore. I'll face it all head-on.",
+      "de": "Ich werde nicht mehr weglaufen. Ich werde mich allem direkt stellen."
+    }
+  },
+  {
+    "id": "kaede-akamatsu",
+    "name": "Kaede Akamatsu",
+    "aliases": ["Ultimate Pianist"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Artist"],
+    "powers": ["None"],
+    "franchise": "Danganronpa",
+    "affiliation": "",
+    "origin": "Ultimate Academy for Gifted Juveniles",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "If we work together, there's nothing we can't overcome!",
+      "de": "Wenn wir zusammenarbeiten, gibt es nichts, was wir nicht überwinden können!"
+    }
+  },
+  {
+    "id": "solaire-of-astora",
+    "name": "Solaire of Astora",
+    "aliases": ["The Sun Bro", "Knight of Astora", "Warrior of Sunlight"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Summoning"],
+    "franchise": "Dark Souls",
+    "affiliation": "Warriors of Sunlight",
+    "origin": "Astora",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "If only I could be so grossly incandescent!",
+      "de": "Wenn ich doch nur so unglaublich strahlend sein könnte!"
+    }
+  },
+  {
+    "id": "gwyn-lord-of-cinder",
+    "name": "Gwyn, Lord of Cinder",
+    "aliases": ["Lord of Sunlight", "The Great Lord", "Lord of Cinder"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Warrior"],
+    "powers": ["Electric/Lightning", "Magic/Sorcery", "Immortality"],
+    "franchise": "Dark Souls",
+    "affiliation": "Gods of Anor Londo",
+    "origin": "Anor Londo",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "All shall fade to ash so the flame may yet endure.",
+      "de": "Alles soll zu Asche zerfallen, damit die Flamme noch fortbestehe."
+    }
+  },
+  {
+    "id": "artorias-the-abysswalker",
+    "name": "Artorias the Abysswalker",
+    "aliases": ["The Abysswalker", "Knight Artorias", "Wolf Knight"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Weapon mastery", "Super strength", "Martial arts"],
+    "franchise": "Dark Souls",
+    "affiliation": "Knights of Gwyn",
+    "origin": "Anor Londo",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "I shall walk the dark alone, as I once swore.",
+      "de": "Ich werde allein in die Finsternis schreiten, wie ich einst schwor."
+    }
+  },
+  {
+    "id": "sif-the-great-grey-wolf",
+    "name": "Sif, the Great Grey Wolf",
+    "aliases": ["The Great Grey Wolf", "Guardian of the Grave", "Great Wolf Sif"],
+    "species": "Animal",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Warrior"],
+    "powers": ["Weapon mastery", "Super strength"],
+    "franchise": "Dark Souls",
+    "affiliation": "",
+    "origin": "Darkroot Garden",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "I guard this grave until my last breath, for the one who fell.",
+      "de": "Ich bewache dieses Grab bis zu meinem letzten Atemzug, für den, der einst fiel."
+    }
+  },
+  {
+    "id": "dragon-slayer-ornstein",
+    "name": "Dragon Slayer Ornstein",
+    "aliases": ["Old Dragonslayer", "Knight of Gwyn", "The Lion Knight"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier", "Leader"],
+    "powers": ["Electric/Lightning", "Weapon mastery", "Super speed"],
+    "franchise": "Dark Souls",
+    "affiliation": "Four Knights of Gwyn",
+    "origin": "Anor Londo",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "None shall pass the cathedral while I still stand.",
+      "de": "Niemand wird die Kathedrale passieren, solange ich noch stehe."
+    }
+  },
+  {
+    "id": "gwynevere-princess-of-sunlight",
+    "name": "Gwynevere, Princess of Sunlight",
+    "aliases": ["Princess of Sunlight", "Queen of Sunlight", "Daughter of Gwyn"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Healer", "Mystic"],
+    "powers": ["Healing/Regeneration", "Magic/Sorcery"],
+    "franchise": "Dark Souls",
+    "affiliation": "Gods of Anor Londo",
+    "origin": "Anor Londo",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "Take this blessing, child, and may its warmth guide your path.",
+      "de": "Nimm diesen Segen, mein Kind, und möge seine Wärme deinen Weg erhellen."
+    }
+  },
+  {
+    "id": "crossbreed-priscilla",
+    "name": "Crossbreed Priscilla",
+    "aliases": ["The Half-Breed", "The Crossbreed", "Lady of the Painted World"],
+    "species": "Creature/Monster",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Warrior"],
+    "powers": ["Stealth/Invisibility", "Magic/Sorcery", "Weapon mastery"],
+    "franchise": "Dark Souls",
+    "affiliation": "",
+    "origin": "The Painted World of Ariamis",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "This place is not for the likes of thee; turn back, please.",
+      "de": "Dieser Ort ist nicht für deinesgleichen bestimmt; kehre bitte um."
+    }
+  },
+  {
+    "id": "the-nameless-king",
+    "name": "The Nameless King",
+    "aliases": ["King of the Storm", "Dragonslayer", "The Forgotten Firstborn"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Royalty", "Leader"],
+    "powers": ["Electric/Lightning", "Weapon mastery", "Flight"],
+    "franchise": "Dark Souls",
+    "affiliation": "Gods of Anor Londo",
+    "origin": "Anor Londo",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "I cast aside my birthright to ride beside the ancient dragons.",
+      "de": "Ich verwarf mein Geburtsrecht, um an der Seite der uralten Drachen zu reiten."
+    }
+  },
+  {
+    "id": "gintoki-sakata",
+    "name": "Gintoki Sakata",
+    "aliases": ["Shiroyasha", "White Demon", "Gin-san", "Odd Jobs Gin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Worker", "Adventurer"],
+    "powers": ["Weapon mastery", "Peak human/Genius", "Martial arts"],
+    "franchise": "Gintama",
+    "affiliation": "Yorozuya",
+    "origin": "Edo, Japan (Joui War era)",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "If you have time to worry about a knife in your back, then arm yourself and prepare for the fight ahead.",
+      "de": "Wenn du Zeit hast, dir Sorgen um ein Messer in deinem Rücken zu machen, dann bewaffne dich und bereite dich auf den kommenden Kampf vor."
+    }
+  },
+  {
+    "id": "shinpachi-shimura",
+    "name": "Shinpachi Shimura",
+    "aliases": ["Pattsuan", "Shimura-kun", "The Glasses"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Worker", "Warrior"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "Gintama",
+    "affiliation": "Yorozuya",
+    "origin": "Edo, Japan",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "I'm not the glasses! I'm a person!",
+      "de": "Ich bin nicht die Brille! Ich bin ein Mensch!"
+    }
+  },
+  {
+    "id": "kagura",
+    "name": "Kagura",
+    "aliases": ["China Musume", "Yato Princess"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Worker", "Adventurer"],
+    "powers": ["Super strength", "Martial arts"],
+    "franchise": "Gintama",
+    "affiliation": "Yorozuya",
+    "origin": "Rakuyo (Yato clan homeworld)",
+    "medium": "Manga",
+    "year": 2004,
+    "quote": {
+      "en": "If you keep underestimating me just because I'm a girl, I'll crush you flat.",
+      "de": "Wenn du mich weiter unterschätzt, nur weil ich ein Mädchen bin, mache ich dich platt."
+    }
+  },
+  {
+    "id": "toshiro-hijikata",
+    "name": "Toshiro Hijikata",
+    "aliases": ["Demon Vice-Commander", "Oni no Fukuchou", "Mayora", "Toushi"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Leader", "Warrior"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Gintama",
+    "affiliation": "Shinsengumi",
+    "origin": "Edo, Japan",
+    "medium": "Manga",
+    "year": 2004,
+    "quote": {
+      "en": "There's no way I'd let a single one of my men die before me.",
+      "de": "Niemals würde ich zulassen, dass auch nur einer meiner Männer vor mir stirbt."
+    }
+  },
+  {
+    "id": "sougo-okita",
+    "name": "Sougo Okita",
+    "aliases": ["Sadist Prince", "Captain of the First Division", "Souichirou-kun"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Gintama",
+    "affiliation": "Shinsengumi",
+    "origin": "Edo, Japan",
+    "medium": "Manga",
+    "year": 2004,
+    "quote": {
+      "en": "Sorry, my hand slipped... and so did the bazooka.",
+      "de": "Tut mir leid, mir ist die Hand ausgerutscht... und die Bazooka gleich mit."
+    }
+  },
+  {
+    "id": "kotaro-katsura",
+    "name": "Kotaro Katsura",
+    "aliases": ["Runaway Kotaro", "Zura", "Elizabeth's companion"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Warrior", "Outlaw"],
+    "powers": ["Weapon mastery", "Martial arts", "Stealth/Invisibility"],
+    "franchise": "Gintama",
+    "affiliation": "Joui faction (moderate)",
+    "origin": "Edo, Japan (Joui War era)",
+    "medium": "Manga",
+    "year": 2004,
+    "quote": {
+      "en": "It's not 'Zura'! And I'm not a terrorist, I'm a patriot fighting for this country's future.",
+      "de": "Es heißt nicht 'Zura'! Und ich bin kein Terrorist, ich bin ein Patriot, der für die Zukunft dieses Landes kämpft."
+    }
+  },
+  {
+    "id": "michael-de-santa",
+    "name": "Michael De Santa",
+    "aliases": ["Michael Townley", "Mike"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Civilian"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "The Heist Crew",
+    "origin": "North Yankton (relocated to Los Santos)",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "I'm a victim of my own success.",
+      "de": "Ich bin ein Opfer meines eigenen Erfolgs."
+    }
+  },
+  {
+    "id": "franklin-clinton",
+    "name": "Franklin Clinton",
+    "aliases": ["Frank", "Franklin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Worker"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "The Heist Crew",
+    "origin": "South Los Santos",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "Ain't no point fighting it, this is who I am.",
+      "de": "Es bringt nichts, sich dagegen zu wehren, so bin ich nun mal."
+    }
+  },
+  {
+    "id": "trevor-philips",
+    "name": "Trevor Philips",
+    "aliases": ["T", "Trevor"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Pilot"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "Trevor Philips Enterprises",
+    "origin": "Canadian border town (based in Sandy Shores, Blaine County)",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "The road to hell is paved with good intentions.",
+      "de": "Der Weg zur Hölle ist mit guten Vorsätzen gepflastert."
+    }
+  },
+  {
+    "id": "carl-johnson",
+    "name": "Carl Johnson",
+    "aliases": ["CJ", "Carl"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "Grove Street Families",
+    "origin": "Ganton, Los Santos (San Andreas)",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "All we had to do was follow the damn train.",
+      "de": "Wir mussten doch nur dem verdammten Zug folgen."
+    }
+  },
+  {
+    "id": "niko-bellic",
+    "name": "Niko Bellic",
+    "aliases": ["Niko", "Mr. Bellic"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Outlaw"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "",
+    "origin": "Eastern Europe (immigrant in Liberty City)",
+    "medium": "Video game",
+    "year": 2008,
+    "quote": {
+      "en": "Life is complicated. I killed people, smuggled people, sold people.",
+      "de": "Das Leben ist kompliziert. Ich habe Menschen getötet, geschmuggelt und verkauft."
+    }
+  },
+  {
+    "id": "tommy-vercetti",
+    "name": "Tommy Vercetti",
+    "aliases": ["Tommy", "The Harwood Butcher"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "Vercetti Gang",
+    "origin": "Liberty City (rose to power in Vice City)",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "I run this town now.",
+      "de": "Ab jetzt bestimme ich, was hier läuft."
+    }
+  },
+  {
+    "id": "lester-crest",
+    "name": "Lester Crest",
+    "aliases": ["Lester", "Lest"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Scientist", "Outlaw"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "The Heist Crew",
+    "origin": "Los Santos",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "Information is power, and I am very, very powerful.",
+      "de": "Information ist Macht, und ich bin sehr, sehr mächtig."
+    }
+  },
+  {
+    "id": "lamar-davis",
+    "name": "Lamar Davis",
+    "aliases": ["Lamar", "LD"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Worker"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Grand Theft Auto",
+    "affiliation": "Families",
+    "origin": "South Los Santos",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "You ever get the feeling like nothing good's gonna happen to you?",
+      "de": "Hast du je das Gefühl, dass dir nie etwas Gutes passiert?"
+    }
+  },
+  {
+    "id": "zagreus",
+    "name": "Zagreus",
+    "aliases": ["Zag", "Prince of the Underworld", "Son of Hades"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Adventurer"],
+    "powers": ["Immortality", "Weapon mastery", "Super speed"],
+    "franchise": "Hades",
+    "affiliation": "House of Hades",
+    "origin": "The Underworld",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "I will escape from this place, no matter how many times it takes.",
+      "de": "Ich werde von hier entkommen, egal wie viele Versuche es braucht."
+    }
+  },
+  {
+    "id": "nyx",
+    "name": "Nyx",
+    "aliases": ["Night Incarnate", "Mother Nyx", "Primordial Night"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Healer", "Worker"],
+    "powers": ["Immortality", "Magic/Sorcery", "Stealth/Invisibility"],
+    "franchise": "Hades",
+    "affiliation": "House of Hades",
+    "origin": "The Underworld",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "I am with you always, child, even in the deepest dark.",
+      "de": "Ich bin immer bei dir, mein Kind, selbst in der tiefsten Finsternis."
+    }
+  },
+  {
+    "id": "megaera",
+    "name": "Megaera",
+    "aliases": ["Meg", "The Fury", "Eldest Fury"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier", "Leader"],
+    "powers": ["Immortality", "Weapon mastery", "Flight"],
+    "franchise": "Hades",
+    "affiliation": "The Furies",
+    "origin": "The Underworld",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "You're not getting past me. Not this time.",
+      "de": "An mir kommst du nicht vorbei. Nicht dieses Mal."
+    }
+  },
+  {
+    "id": "thanatos",
+    "name": "Thanatos",
+    "aliases": ["Than", "Death Incarnate", "Death"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Worker", "Mystic"],
+    "powers": ["Immortality", "Weapon mastery", "Stealth/Invisibility"],
+    "franchise": "Hades",
+    "affiliation": "House of Hades",
+    "origin": "The Underworld",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "Everything comes to an end. It's the only certainty there is.",
+      "de": "Alles findet ein Ende. Es ist die einzige Gewissheit, die es gibt."
+    }
+  },
+  {
+    "id": "achilles",
+    "name": "Achilles",
+    "aliases": ["Lad", "The Greatest of the Greeks", "Tutor of the Prince"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Leader"],
+    "powers": ["Weapon mastery", "Martial arts", "Immortality"],
+    "franchise": "Hades",
+    "affiliation": "House of Hades",
+    "origin": "Phthia",
+    "medium": "Video game",
+    "year": 2020,
+    "quote": {
+      "en": "There is hope yet, lad. Hold fast to it, no matter what.",
+      "de": "Es gibt noch Hoffnung, mein Junge. Halte daran fest, ganz gleich was kommt."
+    }
+  },
+  {
+    "id": "the-knight",
+    "name": "The Knight",
+    "aliases": ["Ghost", "The Vessel", "Little Ghost"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Weapon mastery", "Magic/Sorcery", "Healing/Regeneration"],
+    "franchise": "Hollow Knight",
+    "affiliation": "The Vessels",
+    "origin": "The Abyss, Hallownest",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "...",
+      "de": "..."
+    }
+  },
+  {
+    "id": "hornet",
+    "name": "Hornet",
+    "aliases": ["Princess Protector", "Gendered Child", "Daughter of Hallownest"],
+    "species": "Creature/Monster",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Royalty"],
+    "powers": ["Weapon mastery", "Super speed", "Martial arts"],
+    "franchise": "Hollow Knight",
+    "affiliation": "Hallownest",
+    "origin": "Deepnest, Hallownest",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "My path is mine to walk. Yours is yours. Do not let our shadows cross again unless you are prepared to die.",
+      "de": "Mein Weg ist meiner allein. Deiner ist deiner. Lass unsere Schatten sich nicht erneut kreuzen, es sei denn, du bist bereit zu sterben."
+    }
+  },
+  {
+    "id": "quirrel",
+    "name": "Quirrel",
+    "aliases": ["The Wanderer", "Scholar of Monomon"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Mystic"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Hollow Knight",
+    "affiliation": "The Teacher's Archives",
+    "origin": "Hallownest",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "It almost feels as though my whole life has been leading to this moment.",
+      "de": "Es fühlt sich fast an, als hätte mein ganzes Leben auf diesen Augenblick hingeführt."
+    }
+  },
+  {
+    "id": "grimm",
+    "name": "Grimm",
+    "aliases": ["The Nightmare King", "Troupe Master Grimm"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Artist", "Mystic"],
+    "powers": ["Elemental", "Flight", "Summoning"],
+    "franchise": "Hollow Knight",
+    "affiliation": "The Grimm Troupe",
+    "origin": "The Nightmare Realm",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "Welcome, my friend. Welcome to my humble home.",
+      "de": "Willkommen, mein Freund. Willkommen in meinem bescheidenen Heim."
+    }
+  },
+  {
+    "id": "the-pale-king",
+    "name": "The Pale King",
+    "aliases": ["Wyrm", "King of Hallownest", "The Pale Wyrm"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Scientist"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Immortality"],
+    "franchise": "Hollow Knight",
+    "affiliation": "Hallownest",
+    "origin": "The White Palace, Hallownest",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "No cost too great. No mind to think. No will to break. No voice to cry suffering.",
+      "de": "Kein Preis zu hoch. Kein Verstand zu denken. Kein Wille zu brechen. Keine Stimme, um Leid zu klagen."
+    }
+  },
+  {
+    "id": "the-hollow-knight",
+    "name": "The Hollow Knight",
+    "aliases": ["The Pure Vessel", "The Vessel", "Hollow"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Royalty"],
+    "powers": ["Weapon mastery", "Energy/Beams", "Super strength"],
+    "franchise": "Hollow Knight",
+    "affiliation": "The Vessels",
+    "origin": "The Abyss, Hallownest",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "...",
+      "de": "..."
+    }
+  },
+  {
+    "id": "rathalos",
+    "name": "Rathalos",
+    "aliases": ["King of the Skies", "Fire Wyvern", "Liolaeus"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Monster"],
+    "powers": ["Flight", "Elemental"],
+    "franchise": "Monster Hunter",
+    "affiliation": "",
+    "origin": "The forests and ancient ruins of the hunting grounds",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "The skies belong to me, and none who trespass leave unscorched.",
+      "de": "Der Himmel gehört mir, und keiner, der ihn betritt, bleibt unversengt."
+    }
+  },
+  {
+    "id": "nergigante",
+    "name": "Nergigante",
+    "aliases": ["The Eater of Elder Dragons", "Spiky Black Dragon"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Monster"],
+    "powers": ["Healing/Regeneration", "Flight", "Super strength"],
+    "franchise": "Monster Hunter",
+    "affiliation": "",
+    "origin": "The Rotten Vale of the New World",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "I devour the mighty, and grow ever spikes anew from the carnage.",
+      "de": "Ich verschlinge die Mächtigen und treibe aus dem Gemetzel stets neue Stacheln."
+    }
+  },
+  {
+    "id": "fatalis",
+    "name": "Fatalis",
+    "aliases": ["The Black Dragon", "Crimson Fatalis"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Monster"],
+    "powers": ["Flight", "Elemental", "Immortality"],
+    "franchise": "Monster Hunter",
+    "affiliation": "",
+    "origin": "The ruins of the fallen kingdom of Schrade",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "Kingdoms turned to ash beneath my wings, and ash they shall remain.",
+      "de": "Königreiche zerfielen zu Asche unter meinen Schwingen, und Asche sollen sie bleiben."
+    }
+  },
+  {
+    "id": "the-handler",
+    "name": "The Handler",
+    "aliases": ["The Hunter's Partner", "Field Team Handler"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Monster Hunter",
+    "affiliation": "The Fifth Fleet of the Research Commission",
+    "origin": "Astera in the New World",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "Let's eat first, then we'll figure out how to take that thing down!",
+      "de": "Lass uns erst essen, dann überlegen wir, wie wir das Vieh zur Strecke bringen!"
+    }
+  },
+  {
+    "id": "gore-magala",
+    "name": "Gore Magala",
+    "aliases": ["The Black Eclipse Wyvern", "Frenzy Virus Carrier"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Monster"],
+    "powers": ["Flight", "Elemental"],
+    "franchise": "Monster Hunter",
+    "affiliation": "",
+    "origin": "The Everwood and the wider ecosystem it haunts",
+    "medium": "Video game",
+    "year": 2013,
+    "quote": {
+      "en": "Blind I may roam, yet every creature trembles where my scales fall.",
+      "de": "Blind mag ich umherziehen, doch jedes Geschöpf erbebt, wo meine Schuppen fallen."
+    }
+  },
+  {
+    "id": "zinogre",
+    "name": "Zinogre",
+    "aliases": ["The Thunder Wolf Wyvern", "Jinouga"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Monster"],
+    "powers": ["Electric/Lightning", "Super speed", "Super strength"],
+    "franchise": "Monster Hunter",
+    "affiliation": "",
+    "origin": "The mountainous frontier wilds",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Charged with the storm itself, I strike before the thunder is heard.",
+      "de": "Vom Sturm selbst aufgeladen, schlage ich zu, ehe der Donner zu hören ist."
+    }
+  },
+  {
+    "id": "jace-beleren",
+    "name": "Jace Beleren",
+    "aliases": ["The Living Guildpact", "Mind Sculptor", "Mind Mage"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Detective", "Leader"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery", "Stealth/Invisibility"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "Gatewatch",
+    "origin": "Vryn",
+    "medium": "Web/Other",
+    "year": 2008,
+    "quote": {
+      "en": "I can unravel any secret hidden in a mind, even if you bury it from yourself.",
+      "de": "Ich kann jedes Geheimnis entwirren, das in einem Verstand verborgen liegt, selbst wenn du es vor dir selbst vergräbst."
+    }
+  },
+  {
+    "id": "liliana-vess",
+    "name": "Liliana Vess",
+    "aliases": ["The Necromancer", "Lady of the Dead"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic", "Outlaw"],
+    "powers": ["Magic/Sorcery", "Summoning", "Immortality"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "Gatewatch",
+    "origin": "Dominaria",
+    "medium": "Web/Other",
+    "year": 2008,
+    "quote": {
+      "en": "Death is just the beginning of your service to me.",
+      "de": "Der Tod ist nur der Anfang deines Dienstes für mich."
+    }
+  },
+  {
+    "id": "chandra-nalaar",
+    "name": "Chandra Nalaar",
+    "aliases": ["The Pyromancer", "Fire Mage"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Warrior", "Outlaw"],
+    "powers": ["Elemental", "Magic/Sorcery", "Energy/Beams"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "Gatewatch",
+    "origin": "Kaladesh",
+    "medium": "Web/Other",
+    "year": 2008,
+    "quote": {
+      "en": "When in doubt, set something on fire.",
+      "de": "Im Zweifel setzt man einfach etwas in Brand."
+    }
+  },
+  {
+    "id": "nicol-bolas",
+    "name": "Nicol Bolas",
+    "aliases": ["The God-Pharaoh", "Elder Dragon"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Royalty", "Leader"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Immortality"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "",
+    "origin": "Dominaria",
+    "medium": "Web/Other",
+    "year": 1994,
+    "quote": {
+      "en": "I have outlived gods and empires; you are merely a footnote I have not yet erased.",
+      "de": "Ich habe Götter und Imperien überlebt; du bist nur eine Fußnote, die ich noch nicht ausgelöscht habe."
+    }
+  },
+  {
+    "id": "teferi",
+    "name": "Teferi",
+    "aliases": ["Master of Time", "Hero of Dominaria", "Temporal Archmage"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Immortality", "Peak human/Genius"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "Gatewatch",
+    "origin": "Zhalfir, Dominaria",
+    "medium": "Web/Other",
+    "year": 1998,
+    "quote": {
+      "en": "Time is a river, and I have learned to step out of its current.",
+      "de": "Die Zeit ist ein Fluss, und ich habe gelernt, aus seiner Strömung herauszutreten."
+    }
+  },
+  {
+    "id": "urza",
+    "name": "Urza",
+    "aliases": ["Lord High Artificer", "Urza Planeswalker"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Scientist", "Mage", "Leader"],
+    "powers": ["Tech/Gadgets", "Magic/Sorcery", "Peak human/Genius"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "",
+    "origin": "Argive, Dominaria",
+    "medium": "Novel/Prose",
+    "year": 1994,
+    "quote": {
+      "en": "Every machine I build is one more weapon against the darkness.",
+      "de": "Jede Maschine, die ich baue, ist eine weitere Waffe gegen die Finsternis."
+    }
+  },
+  {
+    "id": "karn",
+    "name": "Karn",
+    "aliases": ["The Silver Golem", "Father of Machines", "Karn Liberated"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic", "Adventurer"],
+    "powers": ["Super strength", "Magic/Sorcery", "Immortality"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "Gatewatch",
+    "origin": "Dominaria",
+    "medium": "Novel/Prose",
+    "year": 1998,
+    "quote": {
+      "en": "I was forged to protect, and I will not break that purpose.",
+      "de": "Ich wurde geschmiedet, um zu beschützen, und ich werde diese Bestimmung nicht brechen."
+    }
+  },
+  {
+    "id": "sorin-markov",
+    "name": "Sorin Markov",
+    "aliases": ["The Vampire Lord", "Bloodlord of Innistrad"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Royalty", "Mystic"],
+    "powers": ["Magic/Sorcery", "Immortality", "Healing/Regeneration"],
+    "franchise": "Magic: The Gathering",
+    "affiliation": "",
+    "origin": "Innistrad",
+    "medium": "Web/Other",
+    "year": 2010,
+    "quote": {
+      "en": "I forged a guardian to shield mortals from the dark, and they repaid me with chains.",
+      "de": "Ich schmiedete einen Wächter, um die Sterblichen vor der Finsternis zu schützen, und sie dankten es mir mit Ketten."
+    }
+  },
+  {
+    "id": "arthur-morgan",
+    "name": "Arthur Morgan",
+    "aliases": ["Arthur", "Mr. Morgan", "Tacitus Kilgore", "The Outlaw"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior", "Adventurer"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Roaming the American frontier",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "We're thieves in a world that don't want us no more.",
+      "de": "Wir sind Diebe in einer Welt, die uns nicht mehr haben will."
+    }
+  },
+  {
+    "id": "john-marston",
+    "name": "John Marston",
+    "aliases": ["John", "Mr. Marston", "Jim Milton"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior", "Worker"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Beecher's Hope, West Elizabeth",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "We can't change what's done. We can only move on.",
+      "de": "Wir können das Geschehene nicht ändern. Wir können nur weitermachen."
+    }
+  },
+  {
+    "id": "dutch-van-der-linde",
+    "name": "Dutch van der Linde",
+    "aliases": ["Dutch", "Mr. van der Linde", "The Boss"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Outlaw"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Roaming the American frontier",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "We just need a little more faith.",
+      "de": "Wir brauchen nur ein bisschen mehr Vertrauen."
+    }
+  },
+  {
+    "id": "micah-bell",
+    "name": "Micah Bell",
+    "aliases": ["Micah", "Mr. Bell", "The Rat"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Spy", "Warrior"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Roaming the American frontier",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "Loyalty's a fine thing, but it'll get you killed.",
+      "de": "Loyalität ist eine feine Sache, aber sie bringt dich noch um."
+    }
+  },
+  {
+    "id": "sadie-adler",
+    "name": "Sadie Adler",
+    "aliases": ["Sadie", "Mrs. Adler", "Widow"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior", "Adventurer"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Grizzlies, Ambarino",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "I ain't waiting around to be a victim no more.",
+      "de": "Ich warte nicht länger darauf, ein Opfer zu sein."
+    }
+  },
+  {
+    "id": "hosea-matthews",
+    "name": "Hosea Matthews",
+    "aliases": ["Hosea", "Mr. Matthews", "The Old Con"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["Peak human/Genius", "Weapon mastery"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Roaming the American frontier",
+    "medium": "Video game",
+    "year": 2018,
+    "quote": {
+      "en": "A man with money is a man worth knowing.",
+      "de": "Ein Mann mit Geld ist ein Mann, den zu kennen sich lohnt."
+    }
+  },
+  {
+    "id": "bill-williamson",
+    "name": "Bill Williamson",
+    "aliases": ["Bill", "Mr. Williamson", "Marion Williamson"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Soldier", "Warrior"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Roaming the American frontier",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "You think you're better than me? You ain't.",
+      "de": "Du glaubst, du bist besser als ich? Bist du nicht."
+    }
+  },
+  {
+    "id": "javier-escuella",
+    "name": "Javier Escuella",
+    "aliases": ["Javier", "Mr. Escuella"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior", "Soldier"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Red Dead Redemption",
+    "affiliation": "Van der Linde gang",
+    "origin": "Nuevo Paraíso, Mexico",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "For a man with nothing, loyalty is everything.",
+      "de": "Für einen Mann, der nichts besitzt, ist Treue alles."
+    }
+  },
+  {
+    "id": "subaru-natsuki",
+    "name": "Subaru Natsuki",
+    "aliases": ["Natsuki Subaru", "Knight of Emilia", "Barusu"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Immortality"],
+    "franchise": "Re:Zero",
+    "affiliation": "Emilia Camp",
+    "origin": "Modern Japan",
+    "medium": "Novel/Prose",
+    "year": 2012,
+    "quote": {
+      "en": "I'll save you, no matter how many times it takes.",
+      "de": "Ich werde dich retten, egal wie oft ich es versuchen muss."
+    }
+  },
+  {
+    "id": "emilia",
+    "name": "Emilia",
+    "aliases": ["The Silver-Haired Half-Elf", "Lia", "Satella"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Mage", "Politician"],
+    "powers": ["Magic/Sorcery", "Elemental"],
+    "franchise": "Re:Zero",
+    "affiliation": "Emilia Camp",
+    "origin": "Elior Forest, Kingdom of Lugunica",
+    "medium": "Novel/Prose",
+    "year": 2012,
+    "quote": {
+      "en": "I want to become someone worthy of standing on my own two feet.",
+      "de": "Ich möchte jemand werden, der wirklich auf eigenen Beinen stehen kann."
+    }
+  },
+  {
+    "id": "beatrice",
+    "name": "Beatrice",
+    "aliases": ["Betty", "Beako", "The Great Spirit"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic", "Worker"],
+    "powers": ["Magic/Sorcery", "Immortality"],
+    "franchise": "Re:Zero",
+    "affiliation": "Roswaal Mansion",
+    "origin": "The Forbidden Library, Roswaal Mansion",
+    "medium": "Novel/Prose",
+    "year": 2012,
+    "quote": {
+      "en": "I have been waiting all this time for that person to come, I suppose.",
+      "de": "Ich habe diese ganze Zeit nur darauf gewartet, dass diese Person kommt, weißt du."
+    }
+  },
+  {
+    "id": "reinhard-van-astrea",
+    "name": "Reinhard van Astrea",
+    "aliases": ["The Sword Saint", "Knight of Felt", "Reinhard"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Royalty"],
+    "powers": ["Weapon mastery", "Super strength", "Peak human/Genius"],
+    "franchise": "Re:Zero",
+    "affiliation": "Knights of the Royal Guard",
+    "origin": "Kingdom of Lugunica",
+    "medium": "Novel/Prose",
+    "year": 2012,
+    "quote": {
+      "en": "There is nothing in this world that a blessing cannot resolve.",
+      "de": "Es gibt nichts auf dieser Welt, das ein Segen nicht lösen könnte."
+    }
+  },
+  {
+    "id": "roswaal-l-mathers",
+    "name": "Roswaal L. Mathers",
+    "aliases": ["Lord of the Mansion", "The Court Mage", "Roswaal"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Politician", "Leader"],
+    "powers": ["Magic/Sorcery", "Elemental", "Immortality"],
+    "franchise": "Re:Zero",
+    "affiliation": "Emilia Camp",
+    "origin": "Mathers Domain, Kingdom of Lugunica",
+    "medium": "Novel/Prose",
+    "year": 2012,
+    "quote": {
+      "en": "Everything is proceeding exactly according to the gospel.",
+      "de": "Alles verläuft genau so, wie es im Evangelium geschrieben steht."
+    }
+  },
+  {
+    "id": "meliodas",
+    "name": "Meliodas",
+    "aliases": ["Captain", "Dragon's Sin of Wrath", "The Demon King's son"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Royalty"],
+    "powers": ["Super strength", "Energy/Beams", "Immortality"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Seven Deadly Sins",
+    "origin": "Demon Realm",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "I'm gonna protect everyone, no matter what it takes.",
+      "de": "Ich werde alle beschützen, egal was es kostet."
+    }
+  },
+  {
+    "id": "elizabeth-liones",
+    "name": "Elizabeth Liones",
+    "aliases": ["Elizabeth", "Third Princess", "Goddess Elizabeth"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Healer"],
+    "powers": ["Healing/Regeneration", "Magic/Sorcery"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Kingdom of Liones",
+    "origin": "Kingdom of Liones",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "Please, let me fight by your side.",
+      "de": "Bitte, lass mich an deiner Seite kämpfen."
+    }
+  },
+  {
+    "id": "ban",
+    "name": "Ban",
+    "aliases": ["Fox's Sin of Greed", "The Undead", "Bandit Ban"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Outlaw"],
+    "powers": ["Immortality", "Healing/Regeneration", "Super strength"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Seven Deadly Sins",
+    "origin": "Ravens",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "Snatch! I'll take everything you've got.",
+      "de": "Raubzug! Ich nehme dir alles, was du hast."
+    }
+  },
+  {
+    "id": "diane",
+    "name": "Diane",
+    "aliases": ["Serpent's Sin of Envy", "Giant"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior"],
+    "powers": ["Super strength", "Elemental", "Size-change"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Seven Deadly Sins",
+    "origin": "Land of Giants",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "I'll crush anyone who hurts my friends!",
+      "de": "Ich zermalme jeden, der meinen Freunden wehtut!"
+    }
+  },
+  {
+    "id": "gowther",
+    "name": "Gowther",
+    "aliases": ["Goat's Sin of Lust", "The Doll", "Selfless"],
+    "species": "Object/Other",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mage"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery", "Weapon mastery"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Seven Deadly Sins",
+    "origin": "Kingdom of Liones",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "I only wished to understand the human heart.",
+      "de": "Ich wollte nur das menschliche Herz verstehen."
+    }
+  },
+  {
+    "id": "merlin",
+    "name": "Merlin",
+    "aliases": ["Boar's Sin of Gluttony", "The Daughter of Belialuin", "Great Mage"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Scientist"],
+    "powers": ["Magic/Sorcery", "Immortality", "Peak human/Genius"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Seven Deadly Sins",
+    "origin": "Belialuin",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "Knowledge is the greatest power of all.",
+      "de": "Wissen ist die größte Macht von allen."
+    }
+  },
+  {
+    "id": "escanor",
+    "name": "Escanor",
+    "aliases": ["Lion's Sin of Pride", "The One", "Strongest Holy Knight"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Worker"],
+    "powers": ["Super strength", "Elemental", "Energy/Beams"],
+    "franchise": "The Seven Deadly Sins",
+    "affiliation": "Seven Deadly Sins",
+    "origin": "Kingdom of Castellio",
+    "medium": "Manga",
+    "year": 2014,
+    "quote": {
+      "en": "Do you know what time it is? It's the time of pride.",
+      "de": "Weißt du, wie spät es ist? Es ist die Zeit des Stolzes."
+    }
+  },
+  {
+    "id": "rintaro-okabe",
+    "name": "Rintaro Okabe",
+    "aliases": ["Okarin", "Hououin Kyouma", "Mad Scientist"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Leader", "Student"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Steins;Gate",
+    "affiliation": "Future Gadget Laboratory",
+    "origin": "Akihabara, Tokyo",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "El Psy Kongroo. The world line is shifting once more.",
+      "de": "El Psy Kongroo. Die Weltlinie verschiebt sich erneut."
+    }
+  },
+  {
+    "id": "kurisu-makise",
+    "name": "Kurisu Makise",
+    "aliases": ["Christina", "Assistant", "The Zombie", "Makise"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Steins;Gate",
+    "affiliation": "Future Gadget Laboratory",
+    "origin": "United States / Japan",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "I am not a tsundere! Stop calling me that!",
+      "de": "Ich bin keine Tsundere! Hör auf, mich so zu nennen!"
+    }
+  },
+  {
+    "id": "mayuri-shiina",
+    "name": "Mayuri Shiina",
+    "aliases": ["Mayushii", "Hostage", "Lab Mem 002"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Steins;Gate",
+    "affiliation": "Future Gadget Laboratory",
+    "origin": "Akihabara, Tokyo",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Tuturu! I'm your hostage, after all.",
+      "de": "Tuturu! Ich bin schließlich deine Geisel."
+    }
+  },
+  {
+    "id": "itaru-hashida",
+    "name": "Itaru Hashida",
+    "aliases": ["Daru", "Super Hacka", "Hacker"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Worker", "Student"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Steins;Gate",
+    "affiliation": "Future Gadget Laboratory",
+    "origin": "Akihabara, Tokyo",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Leave the hacking to me, it's my specialty.",
+      "de": "Überlass das Hacken mir, das ist meine Spezialität."
+    }
+  },
+  {
+    "id": "suzuha-amane",
+    "name": "Suzuha Amane",
+    "aliases": ["Part-time Warrior", "Soldier", "Lab Mem 008"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior", "Worker"],
+    "powers": ["Martial arts", "Weapon mastery"],
+    "franchise": "Steins;Gate",
+    "affiliation": "Resistance against SERN",
+    "origin": "Future Tokyo (year 2036)",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "I came from the future to change this rotten world.",
+      "de": "Ich bin aus der Zukunft gekommen, um diese verdorbene Welt zu verändern."
+    }
+  },
+  {
+    "id": "moeka-kiryu",
+    "name": "Moeka Kiryu",
+    "aliases": ["Shining Finger", "FB", "Lab Mem 005"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Spy", "Worker"],
+    "powers": ["None"],
+    "franchise": "Steins;Gate",
+    "affiliation": "SERN",
+    "origin": "Tokyo, Japan",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "If I lose my phone, I lose my connection to the world.",
+      "de": "Wenn ich mein Handy verliere, verliere ich meine Verbindung zur Welt."
+    }
+  },
+  {
+    "id": "rimuru-tempest",
+    "name": "Rimuru Tempest",
+    "aliases": ["Satoru Mikami", "Demon Lord Rimuru", "The Slime"],
+    "species": "Creature/Monster",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Royalty", "Mage"],
+    "powers": ["Shapeshifting", "Magic/Sorcery", "Energy/Beams"],
+    "franchise": "That Time I Got Reincarnated as a Slime",
+    "affiliation": "Tempest (Jura Tempest Federation)",
+    "origin": "The Great Jura Forest",
+    "medium": "Novel/Prose",
+    "year": 2013,
+    "quote": {
+      "en": "If everyone is a monster, then no one is.",
+      "de": "Wenn alle Monster sind, dann ist niemand eines."
+    }
+  },
+  {
+    "id": "milim-nava",
+    "name": "Milim Nava",
+    "aliases": ["Destroyer", "Demon Lord of Destruction", "Dragon Ogre"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Super strength", "Elemental", "Flight"],
+    "franchise": "That Time I Got Reincarnated as a Slime",
+    "affiliation": "Demon Lords (one of the oldest)",
+    "origin": "Milim's Domain (Dragon's Peak)",
+    "medium": "Novel/Prose",
+    "year": 2014,
+    "quote": {
+      "en": "Be my friend, and I won't destroy your whole country!",
+      "de": "Sei mein Freund, und ich zerstöre nicht dein ganzes Land!"
+    }
+  },
+  {
+    "id": "benimaru",
+    "name": "Benimaru",
+    "aliases": ["Samurai General", "Flame", "Commander of Tempest"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Soldier"],
+    "powers": ["Elemental", "Magic/Sorcery", "Martial arts"],
+    "franchise": "That Time I Got Reincarnated as a Slime",
+    "affiliation": "Tempest (Jura Tempest Federation)",
+    "origin": "The Great Jura Forest",
+    "medium": "Novel/Prose",
+    "year": 2014,
+    "quote": {
+      "en": "I will burn anyone who threatens my home to ash.",
+      "de": "Ich werde jeden zu Asche verbrennen, der meine Heimat bedroht."
+    }
+  },
+  {
+    "id": "shion",
+    "name": "Shion",
+    "aliases": ["Strongest Secretary", "Ogre Maiden", "Purple Hair"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Worker", "Soldier"],
+    "powers": ["Super strength", "Magic/Sorcery", "Weapon mastery"],
+    "franchise": "That Time I Got Reincarnated as a Slime",
+    "affiliation": "Tempest (Jura Tempest Federation)",
+    "origin": "The Great Jura Forest",
+    "medium": "Novel/Prose",
+    "year": 2014,
+    "quote": {
+      "en": "Leave the cooking to me, and the killing too!",
+      "de": "Überlass mir das Kochen, und das Töten gleich mit!"
+    }
+  },
+  {
+    "id": "veldora-tempest",
+    "name": "Veldora Tempest",
+    "aliases": ["Storm Dragon", "Catastrophe-Class Calamity", "True Dragon"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mystic"],
+    "powers": ["Elemental", "Energy/Beams", "Immortality"],
+    "franchise": "That Time I Got Reincarnated as a Slime",
+    "affiliation": "Tempest (Jura Tempest Federation)",
+    "origin": "The Great Jura Forest",
+    "medium": "Novel/Prose",
+    "year": 2013,
+    "quote": {
+      "en": "Kuaaaha ha ha! Fear my unrivaled, overwhelming power!",
+      "de": "Kuaaaha ha ha! Fürchtet meine unübertroffene, überwältigende Macht!"
+    }
+  },
+  {
+    "id": "thorfinn",
+    "name": "Thorfinn",
+    "aliases": ["Thorfinn Karlsefni"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Vinland Saga",
+    "affiliation": "Askeladd's band",
+    "origin": "A village in Iceland",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "I have no enemies. Nobody has any enemies.",
+      "de": "Ich habe keine Feinde. Niemand hat Feinde."
+    }
+  },
+  {
+    "id": "askeladd",
+    "name": "Askeladd",
+    "aliases": ["Lucius Artorius Castus", "Son of Olaf"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Warrior", "Outlaw"],
+    "powers": ["Weapon mastery", "Peak human/Genius", "Martial arts"],
+    "franchise": "Vinland Saga",
+    "affiliation": "Askeladd's band",
+    "origin": "Wales",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "A man who can't keep one promise has nothing left worth protecting.",
+      "de": "Ein Mann, der nicht ein einziges Versprechen halten kann, hat nichts mehr, das es zu beschützen lohnt."
+    }
+  },
+  {
+    "id": "thors",
+    "name": "Thors",
+    "aliases": ["Troll of Jom", "The Troll of Jomsborg"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Vinland Saga",
+    "affiliation": "Jomsvikings",
+    "origin": "A village in Iceland",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "A true warrior needs no sword.",
+      "de": "Ein wahrer Krieger braucht kein Schwert."
+    }
+  },
+  {
+    "id": "canute",
+    "name": "Canute",
+    "aliases": ["Prince Canute", "King Cnut", "Knut"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Politician"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Vinland Saga",
+    "affiliation": "Danish royal house",
+    "origin": "Denmark",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "I will build a paradise here on this earth.",
+      "de": "Ich werde hier auf dieser Erde ein Paradies errichten."
+    }
+  },
+  {
+    "id": "thorkell",
+    "name": "Thorkell",
+    "aliases": ["Thorkell the Tall", "Captain Thorkell"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Vinland Saga",
+    "affiliation": "Jomsvikings",
+    "origin": "Jomsborg",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "Battle is the greatest joy a man can know!",
+      "de": "Der Kampf ist die größte Freude, die ein Mann erleben kann!"
+    }
+  },
+  {
+    "id": "einar",
+    "name": "Einar",
+    "aliases": ["Einar the Slave", "Farmhand Einar"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Warrior"],
+    "powers": ["None"],
+    "franchise": "Vinland Saga",
+    "affiliation": "Ketil's Farm",
+    "origin": "England",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "I just want to live free, on my own land.",
+      "de": "Ich will nur frei leben, auf meinem eigenen Land."
+    }
+  },
+  {
+    "id": "yugi-muto",
+    "name": "Yugi Muto",
+    "aliases": ["Yugi", "King of Games", "Partner"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior"],
+    "powers": ["Summoning", "Magic/Sorcery", "Peak human/Genius"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Yugi's friends",
+    "origin": "Domino City, Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "It's time to duel!",
+      "de": "Es ist Zeit für ein Duell!"
+    }
+  },
+  {
+    "id": "yami-yugi",
+    "name": "Yami Yugi",
+    "aliases": ["Atem", "Pharaoh", "The Nameless Pharaoh", "Dark Yugi"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Mystic"],
+    "powers": ["Summoning", "Magic/Sorcery", "Telepathy/Mind"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Yugi's friends",
+    "origin": "Ancient Egypt",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "I believe in the heart of the cards.",
+      "de": "Ich vertraue auf das Herz der Karten."
+    }
+  },
+  {
+    "id": "seto-kaiba",
+    "name": "Seto Kaiba",
+    "aliases": ["Kaiba", "Seto", "CEO of KaibaCorp"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Scientist", "Warrior"],
+    "powers": ["Summoning", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "KaibaCorp",
+    "origin": "Domino City, Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "There's no one alive who can defeat my ultimate dragon!",
+      "de": "Niemand auf der Welt kann meinen ultimativen Drachen besiegen!"
+    }
+  },
+  {
+    "id": "joey-wheeler",
+    "name": "Joey Wheeler",
+    "aliases": ["Katsuya Jonouchi", "Jonouchi", "Joey"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior"],
+    "powers": ["Summoning", "Martial arts"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Yugi's friends",
+    "origin": "Domino City, Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "I never go back on my word — that's my way!",
+      "de": "Ich nehme nie ein Wort zurück — das ist meine Art!"
+    }
+  },
+  {
+    "id": "maximillion-pegasus",
+    "name": "Maximillion Pegasus",
+    "aliases": ["Pegasus J. Crawford", "Pegasus", "Creator of Duel Monsters"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Artist", "Mystic"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery", "Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Industrial Illusions",
+    "origin": "United States",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "I can see every card in your hand.",
+      "de": "Ich kann jede Karte in deiner Hand sehen."
+    }
+  },
+  {
+    "id": "marik-ishtar",
+    "name": "Marik Ishtar",
+    "aliases": ["Malik Ishtar", "Marik", "Master of the Rare Hunters"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Mystic", "Outlaw"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery", "Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Rare Hunters",
+    "origin": "Egypt",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "The power of darkness will be mine!",
+      "de": "Die Macht der Finsternis wird mir gehören!"
+    }
+  },
+  {
+    "id": "dark-magician",
+    "name": "Dark Magician",
+    "aliases": ["Black Magician", "Mahad", "Ultimate Wizard"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Warrior", "Mystic"],
+    "powers": ["Magic/Sorcery", "Energy/Beams", "Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Yugi's deck",
+    "origin": "Ancient Egypt",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "Dark magic attack!",
+      "de": "Angriff der dunklen Magie!"
+    }
+  },
+  {
+    "id": "blue-eyes-white-dragon",
+    "name": "Blue-Eyes White Dragon",
+    "aliases": ["Blue-Eyes", "Kisara", "Legendary Dragon"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Monster"],
+    "powers": ["Flight", "Energy/Beams", "Elemental"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Kaiba's deck",
+    "origin": "Ancient Egypt",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "Unleash the destruction of my burst stream!",
+      "de": "Entfessle die Zerstörung meines berstenden Stroms!"
+    }
+  },
+  {
+    "id": "yusuke-urameshi",
+    "name": "Yusuke Urameshi",
+    "aliases": ["Spirit Detective", "Urameshi", "The Toushin Heir"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Warrior", "Student"],
+    "powers": ["Energy/Beams", "Martial arts", "Healing/Regeneration"],
+    "franchise": "Yu Yu Hakusho",
+    "affiliation": "Spirit World Detectives",
+    "origin": "Sarayashiki, Human World",
+    "medium": "Manga",
+    "year": 1990,
+    "quote": {
+      "en": "Put 'em up. Nobody picks on my friends and walks away whole.",
+      "de": "Komm her und kämpf. Niemand legt sich mit meinen Freunden an und kommt heil davon."
+    }
+  },
+  {
+    "id": "kazuma-kuwabara",
+    "name": "Kazuma Kuwabara",
+    "aliases": ["Kuwabara", "The Smitten Swordsman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student"],
+    "powers": ["Energy/Beams", "Weapon mastery", "Martial arts"],
+    "franchise": "Yu Yu Hakusho",
+    "affiliation": "Spirit World Detectives",
+    "origin": "Sarayashiki, Human World",
+    "medium": "Manga",
+    "year": 1990,
+    "quote": {
+      "en": "I never go back on my word. That's my code as a man!",
+      "de": "Ich breche niemals mein Wort. Das ist mein Ehrenkodex als Mann!"
+    }
+  },
+  {
+    "id": "kurama",
+    "name": "Kurama",
+    "aliases": ["Shuichi Minamino", "Yoko Kurama", "The Legendary Fox"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Outlaw", "Student"],
+    "powers": ["Elemental", "Shapeshifting", "Peak human/Genius"],
+    "franchise": "Yu Yu Hakusho",
+    "affiliation": "Spirit World Detectives",
+    "origin": "Demon World",
+    "medium": "Manga",
+    "year": 1991,
+    "quote": {
+      "en": "A single rose can be more beautiful, and more deadly, than you imagine.",
+      "de": "Eine einzige Rose kann schöner und tödlicher sein, als du es dir vorstellst."
+    }
+  },
+  {
+    "id": "hiei",
+    "name": "Hiei",
+    "aliases": ["The Jaganshi", "Flame Master", "Forbidden Child"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw"],
+    "powers": ["Elemental", "Super speed", "Telepathy/Mind"],
+    "franchise": "Yu Yu Hakusho",
+    "affiliation": "Spirit World Detectives",
+    "origin": "Demon World",
+    "medium": "Manga",
+    "year": 1991,
+    "quote": {
+      "en": "Behold the darkness flame, and despair before you burn.",
+      "de": "Schau in die Flamme der Finsternis und verzweifle, bevor du verbrennst."
+    }
+  },
+  {
+    "id": "genkai",
+    "name": "Genkai",
+    "aliases": ["Master Genkai", "The Psychic Master", "Grandma"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic", "Leader"],
+    "powers": ["Energy/Beams", "Martial arts", "Peak human/Genius"],
+    "franchise": "Yu Yu Hakusho",
+    "affiliation": "",
+    "origin": "Human World",
+    "medium": "Manga",
+    "year": 1991,
+    "quote": {
+      "en": "Power without discipline is just a child swinging a sword in the dark.",
+      "de": "Kraft ohne Disziplin ist nur ein Kind, das im Dunkeln ein Schwert schwingt."
+    }
+  },
+  {
+    "id": "younger-toguro",
+    "name": "Younger Toguro",
+    "aliases": ["Toguro", "Toguro the Younger", "100% Power"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Monster"],
+    "powers": ["Super strength", "Healing/Regeneration", "Size-change"],
+    "franchise": "Yu Yu Hakusho",
+    "affiliation": "Team Toguro",
+    "origin": "Human World",
+    "medium": "Manga",
+    "year": 1992,
+    "quote": {
+      "en": "Show me your full strength, or I will tear it out of your corpse.",
+      "de": "Zeig mir deine volle Kraft, oder ich reiße sie aus deiner Leiche heraus."
+    }
   }
 ]
