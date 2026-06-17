@@ -33747,5 +33747,2931 @@
       "en": "Adapt, or be removed.",
       "de": "Passe dich an, oder werde ausgemerzt."
     }
+  },
+  {
+    "id": "drizzt-do-urden",
+    "name": "Drizzt Do'Urden",
+    "aliases": ["Drizzt", "Hunter", "The Drow Ranger"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Outlaw"],
+    "powers": ["Weapon mastery", "Martial arts", "Magic/Sorcery"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Companions of the Hall",
+    "origin": "Menzoberranzan",
+    "medium": "Novel/Prose",
+    "year": 1988,
+    "quote": {
+      "en": "I do not fear death, for I have seen the alternative.",
+      "de": "Ich fürchte den Tod nicht, denn ich habe die Alternative gesehen."
+    }
+  },
+  {
+    "id": "elminster-aumar",
+    "name": "Elminster Aumar",
+    "aliases": ["Elminster", "The Sage of Shadowdale", "Old Mage", "El"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Mystic", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Immortality", "Telepathy/Mind"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Chosen of Mystra",
+    "origin": "Shadowdale",
+    "medium": "Novel/Prose",
+    "year": 1987,
+    "quote": {
+      "en": "Magic is meant to be used, lad, not hoarded like coins.",
+      "de": "Magie ist dazu da, benutzt zu werden, Junge, nicht gehortet wie Münzen."
+    }
+  },
+  {
+    "id": "raistlin-majere",
+    "name": "Raistlin Majere",
+    "aliases": ["Raistlin", "The Master of Past and Present", "Master of the Tower"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic"],
+    "powers": ["Magic/Sorcery", "Summoning", "Telepathy/Mind"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Heroes of the Lance",
+    "origin": "Solace",
+    "medium": "Novel/Prose",
+    "year": 1984,
+    "quote": {
+      "en": "I will be the greatest who ever lived, even if I must walk through the Abyss to do it.",
+      "de": "Ich werde der Größte sein, der je gelebt hat, selbst wenn ich dafür durch den Abgrund schreiten muss."
+    }
+  },
+  {
+    "id": "tanis-half-elven",
+    "name": "Tanis Half-Elven",
+    "aliases": ["Tanis", "Half-Elven", "Tanthalas"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Adventurer"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Heroes of the Lance",
+    "origin": "Qualinesti",
+    "medium": "Novel/Prose",
+    "year": 1984,
+    "quote": {
+      "en": "We are all of us caught between two worlds, and must find our own path.",
+      "de": "Wir alle stehen zwischen zwei Welten und müssen unseren eigenen Weg finden."
+    }
+  },
+  {
+    "id": "minsc",
+    "name": "Minsc",
+    "aliases": ["Mighty Minsc", "Butt-Kicker for Goodness"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Rashemen Berserkers",
+    "origin": "Rashemen",
+    "medium": "Video game",
+    "year": 1998,
+    "quote": {
+      "en": "Go for the eyes, Boo! Go for the eyes!",
+      "de": "Auf die Augen, Boo! Geh auf die Augen!"
+    }
+  },
+  {
+    "id": "strahd-von-zarovich",
+    "name": "Strahd von Zarovich",
+    "aliases": ["Strahd", "Count Strahd", "The Devil Strahd", "Lord of Barovia"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Mage", "Monster"],
+    "powers": ["Magic/Sorcery", "Immortality", "Shapeshifting"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Lords of Barovia",
+    "origin": "Barovia",
+    "medium": "Web/Other",
+    "year": 1983,
+    "quote": {
+      "en": "I am the land. My beginnings are lost in the darkness of the past.",
+      "de": "Ich bin das Land. Meine Anfänge verlieren sich in der Dunkelheit der Vergangenheit."
+    }
+  },
+  {
+    "id": "astarion",
+    "name": "Astarion",
+    "aliases": ["Astarion Ancunin", "The Pale Elf"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Spy", "Adventurer"],
+    "powers": ["Stealth/Invisibility", "Weapon mastery", "Magic/Sorcery"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Cazador's Spawn",
+    "origin": "Baldur's Gate",
+    "medium": "Video game",
+    "year": 2023,
+    "quote": {
+      "en": "Ah, it's you. Looking as ravishing as ever, darling.",
+      "de": "Ah, du bist es. Siehst hinreißend aus wie immer, Liebling."
+    }
+  },
+  {
+    "id": "shadowheart",
+    "name": "Shadowheart",
+    "aliases": ["Jenevelle Hallowleaf", "Lady of Shar"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Healer", "Spy"],
+    "powers": ["Magic/Sorcery", "Healing/Regeneration", "Stealth/Invisibility"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Cult of Shar",
+    "origin": "Baldur's Gate",
+    "medium": "Video game",
+    "year": 2023,
+    "quote": {
+      "en": "I don't remember much. I'm not even sure I'm supposed to.",
+      "de": "Ich erinnere mich an wenig. Ich bin mir nicht einmal sicher, ob ich es überhaupt sollte."
+    }
+  },
+  {
+    "id": "lae-zel",
+    "name": "Lae'zel",
+    "aliases": ["Lae'zel of Crèche K'liir", "The Githyanki"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Weapon mastery", "Martial arts", "Telepathy/Mind"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Githyanki",
+    "origin": "Astral Plane",
+    "medium": "Video game",
+    "year": 2023,
+    "quote": {
+      "en": "Tsk'va. You waste my time with foolishness.",
+      "de": "Tsk'va. Du verschwendest meine Zeit mit Torheiten."
+    }
+  },
+  {
+    "id": "bruenor-battlehammer",
+    "name": "Bruenor Battlehammer",
+    "aliases": ["Bruenor", "King Bruenor", "Eighth King of Mithral Hall"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Royalty", "Leader"],
+    "powers": ["Weapon mastery", "Super strength", "Martial arts"],
+    "franchise": "Dungeons & Dragons",
+    "affiliation": "Companions of the Hall",
+    "origin": "Mithral Hall",
+    "medium": "Novel/Prose",
+    "year": 1988,
+    "quote": {
+      "en": "Here's me bow, here's me axe, but where's me kingdom, eh?",
+      "de": "Hier mein Bogen, hier meine Axt, aber wo ist mein Königreich, hm?"
+    }
+  },
+  {
+    "id": "the-doctor",
+    "name": "The Doctor",
+    "aliases": ["The Oncoming Storm", "Time Lord", "The Last of the Time Lords"],
+    "species": "Alien",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Healer", "Scientist"],
+    "powers": ["Healing/Regeneration", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Doctor Who",
+    "affiliation": "Time Lords",
+    "origin": "Gallifrey",
+    "medium": "Film/TV (live-action)",
+    "year": 1963,
+    "quote": {
+      "en": "Would you like a jelly baby?",
+      "de": "Möchtest du ein Gummibärchen?"
+    }
+  },
+  {
+    "id": "the-master",
+    "name": "The Master",
+    "aliases": ["Missy", "Harold Saxon", "The Mistress"],
+    "species": "Alien",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Leader", "Politician"],
+    "powers": ["Healing/Regeneration", "Telepathy/Mind", "Tech/Gadgets"],
+    "franchise": "Doctor Who",
+    "affiliation": "Time Lords",
+    "origin": "Gallifrey",
+    "medium": "Film/TV (live-action)",
+    "year": 1971,
+    "quote": {
+      "en": "The drums, the never-ending drums. Can't you hear them?",
+      "de": "Die Trommeln, die niemals endenden Trommeln. Kannst du sie nicht hören?"
+    }
+  },
+  {
+    "id": "davros",
+    "name": "Davros",
+    "aliases": ["Creator of the Daleks", "Dark Lord of Skaro"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Leader"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Doctor Who",
+    "affiliation": "Daleks",
+    "origin": "Skaro",
+    "medium": "Film/TV (live-action)",
+    "year": 1975,
+    "quote": {
+      "en": "I will have my reward. The destruction of all who oppose me!",
+      "de": "Ich werde meine Belohnung bekommen. Die Vernichtung aller, die sich mir widersetzen!"
+    }
+  },
+  {
+    "id": "rose-tyler",
+    "name": "Rose Tyler",
+    "aliases": ["Rose", "The Bad Wolf", "Defender of the Earth"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Doctor Who",
+    "affiliation": "TARDIS Crew",
+    "origin": "London, Earth",
+    "medium": "Film/TV (live-action)",
+    "year": 2005,
+    "quote": {
+      "en": "I want you safe. Protected from the false god.",
+      "de": "Ich will dich in Sicherheit. Beschützt vor dem falschen Gott."
+    }
+  },
+  {
+    "id": "clara-oswald",
+    "name": "Clara Oswald",
+    "aliases": ["Clara", "The Impossible Girl", "Oswin"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Doctor Who",
+    "affiliation": "TARDIS Crew",
+    "origin": "Blackpool, Earth",
+    "medium": "Film/TV (live-action)",
+    "year": 2012,
+    "quote": {
+      "en": "Run, you clever boy, and remember.",
+      "de": "Lauf, du kluger Junge, und erinnere dich."
+    }
+  },
+  {
+    "id": "river-song",
+    "name": "River Song",
+    "aliases": ["Melody Pond", "Professor Song", "Sweetie"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Adventurer", "Scientist", "Outlaw"],
+    "powers": ["Healing/Regeneration", "Weapon mastery"],
+    "franchise": "Doctor Who",
+    "affiliation": "TARDIS Crew",
+    "origin": "Demons Run",
+    "medium": "Film/TV (live-action)",
+    "year": 2008,
+    "quote": {
+      "en": "Spoilers!",
+      "de": "Spoiler!"
+    }
+  },
+  {
+    "id": "captain-jack-harkness",
+    "name": "Captain Jack Harkness",
+    "aliases": ["Jack Harkness", "Jack", "The Face of Boe"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Leader", "Adventurer"],
+    "powers": ["Immortality", "Weapon mastery", "Healing/Regeneration"],
+    "franchise": "Doctor Who",
+    "affiliation": "Torchwood",
+    "origin": "Boeshane Peninsula",
+    "medium": "Film/TV (live-action)",
+    "year": 2005,
+    "quote": {
+      "en": "Hello, gorgeous. Don't worry, I'll flirt with anything that moves later.",
+      "de": "Hallo, Schönheit. Keine Sorge, mit allem, was sich bewegt, flirte ich später."
+    }
+  },
+  {
+    "id": "donna-noble",
+    "name": "Donna Noble",
+    "aliases": ["Donna", "The DoctorDonna", "The Most Important Woman in the Universe"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Doctor Who",
+    "affiliation": "TARDIS Crew",
+    "origin": "Chiswick, London, Earth",
+    "medium": "Film/TV (live-action)",
+    "year": 2006,
+    "quote": {
+      "en": "Oi! Watch it, spaceman!",
+      "de": "Hey! Pass auf, Weltraummann!"
+    }
+  },
+  {
+    "id": "malenia",
+    "name": "Malenia",
+    "aliases": ["Malenia, Blade of Miquella", "Goddess of Rot"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Royalty", "Mystic"],
+    "powers": ["Weapon mastery", "Elemental", "Healing/Regeneration"],
+    "franchise": "Elden Ring",
+    "affiliation": "Empyreans / Haligtree",
+    "origin": "The Lands Between",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "I have bloomed once more, and I have never known defeat.",
+      "de": "Ich bin erneut erblüht, und ich habe niemals eine Niederlage gekannt."
+    }
+  },
+  {
+    "id": "ranni-the-witch",
+    "name": "Ranni the Witch",
+    "aliases": ["Ranni", "Snow Witch", "Renna"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Royalty", "Mystic"],
+    "powers": ["Magic/Sorcery", "Summoning"],
+    "franchise": "Elden Ring",
+    "affiliation": "Empyreans / Carian Royal Family",
+    "origin": "Caria Manor, Liurnia",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "Mine is the dark moon. I will rule over the night, and the path away from order.",
+      "de": "Mein ist der dunkle Mond. Ich werde über die Nacht herrschen und über den Pfad fort von der Ordnung."
+    }
+  },
+  {
+    "id": "starscourge-radahn",
+    "name": "Starscourge Radahn",
+    "aliases": ["General Radahn", "Radahn", "Conqueror of the Stars"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Royalty"],
+    "powers": ["Magic/Sorcery", "Super strength", "Weapon mastery"],
+    "franchise": "Elden Ring",
+    "affiliation": "Demigods / Carian Royal Family",
+    "origin": "Caelid",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "The very stars are held at bay, that none may stray from the war I have chosen.",
+      "de": "Selbst die Sterne werden in Schach gehalten, damit keiner vom Krieg abweicht, den ich gewählt habe."
+    }
+  },
+  {
+    "id": "queen-marika",
+    "name": "Queen Marika",
+    "aliases": ["Marika the Eternal", "Radagon"],
+    "species": "Deity/Spirit",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Immortality", "Shapeshifting"],
+    "franchise": "Elden Ring",
+    "affiliation": "The Golden Order",
+    "origin": "The Lands Between",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "O Order, heed my will. Let the Erdtree burn, that a new age may begin.",
+      "de": "O Ordnung, höre meinen Willen. Lass den Erdbaum brennen, auf dass ein neues Zeitalter beginne."
+    }
+  },
+  {
+    "id": "mohg-lord-of-blood",
+    "name": "Mohg, Lord of Blood",
+    "aliases": ["Mohg", "Lord of Blood", "Mohg the Omen"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Mystic", "Warrior"],
+    "powers": ["Magic/Sorcery", "Elemental", "Weapon mastery"],
+    "franchise": "Elden Ring",
+    "affiliation": "Mohgwyn Dynasty",
+    "origin": "Mohgwyn Palace, The Lands Between",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "Behold! The cursed blood that will bring forth a new dynasty!",
+      "de": "Sieh nur! Das verfluchte Blut, das eine neue Dynastie hervorbringen wird!"
+    }
+  },
+  {
+    "id": "messmer-the-impaler",
+    "name": "Messmer the Impaler",
+    "aliases": ["Messmer", "The Impaler", "Messmer the Red"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Royalty"],
+    "powers": ["Elemental", "Weapon mastery", "Shapeshifting"],
+    "franchise": "Elden Ring",
+    "affiliation": "Demigods / Marika's Children",
+    "origin": "The Realm of Shadow",
+    "medium": "Video game",
+    "year": 2024,
+    "quote": {
+      "en": "May fire... remember thy name.",
+      "de": "Möge das Feuer... sich an deinen Namen erinnern."
+    }
+  },
+  {
+    "id": "blaidd",
+    "name": "Blaidd",
+    "aliases": ["Blaidd the Half-Wolf", "Half-Wolf"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Spy"],
+    "powers": ["Weapon mastery", "Super strength"],
+    "franchise": "Elden Ring",
+    "affiliation": "Ranni's Faction",
+    "origin": "Caria Manor, Liurnia",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "I am sworn to my lady's shadow. Where she treads, I follow, blade in hand.",
+      "de": "Ich bin dem Schatten meiner Herrin geschworen. Wohin sie auch schreitet, ich folge, die Klinge in der Hand."
+    }
+  },
+  {
+    "id": "godrick-the-grafted",
+    "name": "Godrick the Grafted",
+    "aliases": ["Godrick", "The Grafted", "Lord Godrick"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Elemental", "Weapon mastery", "Super strength"],
+    "franchise": "Elden Ring",
+    "affiliation": "Golden Lineage / Demigods",
+    "origin": "Stormveil Castle, Limgrave",
+    "medium": "Video game",
+    "year": 2022,
+    "quote": {
+      "en": "Forefathers, one and all, bear witness! I have graced my flesh with thee.",
+      "de": "Ahnen, allesamt, seid Zeugen! Ich habe mein Fleisch mit euch geschmückt."
+    }
+  },
+  {
+    "id": "alduin",
+    "name": "Alduin",
+    "aliases": ["The World-Eater", "First-Born of Akatosh"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Leader"],
+    "powers": ["Elemental", "Flight", "Immortality"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "Dragon Cult",
+    "origin": "Skyrim, Tamriel",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "You should not have come here. This world is mine to devour!",
+      "de": "Du hättest nicht herkommen sollen. Diese Welt ist mein, um sie zu verschlingen!"
+    }
+  },
+  {
+    "id": "paarthurnax",
+    "name": "Paarthurnax",
+    "aliases": ["Old One", "Master of the Greybeards"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Leader"],
+    "powers": ["Elemental", "Flight", "Immortality"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "The Greybeards",
+    "origin": "Throat of the World, Tamriel",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "What is better - to be born good, or to overcome your evil nature through great effort?",
+      "de": "Was ist besser - gut geboren zu werden oder seine böse Natur durch große Anstrengung zu überwinden?"
+    }
+  },
+  {
+    "id": "sheogorath",
+    "name": "Sheogorath",
+    "aliases": ["The Madgod", "Prince of Madness", "Daedric Prince of Madness"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Royalty"],
+    "powers": ["Magic/Sorcery", "Immortality", "Shapeshifting"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "The Daedric Princes",
+    "origin": "The Shivering Isles, Oblivion",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "Cheese for everyone!",
+      "de": "Käse für alle!"
+    }
+  },
+  {
+    "id": "vivec",
+    "name": "Vivec",
+    "aliases": ["The Warrior-Poet", "Lord Vivec", "Vehk", "The Hortator"],
+    "species": "Deity/Spirit",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Mystic", "Warrior"],
+    "powers": ["Magic/Sorcery", "Immortality", "Flight"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "The Tribunal",
+    "origin": "Vvardenfell, Morrowind",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "I am the Warrior-Poet, the Word and the Void. Speak, and I will hear you.",
+      "de": "Ich bin der Krieger-Poet, das Wort und die Leere. Sprich, und ich werde dich hören."
+    }
+  },
+  {
+    "id": "tiber-septim",
+    "name": "Tiber Septim",
+    "aliases": ["Talos", "Ysmir", "Dragon of the North", "Hjalti Early-Beard"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Magic/Sorcery", "Immortality", "Weapon mastery"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "Empire of Tamriel",
+    "origin": "Atmora / Tamriel",
+    "medium": "Video game",
+    "year": 1994,
+    "quote": {
+      "en": "I conquered an empire, and in death I ascended to godhood.",
+      "de": "Ich eroberte ein Imperium, und im Tod stieg ich zur Göttlichkeit auf."
+    }
+  },
+  {
+    "id": "martin-septim",
+    "name": "Martin Septim",
+    "aliases": ["Heir to the Septim Throne", "Avatar of Akatosh"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Healer", "Mage"],
+    "powers": ["Magic/Sorcery", "Shapeshifting"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "Empire of Tamriel",
+    "origin": "Cyrodiil, Tamriel",
+    "medium": "Video game",
+    "year": 2006,
+    "quote": {
+      "en": "I am the Dragon's Son. Be consumed!",
+      "de": "Ich bin der Sohn des Drachen. Werde verschlungen!"
+    }
+  },
+  {
+    "id": "mannimarco",
+    "name": "Mannimarco",
+    "aliases": ["The King of Worms", "Worm King"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader"],
+    "powers": ["Magic/Sorcery", "Summoning", "Immortality"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "Order of the Black Worm",
+    "origin": "Tamriel",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "Death is only the beginning of my power.",
+      "de": "Der Tod ist nur der Anfang meiner Macht."
+    }
+  },
+  {
+    "id": "ulfric-stormcloak",
+    "name": "Ulfric Stormcloak",
+    "aliases": ["Jarl of Windhelm", "Bear of Markarth", "True High King"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Royalty"],
+    "powers": ["Elemental", "Weapon mastery"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "The Stormcloaks",
+    "origin": "Skyrim, Tamriel",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "This is the moment we have waited for. The day we throw off these shackles.",
+      "de": "Dies ist der Moment, auf den wir gewartet haben. Der Tag, an dem wir diese Ketten abwerfen."
+    }
+  },
+  {
+    "id": "serana",
+    "name": "Serana",
+    "aliases": ["Daughter of Coldharbour", "Vampire of Volkihar"],
+    "species": "Undead",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Summoning", "Immortality"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "Volkihar Clan",
+    "origin": "Skyrim, Tamriel",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "I'm a pureblood vampire. I'm sure you can put two and two together.",
+      "de": "Ich bin ein reinblütiger Vampir. Ich bin sicher, du kannst dir den Rest zusammenreimen."
+    }
+  },
+  {
+    "id": "m-aiq-the-liar",
+    "name": "M'aiq the Liar",
+    "aliases": ["The Liar", "M'aiq"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Elder Scrolls",
+    "affiliation": "",
+    "origin": "Tamriel",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "Many think that I am a liar. But it is not true! I once met a man who could remove his own head and use it to bash in the heads of others.",
+      "de": "Viele halten mich für einen Lügner. Aber das stimmt nicht! Ich traf einmal einen Mann, der seinen eigenen Kopf abnehmen und damit die Köpfe anderer einschlagen konnte."
+    }
+  },
+  {
+    "id": "lyn",
+    "name": "Lyn",
+    "aliases": ["Lyndis", "Lady of the Plains", "Mani Katti's Wielder"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Adventurer"],
+    "powers": ["Super speed", "Weapon mastery"],
+    "franchise": "Fire Emblem",
+    "affiliation": "Lorca Tribe",
+    "origin": "Sacae",
+    "medium": "Video game",
+    "year": 2003,
+    "quote": {
+      "en": "If you stand in my way, I will cut you down!",
+      "de": "Wenn du dich mir in den Weg stellst, werde ich dich niederstrecken!"
+    }
+  },
+  {
+    "id": "edelgard",
+    "name": "Edelgard",
+    "aliases": ["Flame Emperor", "Adrestian Emperor", "El"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Warrior"],
+    "powers": ["Weapon mastery", "Magic/Sorcery"],
+    "franchise": "Fire Emblem",
+    "affiliation": "Adrestian Empire",
+    "origin": "Adrestia",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "I will lead the way, no matter how cruel or twisted that path may be.",
+      "de": "Ich werde vorangehen, ganz gleich wie grausam oder verschlungen dieser Weg auch sein mag."
+    }
+  },
+  {
+    "id": "dimitri",
+    "name": "Dimitri",
+    "aliases": ["Blue Lion", "Savior King", "Prince of Faerghus"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader", "Warrior"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Fire Emblem",
+    "affiliation": "Holy Kingdom of Faerghus",
+    "origin": "Faerghus",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "The dead do not speak. So we must speak for them.",
+      "de": "Die Toten können nicht sprechen. Also müssen wir für sie sprechen."
+    }
+  },
+  {
+    "id": "hector",
+    "name": "Hector",
+    "aliases": ["Marquess Ostia", "Wielder of Armads", "Lord of Ostia"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Fire Emblem",
+    "affiliation": "Lycia",
+    "origin": "Ostia",
+    "medium": "Video game",
+    "year": 2003,
+    "quote": {
+      "en": "I won't let anyone hurt my friends, not while I draw breath!",
+      "de": "Ich lasse niemanden meine Freunde verletzen, solange ich noch atme!"
+    }
+  },
+  {
+    "id": "tharja",
+    "name": "Tharja",
+    "aliases": ["Dark Mage of Plegia", "Hex Caster"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic", "Soldier"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "Fire Emblem",
+    "affiliation": "Shepherds",
+    "origin": "Plegia",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "Heh heh... I'll curse you if you get in my way.",
+      "de": "Heh heh... Ich verfluche dich, wenn du mir in die Quere kommst."
+    }
+  },
+  {
+    "id": "sergeant-johnson",
+    "name": "Sergeant Johnson",
+    "aliases": ["Avery Johnson", "Sergeant Major Johnson", "Sarge"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Halo",
+    "affiliation": "UNSC Marine Corps",
+    "origin": "Earth",
+    "medium": "Video game",
+    "year": 2001,
+    "quote": {
+      "en": "You will never be as ugly as you are right now, so stop your grinnin' and drop your linen!",
+      "de": "Hässlicher als jetzt werdet ihr nie wieder sein, also hört auf zu grinsen und macht euch fertig!"
+    }
+  },
+  {
+    "id": "343-guilty-spark",
+    "name": "343 Guilty Spark",
+    "aliases": ["the Monitor", "Guilty Spark", "Light of the Faithful"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Worker", "Mystic"],
+    "powers": ["Energy/Beams", "Flight", "Tech/Gadgets"],
+    "franchise": "Halo",
+    "affiliation": "The Forerunners",
+    "origin": "Installation 04",
+    "medium": "Video game",
+    "year": 2001,
+    "quote": {
+      "en": "Protocol dictates action. I have no choice. And neither do you.",
+      "de": "Das Protokoll schreibt das Handeln vor. Ich habe keine Wahl. Und du auch nicht."
+    }
+  },
+  {
+    "id": "gravemind",
+    "name": "Gravemind",
+    "aliases": ["the Gravemind", "the Parasite", "the Inferred Suns"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Healing/Regeneration", "Immortality"],
+    "franchise": "Halo",
+    "affiliation": "The Flood",
+    "origin": "Installation 05",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "This one is the Reclaimer, and this one is reclaimed. I have waited for it for so very long.",
+      "de": "Dieser hier ist der Bewahrer, und dieser ist der Bewahrte. So unendlich lange habe ich darauf gewartet."
+    }
+  },
+  {
+    "id": "atriox",
+    "name": "Atriox",
+    "aliases": ["the Banished warlord", "the one who endures"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Halo",
+    "affiliation": "The Banished",
+    "origin": "Doisac",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "They sent their demons. Now I send you mine.",
+      "de": "Sie schickten ihre Dämonen. Nun schicke ich euch meine."
+    }
+  },
+  {
+    "id": "dr-halsey",
+    "name": "Dr. Halsey",
+    "aliases": ["Catherine Halsey", "Dr. Catherine Halsey", "the Mother of the Spartans"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Scientist", "Leader", "Spy"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Halo",
+    "affiliation": "ONI",
+    "origin": "Endymion",
+    "medium": "Video game",
+    "year": 2001,
+    "quote": {
+      "en": "Every choice I have made, I have made for the survival of the human species.",
+      "de": "Jede Entscheidung, die ich getroffen habe, traf ich für das Überleben der menschlichen Spezies."
+    }
+  },
+  {
+    "id": "roxas",
+    "name": "Roxas",
+    "aliases": ["Number XIII", "The Key of Destiny"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Weapon mastery", "Elemental", "Magic/Sorcery"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Organization XIII",
+    "origin": "Twilight Town",
+    "medium": "Video game",
+    "year": 2005,
+    "quote": {
+      "en": "Why do I have the Keyblade? I have to know!",
+      "de": "Warum trage ich die Schlüsselklinge? Ich muss es einfach wissen!"
+    }
+  },
+  {
+    "id": "axel",
+    "name": "Axel",
+    "aliases": ["Lea", "The Flurry of Dancing Flames", "Number VIII"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Spy"],
+    "powers": ["Elemental", "Weapon mastery", "Magic/Sorcery"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Organization XIII",
+    "origin": "Radiant Garden",
+    "medium": "Video game",
+    "year": 2005,
+    "quote": {
+      "en": "Got it memorized?",
+      "de": "Hast du dir das gemerkt?"
+    }
+  },
+  {
+    "id": "xemnas",
+    "name": "Xemnas",
+    "aliases": ["The Superior of the In-Between", "Number I"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Mage"],
+    "powers": ["Energy/Beams", "Magic/Sorcery", "Flight"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Organization XIII",
+    "origin": "Radiant Garden",
+    "medium": "Video game",
+    "year": 2005,
+    "quote": {
+      "en": "Fill me with the power of darkness!",
+      "de": "Erfülle mich mit der Macht der Dunkelheit!"
+    }
+  },
+  {
+    "id": "aqua",
+    "name": "Aqua",
+    "aliases": ["Keyblade Master"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mage"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Elemental"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Land of Departure",
+    "origin": "Land of Departure",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "May my heart be my guiding key.",
+      "de": "Möge mein Herz mein leitender Schlüssel sein."
+    }
+  },
+  {
+    "id": "terra",
+    "name": "Terra",
+    "aliases": ["Lingering Will"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Weapon mastery", "Elemental", "Super strength"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Land of Departure",
+    "origin": "Land of Departure",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "My friends are my power, and I'm theirs!",
+      "de": "Meine Freunde sind meine Stärke, und ich bin ihre!"
+    }
+  },
+  {
+    "id": "ventus",
+    "name": "Ventus",
+    "aliases": ["Ven"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Weapon mastery", "Super speed", "Magic/Sorcery"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Land of Departure",
+    "origin": "Land of Departure",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "You're my best friend. Don't ever forget it.",
+      "de": "Du bist mein bester Freund. Vergiss das niemals."
+    }
+  },
+  {
+    "id": "namine",
+    "name": "Naminé",
+    "aliases": ["The Witch"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Artist"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Organization XIII",
+    "origin": "Castle Oblivion",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "Even if you forget, the ties that bind us never truly break.",
+      "de": "Selbst wenn du vergisst, brechen die Bande, die uns verbinden, niemals wirklich."
+    }
+  },
+  {
+    "id": "master-xehanort",
+    "name": "Master Xehanort",
+    "aliases": ["Xehanort", "The Seeker of Darkness"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader"],
+    "powers": ["Magic/Sorcery", "Elemental", "Weapon mastery"],
+    "franchise": "Kingdom Hearts",
+    "affiliation": "Real Organization XIII",
+    "origin": "Destiny Islands",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Let us cast aside these tragic puppets and write a new script.",
+      "de": "Lass uns diese tragischen Marionetten beiseitelegen und ein neues Drehbuch schreiben."
+    }
+  },
+  {
+    "id": "nasus",
+    "name": "Nasus",
+    "aliases": ["The Curator of the Sands", "Jackal of the Sands"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic", "Leader"],
+    "powers": ["Magic/Sorcery", "Super strength", "Immortality"],
+    "franchise": "League of Legends",
+    "affiliation": "Shurima",
+    "origin": "Shurima",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "The cycle of life and death continues. We will live, they will die.",
+      "de": "Der Kreislauf von Leben und Tod geht weiter. Wir werden leben, sie werden sterben."
+    }
+  },
+  {
+    "id": "renekton",
+    "name": "Renekton",
+    "aliases": ["The Butcher of the Sands", "Brother of the Curator"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Monster"],
+    "powers": ["Super strength", "Magic/Sorcery", "Immortality"],
+    "franchise": "League of Legends",
+    "affiliation": "Shurima",
+    "origin": "Shurima",
+    "medium": "Video game",
+    "year": 2011,
+    "quote": {
+      "en": "The desert sharpens! I will carve the truth into their flesh!",
+      "de": "Die Wüste schärft mich! Ich werde ihnen die Wahrheit ins Fleisch ritzen!"
+    }
+  },
+  {
+    "id": "malphite",
+    "name": "Malphite",
+    "aliases": ["Shard of the Monolith", "Monument to Order"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic"],
+    "powers": ["Super strength", "Elemental", "Magic/Sorcery"],
+    "franchise": "League of Legends",
+    "affiliation": "Ixtal",
+    "origin": "Ixtal",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Rock solid. Order must prevail over the chaos of flesh.",
+      "de": "Steinhart. Die Ordnung muss über das Chaos des Fleisches siegen."
+    }
+  },
+  {
+    "id": "cho-gath",
+    "name": "Cho'Gath",
+    "aliases": ["The Terror of the Void", "Voidborn"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Warrior"],
+    "powers": ["Super strength", "Size-change", "Magic/Sorcery"],
+    "franchise": "League of Legends",
+    "affiliation": "The Void",
+    "origin": "The Void",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Feast! The hunger is endless, and your world is the meal.",
+      "de": "Festmahl! Der Hunger ist endlos, und deine Welt ist die Mahlzeit."
+    }
+  },
+  {
+    "id": "soraka",
+    "name": "Soraka",
+    "aliases": ["The Starchild", "Daughter of the Stars"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Healer", "Mystic"],
+    "powers": ["Healing/Regeneration", "Magic/Sorcery", "Immortality"],
+    "franchise": "League of Legends",
+    "affiliation": "Ionia",
+    "origin": "The Celestial Realm",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Even the smallest star shines in the darkness. Let me mend your wounds.",
+      "de": "Selbst der kleinste Stern leuchtet in der Dunkelheit. Lass mich deine Wunden heilen."
+    }
+  },
+  {
+    "id": "janna",
+    "name": "Janna",
+    "aliases": ["The Storm's Fury", "Tempest of Zaun"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Healer"],
+    "powers": ["Elemental", "Flight", "Magic/Sorcery"],
+    "franchise": "League of Legends",
+    "affiliation": "Zaun",
+    "origin": "Zaun",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "The winds beckon, and I must follow. Let the storm carry you to safety.",
+      "de": "Die Winde rufen, und ich muss ihnen folgen. Lass den Sturm dich in Sicherheit tragen."
+    }
+  },
+  {
+    "id": "nautilus",
+    "name": "Nautilus",
+    "aliases": ["The Titan of the Depths", "Drowned Sentinel"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Worker"],
+    "powers": ["Super strength", "Immortality", "Weapon mastery"],
+    "franchise": "League of Legends",
+    "affiliation": "Bilgewater",
+    "origin": "Bilgewater",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "From the deep I rise, and the deep is all that remains.",
+      "de": "Aus der Tiefe steige ich empor, und die Tiefe ist alles, was bleibt."
+    }
+  },
+  {
+    "id": "master-yi",
+    "name": "Master Yi",
+    "aliases": ["The Wuju Bladesman", "Last of the Wuju"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic"],
+    "powers": ["Weapon mastery", "Super speed", "Martial arts"],
+    "franchise": "League of Legends",
+    "affiliation": "Ionia",
+    "origin": "Ionia",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Follow the path of the blade. My discipline is unbreakable.",
+      "de": "Folge dem Pfad der Klinge. Meine Disziplin ist unzerbrechlich."
+    }
+  },
+  {
+    "id": "aurelion-sol",
+    "name": "Aurelion Sol",
+    "aliases": ["The Star Forger", "The Starforger"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Royalty"],
+    "powers": ["Magic/Sorcery", "Flight", "Immortality"],
+    "franchise": "League of Legends",
+    "affiliation": "The Cosmos",
+    "origin": "The Cosmos",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "I forged the stars themselves, and now I am chained to a crown of dust.",
+      "de": "Ich erschuf die Sterne selbst, und nun bin ich an eine Krone aus Staub gekettet."
+    }
+  },
+  {
+    "id": "jayce",
+    "name": "Jayce",
+    "aliases": ["The Defender of Tomorrow", "The Defender of Piltover"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Warrior"],
+    "powers": ["Tech/Gadgets", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "League of Legends",
+    "affiliation": "Piltover",
+    "origin": "Piltover",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "The future is in good hands. Progress demands a defender.",
+      "de": "Die Zukunft ist in guten Händen. Der Fortschritt verlangt einen Beschützer."
+    }
+  },
+  {
+    "id": "singed",
+    "name": "Singed",
+    "aliases": ["The Mad Chemist", "The Mad Chemist of Zaun"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "League of Legends",
+    "affiliation": "Zaun",
+    "origin": "Zaun",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "The poison spreads, and progress demands its price. A toxin for every problem.",
+      "de": "Das Gift breitet sich aus, und der Fortschritt fordert seinen Preis. Ein Toxin für jedes Problem."
+    }
+  },
+  {
+    "id": "mordekaiser",
+    "name": "Mordekaiser",
+    "aliases": ["The Iron Revenant", "The Master of Metal"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Royalty", "Mage"],
+    "powers": ["Magic/Sorcery", "Super strength", "Immortality"],
+    "franchise": "League of Legends",
+    "affiliation": "Noxus",
+    "origin": "Noxus",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Death is no escape. I will drag your soul into my dominion.",
+      "de": "Der Tod ist kein Entkommen. Ich werde deine Seele in mein Reich zerren."
+    }
+  },
+  {
+    "id": "karthus",
+    "name": "Karthus",
+    "aliases": ["The Deathsinger", "Harbinger of Oblivion"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Mystic", "Artist"],
+    "powers": ["Magic/Sorcery", "Immortality", "Summoning"],
+    "franchise": "League of Legends",
+    "affiliation": "Shadow Isles",
+    "origin": "Shadow Isles",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "Let my requiem ring across the world. Death is the only release.",
+      "de": "Lass mein Requiem über die Welt erklingen. Der Tod ist die einzige Erlösung."
+    }
+  },
+  {
+    "id": "ornn",
+    "name": "Ornn",
+    "aliases": ["The Fire Below the Mountain", "The Forge God"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Mystic", "Warrior"],
+    "powers": ["Elemental", "Super strength", "Immortality"],
+    "franchise": "League of Legends",
+    "affiliation": "Freljord",
+    "origin": "Freljord",
+    "medium": "Video game",
+    "year": 2017,
+    "quote": {
+      "en": "Bah. The forge is sacred, and you are interrupting my work.",
+      "de": "Bah. Die Schmiede ist heilig, und du störst meine Arbeit."
+    }
+  },
+  {
+    "id": "fiora",
+    "name": "Fiora",
+    "aliases": ["The Grand Duelist", "The Grand Duelist of Demacia"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Royalty"],
+    "powers": ["Weapon mastery", "Super speed", "Peak human/Genius"],
+    "franchise": "League of Legends",
+    "affiliation": "Demacia",
+    "origin": "Demacia",
+    "medium": "Video game",
+    "year": 2012,
+    "quote": {
+      "en": "En garde. My blade will reclaim my family's honor, one duel at a time.",
+      "de": "En garde. Meine Klinge wird die Ehre meiner Familie zurückgewinnen, ein Duell nach dem anderen."
+    }
+  },
+  {
+    "id": "heimerdinger",
+    "name": "Heimerdinger",
+    "aliases": ["The Revered Inventor", "The Yordle Scientist"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Politician"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius", "Summoning"],
+    "franchise": "League of Legends",
+    "affiliation": "Piltover",
+    "origin": "Bandle City",
+    "medium": "Video game",
+    "year": 2009,
+    "quote": {
+      "en": "A brilliant idea! With enough turrets, any problem can be solved.",
+      "de": "Eine geniale Idee! Mit genug Türmen lässt sich jedes Problem lösen."
+    }
+  },
+  {
+    "id": "prince-imrahil",
+    "name": "Prince Imrahil",
+    "aliases": ["Imrahil", "Prince of Dol Amroth", "Lord of Dol Amroth"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "The Lord of the Rings",
+    "affiliation": "Gondor",
+    "origin": "Dol Amroth, Gondor, Middle-earth",
+    "medium": "Novel/Prose",
+    "year": 1955,
+    "quote": {
+      "en": "Let us not stay idle behind our walls while the captains of the West ride to the Black Gate.",
+      "de": "Lasst uns nicht müßig hinter unseren Mauern verweilen, während die Hauptleute des Westens zum Schwarzen Tor reiten."
+    }
+  },
+  {
+    "id": "barliman-butterbur",
+    "name": "Barliman Butterbur",
+    "aliases": ["Barliman", "Butterbur", "The Innkeeper"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Lord of the Rings",
+    "affiliation": "The Prancing Pony",
+    "origin": "Bree, Middle-earth",
+    "medium": "Novel/Prose",
+    "year": 1954,
+    "quote": {
+      "en": "One thing drives out another, so to speak. I'm a busy man, as the saying goes.",
+      "de": "Eines vertreibt das andere, sozusagen. Ich bin ein vielbeschäftigter Mann, wie man so sagt."
+    }
+  },
+  {
+    "id": "gildor-inglorion",
+    "name": "Gildor Inglorion",
+    "aliases": ["Gildor", "Inglorion", "Lord of the Wandering Companies"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Mystic"],
+    "powers": ["Immortality", "Magic/Sorcery"],
+    "franchise": "The Lord of the Rings",
+    "affiliation": "Noldor",
+    "origin": "Rivendell, Middle-earth",
+    "medium": "Novel/Prose",
+    "year": 1954,
+    "quote": {
+      "en": "Go not to the Elves for counsel, for they will say both no and yes.",
+      "de": "Geh nicht zu den Elben um Rat, denn sie werden sowohl Nein als auch Ja sagen."
+    }
+  },
+  {
+    "id": "elladan",
+    "name": "Elladan",
+    "aliases": ["Son of Elrond", "Rider of the Grey Company"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Royalty", "Adventurer"],
+    "powers": ["Immortality", "Weapon mastery"],
+    "franchise": "The Lord of the Rings",
+    "affiliation": "Grey Company",
+    "origin": "Rivendell, Middle-earth",
+    "medium": "Novel/Prose",
+    "year": 1955,
+    "quote": {
+      "en": "We have ridden hard from the North, for word came that aid was needed in the South.",
+      "de": "Wir sind hart aus dem Norden geritten, denn es kam die Kunde, dass im Süden Hilfe vonnöten sei."
+    }
+  },
+  {
+    "id": "elrohir",
+    "name": "Elrohir",
+    "aliases": ["Son of Elrond", "Rider of the Grey Company"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Royalty", "Adventurer"],
+    "powers": ["Immortality", "Weapon mastery"],
+    "franchise": "The Lord of the Rings",
+    "affiliation": "Grey Company",
+    "origin": "Rivendell, Middle-earth",
+    "medium": "Novel/Prose",
+    "year": 1955,
+    "quote": {
+      "en": "The dead follow at our heels, and the road through the mountains lies open before us.",
+      "de": "Die Toten folgen uns auf den Fersen, und der Weg durch die Berge liegt offen vor uns."
+    }
+  },
+  {
+    "id": "urdnot-wrex",
+    "name": "Urdnot Wrex",
+    "aliases": ["Wrex", "Clan Chief Urdnot", "Battlemaster"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Super strength", "Energy/Beams", "Healing/Regeneration"],
+    "franchise": "Mass Effect",
+    "affiliation": "Clan Urdnot",
+    "origin": "Tuchanka",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "I had a plan once. Cost me an eye.",
+      "de": "Ich hatte mal einen Plan. Er kostete mich ein Auge."
+    }
+  },
+  {
+    "id": "mordin-solus",
+    "name": "Mordin Solus",
+    "aliases": ["Mordin", "The Salarian Scientist", "Professor"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Healer", "Soldier"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Mass Effect",
+    "affiliation": "Special Tasks Group",
+    "origin": "Sur'Kesh",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Had to be me. Someone else might have gotten it wrong.",
+      "de": "Es musste ich sein. Jemand anderes hätte es vielleicht falsch gemacht."
+    }
+  },
+  {
+    "id": "legion",
+    "name": "Legion",
+    "aliases": ["A Thousand Voices", "Geth Platform"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Scientist", "Warrior"],
+    "powers": ["Tech/Gadgets", "Energy/Beams", "Peak human/Genius"],
+    "franchise": "Mass Effect",
+    "affiliation": "The Geth",
+    "origin": "Rannoch",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Does this unit have a soul?",
+      "de": "Hat diese Einheit eine Seele?"
+    }
+  },
+  {
+    "id": "the-illusive-man",
+    "name": "The Illusive Man",
+    "aliases": ["Illusive Man", "Jack Harper", "Cerberus Leader"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Politician", "Spy"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Mass Effect",
+    "affiliation": "Cerberus",
+    "origin": "Earth",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "Humanity needs to take its place at the top.",
+      "de": "Die Menschheit muss ihren Platz an der Spitze einnehmen."
+    }
+  },
+  {
+    "id": "saren-arterius",
+    "name": "Saren Arterius",
+    "aliases": ["Saren", "Agent Arterius", "Rogue Spectre"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Spy", "Warrior"],
+    "powers": ["Tech/Gadgets", "Energy/Beams", "Weapon mastery"],
+    "franchise": "Mass Effect",
+    "affiliation": "Citadel Council (rogue)",
+    "origin": "Palaven",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "I am a vision of the future. The evolution of all organic life.",
+      "de": "Ich bin eine Vision der Zukunft. Die Evolution allen organischen Lebens."
+    }
+  },
+  {
+    "id": "edi",
+    "name": "EDI",
+    "aliases": ["Enhanced Defense Intelligence", "The Normandy AI"],
+    "species": "Robot/AI",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Soldier", "Scientist"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius", "Energy/Beams"],
+    "franchise": "Mass Effect",
+    "affiliation": "Normandy crew",
+    "origin": "Normandy SR-2",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "That was a joke.",
+      "de": "Das war ein Scherz."
+    }
+  },
+  {
+    "id": "big-boss",
+    "name": "Big Boss",
+    "aliases": ["Naked Snake", "John", "Jack", "The Legendary Soldier"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Leader", "Warrior"],
+    "powers": ["Stealth/Invisibility", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Metal Gear",
+    "affiliation": "Militaires Sans Frontières",
+    "origin": "United States",
+    "medium": "Video game",
+    "year": 1987,
+    "quote": {
+      "en": "This is good... isn't it?",
+      "de": "Das ist gut... oder nicht?"
+    }
+  },
+  {
+    "id": "revolver-ocelot",
+    "name": "Revolver Ocelot",
+    "aliases": ["Shalashaska", "Adamska", "ADAM", "Major Ocelot"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Spy", "Soldier", "Warrior"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Metal Gear",
+    "affiliation": "Patriots",
+    "origin": "Soviet Union",
+    "medium": "Video game",
+    "year": 1998,
+    "quote": {
+      "en": "You're pretty good.",
+      "de": "Du bist ziemlich gut."
+    }
+  },
+  {
+    "id": "the-boss",
+    "name": "The Boss",
+    "aliases": ["The Joy", "The Mother of Special Forces", "Voyevoda"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Leader", "Warrior"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Metal Gear",
+    "affiliation": "Cobra Unit",
+    "origin": "United States",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "The world must be made whole again.",
+      "de": "Die Welt muss wieder geeint werden."
+    }
+  },
+  {
+    "id": "psycho-mantis",
+    "name": "Psycho Mantis",
+    "aliases": ["The Master of Mind Reading"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Mystic", "Warrior"],
+    "powers": ["Telepathy/Mind"],
+    "franchise": "Metal Gear",
+    "affiliation": "FOXHOUND",
+    "origin": "Soviet Union",
+    "medium": "Video game",
+    "year": 1998,
+    "quote": {
+      "en": "I sense great anger in you.",
+      "de": "Ich spüre großen Zorn in dir."
+    }
+  },
+  {
+    "id": "morgana",
+    "name": "Morgana",
+    "aliases": ["Mona", "Mr. Mona", "Joker's Partner"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Healer", "Leader"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Summoning"],
+    "franchise": "Persona",
+    "affiliation": "Phantom Thieves of Hearts",
+    "origin": "The Metaverse",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "I'm not a cat! Get that through your thick skull!",
+      "de": "Ich bin keine Katze! Bekomm das endlich in deinen dicken Schädel!"
+    }
+  },
+  {
+    "id": "makoto-niijima",
+    "name": "Makoto Niijima",
+    "aliases": ["Queen", "Student Council President"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior", "Leader"],
+    "powers": ["Summoning", "Martial arts", "Magic/Sorcery"],
+    "franchise": "Persona",
+    "affiliation": "Phantom Thieves of Hearts",
+    "origin": "Tokyo, Japan",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "I won't run away anymore. I'll fight for what I believe in.",
+      "de": "Ich werde nicht mehr weglaufen. Ich kämpfe für das, woran ich glaube."
+    }
+  },
+  {
+    "id": "ann-takamaki",
+    "name": "Ann Takamaki",
+    "aliases": ["Panther", "Lady Ann"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Artist", "Warrior"],
+    "powers": ["Summoning", "Elemental", "Magic/Sorcery"],
+    "franchise": "Persona",
+    "affiliation": "Phantom Thieves of Hearts",
+    "origin": "Tokyo, Japan",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "I'm done being a pushover. Time to show them my true colors.",
+      "de": "Ich lasse mich nicht mehr herumschubsen. Zeit, ihnen mein wahres Gesicht zu zeigen."
+    }
+  },
+  {
+    "id": "yu-narukami",
+    "name": "Yu Narukami",
+    "aliases": ["Seta Souji", "Silver-Haired Leader", "Wild Card"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Student", "Warrior"],
+    "powers": ["Summoning", "Magic/Sorcery", "Weapon mastery"],
+    "franchise": "Persona",
+    "affiliation": "Investigation Team",
+    "origin": "Inaba, Japan",
+    "medium": "Video game",
+    "year": 2008,
+    "quote": {
+      "en": "I'll face myself, no matter how ugly the truth gets.",
+      "de": "Ich werde mich mir selbst stellen, egal wie hässlich die Wahrheit wird."
+    }
+  },
+  {
+    "id": "aigis",
+    "name": "Aigis",
+    "aliases": ["Aegis", "Anti-Shadow Weapon", "Unit 7"],
+    "species": "Robot/AI",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior", "Healer"],
+    "powers": ["Summoning", "Tech/Gadgets", "Energy/Beams"],
+    "franchise": "Persona",
+    "affiliation": "SEES",
+    "origin": "Kirijo Group Laboratory, Japan",
+    "medium": "Video game",
+    "year": 2006,
+    "quote": {
+      "en": "I will protect you. That is the reason I was created.",
+      "de": "Ich werde dich beschützen. Das ist der Grund, warum ich erschaffen wurde."
+    }
+  },
+  {
+    "id": "igor",
+    "name": "Igor",
+    "aliases": ["Master of the Velvet Room", "Long-Nosed Man"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Healer"],
+    "powers": ["Magic/Sorcery", "Summoning", "Immortality"],
+    "franchise": "Persona",
+    "affiliation": "The Velvet Room",
+    "origin": "The Velvet Room",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "Welcome. This place exists between dream and reality, mind and matter.",
+      "de": "Willkommen. Dieser Ort existiert zwischen Traum und Wirklichkeit, Geist und Materie."
+    }
+  },
+  {
+    "id": "ryuji-sakamoto",
+    "name": "Ryuji Sakamoto",
+    "aliases": ["Skull", "Captain Kidd's Wielder"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior", "Athlete"],
+    "powers": ["Summoning", "Electric/Lightning", "Super strength"],
+    "franchise": "Persona",
+    "affiliation": "Phantom Thieves of Hearts",
+    "origin": "Tokyo, Japan",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "Let's blow this rotten world wide open!",
+      "de": "Lass uns diese verdorbene Welt weit aufreißen!"
+    }
+  },
+  {
+    "id": "fingon",
+    "name": "Fingon",
+    "aliases": ["Fingon the Valiant", "High King of the Noldor", "Findekáno"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Fingolfin",
+    "origin": "Hithlum",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "I will climb to the highest peak and sing, that even a captive in chains may hear and not despair.",
+      "de": "Ich werde auf den höchsten Gipfel steigen und singen, damit selbst ein Gefangener in Ketten es hört und nicht verzweifelt."
+    }
+  },
+  {
+    "id": "turgon",
+    "name": "Turgon",
+    "aliases": ["Turgon the Wise", "King of Gondolin", "Turukáno"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader", "Warrior"],
+    "powers": ["Weapon mastery", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Fingolfin",
+    "origin": "Gondolin",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "Behind these mountains I have raised a hidden city, and while its walls stand no enemy shall find us.",
+      "de": "Hinter diesen Bergen habe ich eine verborgene Stadt errichtet, und solange ihre Mauern stehen, wird kein Feind uns finden."
+    }
+  },
+  {
+    "id": "celebrimbor",
+    "name": "Celebrimbor",
+    "aliases": ["Lord of Eregion", "Maker of the Rings", "Silver Fist"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Worker", "Leader"],
+    "powers": ["Magic/Sorcery", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "Gwaith-i-Mírdain",
+    "origin": "Eregion",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "Three Rings I forged free of the Deceiver's hand, and into them I poured my deepest craft.",
+      "de": "Drei Ringe schmiedete ich frei von der Hand des Verführers, und in sie goss ich meine tiefste Kunst."
+    }
+  },
+  {
+    "id": "gil-galad",
+    "name": "Gil-galad",
+    "aliases": ["Ereinion", "High King of the Noldor", "Star of Radiance"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "Last Alliance of Elves and Men",
+    "origin": "Lindon",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "Elves and Men shall stand together one last time, and my spear will not be lowered until the Dark Lord falls.",
+      "de": "Elben und Menschen werden ein letztes Mal zusammenstehen, und mein Speer wird nicht gesenkt, bis der Dunkle Herrscher fällt."
+    }
+  },
+  {
+    "id": "tuor",
+    "name": "Tuor",
+    "aliases": ["Tuor son of Huor", "Ulmondil", "Lord of the Wing"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Leader"],
+    "powers": ["Weapon mastery"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Hador",
+    "origin": "Dor-lómin",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "By the will of the Lord of Waters I was sent, and I bear to your hidden king a warning he must not ignore.",
+      "de": "Durch den Willen des Herrn der Wasser wurde ich gesandt, und ich bringe eurem verborgenen König eine Warnung, die er nicht missachten darf."
+    }
+  },
+  {
+    "id": "idril",
+    "name": "Idril",
+    "aliases": ["Idril Celebrindal", "Silver-foot", "Princess of Gondolin"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader"],
+    "powers": ["Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Fingolfin",
+    "origin": "Gondolin",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "I have made a secret way beneath the walls, for I foresaw that the hidden city might one day fall.",
+      "de": "Ich habe einen geheimen Weg unter den Mauern angelegt, denn ich ahnte, dass die verborgene Stadt eines Tages fallen könnte."
+    }
+  },
+  {
+    "id": "hurin",
+    "name": "Húrin",
+    "aliases": ["Húrin Thalion", "Húrin the Steadfast", "Lord of Dor-lómin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Royalty", "Leader"],
+    "powers": ["Weapon mastery"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Hador",
+    "origin": "Dor-lómin",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "Day shall come again! Though every blade is hewn down, I will not bow to the throne of the North.",
+      "de": "Der Tag wird wiederkehren! Auch wenn jede Klinge zerschlagen ist, beuge ich mich nicht vor dem Thron des Nordens."
+    }
+  },
+  {
+    "id": "glaurung",
+    "name": "Glaurung",
+    "aliases": ["Father of Dragons", "the Golden", "the Great Worm"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Warrior"],
+    "powers": ["Elemental", "Telepathy/Mind", "Magic/Sorcery"],
+    "franchise": "The Silmarillion",
+    "affiliation": "Host of Angband",
+    "origin": "Angband",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "Look into my eyes, slayer of thy kin, and behold the doom that my gaze has woven for thee.",
+      "de": "Sieh mir in die Augen, Mörder deiner Sippe, und schau das Verhängnis, das mein Blick dir gewoben hat."
+    }
+  },
+  {
+    "id": "maglor",
+    "name": "Maglor",
+    "aliases": ["Maglor the Singer", "Canafinwë", "Mighty Singer"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Artist", "Warrior", "Royalty"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Fëanor",
+    "origin": "Tirion",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "The Oath is fulfilled and undone at last, and ever I shall wander singing by the sea in pain and regret.",
+      "de": "Der Eid ist endlich erfüllt und zunichte, und für immer werde ich singend am Meer umherziehen in Schmerz und Reue."
+    }
+  },
+  {
+    "id": "celegorm",
+    "name": "Celegorm",
+    "aliases": ["Celegorm the Fair", "Tyelkormo", "Lord of Himlad"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Royalty", "Adventurer"],
+    "powers": ["Weapon mastery", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "House of Fëanor",
+    "origin": "Tirion",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "The chase is mine and the prize is mine, and what my hound corners I shall claim for my own.",
+      "de": "Die Jagd ist mein und die Beute ist mein, und was mein Hund stellt, das nehme ich mir."
+    }
+  },
+  {
+    "id": "beleg-cuthalion",
+    "name": "Beleg Cúthalion",
+    "aliases": ["Beleg Strongbow", "Cúthalion", "Captain of Doriath"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Immortality"],
+    "franchise": "The Silmarillion",
+    "affiliation": "Marchwardens of Doriath",
+    "origin": "Doriath",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "I will go with you into the wild, for friendship is worth more than any king's command.",
+      "de": "Ich werde mit dir in die Wildnis ziehen, denn Freundschaft ist mehr wert als der Befehl eines jeden Königs."
+    }
+  },
+  {
+    "id": "eonwe",
+    "name": "Eönwë",
+    "aliases": ["Herald of Manwë", "Banner-bearer of the West", "Chief of the Maiar"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Immortality", "Weapon mastery"],
+    "franchise": "The Silmarillion",
+    "affiliation": "Host of the Valar",
+    "origin": "Valinor",
+    "medium": "Novel/Prose",
+    "year": 1977,
+    "quote": {
+      "en": "Mightiest in arms of all who dwell in the Blessed Realm, I come to summon the world to its last war.",
+      "de": "Mächtigster im Waffenhandwerk aller, die im Gesegneten Reich wohnen, komme ich, die Welt zu ihrem letzten Krieg zu rufen."
+    }
+  },
+  {
+    "id": "ezra-bridger",
+    "name": "Ezra Bridger",
+    "aliases": ["Ezra", "Specter 6"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Outlaw"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Spectres",
+    "origin": "Lothal",
+    "medium": "Animation/Cartoon",
+    "year": 2014,
+    "quote": {
+      "en": "There's always hope, sometimes you just have to look for it.",
+      "de": "Es gibt immer Hoffnung, manchmal muss man nur danach suchen."
+    }
+  },
+  {
+    "id": "sabine-wren",
+    "name": "Sabine Wren",
+    "aliases": ["Sabine", "Specter 5"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Artist", "Soldier"],
+    "powers": ["Weapon mastery", "Tech/Gadgets", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Spectres",
+    "origin": "Krownest",
+    "medium": "Animation/Cartoon",
+    "year": 2014,
+    "quote": {
+      "en": "I'm an artist. Sometimes I blow things up.",
+      "de": "Ich bin Künstlerin. Manchmal jage ich Dinge in die Luft."
+    }
+  },
+  {
+    "id": "hera-syndulla",
+    "name": "Hera Syndulla",
+    "aliases": ["Hera", "Specter 2", "Captain Syndulla"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Leader", "Soldier"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Star Wars",
+    "affiliation": "Spectres",
+    "origin": "Ryloth",
+    "medium": "Animation/Cartoon",
+    "year": 2014,
+    "quote": {
+      "en": "We have hope. Hope that things can get better. And they will.",
+      "de": "Wir haben Hoffnung. Hoffnung, dass es besser wird. Und das wird es."
+    }
+  },
+  {
+    "id": "kanan-jarrus",
+    "name": "Kanan Jarrus",
+    "aliases": ["Kanan", "Caleb Dume", "Specter 1"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Spectres",
+    "origin": "Coruscant",
+    "medium": "Animation/Cartoon",
+    "year": 2014,
+    "quote": {
+      "en": "Trust each other, trust the Force, and you'll be all right.",
+      "de": "Vertraut einander, vertraut der Macht, und es wird euch gut gehen."
+    }
+  },
+  {
+    "id": "mara-jade",
+    "name": "Mara Jade",
+    "aliases": ["Mara", "The Emperor's Hand", "Mara Jade Skywalker"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Spy", "Warrior", "Outlaw"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Stealth/Invisibility"],
+    "franchise": "Star Wars",
+    "affiliation": "New Republic",
+    "origin": "Coruscant",
+    "medium": "Novel/Prose",
+    "year": 1991,
+    "quote": {
+      "en": "I serve at the Emperor's pleasure, and his enemies do not live long.",
+      "de": "Ich diene dem Willen des Imperators, und seine Feinde leben nicht lange."
+    }
+  },
+  {
+    "id": "darth-bane",
+    "name": "Darth Bane",
+    "aliases": ["Bane", "Dessel"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Mystic", "Leader"],
+    "powers": ["Telepathy/Mind", "Electric/Lightning", "Weapon mastery"],
+    "franchise": "Star Wars",
+    "affiliation": "Sith Order",
+    "origin": "Apatros",
+    "medium": "Comic (Western)",
+    "year": 2001,
+    "quote": {
+      "en": "Two there should be; no more, no less. One to embody power, the other to crave it.",
+      "de": "Zwei soll es geben, nicht mehr, nicht weniger. Einer, der die Macht verkörpert, einer, der nach ihr giert."
+    }
+  },
+  {
+    "id": "kyle-katarn",
+    "name": "Kyle Katarn",
+    "aliases": ["Katarn", "Jedi Master Katarn"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Spy", "Soldier"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "New Jedi Order",
+    "origin": "Sulon",
+    "medium": "Video game",
+    "year": 1995,
+    "quote": {
+      "en": "I've got a bad feeling about this whole place.",
+      "de": "Ich habe ein ungutes Gefühl bei diesem ganzen Ort."
+    }
+  },
+  {
+    "id": "galen-marek",
+    "name": "Galen Marek",
+    "aliases": ["Starkiller", "The Apprentice", "Galen"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Spy", "Soldier"],
+    "powers": ["Electric/Lightning", "Telepathy/Mind", "Weapon mastery"],
+    "franchise": "Star Wars",
+    "affiliation": "Galactic Empire",
+    "origin": "Kashyyyk",
+    "medium": "Video game",
+    "year": 2008,
+    "quote": {
+      "en": "The fight is just beginning.",
+      "de": "Der Kampf hat gerade erst begonnen."
+    }
+  },
+  {
+    "id": "quinlan-vos",
+    "name": "Quinlan Vos",
+    "aliases": ["Vos", "Master Vos"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Spy", "Detective"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Jedi Order",
+    "origin": "Kiffu",
+    "medium": "Comic (Western)",
+    "year": 2000,
+    "quote": {
+      "en": "There's no one I'd rather have at my back.",
+      "de": "Es gibt niemanden, den ich lieber im Rücken hätte."
+    }
+  },
+  {
+    "id": "plo-koon",
+    "name": "Plo Koon",
+    "aliases": ["Master Plo", "Koon"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Electric/Lightning"],
+    "franchise": "Star Wars",
+    "affiliation": "Jedi Order",
+    "origin": "Dorin",
+    "medium": "Film/TV (live-action)",
+    "year": 1999,
+    "quote": {
+      "en": "When you find yourself in the dark, follow my voice.",
+      "de": "Wenn du dich in der Dunkelheit wiederfindest, folge meiner Stimme."
+    }
+  },
+  {
+    "id": "aayla-secura",
+    "name": "Aayla Secura",
+    "aliases": ["Aayla", "General Secura"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Jedi Order",
+    "origin": "Ryloth",
+    "medium": "Comic (Western)",
+    "year": 2000,
+    "quote": {
+      "en": "Follow the will of the Force, and it will lead you true.",
+      "de": "Folge dem Willen der Macht, und sie wird dich richtig leiten."
+    }
+  },
+  {
+    "id": "shaak-ti",
+    "name": "Shaak Ti",
+    "aliases": ["Master Shaak Ti", "Ti"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Jedi Order",
+    "origin": "Shili",
+    "medium": "Film/TV (live-action)",
+    "year": 2002,
+    "quote": {
+      "en": "Patience. The Force will guide us.",
+      "de": "Geduld. Die Macht wird uns leiten."
+    }
+  },
+  {
+    "id": "savage-opress",
+    "name": "Savage Opress",
+    "aliases": ["Savage", "Opress"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Soldier", "Monster"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Sith",
+    "origin": "Dathomir",
+    "medium": "Animation/Cartoon",
+    "year": 2011,
+    "quote": {
+      "en": "I will become more powerful than any Jedi.",
+      "de": "Ich werde mächtiger werden als jeder Jedi."
+    }
+  },
+  {
+    "id": "director-krennic",
+    "name": "Director Krennic",
+    "aliases": ["Orson Krennic", "Krennic", "Director"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Scientist", "Soldier"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Star Wars",
+    "affiliation": "Galactic Empire",
+    "origin": "Lexrul",
+    "medium": "Film/TV (live-action)",
+    "year": 2016,
+    "quote": {
+      "en": "We were on the verge of greatness. We were this close to peace and security for the galaxy.",
+      "de": "Wir standen kurz vor der Größe. Wir waren so nah daran, der Galaxis Frieden und Sicherheit zu bringen."
+    }
+  },
+  {
+    "id": "qi-ra",
+    "name": "Qi'ra",
+    "aliases": ["Qira", "Head of Crimson Dawn"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Leader", "Spy"],
+    "powers": ["Peak human/Genius", "Martial arts"],
+    "franchise": "Star Wars",
+    "affiliation": "Crimson Dawn",
+    "origin": "Corellia",
+    "medium": "Film/TV (live-action)",
+    "year": 2018,
+    "quote": {
+      "en": "When you're with me, do exactly as I tell you.",
+      "de": "Wenn du bei mir bist, tu genau das, was ich dir sage."
+    }
+  },
+  {
+    "id": "mon-mothma",
+    "name": "Mon Mothma",
+    "aliases": ["Senator Mothma", "Chancellor Mon Mothma"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Politician"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Star Wars",
+    "affiliation": "Rebel Alliance",
+    "origin": "Chandrila",
+    "medium": "Film/TV (live-action)",
+    "year": 1983,
+    "quote": {
+      "en": "Many Bothans died to bring us this information.",
+      "de": "Viele Bothaner starben, um uns diese Informationen zu bringen."
+    }
+  },
+  {
+    "id": "anduin-wrynn",
+    "name": "Anduin Wrynn",
+    "aliases": ["Anduin", "King Anduin", "High King"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader", "Healer"],
+    "powers": ["Magic/Sorcery", "Healing/Regeneration"],
+    "franchise": "Warcraft",
+    "affiliation": "Alliance",
+    "origin": "Stormwind",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "What is a king but a servant to his people?",
+      "de": "Was ist ein König anderes als ein Diener seines Volkes?"
+    }
+  },
+  {
+    "id": "varian-wrynn",
+    "name": "Varian Wrynn",
+    "aliases": ["Varian", "King Varian", "Lo'Gosh"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader", "Warrior"],
+    "powers": ["Weapon mastery", "Super strength"],
+    "franchise": "Warcraft",
+    "affiliation": "Alliance",
+    "origin": "Stormwind",
+    "medium": "Video game",
+    "year": 2004,
+    "quote": {
+      "en": "For the Alliance!",
+      "de": "Für die Allianz!"
+    }
+  },
+  {
+    "id": "tyrande-whisperwind",
+    "name": "Tyrande Whisperwind",
+    "aliases": ["Tyrande", "High Priestess", "Night Warrior"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Mystic", "Warrior"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Healing/Regeneration"],
+    "franchise": "Warcraft",
+    "affiliation": "Night Elves",
+    "origin": "Kalimdor",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "May the goddess of the moon watch over you.",
+      "de": "Möge die Göttin des Mondes über dich wachen."
+    }
+  },
+  {
+    "id": "malfurion-stormrage",
+    "name": "Malfurion Stormrage",
+    "aliases": ["Malfurion", "Shan'do", "The Archdruid"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Mystic", "Healer"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Elemental"],
+    "franchise": "Warcraft",
+    "affiliation": "Night Elves",
+    "origin": "Kalimdor",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "Nature itself shall rise against you!",
+      "de": "Die Natur selbst wird sich gegen dich erheben!"
+    }
+  },
+  {
+    "id": "grommash-hellscream",
+    "name": "Grommash Hellscream",
+    "aliases": ["Grom", "Grommash", "Warsong Chieftain"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Warcraft",
+    "affiliation": "Warsong Clan",
+    "origin": "Draenor",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "By freeing you, I have saved us all.",
+      "de": "Indem ich euch befreite, habe ich uns alle gerettet."
+    }
+  },
+  {
+    "id": "gul-dan",
+    "name": "Gul'dan",
+    "aliases": ["Darkness Incarnate", "The Destroyer"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Summoning", "Energy/Beams"],
+    "franchise": "Warcraft",
+    "affiliation": "Shadow Council",
+    "origin": "Draenor",
+    "medium": "Video game",
+    "year": 1994,
+    "quote": {
+      "en": "Power demands sacrifice — and I will pay any price.",
+      "de": "Macht verlangt Opfer — und ich zahle jeden Preis."
+    }
+  },
+  {
+    "id": "kael-thas-sunstrider",
+    "name": "Kael'thas Sunstrider",
+    "aliases": ["Kael'thas", "Prince Kael'thas", "The Sun King"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Mage", "Leader"],
+    "powers": ["Magic/Sorcery", "Elemental", "Energy/Beams"],
+    "franchise": "Warcraft",
+    "affiliation": "Blood Elves",
+    "origin": "Quel'Thalas",
+    "medium": "Video game",
+    "year": 2003,
+    "quote": {
+      "en": "Selama ashal'anore — justice for our people!",
+      "de": "Selama ashal'anore — Gerechtigkeit für unser Volk!"
+    }
+  },
+  {
+    "id": "bolvar-fordragon",
+    "name": "Bolvar Fordragon",
+    "aliases": ["Bolvar", "Highlord Bolvar", "The Lich King"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Royalty"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Summoning"],
+    "franchise": "Warcraft",
+    "affiliation": "Alliance",
+    "origin": "Stormwind",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "There must always be a jailer of the damned.",
+      "de": "Es muss immer einen Kerkermeister der Verdammten geben."
+    }
+  },
+  {
+    "id": "medivh",
+    "name": "Medivh",
+    "aliases": ["The Last Guardian", "The Prophet"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Telepathy/Mind"],
+    "franchise": "Warcraft",
+    "affiliation": "Guardians of Tirisfal",
+    "origin": "Karazhan",
+    "medium": "Video game",
+    "year": 1994,
+    "quote": {
+      "en": "The hour grows late — heed my warning, or all is lost.",
+      "de": "Die Stunde ist spät — beherzigt meine Warnung, oder alles ist verloren."
+    }
+  },
+  {
+    "id": "khadgar",
+    "name": "Khadgar",
+    "aliases": ["Archmage Khadgar", "The Younger"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Leader", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Energy/Beams", "Telepathy/Mind"],
+    "franchise": "Warcraft",
+    "affiliation": "Kirin Tor",
+    "origin": "Dalaran",
+    "medium": "Video game",
+    "year": 1994,
+    "quote": {
+      "en": "Knowledge is the sharpest blade against the darkness.",
+      "de": "Wissen ist die schärfste Klinge gegen die Dunkelheit."
+    }
+  },
+  {
+    "id": "garrosh-hellscream",
+    "name": "Garrosh Hellscream",
+    "aliases": ["Garrosh", "Warchief Garrosh", "Hellscream"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Warcraft",
+    "affiliation": "Horde",
+    "origin": "Draenor",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "The true Horde takes what it wants!",
+      "de": "Die wahre Horde nimmt sich, was sie will!"
+    }
+  },
+  {
+    "id": "vol-jin",
+    "name": "Vol'jin",
+    "aliases": ["Warchief Vol'jin", "Shadow Hunter"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Mystic"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Stealth/Invisibility"],
+    "franchise": "Warcraft",
+    "affiliation": "Darkspear Tribe",
+    "origin": "Echo Isles",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "The spirits will guide us through the darkness.",
+      "de": "Die Geister werden uns durch die Dunkelheit führen."
+    }
+  },
+  {
+    "id": "cairne-bloodhoof",
+    "name": "Cairne Bloodhoof",
+    "aliases": ["Cairne", "High Chieftain", "Bloodhoof"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Mystic"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Warcraft",
+    "affiliation": "Tauren",
+    "origin": "Mulgore",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "The Earth Mother watches over us all.",
+      "de": "Die Erdmutter wacht über uns alle."
+    }
+  },
+  {
+    "id": "uther-the-lightbringer",
+    "name": "Uther the Lightbringer",
+    "aliases": ["Uther", "Lightbringer", "Sir Uther"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Healer"],
+    "powers": ["Magic/Sorcery", "Healing/Regeneration", "Weapon mastery"],
+    "franchise": "Warcraft",
+    "affiliation": "Knights of the Silver Hand",
+    "origin": "Lordaeron",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "There is no honor in betraying your own people.",
+      "de": "Es liegt keine Ehre darin, sein eigenes Volk zu verraten."
+    }
+  },
+  {
+    "id": "kel-thuzad",
+    "name": "Kel'Thuzad",
+    "aliases": ["The Archlich", "Founder of the Cult of the Damned"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Summoning", "Energy/Beams"],
+    "franchise": "Warcraft",
+    "affiliation": "Scourge",
+    "origin": "Dalaran",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "The living will kneel, or they will be raised to serve.",
+      "de": "Die Lebenden werden knien, oder sie werden erweckt, um zu dienen."
+    }
+  },
+  {
+    "id": "ner-zhul",
+    "name": "Ner'zhul",
+    "aliases": ["The Old Lich King", "Shaman of the Shadowmoon"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mystic", "Leader", "Mage"],
+    "powers": ["Magic/Sorcery", "Summoning", "Telepathy/Mind"],
+    "franchise": "Warcraft",
+    "affiliation": "Shadowmoon Clan",
+    "origin": "Draenor",
+    "medium": "Video game",
+    "year": 1995,
+    "quote": {
+      "en": "Now I am the master, and this world will be mine!",
+      "de": "Jetzt bin ich der Meister, und diese Welt wird mir gehören!"
+    }
+  },
+  {
+    "id": "deathwing",
+    "name": "Deathwing",
+    "aliases": ["Neltharion", "The Destroyer"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Leader"],
+    "powers": ["Flight", "Elemental", "Super strength"],
+    "franchise": "Warcraft",
+    "affiliation": "Black Dragonflight",
+    "origin": "Deepholm",
+    "medium": "Video game",
+    "year": 1995,
+    "quote": {
+      "en": "All shall burn beneath the shadow of my wings!",
+      "de": "Alles soll im Schatten meiner Schwingen verbrennen!"
+    }
+  },
+  {
+    "id": "alexstrasza",
+    "name": "Alexstrasza",
+    "aliases": ["The Life-Binder", "Dragonqueen"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Healer", "Leader"],
+    "powers": ["Flight", "Healing/Regeneration", "Magic/Sorcery"],
+    "franchise": "Warcraft",
+    "affiliation": "Red Dragonflight",
+    "origin": "Azeroth",
+    "medium": "Video game",
+    "year": 1995,
+    "quote": {
+      "en": "Life will always find a way to flourish.",
+      "de": "Das Leben findet immer einen Weg zu gedeihen."
+    }
+  },
+  {
+    "id": "velen",
+    "name": "Velen",
+    "aliases": ["Prophet Velen", "The Prophet"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Mystic", "Healer"],
+    "powers": ["Magic/Sorcery", "Healing/Regeneration", "Telepathy/Mind"],
+    "franchise": "Warcraft",
+    "affiliation": "Draenei",
+    "origin": "Argus",
+    "medium": "Video game",
+    "year": 2007,
+    "quote": {
+      "en": "The Light will protect us, for it shines within us all.",
+      "de": "Das Licht wird uns beschützen, denn es leuchtet in uns allen."
+    }
+  },
+  {
+    "id": "maiev-shadowsong",
+    "name": "Maiev Shadowsong",
+    "aliases": ["Maiev", "The Warden", "Shadowsong"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Spy"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Martial arts"],
+    "franchise": "Warcraft",
+    "affiliation": "Watchers",
+    "origin": "Kalimdor",
+    "medium": "Video game",
+    "year": 2003,
+    "quote": {
+      "en": "You may have escaped my grasp, but never my sight.",
+      "de": "Du magst meinem Griff entkommen sein, doch niemals meinem Blick."
+    }
+  },
+  {
+    "id": "roboute-guilliman",
+    "name": "Roboute Guilliman",
+    "aliases": ["The Avenging Son", "Lord Commander of the Imperium", "Primarch of the Ultramarines"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Politician"],
+    "powers": ["Super strength", "Immortality", "Peak human/Genius"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Ultramarines",
+    "origin": "Macragge",
+    "medium": "Novel/Prose",
+    "year": 1987,
+    "quote": {
+      "en": "I will not let this empire of corpses stand. I will rebuild what was lost.",
+      "de": "Ich werde dieses Reich der Leichen nicht bestehen lassen. Ich werde wieder aufbauen, was verloren ging."
+    }
+  },
+  {
+    "id": "the-emperor-of-mankind",
+    "name": "The Emperor of Mankind",
+    "aliases": ["The God-Emperor", "The Master of Mankind", "The Anathema"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery", "Immortality"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Imperium of Man",
+    "origin": "Terra",
+    "medium": "Novel/Prose",
+    "year": 1987,
+    "quote": {
+      "en": "There is only war, and I am its eternal will upon the throne.",
+      "de": "Es gibt nur den Krieg, und ich bin sein ewiger Wille auf dem Thron."
+    }
+  },
+  {
+    "id": "abaddon-the-despoiler",
+    "name": "Abaddon the Despoiler",
+    "aliases": ["Warmaster of Chaos", "The Despoiler", "Ezekyle Abaddon"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Black Legion",
+    "origin": "Cthonia",
+    "medium": "Novel/Prose",
+    "year": 1988,
+    "quote": {
+      "en": "Thirteen times I have crossed the great rift, and the galaxy shall burn for it.",
+      "de": "Dreizehn Mal habe ich den großen Riss überquert, und die Galaxis wird dafür brennen."
+    }
+  },
+  {
+    "id": "ghazghkull-thraka",
+    "name": "Ghazghkull Thraka",
+    "aliases": ["The Beast of Armageddon", "Ghazghkull Mag Uruk Thraka", "Prophet of the Waaagh!"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Weapon mastery"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Orks",
+    "origin": "Urk",
+    "medium": "Novel/Prose",
+    "year": 1992,
+    "quote": {
+      "en": "We're da biggest, da meanest, an' da loudest! Stomp 'em flat!",
+      "de": "Wir sind die Größten, die Fiesesten und die Lautesten! Stampft sie platt!"
+    }
+  },
+  {
+    "id": "commissar-yarrick",
+    "name": "Commissar Yarrick",
+    "aliases": ["The Hero of Hades Hive", "The Old Man", "Sebastian Yarrick"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Leader"],
+    "powers": ["Peak human/Genius", "Weapon mastery"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Astra Militarum",
+    "origin": "Taos III",
+    "medium": "Novel/Prose",
+    "year": 1991,
+    "quote": {
+      "en": "I will hold this world while a single breath remains in my body.",
+      "de": "Ich werde diese Welt halten, solange noch ein einziger Atemzug in meinem Körper ist."
+    }
+  },
+  {
+    "id": "eldrad-ulthran",
+    "name": "Eldrad Ulthran",
+    "aliases": ["The Farseer of Ulthwé", "Eldest of Ulthwé"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Mage", "Leader"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Aeldari",
+    "origin": "Ulthwé",
+    "medium": "Novel/Prose",
+    "year": 1998,
+    "quote": {
+      "en": "I have walked the threads of fate, and your doom is already woven.",
+      "de": "Ich bin die Fäden des Schicksals abgeschritten, und euer Untergang ist bereits gewoben."
+    }
+  },
+  {
+    "id": "commander-dante",
+    "name": "Commander Dante",
+    "aliases": ["The Lord of the Blood Angels", "The Bright Lord", "Chapter Master"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Flight", "Weapon mastery"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Blood Angels",
+    "origin": "Baal",
+    "medium": "Novel/Prose",
+    "year": 1989,
+    "quote": {
+      "en": "For a thousand years I have led my sons, and for a thousand more I shall not fail.",
+      "de": "Tausend Jahre lang habe ich meine Söhne geführt, und weitere tausend Jahre werde ich nicht versagen."
+    }
+  },
+  {
+    "id": "kharn-the-betrayer",
+    "name": "Kharn the Betrayer",
+    "aliases": ["The Betrayer", "Khârn", "Champion of Khorne"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "World Eaters",
+    "origin": "Terra",
+    "medium": "Novel/Prose",
+    "year": 1988,
+    "quote": {
+      "en": "Blood for the Blood God! Skulls for the throne of brass!",
+      "de": "Blut für den Blutgott! Schädel für den Thron aus Messing!"
+    }
+  },
+  {
+    "id": "ahriman",
+    "name": "Ahriman",
+    "aliases": ["Ahzek Ahriman", "The Sorcerer of Tzeentch", "Arch-Sorcerer of the Thousand Sons"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Mystic", "Warrior"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Summoning"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Thousand Sons",
+    "origin": "Prospero",
+    "medium": "Novel/Prose",
+    "year": 1996,
+    "quote": {
+      "en": "Knowledge is power, and I would have all of it, no matter the cost.",
+      "de": "Wissen ist Macht, und ich würde all dieses Wissen besitzen, ganz gleich, was es kostet."
+    }
+  },
+  {
+    "id": "magnus-the-red",
+    "name": "Magnus the Red",
+    "aliases": ["The Crimson King", "Primarch of the Thousand Sons", "The Red Cyclops"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Immortality"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Thousand Sons",
+    "origin": "Prospero",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "I sought only to protect my sons, and for that they named me traitor.",
+      "de": "Ich wollte nur meine Söhne beschützen, und dafür nannten sie mich Verräter."
+    }
+  },
+  {
+    "id": "mortarion",
+    "name": "Mortarion",
+    "aliases": ["The Death Lord", "The Reaper", "Primarch of the Death Guard"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Super strength", "Magic/Sorcery", "Flight"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Death Guard",
+    "origin": "Barbarus",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "All things rot. I am merely the hand that hastens the decay.",
+      "de": "Alle Dinge verrotten. Ich bin nur die Hand, die den Verfall beschleunigt."
+    }
+  },
+  {
+    "id": "saint-celestine",
+    "name": "Saint Celestine",
+    "aliases": ["The Living Saint", "The Healer", "The Geminae's Mistress"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic", "Healer"],
+    "powers": ["Flight", "Healing/Regeneration", "Immortality"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Adepta Sororitas",
+    "origin": "Terra",
+    "medium": "Novel/Prose",
+    "year": 2002,
+    "quote": {
+      "en": "Death holds no fear for me, for I am risen again and again in His name.",
+      "de": "Der Tod schreckt mich nicht, denn ich erstehe in Seinem Namen immer wieder auf."
+    }
+  },
+  {
+    "id": "trazyn-the-infinite",
+    "name": "Trazyn the Infinite",
+    "aliases": ["The Collector", "Archeovist of Solemnace"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Adventurer", "Royalty"],
+    "powers": ["Immortality", "Tech/Gadgets", "Stealth/Invisibility"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Necrons",
+    "origin": "Solemnace",
+    "medium": "Novel/Prose",
+    "year": 2011,
+    "quote": {
+      "en": "Every age leaves its treasures, and I shall be there to claim them all.",
+      "de": "Jedes Zeitalter hinterlässt seine Schätze, und ich werde dort sein, um sie alle zu beanspruchen."
+    }
+  },
+  {
+    "id": "gregor-eisenhorn",
+    "name": "Gregor Eisenhorn",
+    "aliases": ["Inquisitor Eisenhorn", "The Radical"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Detective", "Spy", "Mystic"],
+    "powers": ["Telepathy/Mind", "Peak human/Genius"],
+    "franchise": "Warhammer 40,000",
+    "affiliation": "Inquisition",
+    "origin": "DeKere's World",
+    "medium": "Novel/Prose",
+    "year": 2001,
+    "quote": {
+      "en": "By any means necessary, I will protect mankind from the darkness within and without.",
+      "de": "Mit allen erforderlichen Mitteln werde ich die Menschheit vor der Dunkelheit von innen und außen beschützen."
+    }
   }
 ]
