@@ -31113,12 +31113,12 @@
     "powers": ["Martial arts", "Super speed", "Summoning"],
     "franchise": "Hunter x Hunter",
     "affiliation": "Hunter Association",
-    "origin": "Republic of East Gorteau region",
+    "origin": "A remote mountain temple",
     "medium": "Manga",
     "year": 1999,
     "quote": {
-      "en": "There is no limit to human potential — gratitude is the source of my strength.",
-      "de": "Dem menschlichen Potenzial sind keine Grenzen gesetzt — Dankbarkeit ist die Quelle meiner Stärke."
+      "en": "There is no limit to human potential — gratitude is the source of all my strength.",
+      "de": "Dem menschlichen Potenzial sind keine Grenzen gesetzt — Dankbarkeit ist die Quelle all meiner Stärke."
     }
   },
   {
@@ -31193,8 +31193,8 @@
     "medium": "Manga",
     "year": 1999,
     "quote": {
-      "en": "The more pain you feel, the hotter my judgment burns.",
-      "de": "Je mehr Schmerz du fühlst, desto heißer brennt mein Urteil."
+      "en": "The more pain you make me feel, the hotter my judgment will burn.",
+      "de": "Je mehr Schmerz du mir zufügst, desto heißer wird mein Urteil brennen."
     }
   },
   {
@@ -31212,8 +31212,8 @@
     "medium": "Manga",
     "year": 1999,
     "quote": {
-      "en": "You should enjoy the little detours to the fullest — that's where you'll find the things more important than the goal.",
-      "de": "Du solltest die kleinen Umwege voll auskosten — dort findest du die Dinge, die wichtiger sind als das Ziel."
+      "en": "You should enjoy the little detours to the fullest — that's where you'll find things more important than the goal.",
+      "de": "Du solltest die kleinen Umwege voll auskosten — dort findest du Dinge, die wichtiger sind als das Ziel."
     }
   },
   {
@@ -31238,7 +31238,7 @@
   {
     "id": "jett",
     "name": "Jett",
-    "aliases": ["Sunwoo Han", "Han Sun-woo"],
+    "aliases": [],
     "species": "Human",
     "gender": "Female",
     "alignment": "Hero/Good",
@@ -31250,8 +31250,8 @@
     "medium": "Video game",
     "year": 2020,
     "quote": {
-      "en": "Catch me if you can.",
-      "de": "Fang mich doch, wenn du kannst."
+      "en": "Catch me if you can. Blink and you'll miss it.",
+      "de": "Fang mich doch, wenn du kannst. Einmal blinzeln und ich bin weg."
     }
   },
   {
@@ -31276,7 +31276,7 @@
   {
     "id": "sage",
     "name": "Sage",
-    "aliases": ["Ling Wei"],
+    "aliases": [],
     "species": "Human",
     "gender": "Female",
     "alignment": "Hero/Good",
@@ -31288,14 +31288,14 @@
     "medium": "Video game",
     "year": 2020,
     "quote": {
-      "en": "I will be your shield. Stay strong.",
-      "de": "Ich werde dein Schild sein. Bleib stark."
+      "en": "I will be your shield. Stay strong, the wall holds.",
+      "de": "Ich werde dein Schild sein. Bleib stark, die Mauer hält."
     }
   },
   {
     "id": "sova",
     "name": "Sova",
-    "aliases": ["Aleksandr Novikov", "The Hunter"],
+    "aliases": ["The Hunter"],
     "species": "Human",
     "gender": "Male",
     "alignment": "Hero/Good",
@@ -31307,8 +31307,8 @@
     "medium": "Video game",
     "year": 2020,
     "quote": {
-      "en": "There is nowhere to hide. I will find you.",
-      "de": "Es gibt kein Versteck. Ich werde dich finden."
+      "en": "There is nowhere to hide. My arrow will find you.",
+      "de": "Es gibt kein Versteck. Mein Pfeil wird dich finden."
     }
   },
   {
@@ -31326,14 +31326,14 @@
     "medium": "Video game",
     "year": 2020,
     "quote": {
-      "en": "You are nothing without me.",
-      "de": "Ohne mich bist du nichts."
+      "en": "Your soul will feed me. You are nothing without me.",
+      "de": "Deine Seele wird mich nähren. Ohne mich bist du nichts."
     }
   },
   {
     "id": "cypher",
     "name": "Cypher",
-    "aliases": ["Amir El Adrissi", "The Information Broker"],
+    "aliases": ["The Information Broker"],
     "species": "Human",
     "gender": "Male",
     "alignment": "Neutral/Anti-hero",
@@ -31345,14 +31345,14 @@
     "medium": "Video game",
     "year": 2020,
     "quote": {
-      "en": "There is nowhere to hide, I am watching everything.",
-      "de": "Es gibt kein Versteck, ich beobachte alles."
+      "en": "There is nowhere to hide. I am watching everything.",
+      "de": "Es gibt kein Versteck. Ich beobachte alles."
     }
   },
   {
     "id": "killjoy",
     "name": "Killjoy",
-    "aliases": ["Klara Böhringer"],
+    "aliases": [],
     "species": "Human",
     "gender": "Female",
     "alignment": "Hero/Good",
@@ -31402,8 +31402,8 @@
     "medium": "Manga",
     "year": 2018,
     "quote": {
-      "en": "If you survive, how about you go on a date with me?",
-      "de": "Wenn du ueberlebst, wie waere es mit einem Date mit mir?"
+      "en": "If you survive this, how about you go on a date with me?",
+      "de": "Wenn du das hier ueberlebst, wie waere es mit einem Date?"
     }
   },
   {
@@ -31421,15 +31421,15 @@
     "medium": "Manga",
     "year": 2019,
     "quote": {
-      "en": "The strong ones are always the strange ones.",
-      "de": "Die Starken sind immer die Seltsamen."
+      "en": "The strong ones are always a little messed up in the head.",
+      "de": "Die Starken haben alle eine Schraube locker."
     }
   },
   {
     "id": "reze",
     "name": "Reze",
     "aliases": ["Bomb Devil", "Bomb Girl", "Lady Reze"],
-    "species": "Cyborg/Augmented",
+    "species": "Humanoid",
     "gender": "Female",
     "alignment": "Villain/Evil",
     "role": ["Spy", "Soldier", "Warrior"],
@@ -31441,7 +31441,7 @@
     "year": 2019,
     "quote": {
       "en": "Want to run away together, just the two of us?",
-      "de": "Willst du mit mir weglaufen, nur wir beide?"
+      "de": "Wollen wir zusammen weglaufen, nur wir beide?"
     }
   },
   {
@@ -31645,7 +31645,7 @@
     "powers": ["Weapon mastery", "Peak human/Genius", "Super speed"],
     "franchise": "Tokyo Ghoul",
     "affiliation": "CCG",
-    "origin": "Tokyo, 13th Ward",
+    "origin": "Tokyo",
     "medium": "Manga",
     "year": 2012,
     "quote": {
@@ -31679,10 +31679,10 @@
     "species": "Humanoid",
     "gender": "Male",
     "alignment": "Neutral/Anti-hero",
-    "role": ["Outlaw", "Civilian"],
+    "role": ["Outlaw", "Student"],
     "powers": ["Super speed", "Healing/Regeneration", "Super strength"],
     "franchise": "Tokyo Ghoul",
-    "affiliation": "Anteiku",
+    "affiliation": "Tsukiyama Family",
     "origin": "Tokyo",
     "medium": "Manga",
     "year": 2011,
@@ -31703,11 +31703,11 @@
     "franchise": "One Punch Man",
     "affiliation": "Hero Association",
     "origin": "City Z",
-    "medium": "Web/Other",
+    "medium": "Manga",
     "year": 2009,
     "quote": {
-      "en": "I want to become strong enough to defeat any enemy.",
-      "de": "Ich will stark genug werden, um jeden Feind zu besiegen."
+      "en": "Master, please teach me how to grow truly strong.",
+      "de": "Meister, bitte lehre mich, wie ich wahrhaft stark werde."
     }
   },
   {
@@ -31722,11 +31722,11 @@
     "franchise": "One Punch Man",
     "affiliation": "Hero Association",
     "origin": "City A",
-    "medium": "Web/Other",
+    "medium": "Manga",
     "year": 2012,
     "quote": {
-      "en": "Don't underestimate me just because I'm small.",
-      "de": "Unterschätz mich nicht, nur weil ich klein bin."
+      "en": "Don't look down on me just because I'm small.",
+      "de": "Schau nicht auf mich herab, nur weil ich klein bin."
     }
   },
   {
@@ -31741,11 +31741,11 @@
     "franchise": "One Punch Man",
     "affiliation": "Monster Association",
     "origin": "City Z",
-    "medium": "Web/Other",
+    "medium": "Manga",
     "year": 2014,
     "quote": {
-      "en": "I will become the absolute evil that this world fears.",
-      "de": "Ich werde das absolute Böse werden, das diese Welt fürchtet."
+      "en": "I'll become the absolute evil this world learns to fear.",
+      "de": "Ich werde das absolute Böse, das diese Welt fürchten lernt."
     }
   },
   {
@@ -31760,11 +31760,11 @@
     "franchise": "One Punch Man",
     "affiliation": "Dark Matter Thieves",
     "origin": "Outer space",
-    "medium": "Web/Other",
+    "medium": "Manga",
     "year": 2012,
     "quote": {
-      "en": "Is this all the strength your planet has to offer?",
-      "de": "Ist das die ganze Stärke, die dein Planet zu bieten hat?"
+      "en": "Is this all the strength your little planet can muster?",
+      "de": "Ist das die ganze Kraft, die dein kleiner Planet aufbieten kann?"
     }
   },
   {
@@ -31775,10 +31775,10 @@
     "gender": "Female",
     "alignment": "Hero/Good",
     "role": ["Student", "Warrior"],
-    "powers": ["Elemental", "Martial arts"],
+    "powers": ["Flight", "Martial arts"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
@@ -31797,11 +31797,11 @@
     "powers": ["Super speed", "Martial arts"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
-      "en": "A true hero finds a way for justice to be served!",
+      "en": "A true hero always finds a way for justice to be served!",
       "de": "Ein wahrer Held findet immer einen Weg, der Gerechtigkeit zum Sieg zu verhelfen!"
     }
   },
@@ -31813,14 +31813,14 @@
     "gender": "Female",
     "alignment": "Hero/Good",
     "role": ["Student", "Warrior"],
-    "powers": ["Super strength", "Martial arts"],
+    "powers": ["Elasticity/Stretch", "Martial arts"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
-      "en": "I always say what's on my mind, kero.",
+      "en": "I always say exactly what's on my mind, kero.",
       "de": "Ich sage immer geradeheraus, was ich denke, kero."
     }
   },
@@ -31835,7 +31835,7 @@
     "powers": ["Super strength", "Martial arts"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
@@ -31851,10 +31851,10 @@
     "gender": "Female",
     "alignment": "Hero/Good",
     "role": ["Student", "Warrior", "Leader"],
-    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "powers": ["Summoning", "Peak human/Genius"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
@@ -31873,7 +31873,7 @@
     "powers": ["Electric/Lightning"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
@@ -31888,15 +31888,15 @@
     "species": "Human",
     "gender": "Male",
     "alignment": "Hero/Good",
-    "role": ["Warrior", "Leader", "Detective"],
-    "powers": ["Telepathy/Mind", "Weapon mastery", "Martial arts"],
+    "role": ["Warrior", "Leader", "Worker"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
-      "en": "I can erase your Quirk just by looking at you. Now sit down and listen.",
+      "en": "I can erase your power just by looking at you. Now sit down and listen.",
       "de": "Ich kann deine Macht löschen, indem ich dich nur ansehe. Also setz dich und hör zu."
     }
   },
@@ -31911,7 +31911,7 @@
     "powers": ["Elemental", "Super strength"],
     "franchise": "My Hero Academia",
     "affiliation": "Pro Heroes",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2014,
     "quote": {
@@ -31930,9 +31930,9 @@
     "powers": ["Flight", "Weapon mastery", "Super speed"],
     "franchise": "My Hero Academia",
     "affiliation": "Pro Heroes",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
-    "year": 2017,
+    "year": 2018,
     "quote": {
       "en": "I just want a world where heroes have enough free time to be bored.",
       "de": "Ich will einfach eine Welt, in der Helden so viel Freizeit haben, dass ihnen langweilig wird."
@@ -31949,7 +31949,7 @@
     "powers": ["Shapeshifting", "Weapon mastery"],
     "franchise": "My Hero Academia",
     "affiliation": "League of Villains",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2016,
     "quote": {
@@ -31968,7 +31968,7 @@
     "powers": ["Elemental"],
     "franchise": "My Hero Academia",
     "affiliation": "League of Villains",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2016,
     "quote": {
@@ -31987,7 +31987,7 @@
     "powers": ["Stealth/Invisibility", "Martial arts"],
     "franchise": "My Hero Academia",
     "affiliation": "U.A. High School",
-    "origin": "Japanese",
+    "origin": "Japan",
     "medium": "Manga",
     "year": 2017,
     "quote": {
@@ -32094,11 +32094,11 @@
     "id": "happy",
     "name": "Happy",
     "aliases": ["The Blue Cat", "Exceed"],
-    "species": "Creature/Monster",
+    "species": "Animal",
     "gender": "Male",
     "alignment": "Hero/Good",
     "role": ["Adventurer", "Warrior"],
-    "powers": ["Flight", "Shapeshifting"],
+    "powers": ["Flight", "Magic/Sorcery"],
     "franchise": "Fairy Tail",
     "affiliation": "Fairy Tail Guild",
     "origin": "Edolas",
@@ -32200,8 +32200,8 @@
     "medium": "Video game",
     "year": 2004,
     "quote": {
-      "en": "I am the bone of my sword.",
-      "de": "Ich bin der Knochen meines Schwertes."
+      "en": "People die if they are killed. That's only natural.",
+      "de": "Menschen sterben, wenn man sie tötet. Das ist nur natürlich."
     }
   },
   {
@@ -32277,7 +32277,7 @@
     "year": 2004,
     "quote": {
       "en": "I shall become your shield, and your sword.",
-      "de": "Ich werde dein Schild sein, und dein Schwert."
+      "de": "Ich werde dein Schild und dein Schwert sein."
     }
   },
   {
@@ -32287,7 +32287,7 @@
     "species": "Human",
     "gender": "Female",
     "alignment": "Neutral/Anti-hero",
-    "role": ["Scientist", "Adventurer", "Civilian"],
+    "role": ["Adventurer", "Civilian"],
     "powers": ["Tech/Gadgets", "Peak human/Genius"],
     "franchise": "Cowboy Bebop",
     "affiliation": "Bebop Crew",
@@ -32504,8 +32504,8 @@
     "medium": "Novel/Prose",
     "year": 1986,
     "quote": {
-      "en": "Toss a coin to your witcher, oh valley of plenty.",
-      "de": "Wirf eine Münze deinem Hexer zu, oh Tal des Überflusses."
+      "en": "A good ballad outlives any sword. Now buy me an ale and I'll make you immortal.",
+      "de": "Eine gute Ballade überdauert jedes Schwert. Spendier mir ein Bier, und ich mache dich unsterblich."
     }
   },
   {
@@ -32516,15 +32516,15 @@
     "gender": "Male",
     "alignment": "Hero/Good",
     "role": ["Warrior", "Healer", "Leader"],
-    "powers": ["Weapon mastery", "Magic/Sorcery", "Immortality"],
+    "powers": ["Weapon mastery", "Magic/Sorcery", "Martial arts"],
     "franchise": "The Witcher",
     "affiliation": "School of the Wolf",
     "origin": "Kaer Morhen",
     "medium": "Novel/Prose",
-    "year": 1992,
+    "year": 1994,
     "quote": {
-      "en": "A witcher never dies in his bed.",
-      "de": "Ein Hexer stirbt niemals in seinem Bett."
+      "en": "Evil is evil. Lesser, greater, middling — the degree makes no difference.",
+      "de": "Böses ist Böses. Geringeres, größeres, mittleres — der Grad macht keinen Unterschied."
     }
   },
   {
@@ -32545,10 +32545,10 @@
     "affiliation": "Nilfgaardian Empire",
     "origin": "Nilfgaard",
     "medium": "Novel/Prose",
-    "year": 1992,
+    "year": 1990,
     "quote": {
-      "en": "The empire is forever. What lives must die, but the empire endures.",
-      "de": "Das Imperium ist ewig. Was lebt, muss sterben, doch das Imperium besteht fort."
+      "en": "An emperor does not ask. An emperor commands, and the world obeys.",
+      "de": "Ein Kaiser bittet nicht. Ein Kaiser befiehlt, und die Welt gehorcht."
     }
   },
   {
@@ -32564,10 +32564,10 @@
     "affiliation": "Hansa (Geralt's Company)",
     "origin": "Dillingen",
     "medium": "Novel/Prose",
-    "year": 1997,
+    "year": 1996,
     "quote": {
-      "en": "A man knows much, but a man also drinks much.",
-      "de": "Ein Mensch weiß viel, aber ein Mensch trinkt auch viel."
+      "en": "I gave up the blood long ago. These days I find conversation far more intoxicating.",
+      "de": "Dem Blut habe ich längst abgeschworen. Heutzutage berauscht mich ein gutes Gespräch weit mehr."
     }
   },
   {
@@ -32596,13 +32596,13 @@
     "species": "Human",
     "gender": "Male",
     "alignment": "Neutral/Anti-hero",
-    "role": ["Leader", "Politician", "Royalty"],
+    "role": ["Leader", "Politician"],
     "powers": ["Peak human/Genius"],
     "franchise": "The Lord of the Rings",
     "affiliation": "Gondor",
     "origin": "Minas Tirith, Gondor",
     "medium": "Novel/Prose",
-    "year": 1954,
+    "year": 1955,
     "quote": {
       "en": "The West has failed. It shall all go up in a great fire, and all shall be ended.",
       "de": "Der Westen ist gefallen. Alles wird in einem grossen Feuer aufgehen, und alles wird enden."
@@ -32809,12 +32809,12 @@
     "powers": ["Weapon mastery", "Peak human/Genius"],
     "franchise": "Sword Art Online",
     "affiliation": "Knights of the Blood",
-    "origin": "Kawagoe, Saitama (Japan)",
+    "origin": "Kawagoe, Saitama",
     "medium": "Novel/Prose",
     "year": 2009,
     "quote": {
-      "en": "I'd rather be called a cheater than a beater. At least it's true.",
-      "de": "Lieber nenne ich mich Schummler als Schmarotzer. Wenigstens ist das wahr."
+      "en": "I'll clear this game. I'll get everyone back to the real world.",
+      "de": "Ich werde dieses Spiel beenden. Ich bringe alle zurück in die echte Welt."
     }
   },
   {
@@ -32828,7 +32828,7 @@
     "powers": ["Weapon mastery", "Super speed"],
     "franchise": "Sword Art Online",
     "affiliation": "Knights of the Blood",
-    "origin": "Setagaya, Tokyo (Japan)",
+    "origin": "Setagaya, Tokyo",
     "medium": "Novel/Prose",
     "year": 2009,
     "quote": {
@@ -32847,7 +32847,7 @@
     "powers": ["Weapon mastery", "Peak human/Genius"],
     "franchise": "Sword Art Online",
     "affiliation": "",
-    "origin": "Tochigi Prefecture (Japan)",
+    "origin": "Tochigi Prefecture",
     "medium": "Novel/Prose",
     "year": 2010,
     "quote": {
@@ -32859,14 +32859,14 @@
     "id": "leafa",
     "name": "Leafa",
     "aliases": ["Suguha Kirigaya", "Suguha", "Sugu"],
-    "species": "Humanoid",
+    "species": "Human",
     "gender": "Female",
     "alignment": "Hero/Good",
     "role": ["Warrior", "Adventurer", "Student"],
     "powers": ["Flight", "Magic/Sorcery", "Weapon mastery"],
     "franchise": "Sword Art Online",
     "affiliation": "Sylph",
-    "origin": "Kawagoe, Saitama (Japan)",
+    "origin": "Kawagoe, Saitama",
     "medium": "Novel/Prose",
     "year": 2010,
     "quote": {
@@ -32919,7 +32919,7 @@
     "species": "Human",
     "gender": "Female",
     "alignment": "Hero/Good",
-    "role": ["Student", "Healer", "Warrior"],
+    "role": ["Student", "Mystic", "Warrior"],
     "powers": ["Magic/Sorcery", "Weapon mastery"],
     "franchise": "Inuyasha",
     "affiliation": "Inuyasha's group",
@@ -33014,16 +33014,16 @@
     "species": "Human",
     "gender": "Male",
     "alignment": "Hero/Good",
-    "role": ["Warrior", "Royalty", "Adventurer"],
-    "powers": ["Super strength", "Martial arts", "Energy/Beams"],
+    "role": ["Warrior", "Adventurer", "Civilian"],
+    "powers": ["Energy/Beams", "Martial arts", "Super strength"],
     "franchise": "JoJo's Bizarre Adventure",
     "affiliation": "Joestar Family",
     "origin": "England",
     "medium": "Manga",
     "year": 1987,
     "quote": {
-      "en": "Your next line is going to be... 'Impossible!'",
-      "de": "Dein nächster Satz wird sein... 'Unmöglich!'"
+      "en": "I'll fight with the pride of a true gentleman, no matter the cost!",
+      "de": "Ich kämpfe mit dem Stolz eines wahren Gentlemans, koste es, was es wolle!"
     }
   },
   {
@@ -33041,8 +33041,8 @@
     "medium": "Manga",
     "year": 1987,
     "quote": {
-      "en": "Your next line is gonna be...!",
-      "de": "Dein nächster Satz wird lauten...!"
+      "en": "Your next line is going to be... 'What did you say?!'",
+      "de": "Dein nächster Satz wird sein... 'Was hast du gesagt?!'"
     }
   },
   {
@@ -33079,8 +33079,8 @@
     "medium": "Manga",
     "year": 1987,
     "quote": {
-      "en": "You thought it was a man, but it was me!",
-      "de": "Du dachtest, es sei ein Mensch, aber ich war es!"
+      "en": "I reject my humanity! A mere human could never stand above me!",
+      "de": "Ich verwerfe meine Menschlichkeit! Ein bloßer Mensch könnte niemals über mir stehen!"
     }
   },
   {
@@ -33117,8 +33117,8 @@
     "medium": "Manga",
     "year": 1995,
     "quote": {
-      "en": "I, Giorno Giovanna, have a dream.",
-      "de": "Ich habe einen Traum."
+      "en": "I have a dream, and I will become a gang-star to make it real.",
+      "de": "Ich habe einen Traum, und ich werde ein Gang-Star, um ihn wahr werden zu lassen."
     }
   },
   {
@@ -33174,8 +33174,8 @@
     "medium": "Manga",
     "year": 1989,
     "quote": {
-      "en": "It just works! I knew it would!",
-      "de": "Es funktioniert einfach! Ich wusste es!"
+      "en": "Rero rero rero... I'll savor this cherry before I crush you.",
+      "de": "Rero rero rero... Ich genieße diese Kirsche, bevor ich dich zermalme."
     }
   },
   {
@@ -33188,13 +33188,13 @@
     "role": ["Worker", "Outlaw", "Monster"],
     "powers": ["Energy/Beams", "Summoning", "Stealth/Invisibility"],
     "franchise": "JoJo's Bizarre Adventure",
-    "affiliation": "None",
+    "affiliation": "",
     "origin": "Morioh, Japan",
     "medium": "Manga",
     "year": 1992,
     "quote": {
-      "en": "I just want a quiet life.",
-      "de": "Ich will einfach nur ein ruhiges Leben."
+      "en": "I just want a quiet life. I don't wish to fight, only to be left alone.",
+      "de": "Ich will einfach nur ein ruhiges Leben. Ich will nicht kämpfen, nur in Ruhe gelassen werden."
     }
   },
   {
@@ -33231,8 +33231,8 @@
     "medium": "Manga",
     "year": 1988,
     "quote": {
-      "en": "A man's world! That's where I live!",
-      "de": "Eine Welt der Männer! Da lebe ich!"
+      "en": "I carry my pride on my back. I won't let my family's name be disgraced!",
+      "de": "Ich trage meinen Stolz auf dem Rücken. Ich lasse den Namen meiner Familie nicht beschmutzen!"
     }
   },
   {
@@ -33264,7 +33264,7 @@
     "role": ["Artist", "Detective", "Adventurer"],
     "powers": ["Telepathy/Mind", "Summoning", "Peak human/Genius"],
     "franchise": "JoJo's Bizarre Adventure",
-    "affiliation": "None",
+    "affiliation": "",
     "origin": "Morioh, Japan",
     "medium": "Manga",
     "year": 1993,
@@ -33289,7 +33289,7 @@
     "year": 2008,
     "quote": {
       "en": "In my book, experience outranks everything.",
-      "de": "In meinem Buch zählt Erfahrung mehr als alles andere."
+      "de": "Für mich zählt Erfahrung mehr als jeder Rang."
     }
   },
   {
@@ -33304,8 +33304,8 @@
     "franchise": "Star Wars",
     "affiliation": "Grand Army of the Republic / Galactic Empire",
     "origin": "Kamino",
-    "medium": "Animation/Cartoon",
-    "year": 2008,
+    "medium": "Film/TV (live-action)",
+    "year": 2005,
     "quote": {
       "en": "Blast him! And bring me his lightsaber.",
       "de": "Erschießt ihn! Und bringt mir sein Lichtschwert."
@@ -33383,8 +33383,8 @@
     "medium": "Animation/Cartoon",
     "year": 2012,
     "quote": {
-      "en": "This is the Way.",
-      "de": "Dies ist der Weg."
+      "en": "I will take back my home, and my people will be free.",
+      "de": "Ich werde meine Heimat zurückerobern, und mein Volk wird frei sein."
     }
   },
   {
@@ -33402,8 +33402,8 @@
     "medium": "Film/TV (live-action)",
     "year": 2016,
     "quote": {
-      "en": "Rebellions are built on hope.",
-      "de": "Rebellionen werden auf Hoffnung aufgebaut."
+      "en": "I've been in this fight since I was six years old. I'm not going to stop now.",
+      "de": "Ich kämpfe schon, seit ich sechs Jahre alt war. Jetzt höre ich nicht damit auf."
     }
   },
   {
@@ -33417,7 +33417,7 @@
     "powers": ["Super strength", "Tech/Gadgets", "Peak human/Genius"],
     "franchise": "Star Wars",
     "affiliation": "Rebel Alliance",
-    "origin": "Galactic Empire",
+    "origin": "Coruscant",
     "medium": "Film/TV (live-action)",
     "year": 2016,
     "quote": {
@@ -33441,7 +33441,7 @@
     "year": 2016,
     "quote": {
       "en": "We have hope. Rebellions are built on hope.",
-      "de": "Wir haben Hoffnung. Rebellionen werden auf Hoffnung aufgebaut."
+      "de": "Wir haben Hoffnung. Rebellionen gründen sich auf Hoffnung."
     }
   },
   {
@@ -33493,12 +33493,12 @@
     "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
     "franchise": "Star Wars",
     "affiliation": "Bounty Hunters / Fett Syndicate",
-    "origin": "Tatooine",
+    "origin": "Mid Rim",
     "medium": "Film/TV (live-action)",
     "year": 2019,
     "quote": {
-      "en": "If you can get past them, you might just make it.",
-      "de": "Wenn du an ihnen vorbeikommst, schaffst du es vielleicht."
+      "en": "I always finish the job. That is why they pay me.",
+      "de": "Ich bringe den Auftrag immer zu Ende. Dafür bezahlt man mich."
     }
   },
   {
@@ -33550,7 +33550,7 @@
     "powers": ["Weapon mastery", "Super strength", "Peak human/Genius"],
     "franchise": "Star Wars",
     "affiliation": "Assassin Droids",
-    "origin": "Telos IV",
+    "origin": "Galactic Republic",
     "medium": "Video game",
     "year": 2003,
     "quote": {
@@ -33593,7 +33593,7 @@
     "year": 2009,
     "quote": {
       "en": "A leader is judged not by her words, but by her actions.",
-      "de": "Eine Anführerin wird nicht an ihren Worten gemessen, sondern an ihren Taten."
+      "de": "Eine Anführerin misst man nicht an ihren Worten, sondern an ihren Taten."
     }
   },
   {
@@ -33611,8 +33611,8 @@
     "medium": "Video game",
     "year": 2020,
     "quote": {
-      "en": "There's a new boss in town.",
-      "de": "Es gibt einen neuen Boss in der Stadt."
+      "en": "Step into my ring and I'll show you who runs this town.",
+      "de": "Komm in meinen Ring, dann zeig ich dir, wer hier das Sagen hat."
     }
   },
   {
@@ -33647,10 +33647,10 @@
     "affiliation": "Bilgewater",
     "origin": "Bilgewater",
     "medium": "Video game",
-    "year": 2012,
+    "year": 2011,
     "quote": {
       "en": "Sometimes you eat the shark, sometimes the shark eats you.",
-      "de": "Manchmal isst du den Hai, manchmal isst der Hai dich."
+      "de": "Mal frisst du den Hai, mal frisst der Hai dich."
     }
   },
   {
@@ -33717,8 +33717,8 @@
     "species": "Human",
     "gender": "Male",
     "alignment": "Neutral/Anti-hero",
-    "role": ["Outlaw", "Adventurer", "Artist"],
-    "powers": ["Magic/Sorcery", "Weapon mastery", "Tech/Gadgets"],
+    "role": ["Outlaw", "Adventurer", "Mage"],
+    "powers": ["Magic/Sorcery", "Weapon mastery", "Peak human/Genius"],
     "franchise": "League of Legends",
     "affiliation": "Bilgewater",
     "origin": "Bilgewater",
@@ -33736,7 +33736,7 @@
     "species": "Cyborg/Augmented",
     "gender": "Female",
     "alignment": "Neutral/Anti-hero",
-    "role": ["Spy", "Soldier", "Politician"],
+    "role": ["Spy", "Warrior", "Soldier"],
     "powers": ["Weapon mastery", "Tech/Gadgets", "Martial arts"],
     "franchise": "League of Legends",
     "affiliation": "Clan Ferros",
@@ -33745,7 +33745,7 @@
     "year": 2016,
     "quote": {
       "en": "Adapt, or be removed.",
-      "de": "Passe dich an, oder werde entfernt."
+      "de": "Passe dich an, oder werde ausgemerzt."
     }
   }
 ]
