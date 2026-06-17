@@ -378,11 +378,11 @@ export default function RoundBody({
             {t("play.anyTurn", { name: a.active.name })}
           </p>
         )}
-        {!revealed && !solved && <AnyQuote quote={a.quote} />}
         {!revealed && !solved && <AnyColors colors={a.colors} />}
+        {!revealed && !solved && <AnyQuote quote={a.quote} />}
         {guesses.length > 0 ? (
           <>
-            <div className="mt-5 w-full max-w-5xl">
+            <div className={`mt-5 w-full ${compact ? "max-w-2xl" : "max-w-[112rem]"}`}>
               <GuessGrid guesses={guesses} big={!compact} />
             </div>
             <div className="mt-3">

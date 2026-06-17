@@ -2144,13 +2144,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
           )}
         </div>
 
-        {/* quote hint (after enough wrong guesses) */}
-        {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_QUOTE_AFTER && <AnyQuote quote={anyQuote} />}
-
-        {/* colour-scheme hint (after even more wrong guesses) */}
+        {/* colour-scheme hint (earlier, vaguer hint) */}
         {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_COLORS_AFTER && (
           <AnyColors colors={q.target?.colors} />
         )}
+
+        {/* quote hint (later, stronger hint) */}
+        {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_QUOTE_AFTER && <AnyQuote quote={anyQuote} />}
 
         {/* shared guess board */}
         <div className="mt-3 min-h-0 flex-1 overflow-y-auto">

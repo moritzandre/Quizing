@@ -241,13 +241,13 @@ function Cell({ cell, big, index = 0 }) {
   return (
     <div
       style={{ animationDelay: `${index * 0.12}s` }}
-      className={`qn-cell-in flex h-full items-center justify-center gap-0.5 rounded-md border px-1 py-1 text-center font-semibold ${tone} ${
-        big ? "min-h-14 text-sm" : "min-h-11 text-[11px]"
+      className={`qn-cell-in flex h-full items-center justify-center gap-1 rounded-md border px-1.5 py-1.5 text-center font-semibold ${tone} ${
+        big ? "min-h-16 text-base" : "min-h-11 text-[11px]"
       }`}
     >
       <span className="hyphens-auto break-words leading-tight">{cell?.val || "—"}</span>
-      {cell?.dir === "up" && <ArrowUp size={big ? 16 : 12} className="shrink-0" />}
-      {cell?.dir === "down" && <ArrowDown size={big ? 16 : 12} className="shrink-0" />}
+      {cell?.dir === "up" && <ArrowUp size={big ? 18 : 12} className="shrink-0" />}
+      {cell?.dir === "down" && <ArrowDown size={big ? 18 : 12} className="shrink-0" />}
     </div>
   );
 }
@@ -259,10 +259,14 @@ function Cell({ cell, big, index = 0 }) {
 export function GuessGrid({ guesses = [], big = false }) {
   const { t } = useI18n();
   const cols = ANYTHINGLE_TRAITS;
-  const template = `minmax(6.5rem, 1.3fr) repeat(${cols.length}, minmax(4.75rem, 1fr))`;
+  // The big (presenter) grid gets wider columns so long values (franchises,
+  // multi-value powers, media) fit on a line or two instead of being cramped.
+  const template = big
+    ? `minmax(9rem, 1.5fr) repeat(${cols.length}, minmax(6.5rem, 1fr))`
+    : `minmax(6.5rem, 1.3fr) repeat(${cols.length}, minmax(4.75rem, 1fr))`;
   return (
     <div className="w-full overflow-x-auto">
-      <div className="min-w-[58rem] space-y-1.5">
+      <div className={`space-y-1.5 ${big ? "min-w-[80rem]" : "min-w-[58rem]"}`}>
         {/* header */}
         <div className="grid items-end gap-1 text-center" style={{ gridTemplateColumns: template }}>
           <div />
@@ -270,7 +274,7 @@ export function GuessGrid({ guesses = [], big = false }) {
             <div
               key={c.key}
               className={`hyphens-auto break-words font-pixel uppercase leading-tight tracking-wide text-stone-400 dark:text-stone-500 ${
-                big ? "text-[9px]" : "text-[8px]"
+                big ? "text-[10px]" : "text-[8px]"
               }`}
             >
               {t(`any.trait.${c.key}`)}
@@ -286,8 +290,8 @@ export function GuessGrid({ guesses = [], big = false }) {
           .map(({ g, idx }) => (
             <div key={idx} className="grid items-stretch gap-1" style={{ gridTemplateColumns: template }}>
               <div className="flex min-w-0 items-center gap-1.5">
-                {g.by && <Avatar color={g.by.color} emoji={g.by.emoji} name={g.by.name} size={big ? 26 : 20} />}
-                <span className={`min-w-0 break-words font-semibold ${big ? "text-sm" : "text-xs"}`}>{g.name}</span>
+                {g.by && <Avatar color={g.by.color} emoji={g.by.emoji} name={g.by.name} size={big ? 28 : 20} />}
+                <span className={`min-w-0 break-words font-semibold ${big ? "text-base" : "text-xs"}`}>{g.name}</span>
               </div>
               {cols.map((c, ci) => (
                 <Cell key={c.key} cell={(g.cells || []).find((x) => x.key === c.key)} big={big} index={ci} />
