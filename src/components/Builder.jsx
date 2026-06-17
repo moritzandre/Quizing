@@ -690,6 +690,12 @@ function AnyTargetCard({ char, onEdit, onClear, t }) {
           );
         })}
       </div>
+      {(char.quote?.en || char.quote?.de) && (
+        <div className="mt-2 space-y-0.5 border-t border-pink-200/60 pt-2 text-xs italic text-stone-500 dark:border-pink-500/20 dark:text-stone-400">
+          {char.quote?.en && <p className="truncate">EN: “{char.quote.en}”</p>}
+          {char.quote?.de && <p className="truncate">DE: „{char.quote.de}"</p>}
+        </div>
+      )}
     </div>
   );
 }
