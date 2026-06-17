@@ -43779,5 +43779,2057 @@
       "en": "I want to sing on the biggest stage and make everyone smile.",
       "de": "Ich möchte auf der größten Bühne singen und alle zum Lächeln bringen."
     }
+  },
+  {
+    "id": "gomez-addams",
+    "name": "Gomez Addams",
+    "aliases": ["Gomez", "Mon Cher"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Warrior", "Athlete"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "The Addams Family",
+    "affiliation": "The Addams Family",
+    "origin": "The Addams mansion",
+    "medium": "Comic (Western)",
+    "year": 1938,
+    "quote": {
+      "en": "Last night you were unhinged. You were like some desperate, howling demon. You frightened me. Do it again!",
+      "de": "Letzte Nacht warst du wie von Sinnen. Wie ein verzweifelter, heulender Dämon. Du hast mir Angst gemacht. Tu es noch einmal!"
+    }
+  },
+  {
+    "id": "morticia-addams",
+    "name": "Morticia Addams",
+    "aliases": ["Tish", "Querida", "Morticia Frump"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Artist", "Mystic"],
+    "powers": ["None"],
+    "franchise": "The Addams Family",
+    "affiliation": "The Addams Family",
+    "origin": "The Addams mansion",
+    "medium": "Comic (Western)",
+    "year": 1938,
+    "quote": {
+      "en": "Normal is an illusion. What is normal for the spider is chaos for the fly.",
+      "de": "Normal ist eine Illusion. Was für die Spinne normal ist, ist für die Fliege das Chaos."
+    }
+  },
+  {
+    "id": "wednesday-addams",
+    "name": "Wednesday Addams",
+    "aliases": ["Wednesday Friday Addams"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Detective", "Outlaw"],
+    "powers": ["None"],
+    "franchise": "The Addams Family",
+    "affiliation": "The Addams Family",
+    "origin": "The Addams mansion",
+    "medium": "Comic (Western)",
+    "year": 1938,
+    "quote": {
+      "en": "I'm not perky.",
+      "de": "Ich bin nicht munter."
+    }
+  },
+  {
+    "id": "uncle-fester",
+    "name": "Uncle Fester",
+    "aliases": ["Fester Addams"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Scientist", "Adventurer"],
+    "powers": ["Electric/Lightning"],
+    "franchise": "The Addams Family",
+    "affiliation": "The Addams Family",
+    "origin": "The Addams mansion",
+    "medium": "Comic (Western)",
+    "year": 1938,
+    "quote": {
+      "en": "I can light a bulb in my mouth, you know.",
+      "de": "Weißt du, ich kann mit dem Mund eine Glühbirne zum Leuchten bringen."
+    }
+  },
+  {
+    "id": "lurch",
+    "name": "Lurch",
+    "aliases": ["The Butler", "Lurch the Butler"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Artist"],
+    "powers": ["Super strength"],
+    "franchise": "The Addams Family",
+    "affiliation": "The Addams Family",
+    "origin": "The Addams mansion",
+    "medium": "Comic (Western)",
+    "year": 1938,
+    "quote": {
+      "en": "You rang?",
+      "de": "Sie haben geläutet?"
+    }
+  },
+  {
+    "id": "rin-okumura",
+    "name": "Rin Okumura",
+    "aliases": ["Son of Satan", "Okumura Rin", "Wielder of the Kurikara"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior"],
+    "powers": ["Elemental", "Healing/Regeneration", "Super strength"],
+    "franchise": "Blue Exorcist",
+    "affiliation": "True Cross Academy",
+    "origin": "Southern Cross Boys' Monastery, Tokyo",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "I'm gonna become the strongest exorcist and kick my old man's ass!",
+      "de": "Ich werde der stärkste Exorzist und trete meinem alten Herrn in den Hintern!"
+    }
+  },
+  {
+    "id": "yukio-okumura",
+    "name": "Yukio Okumura",
+    "aliases": ["Okumura Yukio", "The Youngest Exorcist", "Mr. Okumura"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Healer", "Student"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Blue Exorcist",
+    "affiliation": "True Cross Academy",
+    "origin": "Southern Cross Boys' Monastery, Tokyo",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "An exorcist must never let his emotions cloud his judgment.",
+      "de": "Ein Exorzist darf niemals zulassen, dass seine Gefühle sein Urteilsvermögen trüben."
+    }
+  },
+  {
+    "id": "shiemi-moriyama",
+    "name": "Shiemi Moriyama",
+    "aliases": ["Moriyama Shiemi", "Shiemi", "Tamer"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Healer"],
+    "powers": ["Summoning", "Healing/Regeneration"],
+    "franchise": "Blue Exorcist",
+    "affiliation": "True Cross Academy",
+    "origin": "Moriyama Garden, Tokyo",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "I want to make friends and be useful to everyone!",
+      "de": "Ich möchte Freunde finden und für alle nützlich sein!"
+    }
+  },
+  {
+    "id": "mephisto-pheles",
+    "name": "Mephisto Pheles",
+    "aliases": ["Samael", "King of Time", "Johann Faust V", "The Director"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Mystic", "Politician"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Immortality"],
+    "franchise": "Blue Exorcist",
+    "affiliation": "True Cross Order",
+    "origin": "Gehenna",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "How very interesting. Everything is proceeding exactly as I foresaw.",
+      "de": "Wie überaus interessant. Alles verläuft genau so, wie ich es vorhergesehen habe."
+    }
+  },
+  {
+    "id": "ryuji-suguro",
+    "name": "Ryuji Suguro",
+    "aliases": ["Bon", "Suguro Ryuji", "Aria"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Mystic", "Warrior"],
+    "powers": ["Magic/Sorcery", "Peak human/Genius"],
+    "franchise": "Blue Exorcist",
+    "affiliation": "True Cross Academy",
+    "origin": "Myoda Temple, Kyoto",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "I'm going to defeat Satan and rebuild my family's fallen temple!",
+      "de": "Ich werde Satan besiegen und den zerstörten Tempel meiner Familie wieder aufbauen!"
+    }
+  },
+  {
+    "id": "harry-dresden",
+    "name": "Harry Dresden",
+    "aliases": ["Harry", "Harry Blackstone Copperfield Dresden", "The Winter Knight", "Starborn"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Detective", "Warrior"],
+    "powers": ["Magic/Sorcery", "Elemental", "Summoning"],
+    "franchise": "The Dresden Files",
+    "affiliation": "White Council",
+    "origin": "Chicago, Illinois",
+    "medium": "Novel/Prose",
+    "year": 2000,
+    "quote": {
+      "en": "Wizard for hire. Lost items found. Paranormal investigations. Consulting. Advice. Reasonable rates. No love potions, endless purses, or other entertainment.",
+      "de": "Zauberer zu mieten. Verlorene Dinge gefunden. Paranormale Ermittlungen. Beratung. Vernünftige Preise. Keine Liebestränke, endlosen Geldbeutel oder sonstige Unterhaltung."
+    }
+  },
+  {
+    "id": "karrin-murphy",
+    "name": "Karrin Murphy",
+    "aliases": ["Murph", "Karrin", "Lieutenant Murphy", "Sergeant Murphy"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Warrior", "Soldier"],
+    "powers": ["Peak human/Genius", "Martial arts", "Weapon mastery"],
+    "franchise": "The Dresden Files",
+    "affiliation": "Chicago PD Special Investigations",
+    "origin": "Chicago, Illinois",
+    "medium": "Novel/Prose",
+    "year": 2000,
+    "quote": {
+      "en": "When everything goes to hell, the people who stand by you without flinching — they are your family.",
+      "de": "Wenn alles den Bach runtergeht, sind die Menschen, die ohne zu zögern an deiner Seite stehen, deine Familie."
+    }
+  },
+  {
+    "id": "bob-the-skull",
+    "name": "Bob the Skull",
+    "aliases": ["Bob", "Bonea", "Spirit of Intellect"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Civilian"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Immortality"],
+    "franchise": "The Dresden Files",
+    "affiliation": "",
+    "origin": "Chicago, Illinois",
+    "medium": "Novel/Prose",
+    "year": 2000,
+    "quote": {
+      "en": "I'm a spirit of intellect, boss. I know things. Now, can we please discuss the truly important matters — like which lab assistant you're dating?",
+      "de": "Ich bin ein Geist des Intellekts, Chef. Ich weiß Dinge. Können wir jetzt bitte über die wirklich wichtigen Themen reden — etwa, mit wem du gerade ausgehst?"
+    }
+  },
+  {
+    "id": "michael-carpenter",
+    "name": "Michael Carpenter",
+    "aliases": ["Michael", "Knight of the Cross", "Fist of God"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Worker", "Mystic"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "The Dresden Files",
+    "affiliation": "Knights of the Cross",
+    "origin": "Chicago, Illinois",
+    "medium": "Novel/Prose",
+    "year": 2001,
+    "quote": {
+      "en": "Have faith. Even when all looks lost, the right thing to do is still the right thing to do.",
+      "de": "Hab Vertrauen. Selbst wenn alles verloren scheint, bleibt das Richtige immer noch das Richtige."
+    }
+  },
+  {
+    "id": "mab",
+    "name": "Mab",
+    "aliases": ["Queen of Air and Darkness", "The Winter Queen", "Queen of the Winter Court"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Immortality", "Elemental"],
+    "franchise": "The Dresden Files",
+    "affiliation": "Winter Court",
+    "origin": "Arctis Tor, Faerie",
+    "medium": "Novel/Prose",
+    "year": 2002,
+    "quote": {
+      "en": "I do not break my word. Ever. To anyone. It is not in my nature.",
+      "de": "Ich breche niemals mein Wort. Niemals. Bei niemandem. Es liegt nicht in meiner Natur."
+    }
+  },
+  {
+    "id": "thomas-raith",
+    "name": "Thomas Raith",
+    "aliases": ["Thomas", "The White Court Vampire", "Prince of the White Court"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Spy", "Adventurer"],
+    "powers": ["Super strength", "Super speed", "Telepathy/Mind"],
+    "franchise": "The Dresden Files",
+    "affiliation": "White Court",
+    "origin": "Chicago, Illinois",
+    "medium": "Novel/Prose",
+    "year": 2001,
+    "quote": {
+      "en": "I'm a creature of hunger and seduction, and I hate every moment of what I am. So I fight it.",
+      "de": "Ich bin ein Geschöpf aus Hunger und Verführung, und ich hasse jeden Moment dessen, was ich bin. Also kämpfe ich dagegen an."
+    }
+  },
+  {
+    "id": "logen-ninefingers",
+    "name": "Logen Ninefingers",
+    "aliases": ["The Bloody-Nine", "Ninefingers", "Bloody-Nine"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Leader"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "The First Law",
+    "affiliation": "The Named Men of the North",
+    "origin": "The North",
+    "medium": "Novel/Prose",
+    "year": 2006,
+    "quote": {
+      "en": "You have to be realistic about these things.",
+      "de": "Bei solchen Dingen muss man realistisch bleiben."
+    }
+  },
+  {
+    "id": "sand-dan-glokta",
+    "name": "Sand dan Glokta",
+    "aliases": ["Inquisitor Glokta", "The Cripple", "Superior Glokta"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Detective", "Spy", "Politician"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The First Law",
+    "affiliation": "His Majesty's Inquisition",
+    "origin": "Adua, the Union",
+    "medium": "Novel/Prose",
+    "year": 2006,
+    "quote": {
+      "en": "Why do I do this? Why do I always do this?",
+      "de": "Warum tue ich das? Warum tue ich das immer?"
+    }
+  },
+  {
+    "id": "bayaz",
+    "name": "Bayaz",
+    "aliases": ["The First of the Magi", "First of the Magi", "The Bald"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic", "Leader"],
+    "powers": ["Magic/Sorcery", "Elemental", "Immortality"],
+    "franchise": "The First Law",
+    "affiliation": "The Order of Magi",
+    "origin": "The Old Empire",
+    "medium": "Novel/Prose",
+    "year": 2006,
+    "quote": {
+      "en": "The seed must be found, whatever the cost.",
+      "de": "Der Samen muss gefunden werden, koste es, was es wolle."
+    }
+  },
+  {
+    "id": "jezal-dan-luthar",
+    "name": "Jezal dan Luthar",
+    "aliases": ["Captain Luthar", "Jezal", "King Jezal"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Royalty", "Athlete"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "The First Law",
+    "affiliation": "The King's Own",
+    "origin": "Adua, the Union",
+    "medium": "Novel/Prose",
+    "year": 2006,
+    "quote": {
+      "en": "Winning is all that matters, the rest is just talk.",
+      "de": "Nur das Gewinnen zählt, der Rest ist bloß Gerede."
+    }
+  },
+  {
+    "id": "ferro-maljinn",
+    "name": "Ferro Maljinn",
+    "aliases": ["Ferro", "The Yellow-Eyed Woman"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Adventurer"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "The First Law",
+    "affiliation": "The Eaters' enemies",
+    "origin": "Kanta, the South",
+    "medium": "Novel/Prose",
+    "year": 2006,
+    "quote": {
+      "en": "I want vengeance. Nothing else matters.",
+      "de": "Ich will Rache. Nichts anderes zählt."
+    }
+  },
+  {
+    "id": "collem-west",
+    "name": "Collem West",
+    "aliases": ["Colonel West", "Major West", "West"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Leader", "Warrior"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "The First Law",
+    "affiliation": "The Union Army",
+    "origin": "Adua, the Union",
+    "medium": "Novel/Prose",
+    "year": 2006,
+    "quote": {
+      "en": "A common man can rise high, if he is willing to bleed for it.",
+      "de": "Ein einfacher Mann kann hoch aufsteigen, wenn er bereit ist, dafür zu bluten."
+    }
+  },
+  {
+    "id": "peter-venkman",
+    "name": "Peter Venkman",
+    "aliases": ["Dr. Venkman", "Dr. Peter Venkman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Leader", "Adventurer"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Ghostbusters",
+    "affiliation": "Ghostbusters",
+    "origin": "New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1984,
+    "quote": {
+      "en": "We came, we saw, we kicked its ass!",
+      "de": "Wir kamen, wir sahen, wir traten ihm in den Hintern!"
+    }
+  },
+  {
+    "id": "egon-spengler",
+    "name": "Egon Spengler",
+    "aliases": ["Dr. Spengler", "Dr. Egon Spengler"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Adventurer"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Ghostbusters",
+    "affiliation": "Ghostbusters",
+    "origin": "New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1984,
+    "quote": {
+      "en": "Don't cross the streams. It would be bad.",
+      "de": "Kreuzt niemals die Strahlen. Das wäre schlecht."
+    }
+  },
+  {
+    "id": "ray-stantz",
+    "name": "Ray Stantz",
+    "aliases": ["Dr. Stantz", "Dr. Raymond Stantz", "Raymond"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Adventurer"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Ghostbusters",
+    "affiliation": "Ghostbusters",
+    "origin": "New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1984,
+    "quote": {
+      "en": "Everything was fine with our system until the power grid was shut off.",
+      "de": "Mit unserem System war alles in Ordnung, bis das Stromnetz abgeschaltet wurde."
+    }
+  },
+  {
+    "id": "slimer",
+    "name": "Slimer",
+    "aliases": ["The Onionhead", "Spud", "The Green Ghost"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Monster"],
+    "powers": ["Flight", "Stealth/Invisibility"],
+    "franchise": "Ghostbusters",
+    "affiliation": "Ghostbusters",
+    "origin": "Sedgewick Hotel, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1984,
+    "quote": {
+      "en": "So hungry! Munch munch munch!",
+      "de": "So hungrig! Mampf mampf mampf!"
+    }
+  },
+  {
+    "id": "gozer",
+    "name": "Gozer",
+    "aliases": ["Gozer the Gozerian", "The Destructor", "The Traveler", "Volguus Zildrohar"],
+    "species": "Deity/Spirit",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Villain/Evil",
+    "role": ["Mystic", "Monster"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Energy/Beams"],
+    "franchise": "Ghostbusters",
+    "affiliation": "",
+    "origin": "Another dimension",
+    "medium": "Film/TV (live-action)",
+    "year": 1984,
+    "quote": {
+      "en": "Choose. Choose the form of the Destructor.",
+      "de": "Wähle. Wähle die Gestalt des Zerstörers."
+    }
+  },
+  {
+    "id": "batou",
+    "name": "Batou",
+    "aliases": ["Batō", "The Ranger"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior", "Spy"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "Ghost in the Shell",
+    "affiliation": "Public Security Section 9",
+    "origin": "Niihama, Japan",
+    "medium": "Manga",
+    "year": 1989,
+    "quote": {
+      "en": "A guy who can't even keep his own ghost in line shouldn't go poking around in other people's heads.",
+      "de": "Wer nicht mal seinen eigenen Geist im Griff hat, sollte nicht in den Köpfen anderer herumwühlen."
+    }
+  },
+  {
+    "id": "togusa",
+    "name": "Togusa",
+    "aliases": ["Togusa-kun"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Soldier", "Spy"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Ghost in the Shell",
+    "affiliation": "Public Security Section 9",
+    "origin": "Niihama, Japan",
+    "medium": "Manga",
+    "year": 1989,
+    "quote": {
+      "en": "If we all reacted the same way, we'd be predictable, and there's always more than one way to view a situation.",
+      "de": "Wenn wir alle gleich reagieren würden, wären wir berechenbar — und es gibt immer mehr als eine Sichtweise auf eine Lage."
+    }
+  },
+  {
+    "id": "daisuke-aramaki",
+    "name": "Daisuke Aramaki",
+    "aliases": ["Chief Aramaki", "The Old Ape", "Chief"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Politician", "Spy"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Ghost in the Shell",
+    "affiliation": "Public Security Section 9",
+    "origin": "Niihama, Japan",
+    "medium": "Manga",
+    "year": 1989,
+    "quote": {
+      "en": "Overspecialize, and you breed in weakness. It's slow death.",
+      "de": "Wer sich zu sehr spezialisiert, züchtet sich Schwäche an. Das ist ein langsamer Tod."
+    }
+  },
+  {
+    "id": "tachikoma",
+    "name": "Tachikoma",
+    "aliases": ["Think Tank", "Tachikomas"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior", "Worker"],
+    "powers": ["Tech/Gadgets", "Weapon mastery", "Super strength"],
+    "franchise": "Ghost in the Shell",
+    "affiliation": "Public Security Section 9",
+    "origin": "Niihama, Japan",
+    "medium": "Anime",
+    "year": 2002,
+    "quote": {
+      "en": "Hey, hey! If we keep developing our own individuality, do you think we'll get a ghost of our own someday?",
+      "de": "Hey, hey! Wenn wir unsere eigene Individualität immer weiter entwickeln, glaubst du, dass wir eines Tages auch einen eigenen Geist bekommen?"
+    }
+  },
+  {
+    "id": "seras-victoria",
+    "name": "Seras Victoria",
+    "aliases": ["Police Girl", "The Draculina"],
+    "species": "Undead",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior"],
+    "powers": ["Super strength", "Immortality", "Healing/Regeneration"],
+    "franchise": "Hellsing",
+    "affiliation": "Hellsing Organization",
+    "origin": "England",
+    "medium": "Manga",
+    "year": 1997,
+    "quote": {
+      "en": "Yes, my master!",
+      "de": "Ja, mein Meister!"
+    }
+  },
+  {
+    "id": "integra-hellsing",
+    "name": "Integra Hellsing",
+    "aliases": ["Sir Integra", "Integra Fairbrook Wingates Hellsing"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Politician", "Warrior"],
+    "powers": ["Peak human/Genius", "Weapon mastery"],
+    "franchise": "Hellsing",
+    "affiliation": "Hellsing Organization",
+    "origin": "England",
+    "medium": "Manga",
+    "year": 1997,
+    "quote": {
+      "en": "Search and destroy. Leave not a single one alive.",
+      "de": "Aufspüren und vernichten. Lasst keinen Einzigen am Leben."
+    }
+  },
+  {
+    "id": "alexander-anderson",
+    "name": "Alexander Anderson",
+    "aliases": ["Father Anderson", "The Paladin", "Regenerator"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mystic", "Soldier"],
+    "powers": ["Healing/Regeneration", "Weapon mastery", "Super speed"],
+    "franchise": "Hellsing",
+    "affiliation": "Iscariot Organization",
+    "origin": "Scotland",
+    "medium": "Manga",
+    "year": 1998,
+    "quote": {
+      "en": "In the name of God, impure souls of the living dead shall be banished into eternal damnation.",
+      "de": "Im Namen Gottes sollen die unreinen Seelen der lebenden Toten in die ewige Verdammnis verbannt werden."
+    }
+  },
+  {
+    "id": "the-major",
+    "name": "The Major",
+    "aliases": ["Sturmbannführer", "Herr Major"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Soldier", "Scientist"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Hellsing",
+    "affiliation": "Millennium",
+    "origin": "Germany",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "Gentlemen, I love war.",
+      "de": "Meine Herren, ich liebe den Krieg."
+    }
+  },
+  {
+    "id": "kenshiro",
+    "name": "Kenshiro",
+    "aliases": ["Ken", "Successor to Hokuto Shinken", "Man with Seven Scars"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Healer"],
+    "powers": ["Martial arts", "Peak human/Genius", "Super strength"],
+    "franchise": "Fist of the North Star",
+    "affiliation": "Hokuto Shinken",
+    "origin": "Post-apocalyptic wasteland, Japan",
+    "medium": "Manga",
+    "year": 1983,
+    "quote": {
+      "en": "You are already dead.",
+      "de": "Du bist bereits tot."
+    }
+  },
+  {
+    "id": "raoh",
+    "name": "Raoh",
+    "aliases": ["Ken-oh", "The Conqueror", "King of Fists", "Raō"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Royalty"],
+    "powers": ["Martial arts", "Super strength", "Peak human/Genius"],
+    "franchise": "Fist of the North Star",
+    "affiliation": "Hokuto Shinken",
+    "origin": "Post-apocalyptic wasteland, Japan",
+    "medium": "Manga",
+    "year": 1984,
+    "quote": {
+      "en": "I have no regrets in my entire life!",
+      "de": "Ich bereue nichts in meinem ganzen Leben!"
+    }
+  },
+  {
+    "id": "toki",
+    "name": "Toki",
+    "aliases": ["The Gentle Fist", "Successor of Compassion", "Amiba's double"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Healer", "Warrior", "Mystic"],
+    "powers": ["Martial arts", "Healing/Regeneration", "Peak human/Genius"],
+    "franchise": "Fist of the North Star",
+    "affiliation": "Hokuto Shinken",
+    "origin": "Post-apocalyptic wasteland, Japan",
+    "medium": "Manga",
+    "year": 1984,
+    "quote": {
+      "en": "A true fist should be used to heal, not to wound.",
+      "de": "Eine wahre Faust sollte heilen, nicht verwunden."
+    }
+  },
+  {
+    "id": "rei",
+    "name": "Rei",
+    "aliases": ["Star of Justice", "Master of Nanto Suicho Ken", "Rei of the Flying Phoenix"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Martial arts", "Super speed", "Peak human/Genius"],
+    "franchise": "Fist of the North Star",
+    "affiliation": "Nanto Seiken",
+    "origin": "Post-apocalyptic wasteland, Japan",
+    "medium": "Manga",
+    "year": 1984,
+    "quote": {
+      "en": "I will cut down anyone who stands in the way of justice.",
+      "de": "Ich werde jeden niederstrecken, der sich der Gerechtigkeit in den Weg stellt."
+    }
+  },
+  {
+    "id": "shin",
+    "name": "Shin",
+    "aliases": ["King", "Master of Nanto Koshu Ken", "Lord of Southern Cross"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Martial arts", "Peak human/Genius", "Super speed"],
+    "franchise": "Fist of the North Star",
+    "affiliation": "Nanto Seiken",
+    "origin": "Southern Cross city",
+    "medium": "Manga",
+    "year": 1983,
+    "quote": {
+      "en": "Love is the only thing worth carving into a man's flesh.",
+      "de": "Liebe ist das Einzige, das es wert ist, in das Fleisch eines Mannes zu ritzen."
+    }
+  },
+  {
+    "id": "dr-alan-grant",
+    "name": "Dr. Alan Grant",
+    "aliases": ["Alan Grant", "Dr. Grant", "Grant"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Jurassic Park",
+    "affiliation": "InGen Park Endorsement Team",
+    "origin": "Montana, United States",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "They were never just animals to us. They were our chance to touch the past.",
+      "de": "Sie waren für uns nie nur Tiere. Sie waren unsere Chance, die Vergangenheit zu berühren."
+    }
+  },
+  {
+    "id": "dr-ellie-sattler",
+    "name": "Dr. Ellie Sattler",
+    "aliases": ["Ellie Sattler", "Dr. Sattler", "Ellie"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Jurassic Park",
+    "affiliation": "InGen Park Endorsement Team",
+    "origin": "United States",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "You never had control. That's the illusion. I was overwhelmed by the power of this place.",
+      "de": "Du hattest nie die Kontrolle. Das ist die Illusion. Ich war überwältigt von der Macht dieses Ortes."
+    }
+  },
+  {
+    "id": "dr-ian-malcolm",
+    "name": "Dr. Ian Malcolm",
+    "aliases": ["Ian Malcolm", "Dr. Malcolm", "The Chaotician"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Jurassic Park",
+    "affiliation": "InGen Park Endorsement Team",
+    "origin": "United States",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "Life, uh, finds a way.",
+      "de": "Das Leben, äh, findet einen Weg."
+    }
+  },
+  {
+    "id": "john-hammond",
+    "name": "John Hammond",
+    "aliases": ["Mr. Hammond", "The old man"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Jurassic Park",
+    "affiliation": "InGen",
+    "origin": "Scotland",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "Spared no expense.",
+      "de": "Keine Kosten gescheut."
+    }
+  },
+  {
+    "id": "dennis-nedry",
+    "name": "Dennis Nedry",
+    "aliases": ["Nedry"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Worker", "Outlaw"],
+    "powers": ["Tech/Gadgets"],
+    "franchise": "Jurassic Park",
+    "affiliation": "InGen",
+    "origin": "United States",
+    "medium": "Novel/Prose",
+    "year": 1990,
+    "quote": {
+      "en": "Ah, ah, ah! You didn't say the magic word!",
+      "de": "Ah, ah, ah! Du hast das Zauberwort nicht gesagt!"
+    }
+  },
+  {
+    "id": "owen-grady",
+    "name": "Owen Grady",
+    "aliases": ["Owen", "The Raptor Trainer"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Adventurer", "Worker"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Jurassic Park",
+    "affiliation": "Jurassic World",
+    "origin": "United States",
+    "medium": "Film/TV (live-action)",
+    "year": 2015,
+    "quote": {
+      "en": "They're animals. They might be different sizes, but it's still a relationship.",
+      "de": "Es sind Tiere. Sie mögen unterschiedlich groß sein, aber es ist trotzdem eine Beziehung."
+    }
+  },
+  {
+    "id": "kenshin-himura",
+    "name": "Kenshin Himura",
+    "aliases": ["Battosai the Slayer", "Hitokiri Battosai", "Rurouni"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Weapon mastery", "Super speed", "Peak human/Genius"],
+    "franchise": "Rurouni Kenshin",
+    "affiliation": "Kamiya Kasshin Dojo",
+    "origin": "Rural Japan (raised near Kyoto)",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "This sword is a sword that protects people. I have sworn never to kill again.",
+      "de": "Dieses Schwert ist ein Schwert, das Menschen beschützt. Ich habe geschworen, nie wieder zu töten."
+    }
+  },
+  {
+    "id": "kaoru-kamiya",
+    "name": "Kaoru Kamiya",
+    "aliases": ["Assistant Master", "Kaoru-dono"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "Rurouni Kenshin",
+    "affiliation": "Kamiya Kasshin Dojo",
+    "origin": "Tokyo, Japan",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "A sword that gives life, not one that takes it — that is the true way of the blade.",
+      "de": "Ein Schwert, das Leben schenkt, nicht eines, das es nimmt — das ist der wahre Weg der Klinge."
+    }
+  },
+  {
+    "id": "sanosuke-sagara",
+    "name": "Sanosuke Sagara",
+    "aliases": ["Sano", "Zanza", "Fight Merchant"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Outlaw"],
+    "powers": ["Super strength", "Martial arts"],
+    "franchise": "Rurouni Kenshin",
+    "affiliation": "Kamiya Kasshin Dojo",
+    "origin": "Shinshu, Japan",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "I'll keep getting up no matter how many times you knock me down!",
+      "de": "Ich werde immer wieder aufstehen, egal wie oft du mich niederschlägst!"
+    }
+  },
+  {
+    "id": "saito-hajime",
+    "name": "Saito Hajime",
+    "aliases": ["Goro Fujita", "Wolf of Mibu", "Mr. Fujita"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Detective", "Soldier"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Rurouni Kenshin",
+    "affiliation": "Tokyo Metropolitan Police",
+    "origin": "Edo (Tokyo), Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "Slay evil instantly. That is the one creed I have always lived by.",
+      "de": "Vernichte das Böse augenblicklich. Das ist der einzige Grundsatz, nach dem ich stets gelebt habe."
+    }
+  },
+  {
+    "id": "shishio-makoto",
+    "name": "Shishio Makoto",
+    "aliases": ["The Successor", "Bandaged Man"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Elemental", "Peak human/Genius"],
+    "franchise": "Rurouni Kenshin",
+    "affiliation": "The Juppongatana",
+    "origin": "Kyoto, Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "In this world, the strong live and the weak die. That is the law of nature.",
+      "de": "In dieser Welt leben die Starken und sterben die Schwachen. Das ist das Gesetz der Natur."
+    }
+  },
+  {
+    "id": "aoshi-shinomori",
+    "name": "Aoshi Shinomori",
+    "aliases": ["Okashira", "Iceman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Spy"],
+    "powers": ["Weapon mastery", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Rurouni Kenshin",
+    "affiliation": "Oniwabanshu",
+    "origin": "Kyoto, Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "To stand at the summit as the strongest — that alone is the proof of my existence.",
+      "de": "An der Spitze als der Stärkste zu stehen — das allein ist der Beweis meiner Existenz."
+    }
+  },
+  {
+    "id": "raleigh-becket",
+    "name": "Raleigh Becket",
+    "aliases": ["Mr. Becket", "Ranger Becket"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Soldier", "Warrior"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets", "Martial arts"],
+    "franchise": "Pacific Rim",
+    "affiliation": "Pan Pacific Defense Corps",
+    "origin": "Anchorage, Alaska",
+    "medium": "Film/TV (live-action)",
+    "year": 2013,
+    "quote": {
+      "en": "There are things you can't fight, acts of God. But this thing, we can fight it.",
+      "de": "Es gibt Dinge, die man nicht bekämpfen kann, höhere Gewalt. Aber dieses Ding können wir bekämpfen."
+    }
+  },
+  {
+    "id": "mako-mori",
+    "name": "Mako Mori",
+    "aliases": ["Miss Mori", "Ranger Mori"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Soldier", "Warrior"],
+    "powers": ["Martial arts", "Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Pacific Rim",
+    "affiliation": "Pan Pacific Defense Corps",
+    "origin": "Tokyo, Japan",
+    "medium": "Film/TV (live-action)",
+    "year": 2013,
+    "quote": {
+      "en": "I can fight. You've seen me fight. I am ready.",
+      "de": "Ich kann kämpfen. Du hast mich kämpfen sehen. Ich bin bereit."
+    }
+  },
+  {
+    "id": "stacker-pentecost",
+    "name": "Stacker Pentecost",
+    "aliases": ["Marshal Pentecost", "The Marshal"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Soldier", "Pilot"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Pacific Rim",
+    "affiliation": "Pan Pacific Defense Corps",
+    "origin": "London, England",
+    "medium": "Film/TV (live-action)",
+    "year": 2013,
+    "quote": {
+      "en": "Today, we are cancelling the apocalypse!",
+      "de": "Heute sagen wir die Apokalypse ab!"
+    }
+  },
+  {
+    "id": "hannibal-chau",
+    "name": "Hannibal Chau",
+    "aliases": ["The Bone Slums Dealer", "Mr. Chau"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Pacific Rim",
+    "affiliation": "Kaiju organ black market",
+    "origin": "Hong Kong",
+    "medium": "Film/TV (live-action)",
+    "year": 2013,
+    "quote": {
+      "en": "Where do you think all this comes from? The black market is booming.",
+      "de": "Wo kommt das alles wohl her? Der Schwarzmarkt boomt."
+    }
+  },
+  {
+    "id": "tommy-oliver",
+    "name": "Tommy Oliver",
+    "aliases": ["Green Ranger", "White Ranger", "Dr. O", "Black Dino Ranger"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Scientist"],
+    "powers": ["Martial arts", "Weapon mastery", "Tech/Gadgets"],
+    "franchise": "Power Rangers",
+    "affiliation": "Mighty Morphin Power Rangers",
+    "origin": "Angel Grove, California",
+    "medium": "Film/TV (live-action)",
+    "year": 1993,
+    "quote": {
+      "en": "It's morphin time!",
+      "de": "Es ist Zeit zu morphen!"
+    }
+  },
+  {
+    "id": "jason-lee-scott",
+    "name": "Jason Lee Scott",
+    "aliases": ["Red Ranger", "Gold Ranger", "Jase"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Athlete"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Power Rangers",
+    "affiliation": "Mighty Morphin Power Rangers",
+    "origin": "Angel Grove, California",
+    "medium": "Film/TV (live-action)",
+    "year": 1993,
+    "quote": {
+      "en": "Back to action!",
+      "de": "Zurück in den Kampf!"
+    }
+  },
+  {
+    "id": "kimberly-hart",
+    "name": "Kimberly Hart",
+    "aliases": ["Pink Ranger", "Kim"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Athlete", "Student"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Power Rangers",
+    "affiliation": "Mighty Morphin Power Rangers",
+    "origin": "Angel Grove, California",
+    "medium": "Film/TV (live-action)",
+    "year": 1993,
+    "quote": {
+      "en": "Power Bow!",
+      "de": "Kraftbogen!"
+    }
+  },
+  {
+    "id": "billy-cranston",
+    "name": "Billy Cranston",
+    "aliases": ["Blue Ranger", "Billy"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Scientist", "Student"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius", "Weapon mastery"],
+    "franchise": "Power Rangers",
+    "affiliation": "Mighty Morphin Power Rangers",
+    "origin": "Angel Grove, California",
+    "medium": "Film/TV (live-action)",
+    "year": 1993,
+    "quote": {
+      "en": "Affirmative! Let's do this.",
+      "de": "Bestätigt! Bringen wir es hinter uns."
+    }
+  },
+  {
+    "id": "rita-repulsa",
+    "name": "Rita Repulsa",
+    "aliases": ["Empress of Evil", "Mistress Repulsa"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Mage", "Leader"],
+    "powers": ["Magic/Sorcery", "Summoning", "Size-change"],
+    "franchise": "Power Rangers",
+    "affiliation": "Evil Space Aliens",
+    "origin": "The Moon",
+    "medium": "Film/TV (live-action)",
+    "year": 1993,
+    "quote": {
+      "en": "Magic wand, make my monster grow!",
+      "de": "Zauberstab, lass mein Monster wachsen!"
+    }
+  },
+  {
+    "id": "zordon",
+    "name": "Zordon",
+    "aliases": ["Zordon of Eltar", "The Mentor"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Mystic", "Mage"],
+    "powers": ["Telepathy/Mind", "Magic/Sorcery", "Energy/Beams"],
+    "franchise": "Power Rangers",
+    "affiliation": "Command Center",
+    "origin": "Eltar",
+    "medium": "Film/TV (live-action)",
+    "year": 1993,
+    "quote": {
+      "en": "May the power protect you.",
+      "de": "Möge die Kraft euch beschützen."
+    }
+  },
+  {
+    "id": "emma",
+    "name": "Emma",
+    "aliases": ["63194", "Em"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Student", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Promised Neverland",
+    "affiliation": "Grace Field House Orphans",
+    "origin": "Grace Field House (Plant 3)",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "I won't abandon anyone. We're all getting out of here together!",
+      "de": "Ich lasse niemanden zurück. Wir kommen hier alle zusammen raus!"
+    }
+  },
+  {
+    "id": "norman",
+    "name": "Norman",
+    "aliases": ["22194", "Minerva", "William Minerva"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Student", "Detective"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Promised Neverland",
+    "affiliation": "Lambda 7214 / The Resistance",
+    "origin": "Grace Field House (Plant 3)",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "If I have to sacrifice myself so everyone else can live, then I will.",
+      "de": "Wenn ich mich opfern muss, damit alle anderen leben können, dann tue ich es."
+    }
+  },
+  {
+    "id": "ray",
+    "name": "Ray",
+    "aliases": ["81194", "The Traitor"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Detective", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Promised Neverland",
+    "affiliation": "Grace Field House Orphans",
+    "origin": "Grace Field House (Plant 3)",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "Don't underestimate me. I've been preparing for this since I was little.",
+      "de": "Unterschätz mich nicht. Ich bereite mich seit meiner Kindheit darauf vor."
+    }
+  },
+  {
+    "id": "isabella",
+    "name": "Isabella",
+    "aliases": ["Mama", "Mother"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Worker", "Spy"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Promised Neverland",
+    "affiliation": "Grace Field House Caretakers",
+    "origin": "Grace Field House (Plant 3)",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "There's no escape. Every move you make, I already know.",
+      "de": "Es gibt kein Entkommen. Jeden Zug, den du machst, kenne ich bereits."
+    }
+  },
+  {
+    "id": "sister-krone",
+    "name": "Sister Krone",
+    "aliases": ["Krone"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Worker", "Spy", "Soldier"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Promised Neverland",
+    "affiliation": "Grace Field House Caretakers",
+    "origin": "Grace Field House (Plant 3)",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "I want my own farm. I'll do anything to climb to the top.",
+      "de": "Ich will meine eigene Farm. Ich tue alles, um ganz nach oben zu kommen."
+    }
+  },
+  {
+    "id": "don",
+    "name": "Don",
+    "aliases": ["Donny"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Worker", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "The Promised Neverland",
+    "affiliation": "Grace Field House Orphans",
+    "origin": "Grace Field House (Plant 3)",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "Just tell me the truth! I'd rather know than be kept in the dark!",
+      "de": "Sag mir einfach die Wahrheit! Ich will es lieber wissen, als im Dunkeln gelassen zu werden!"
+    }
+  },
+  {
+    "id": "pegasus-seiya",
+    "name": "Pegasus Seiya",
+    "aliases": ["Seiya", "Pegasus Saint", "Knight of Pegasus"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Martial arts", "Energy/Beams", "Peak human/Genius"],
+    "franchise": "Saint Seiya",
+    "affiliation": "Bronze Saints of Athena",
+    "origin": "Sanctuary, Greece",
+    "medium": "Manga",
+    "year": 1986,
+    "quote": {
+      "en": "Burn, my cosmos! I will protect the goddess no matter the cost!",
+      "de": "Brenne, mein Kosmos! Ich werde die Göttin um jeden Preis beschützen!"
+    }
+  },
+  {
+    "id": "dragon-shiryu",
+    "name": "Dragon Shiryu",
+    "aliases": ["Shiryu", "Dragon Saint", "Knight of the Dragon"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Martial arts", "Energy/Beams", "Super strength"],
+    "franchise": "Saint Seiya",
+    "affiliation": "Bronze Saints of Athena",
+    "origin": "Rozan Waterfall, China",
+    "medium": "Manga",
+    "year": 1986,
+    "quote": {
+      "en": "My shield is unbreakable, and so is my will to fight for justice.",
+      "de": "Mein Schild ist unzerbrechlich, und ebenso mein Wille, für die Gerechtigkeit zu kämpfen."
+    }
+  },
+  {
+    "id": "cygnus-hyoga",
+    "name": "Cygnus Hyoga",
+    "aliases": ["Hyoga", "Cygnus Saint", "Swan Saint"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Elemental", "Martial arts", "Energy/Beams"],
+    "franchise": "Saint Seiya",
+    "affiliation": "Bronze Saints of Athena",
+    "origin": "Siberia, Russia",
+    "medium": "Manga",
+    "year": 1986,
+    "quote": {
+      "en": "I will freeze you to absolute zero, where no warmth can ever reach.",
+      "de": "Ich werde dich auf den absoluten Nullpunkt einfrieren, wo keine Wärme dich je erreicht."
+    }
+  },
+  {
+    "id": "andromeda-shun",
+    "name": "Andromeda Shun",
+    "aliases": ["Shun", "Andromeda Saint", "Knight of Andromeda"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Energy/Beams", "Martial arts", "Weapon mastery"],
+    "franchise": "Saint Seiya",
+    "affiliation": "Bronze Saints of Athena",
+    "origin": "Andromeda Island, Ethiopia",
+    "medium": "Manga",
+    "year": 1986,
+    "quote": {
+      "en": "I do not wish to fight, but I will not let you harm those I love.",
+      "de": "Ich will nicht kämpfen, aber ich werde nicht zulassen, dass du denen schadest, die ich liebe."
+    }
+  },
+  {
+    "id": "phoenix-ikki",
+    "name": "Phoenix Ikki",
+    "aliases": ["Ikki", "Phoenix Saint", "Knight of the Phoenix"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Healing/Regeneration", "Elemental", "Telepathy/Mind"],
+    "franchise": "Saint Seiya",
+    "affiliation": "Bronze Saints of Athena",
+    "origin": "Death Queen Island",
+    "medium": "Manga",
+    "year": 1986,
+    "quote": {
+      "en": "Like an undying flame, I will rise again from the ashes every time.",
+      "de": "Wie eine unsterbliche Flamme werde ich jedes Mal aufs Neue aus der Asche auferstehen."
+    }
+  },
+  {
+    "id": "athena-saori-kido",
+    "name": "Athena Saori Kido",
+    "aliases": ["Saori Kido", "Athena", "The Goddess"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader"],
+    "powers": ["Energy/Beams", "Healing/Regeneration", "Immortality"],
+    "franchise": "Saint Seiya",
+    "affiliation": "Sanctuary",
+    "origin": "Sanctuary, Greece",
+    "medium": "Manga",
+    "year": 1986,
+    "quote": {
+      "en": "As long as there is love on this earth, I will fight to protect it.",
+      "de": "Solange es Liebe auf dieser Erde gibt, werde ich kämpfen, um sie zu beschützen."
+    }
+  },
+  {
+    "id": "seong-gi-hun",
+    "name": "Seong Gi-hun",
+    "aliases": ["Player 456", "Number 456", "Gganbu"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Squid Game",
+    "affiliation": "Game Participants",
+    "origin": "Ssangmun-dong, Seoul",
+    "medium": "Film/TV (live-action)",
+    "year": 2021,
+    "quote": {
+      "en": "I'm not a horse. I'm a person. That's why I want to know who you people are and how you can do these terrible, brutal things to people.",
+      "de": "Ich bin kein Pferd. Ich bin ein Mensch. Deshalb will ich wissen, wer ihr seid und wie ihr Menschen solche grausamen, brutalen Dinge antun könnt."
+    }
+  },
+  {
+    "id": "cho-sang-woo",
+    "name": "Cho Sang-woo",
+    "aliases": ["Player 218", "Number 218"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Outlaw"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Squid Game",
+    "affiliation": "Game Participants",
+    "origin": "Ssangmun-dong, Seoul",
+    "medium": "Film/TV (live-action)",
+    "year": 2021,
+    "quote": {
+      "en": "We could come this far because it wasn't us. It was the other people. We didn't do anything wrong.",
+      "de": "Wir sind nur so weit gekommen, weil wir es nicht waren. Es waren die anderen. Wir haben nichts falsch gemacht."
+    }
+  },
+  {
+    "id": "kang-sae-byeok",
+    "name": "Kang Sae-byeok",
+    "aliases": ["Player 067", "Number 067", "The Pickpocket"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Squid Game",
+    "affiliation": "Game Participants",
+    "origin": "North Korea",
+    "medium": "Film/TV (live-action)",
+    "year": 2021,
+    "quote": {
+      "en": "Once I get out of here with the money, the first thing I want to do is buy a house for my family.",
+      "de": "Sobald ich mit dem Geld hier rauskomme, will ich als Erstes ein Haus für meine Familie kaufen."
+    }
+  },
+  {
+    "id": "oh-il-nam",
+    "name": "Oh Il-nam",
+    "aliases": ["Player 001", "Number 001", "The Host", "The Old Man"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Squid Game",
+    "affiliation": "The Organization",
+    "origin": "Seoul, South Korea",
+    "medium": "Film/TV (live-action)",
+    "year": 2021,
+    "quote": {
+      "en": "You bet on a horse. I bet on a man. There's no joy in betting when you already know who's going to win.",
+      "de": "Du wettest auf ein Pferd. Ich wette auf einen Menschen. Es gibt keine Freude am Wetten, wenn man schon weiß, wer gewinnt."
+    }
+  },
+  {
+    "id": "the-front-man",
+    "name": "The Front Man",
+    "aliases": ["Hwang In-ho", "In-ho"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Soldier"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Squid Game",
+    "affiliation": "The Organization",
+    "origin": "Seoul, South Korea",
+    "medium": "Film/TV (live-action)",
+    "year": 2021,
+    "quote": {
+      "en": "In here, everyone is equal. They get to play a fair game on equal terms. These people suffered from inequality and discrimination out in the world.",
+      "de": "Hier drin sind alle gleich. Sie spielen ein faires Spiel zu gleichen Bedingungen. Diese Menschen litten draußen unter Ungleichheit und Diskriminierung."
+    }
+  },
+  {
+    "id": "homelander",
+    "name": "Homelander",
+    "aliases": ["John", "The Homelander", "The World's Greatest Superhero"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Soldier", "Warrior"],
+    "powers": ["Flight", "Super strength", "Energy/Beams"],
+    "franchise": "The Boys",
+    "affiliation": "The Seven",
+    "origin": "Vought laboratory, United States",
+    "medium": "Comic (Western)",
+    "year": 2006,
+    "quote": {
+      "en": "I can do whatever I want. And there's nothing anyone can do to stop me.",
+      "de": "Ich kann tun, was ich will. Und niemand kann mich aufhalten."
+    }
+  },
+  {
+    "id": "billy-butcher",
+    "name": "Billy Butcher",
+    "aliases": ["Butcher", "William Butcher", "The Butcher"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Soldier", "Outlaw"],
+    "powers": ["Martial arts", "Peak human/Genius"],
+    "franchise": "The Boys",
+    "affiliation": "The Boys",
+    "origin": "London, England",
+    "medium": "Comic (Western)",
+    "year": 2006,
+    "quote": {
+      "en": "We're gonna spank the bastards, and spank 'em hard.",
+      "de": "Wir verprügeln die Mistkerle, und zwar ordentlich."
+    }
+  },
+  {
+    "id": "hughie-campbell",
+    "name": "Hughie Campbell",
+    "aliases": ["Hughie", "Wee Hughie", "Hugh Campbell"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Worker", "Spy"],
+    "powers": ["None"],
+    "franchise": "The Boys",
+    "affiliation": "The Boys",
+    "origin": "Auchterladle, Scotland",
+    "medium": "Comic (Western)",
+    "year": 2006,
+    "quote": {
+      "en": "I just want my life back. I didn't ask for any of this.",
+      "de": "Ich will einfach nur mein Leben zurück. Ich habe um nichts davon gebeten."
+    }
+  },
+  {
+    "id": "starlight",
+    "name": "Starlight",
+    "aliases": ["Annie January", "Annie"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Energy/Beams", "Flight"],
+    "franchise": "The Boys",
+    "affiliation": "The Seven",
+    "origin": "Des Moines, Iowa",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "I'm done being afraid. I'm done staying quiet.",
+      "de": "Ich habe keine Angst mehr. Ich werde nicht länger schweigen."
+    }
+  },
+  {
+    "id": "a-train",
+    "name": "A-Train",
+    "aliases": ["Reggie Franklin", "The Fastest Man Alive"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Athlete", "Soldier", "Warrior"],
+    "powers": ["Super speed"],
+    "franchise": "The Boys",
+    "affiliation": "The Seven",
+    "origin": "South Side, Chicago",
+    "medium": "Comic (Western)",
+    "year": 2006,
+    "quote": {
+      "en": "Do you have any idea how fast I am? Nobody can touch me.",
+      "de": "Hast du eine Ahnung, wie schnell ich bin? Niemand kommt an mich heran."
+    }
+  },
+  {
+    "id": "queen-maeve",
+    "name": "Queen Maeve",
+    "aliases": ["Maeve", "Maggie Shaw", "The Queen"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier", "Royalty"],
+    "powers": ["Super strength", "Flight", "Martial arts"],
+    "franchise": "The Boys",
+    "affiliation": "The Seven",
+    "origin": "United States",
+    "medium": "Comic (Western)",
+    "year": 2006,
+    "quote": {
+      "en": "I'm tired of pretending. I used to want to actually help people.",
+      "de": "Ich bin es leid, mir etwas vorzumachen. Früher wollte ich Menschen wirklich helfen."
+    }
+  },
+  {
+    "id": "leonardo",
+    "name": "Leonardo",
+    "aliases": ["Leo", "Fearless Leader", "Blue"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Teenage Mutant Ninja Turtles",
+    "affiliation": "Ninja Turtles",
+    "origin": "The sewers of New York City",
+    "medium": "Comic (Western)",
+    "year": 1984,
+    "quote": {
+      "en": "We strike hard and fade away into the night.",
+      "de": "Wir schlagen hart zu und verschwinden in der Nacht."
+    }
+  },
+  {
+    "id": "donatello",
+    "name": "Donatello",
+    "aliases": ["Donnie", "Don", "Purple"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Warrior"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius", "Martial arts"],
+    "franchise": "Teenage Mutant Ninja Turtles",
+    "affiliation": "Ninja Turtles",
+    "origin": "The sewers of New York City",
+    "medium": "Comic (Western)",
+    "year": 1984,
+    "quote": {
+      "en": "Give me enough parts and a little time, and I can build anything.",
+      "de": "Gib mir genug Teile und etwas Zeit, und ich kann alles bauen."
+    }
+  },
+  {
+    "id": "raphael",
+    "name": "Raphael",
+    "aliases": ["Raph", "Red", "Hothead"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Teenage Mutant Ninja Turtles",
+    "affiliation": "Ninja Turtles",
+    "origin": "The sewers of New York City",
+    "medium": "Comic (Western)",
+    "year": 1984,
+    "quote": {
+      "en": "I don't follow orders, I crack skulls.",
+      "de": "Ich folge keinen Befehlen, ich zertrümmere Schädel."
+    }
+  },
+  {
+    "id": "michelangelo",
+    "name": "Michelangelo",
+    "aliases": ["Mikey", "Mike", "Orange"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Artist"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Teenage Mutant Ninja Turtles",
+    "affiliation": "Ninja Turtles",
+    "origin": "The sewers of New York City",
+    "medium": "Comic (Western)",
+    "year": 1984,
+    "quote": {
+      "en": "Cowabunga! Now that's a party, dude!",
+      "de": "Cowabunga! Das ist mal eine Party, Alter!"
+    }
+  },
+  {
+    "id": "splinter",
+    "name": "Splinter",
+    "aliases": ["Master Splinter", "Sensei", "Hamato Yoshi"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Leader", "Warrior"],
+    "powers": ["Martial arts", "Peak human/Genius", "Weapon mastery"],
+    "franchise": "Teenage Mutant Ninja Turtles",
+    "affiliation": "Ninja Turtles",
+    "origin": "The sewers of New York City",
+    "medium": "Comic (Western)",
+    "year": 1984,
+    "quote": {
+      "en": "A true warrior masters his anger before he masters his sword.",
+      "de": "Ein wahrer Krieger meistert seinen Zorn, bevor er sein Schwert meistert."
+    }
+  },
+  {
+    "id": "shredder",
+    "name": "Shredder",
+    "aliases": ["Oroku Saki", "The Shredder", "Master Shredder"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Warrior", "Outlaw"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Teenage Mutant Ninja Turtles",
+    "affiliation": "The Foot Clan",
+    "origin": "Japan",
+    "medium": "Comic (Western)",
+    "year": 1984,
+    "quote": {
+      "en": "Tonight, the streets will run red with the blood of my enemies.",
+      "de": "Heute Nacht werden die Straßen rot vom Blut meiner Feinde sein."
+    }
+  },
+  {
+    "id": "bumblebee",
+    "name": "Bumblebee",
+    "aliases": ["Bee", "Goldbug"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Spy", "Soldier", "Warrior"],
+    "powers": ["Tech/Gadgets", "Super speed", "Weapon mastery"],
+    "franchise": "Transformers",
+    "affiliation": "Autobots",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1984,
+    "quote": {
+      "en": "I may be small, but I've got a big heart and a faster engine than you.",
+      "de": "Ich bin vielleicht klein, aber ich habe ein großes Herz und einen schnelleren Motor als du."
+    }
+  },
+  {
+    "id": "starscream",
+    "name": "Starscream",
+    "aliases": ["Air Commander"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Pilot", "Soldier", "Warrior"],
+    "powers": ["Flight", "Energy/Beams", "Weapon mastery"],
+    "franchise": "Transformers",
+    "affiliation": "Decepticons",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1984,
+    "quote": {
+      "en": "The throne will be mine, and then everyone will bow before me!",
+      "de": "Der Thron wird mir gehören, und dann wird sich jeder vor mir verneigen!"
+    }
+  },
+  {
+    "id": "soundwave",
+    "name": "Soundwave",
+    "aliases": [],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Spy", "Soldier", "Warrior"],
+    "powers": ["Tech/Gadgets", "Energy/Beams", "Stealth/Invisibility"],
+    "franchise": "Transformers",
+    "affiliation": "Decepticons",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1984,
+    "quote": {
+      "en": "Superior intelligence demands obedience; resistance is illogical.",
+      "de": "Überlegene Intelligenz verlangt Gehorsam; Widerstand ist unlogisch."
+    }
+  },
+  {
+    "id": "ironhide",
+    "name": "Ironhide",
+    "aliases": ["Old Soldier"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Weapon mastery", "Energy/Beams"],
+    "franchise": "Transformers",
+    "affiliation": "Autobots",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1984,
+    "quote": {
+      "en": "Let's see how tough these creeps are with a faceful of my cannons.",
+      "de": "Mal sehen, wie hart diese Schurken mit einer Ladung aus meinen Kanonen sind."
+    }
+  },
+  {
+    "id": "grimlock",
+    "name": "Grimlock",
+    "aliases": ["King of the Dinobots"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Soldier"],
+    "powers": ["Super strength", "Shapeshifting", "Elemental"],
+    "franchise": "Transformers",
+    "affiliation": "Autobots",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1985,
+    "quote": {
+      "en": "Me strongest there is! Me crush enemies and ask questions never!",
+      "de": "Ich stärkster überhaupt! Ich zermalme Feinde und stelle niemals Fragen!"
+    }
+  },
+  {
+    "id": "shockwave",
+    "name": "Shockwave",
+    "aliases": [],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Soldier", "Warrior"],
+    "powers": ["Energy/Beams", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Transformers",
+    "affiliation": "Decepticons",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1984,
+    "quote": {
+      "en": "Emotion clouds judgment; only cold logic guarantees victory.",
+      "de": "Gefühle trüben das Urteil; nur kalte Logik garantiert den Sieg."
+    }
+  },
+  {
+    "id": "arcee",
+    "name": "Arcee",
+    "aliases": [],
+    "species": "Robot/AI",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Healer"],
+    "powers": ["Super speed", "Weapon mastery", "Energy/Beams"],
+    "franchise": "Transformers",
+    "affiliation": "Autobots",
+    "origin": "Cybertron",
+    "medium": "Animation/Cartoon",
+    "year": 1986,
+    "quote": {
+      "en": "Don't underestimate me just because I'm sleeker than the rest of you.",
+      "de": "Unterschätze mich nicht nur, weil ich eleganter bin als der Rest von euch."
+    }
+  },
+  {
+    "id": "nicholas-d-wolfwood",
+    "name": "Nicholas D. Wolfwood",
+    "aliases": ["Wolfwood", "The Priest", "Chapel"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Healer"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Trigun",
+    "affiliation": "Eye of Michael",
+    "origin": "An orphanage on the planet Gunsmoke",
+    "medium": "Manga",
+    "year": 1995,
+    "quote": {
+      "en": "Mercy is for those who can afford it.",
+      "de": "Gnade ist nur für die, die sie sich leisten können."
+    }
+  },
+  {
+    "id": "millions-knives",
+    "name": "Millions Knives",
+    "aliases": ["Knives"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Warrior"],
+    "powers": ["Energy/Beams", "Healing/Regeneration", "Weapon mastery"],
+    "franchise": "Trigun",
+    "affiliation": "Plant",
+    "origin": "Project SEEDS colony ship",
+    "medium": "Manga",
+    "year": 1995,
+    "quote": {
+      "en": "Humanity is a plague this world is better off without.",
+      "de": "Die Menschheit ist eine Plage, ohne die diese Welt besser dran wäre."
+    }
+  },
+  {
+    "id": "meryl-stryfe",
+    "name": "Meryl Stryfe",
+    "aliases": ["The Derringer", "Insurance Girl", "Short Girl"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Worker", "Civilian"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Trigun",
+    "affiliation": "Bernardelli Insurance Society",
+    "origin": "A city on the planet Gunsmoke",
+    "medium": "Manga",
+    "year": 1995,
+    "quote": {
+      "en": "Someone has to keep an eye on you, and clearly it has to be me.",
+      "de": "Irgendjemand muss ein Auge auf dich haben, und offensichtlich bin das ich."
+    }
+  },
+  {
+    "id": "legato-bluesummers",
+    "name": "Legato Bluesummers",
+    "aliases": ["Legato", "The Puppet Master"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Mystic"],
+    "powers": ["Telepathy/Mind"],
+    "franchise": "Trigun",
+    "affiliation": "Gung-Ho Guns",
+    "origin": "A slum on the planet Gunsmoke",
+    "medium": "Manga",
+    "year": 1995,
+    "quote": {
+      "en": "Your body moves only when I allow it to.",
+      "de": "Dein Körper bewegt sich nur, wenn ich es erlaube."
+    }
+  },
+  {
+    "id": "number-five",
+    "name": "Number Five",
+    "aliases": ["The Boy", "Five", "The Handler's Assassin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Outlaw", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Umbrella Academy",
+    "affiliation": "The Umbrella Academy",
+    "origin": "Hargreeves mansion, USA",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "I've been alone for forty-five years. Don't tell me about being scared.",
+      "de": "Ich war fünfundvierzig Jahre lang allein. Erzähl mir nichts über Angst."
+    }
+  },
+  {
+    "id": "klaus-hargreeves",
+    "name": "Klaus Hargreeves",
+    "aliases": ["Number Four", "The Séance", "Klaus"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Civilian"],
+    "powers": ["Summoning"],
+    "franchise": "The Umbrella Academy",
+    "affiliation": "The Umbrella Academy",
+    "origin": "Hargreeves mansion, USA",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "I'm so high right now, I can't even see straight.",
+      "de": "Ich bin gerade so high, dass ich nicht mal geradeaus sehen kann."
+    }
+  },
+  {
+    "id": "luther-hargreeves",
+    "name": "Luther Hargreeves",
+    "aliases": ["Number One", "Spaceboy", "Luther"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Soldier", "Adventurer"],
+    "powers": ["Super strength", "Peak human/Genius"],
+    "franchise": "The Umbrella Academy",
+    "affiliation": "The Umbrella Academy",
+    "origin": "Hargreeves mansion, USA",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "Dad gave me a mission, and I'm going to see it through.",
+      "de": "Vater hat mir eine Mission gegeben, und ich werde sie zu Ende bringen."
+    }
+  },
+  {
+    "id": "diego-hargreeves",
+    "name": "Diego Hargreeves",
+    "aliases": ["Number Two", "The Kraken", "Diego"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Outlaw", "Detective"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "The Umbrella Academy",
+    "affiliation": "The Umbrella Academy",
+    "origin": "Hargreeves mansion, USA",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "I only ever wanted to be a hero. To save people.",
+      "de": "Ich wollte immer nur ein Held sein. Menschen retten."
+    }
+  },
+  {
+    "id": "allison-hargreeves",
+    "name": "Allison Hargreeves",
+    "aliases": ["Number Three", "The Rumor", "Allison"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Artist", "Civilian"],
+    "powers": ["Telepathy/Mind"],
+    "franchise": "The Umbrella Academy",
+    "affiliation": "The Umbrella Academy",
+    "origin": "Hargreeves mansion, USA",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "I heard a rumor... that you did exactly what I told you.",
+      "de": "Ich hörte ein Gerücht... dass du genau das tatest, was ich dir sagte."
+    }
+  },
+  {
+    "id": "sir-reginald-hargreeves",
+    "name": "Sir Reginald Hargreeves",
+    "aliases": ["The Monocle", "Father", "Hargreeves"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Leader"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "The Umbrella Academy",
+    "affiliation": "The Umbrella Academy",
+    "origin": "Hargreeves mansion, USA",
+    "medium": "Comic (Western)",
+    "year": 2007,
+    "quote": {
+      "en": "I adopted you because the world is in dire need of saving.",
+      "de": "Ich habe dich adoptiert, weil die Welt dringend gerettet werden muss."
+    }
   }
 ]
