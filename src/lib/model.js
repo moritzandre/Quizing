@@ -397,9 +397,11 @@ export function normalizeAnyChar(raw) {
  * Resolves [] on any failure (load error, CORS-tainted canvas).
  * @param {string} src Image URL or data URL.
  * @param {number} [n] How many colours to return (default 3).
+ * @param {number} [minDist] Min summed-RGB distance between kept colours (default
+ *   80); lower it (e.g. 36) to surface a richer candidate palette for manual picking.
  * @returns {Promise<string[]>} Hex colours like "#rrggbb".
  */
-export function extractColors(src, n = 3) {
+export function extractColors(src, n = 3, minDist = 80) {
   return new Promise((resolve) => {
     if (!src) return resolve([]);
     const img = new Image();
@@ -445,7 +447,7 @@ export function extractColors(src, n = 3) {
         for (const c of ranked) {
           if (picked.length >= n) break;
           // skip near-duplicates so the palette reads as distinct colours
-          if (picked.some((p) => Math.abs(p.r - c.r) + Math.abs(p.g - c.g) + Math.abs(p.b - c.b) < 80)) continue;
+          if (picked.some((p) => Math.abs(p.r - c.r) + Math.abs(p.g - c.g) + Math.abs(p.b - c.b) < minDist)) continue;
           picked.push(c);
         }
         resolve(picked.map(hex));

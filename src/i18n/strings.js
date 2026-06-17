@@ -549,6 +549,9 @@ const en = {
   "builder.anyQuoteDe": "Quote — German",
   "builder.anyColorHint": "Colour hint — pick three main colours from an image (shown after 5 wrong guesses)",
   "builder.anyColorUpload": "Upload image",
+  "builder.anyColorReupload": "Change image",
+  "builder.anyColorPick": "Click the image or a suggested swatch to pick up to {max} colours.",
+  "builder.anyColorChosen": "Chosen {n}/{max}",
   "builder.anyColorClear": "Clear",
   // who-knows-more play + builder
   "play.wkPickWinner": "Who won the auction?",
@@ -1124,6 +1127,9 @@ const de = {
   "builder.anyQuoteDe": "Zitat — Deutsch",
   "builder.anyColorHint": "Farb-Hinweis — drei Hauptfarben aus einem Bild wählen (erscheint nach 5 falschen Tipps)",
   "builder.anyColorUpload": "Bild hochladen",
+  "builder.anyColorReupload": "Bild ändern",
+  "builder.anyColorPick": "Klicke ins Bild oder auf eine vorgeschlagene Farbe, um bis zu {max} Farben zu wählen.",
+  "builder.anyColorChosen": "Gewählt {n}/{max}",
   "builder.anyColorClear": "Entfernen",
   // who-knows-more play + builder
   "play.wkPickWinner": "Wer hat die Auktion gewonnen?",

@@ -39,15 +39,18 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
   const { t } = useI18n();
   const dlId = useId(); // unique datalist id per instance (the Builder mounts many)
   const [colorBusy, setColorBusy] = useState(false);
+  const [colorSrc, setColorSrc] = useState(null); // uploaded image for the picker (UI only, never stored)
   const v = value || {};
   const set = (key, val) => onChange({ ...v, [key]: val });
-  // Derive the 3-colour palette hint from an uploaded image (the image itself is
-  // not stored — only the extracted hex colours).
+  // Load an uploaded image for the colour-scheme hint: show it in the picker and
+  // pre-fill the 3 dominant colours (the user can then refine the picks). The
+  // image itself is never stored — only the chosen hex codes.
   const onColorImage = async (file) => {
     if (!file) return;
     setColorBusy(true);
     try {
-      const url = await fileToDataUrl(file, { maxDim: 256 });
+      const url = await fileToDataUrl(file, { maxDim: 512 });
+      setColorSrc(url);
       const cols = await extractColors(url, 3);
       if (cols.length) set("colors", cols);
     } catch {
@@ -194,7 +197,7 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
         </label>
       </div>
 
-      {/* colour-scheme hint: upload an image → 3 dominant colours */}
+      {/* colour-scheme hint: upload an image, then pick up to 3 colours from it */}
       <div>
         <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">
           {t("builder.anyColorHint")}
@@ -203,7 +206,7 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
           <label
             className={`cursor-pointer rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:border-stone-400 dark:border-stone-600 dark:text-stone-300 ${FOCUS}`}
           >
-            {colorBusy ? "…" : t("builder.anyColorUpload")}
+            {colorBusy ? "…" : colorSrc ? t("builder.anyColorReupload") : t("builder.anyColorUpload")}
             <input
               type="file"
               accept="image/*"
@@ -211,24 +214,32 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
               onChange={(e) => onColorImage(e.target.files?.[0])}
             />
           </label>
-          {(v.colors || []).map((c, i) => (
-            <span
-              key={i}
-              className="h-7 w-7 rounded-md border border-stone-200 shadow-sm dark:border-stone-700"
-              style={{ backgroundColor: c }}
-              title={c}
-            />
-          ))}
-          {(v.colors || []).length > 0 && (
+          {/* saved swatches shown inline only when the picker isn't open */}
+          {!colorSrc &&
+            (v.colors || []).map((c, i) => (
+              <span
+                key={i}
+                className="h-7 w-7 rounded-md border border-stone-200 shadow-sm dark:border-stone-700"
+                style={{ backgroundColor: c }}
+                title={c}
+              />
+            ))}
+          {((v.colors || []).length > 0 || colorSrc) && (
             <button
               type="button"
-              onClick={() => set("colors", [])}
+              onClick={() => {
+                set("colors", []);
+                setColorSrc(null);
+              }}
               className="text-xs text-stone-400 transition hover:text-red-500"
             >
               {t("builder.anyColorClear")}
             </button>
           )}
         </div>
+        {colorSrc && (
+          <ColorPicker src={colorSrc} value={v.colors || []} onChange={(cols) => set("colors", cols)} max={3} />
+        )}
       </div>
     </div>
   );
@@ -338,6 +349,131 @@ export function AnyColors({ colors }) {
             className="h-10 w-10 rounded-xl border border-white/70 shadow-sm dark:border-stone-900/50"
             style={{ backgroundColor: c }}
           />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Pick up to `max` colours from an uploaded image: click anywhere on the image
+ * (eyedropper) or tap a suggested swatch. Props-only; onChange(hex[]) fires with
+ * the current selection (toggles off if already picked; FIFO-drops the oldest
+ * once full). The image itself is never stored — only the chosen hex codes.
+ * @param {{src:string, value?:string[], onChange:(hex:string[])=>void, max?:number}} props
+ */
+export function ColorPicker({ src, value = [], onChange, max = 3 }) {
+  const { t } = useI18n();
+  const canvasRef = useRef(null);
+  const [candidates, setCandidates] = useState([]);
+  const [hover, setHover] = useState(null);
+
+  useEffect(() => {
+    if (!src) return;
+    let alive = true;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = canvasRef.current;
+      if (!alive || !canvas) return;
+      const scale = Math.min(1, 360 / img.width);
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+    img.src = src;
+    // a richer candidate palette (lower min-distance) for picking
+    extractColors(src, 12, 36).then((c) => alive && setCandidates(c));
+    return () => {
+      alive = false;
+    };
+  }, [src]);
+
+  const toHex = (r, g, b) =>
+    "#" + [r, g, b].map((v) => Math.max(0, Math.min(255, v)).toString(16).padStart(2, "0")).join("");
+
+  const sampleAt = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+    const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width));
+    const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height));
+    try {
+      const d = canvas.getContext("2d").getImageData(x, y, 1, 1).data;
+      return toHex(d[0], d[1], d[2]);
+    } catch {
+      return null; // tainted canvas
+    }
+  };
+
+  const toggle = (hex) => {
+    if (!hex) return;
+    if (value.includes(hex)) return onChange(value.filter((c) => c !== hex));
+    onChange(value.length >= max ? [...value.slice(1), hex] : [...value, hex]);
+  };
+
+  return (
+    <div className="mt-2 space-y-2 rounded-xl border border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-900/40">
+      <p className="text-xs text-stone-500 dark:text-stone-400">{t("builder.anyColorPick", { max })}</p>
+      <div className="flex flex-wrap items-start gap-3">
+        <canvas
+          ref={canvasRef}
+          onClick={(e) => toggle(sampleAt(e))}
+          onMouseMove={(e) => setHover(sampleAt(e))}
+          onMouseLeave={() => setHover(null)}
+          className="max-h-48 max-w-full cursor-crosshair rounded-lg border border-stone-300 dark:border-stone-600"
+        />
+        <div className="min-w-[8rem] flex-1 space-y-2">
+          <div className="flex h-5 items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400">
+            {hover && (
+              <>
+                <span
+                  className="h-4 w-4 rounded border border-stone-300 dark:border-stone-600"
+                  style={{ backgroundColor: hover }}
+                />
+                <span className="tabular-nums">{hover}</span>
+              </>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {candidates.map((c) => {
+              const on = value.includes(c);
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => toggle(c)}
+                  title={c}
+                  className={`h-6 w-6 rounded-md transition ${
+                    on
+                      ? "ring-2 ring-pink-500 ring-offset-1 dark:ring-offset-stone-900"
+                      : "border border-stone-300 dark:border-stone-600"
+                  }`}
+                  style={{ backgroundColor: c }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[11px] uppercase tracking-wide text-stone-400">
+          {t("builder.anyColorChosen", { n: value.length, max })}
+        </span>
+        {value.map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => toggle(c)}
+            title={`${c} — ${t("builder.anyColorClear")}`}
+            className="group relative h-7 w-7 rounded-md border border-stone-300 dark:border-stone-600"
+            style={{ backgroundColor: c }}
+          >
+            <span className="absolute inset-0 flex items-center justify-center rounded-md text-sm font-bold text-white opacity-0 transition group-hover:bg-black/45 group-hover:opacity-100">
+              ×
+            </span>
+          </button>
         ))}
       </div>
     </div>
