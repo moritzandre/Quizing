@@ -48,16 +48,31 @@ const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm
 const panelCls = "rounded-xl bg-stone-50 p-3 dark:bg-stone-800/50";
 const rowLabelCls = "mb-1 flex items-center justify-between text-xs text-stone-400 dark:text-stone-500";
 
-/** Drag handle button; spread the props provided by SortableList onto it. */
-function DragHandle(props) {
+/**
+ * Reorder control: reliable up/down buttons + a drag grip. SortableList passes
+ * `up`/`down` (callbacks, or null at the ends) alongside the grip's drag props;
+ * the buttons work everywhere (incl. touch, where native HTML5 drag does not).
+ */
+function DragHandle({ up, down, ...gripProps }) {
+  const arrowCls = `rounded p-0.5 text-stone-300 transition hover:bg-stone-100 hover:text-stone-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-stone-300 dark:text-stone-600 dark:hover:bg-stone-800 ${FOCUS}`;
   return (
-    <button
-      type="button"
-      className={`cursor-grab rounded-lg p-1.5 text-stone-300 transition hover:bg-stone-100 hover:text-stone-500 active:cursor-grabbing dark:text-stone-600 dark:hover:bg-stone-800 ${FOCUS}`}
-      {...props}
-    >
-      <GripVertical size={15} />
-    </button>
+    <span className="inline-flex items-center">
+      <span className="flex flex-col">
+        <button type="button" onClick={up || undefined} disabled={!up} aria-label="Move up" className={arrowCls}>
+          <ChevronUp size={13} />
+        </button>
+        <button type="button" onClick={down || undefined} disabled={!down} aria-label="Move down" className={arrowCls}>
+          <ChevronDown size={13} />
+        </button>
+      </span>
+      <button
+        type="button"
+        className={`cursor-grab rounded-lg p-1.5 text-stone-300 transition hover:bg-stone-100 hover:text-stone-500 active:cursor-grabbing dark:text-stone-600 dark:hover:bg-stone-800 ${FOCUS}`}
+        {...gripProps}
+      >
+        <GripVertical size={15} />
+      </button>
+    </span>
   );
 }
 
@@ -128,6 +143,10 @@ function SortableList({ items, getKey, onReorder, gap = "space-y-3", itemClassNa
             title: t("builder.dragToReorder"),
             onMouseDown: () => setArmedIdx(i),
             onTouchStart: () => setArmedIdx(i),
+            // Reliable fallback to the flaky native drag (and the only option on
+            // touch): step the item up/down. null at the ends disables the arrow.
+            up: i > 0 ? () => onReorder(i, i - 1) : null,
+            down: i < items.length - 1 ? () => onReorder(i, i + 1) : null,
           })}
         </div>
       ))}
@@ -1565,28 +1584,37 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           value={item.q}
                           onChange={(e) => qRow(r, item, { q: e.target.value })}
                         />
-                        <div className="mt-2 flex gap-2">
-                          <input
-                            type="number"
-                            className={`${inputCls} flex-1`}
-                            placeholder={t("builder.numberAnswer")}
-                            value={item.answer ?? ""}
-                            onChange={(e) => qRow(r, item, { answer: e.target.value === "" ? null : +e.target.value })}
-                          />
-                          <input
-                            className={`${inputCls} w-28`}
-                            placeholder={t("builder.unit")}
-                            value={item.unit}
-                            onChange={(e) => qRow(r, item, { unit: e.target.value })}
-                          />
-                          <input
-                            type="number"
-                            aria-label={t("builder.points")}
-                            className={`${inputCls} w-20`}
-                            title={t("builder.points")}
-                            value={item.points}
-                            onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
-                          />
+                        <div className="mt-2 flex flex-wrap items-end gap-2">
+                          <label className="flex-1 text-xs font-medium text-stone-500 dark:text-stone-400">
+                            {t("builder.numberAnswer")}
+                            <input
+                              type="number"
+                              step="any"
+                              className={`${inputCls} mt-1`}
+                              placeholder={t("builder.numberAnswer")}
+                              value={item.answer ?? ""}
+                              onChange={(e) =>
+                                qRow(r, item, { answer: e.target.value === "" ? null : +e.target.value })
+                              }
+                            />
+                          </label>
+                          <label className="w-28 text-xs font-medium text-stone-500 dark:text-stone-400">
+                            {t("builder.unit")}
+                            <input
+                              className={`${inputCls} mt-1`}
+                              value={item.unit}
+                              onChange={(e) => qRow(r, item, { unit: e.target.value })}
+                            />
+                          </label>
+                          <label className="w-20 text-xs font-medium text-stone-500 dark:text-stone-400">
+                            {t("builder.points")}
+                            <input
+                              type="number"
+                              className={`${inputCls} mt-1`}
+                              value={item.points}
+                              onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                            />
+                          </label>
                         </div>
                       </div>
                     )}
