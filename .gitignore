@@ -21,3 +21,7 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Anythingle DB generation scratch (temp batches + merge scripts; output is
+# merged into src/data/anythingle.characters.json and committed directly)
+.anytmp/
