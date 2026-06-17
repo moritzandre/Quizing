@@ -1376,7 +1376,7 @@ export function recapStory(entities) {
  * the public Wordle-tile information), and the solver. The secret target name is
  * included ONLY once the round is revealed. Never carries trait VALUES.
  */
-function buildAnyLive(game) {
+function buildAnyLive(game, anyQuote) {
   const round = game.quiz?.rounds?.[game.ri];
   if (round?.type !== "anythingle" || !game.anythingle) return null;
   const a = game.anythingle;
@@ -1395,8 +1395,10 @@ function buildAnyLive(game) {
   const q = currentQuestion(game);
   const guessCount = Array.isArray(a.guesses) ? a.guesses.length : 0;
   // The character's quote is a hint — only sent to the TV once enough wrong
-  // guesses have been made (it would leak the answer if sent earlier).
-  const qt = q?.target?.quote;
+  // guesses have been made (it would leak the answer if sent earlier). Prefer a
+  // host-resolved quote (DB fallback for targets saved before quotes existed).
+  const own = q?.target?.quote;
+  const qt = anyQuote && (str(anyQuote.en) || str(anyQuote.de)) ? anyQuote : own;
   const quote =
     guessCount >= ANY_QUOTE_AFTER && qt && (str(qt.en) || str(qt.de)) ? { en: str(qt.en), de: str(qt.de) } : null;
   return {
@@ -1455,7 +1457,7 @@ export function buildLive(game, opts = {}) {
     soundOnTv: !!opts.soundOnTv,
     volume: Math.max(0, Math.min(100, num(opts.volume, 100))),
     whoknows: opts.whoknows ? normalizeWhoknows(opts.whoknows) : null,
-    anythingle: buildAnyLive(game),
+    anythingle: buildAnyLive(game, opts.anyQuote),
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {

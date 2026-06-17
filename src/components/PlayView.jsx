@@ -330,6 +330,15 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const anySig = game.anythingle
     ? `${game.anythingle.turn}:${game.anythingle.guesses.length}:${game.anythingle.solvedBy}`
     : "";
+  // The secret's quote hint: its own (authored) quote, else a DB lookup by name —
+  // so a target saved before quotes existed (or a custom one) still gets a hint.
+  const anyQuote = (() => {
+    if (round?.type !== "anythingle") return null;
+    const tgt = round.questions[game.qi]?.target;
+    if (tgt?.quote && (tgt.quote.en || tgt.quote.de)) return tgt.quote;
+    const hit = tgt?.name ? anyDbRef.current?.findAnyChar?.(tgt.name) : null;
+    return hit?.quote || null;
+  })();
   // quantize the morph demorph for the TV (smooth via CSS transition; ~50 updates max)
   const morphStreamP = Math.round(morphP * 50) / 50;
   useEffect(() => {
@@ -351,10 +360,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         soundOnTv,
         volume,
         whoknows: wkLive,
+        anyQuote,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -2134,9 +2144,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
 
         {/* quote hint (after enough wrong guesses) */}
-        {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_QUOTE_AFTER && (
-          <AnyQuote quote={q.target?.quote} />
-        )}
+        {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_QUOTE_AFTER && <AnyQuote quote={anyQuote} />}
 
         {/* shared guess board */}
         <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
