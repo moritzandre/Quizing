@@ -12,7 +12,7 @@
 import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { optionsFor, Avatar } from "./ui.jsx";
-import { GuessGrid, TraitLegend, AnyQuote } from "./anythingleTraits.jsx";
+import { GuessGrid, TraitLegend, AnyQuote, AnyColors } from "./anythingleTraits.jsx";
 import { Check, X, Target, Volume2 } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
@@ -379,6 +379,7 @@ export default function RoundBody({
           </p>
         )}
         {!revealed && !solved && <AnyQuote quote={a.quote} />}
+        {!revealed && !solved && <AnyColors colors={a.colors} />}
         {guesses.length > 0 ? (
           <>
             <div className="mt-5 w-full max-w-5xl">

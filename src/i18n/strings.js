@@ -522,6 +522,7 @@ const en = {
   "play.anyNewChar": "Not in the library — add it to grade",
   "play.anyRemoteHint": "Pick a character from the list. Names not in the library still score (as all-misses).",
   "play.anyQuoteHint": "Quote from the character",
+  "play.anyColorHint": "Colour scheme",
   "any.trait.species": "Species",
   "any.trait.gender": "Gender",
   "any.trait.alignment": "Alignment",
@@ -546,6 +547,9 @@ const en = {
   "builder.anyTraits": "Traits",
   "builder.anyQuoteEn": "Quote — English (hint after 4 wrong guesses)",
   "builder.anyQuoteDe": "Quote — German",
+  "builder.anyColorHint": "Colour hint — pick three main colours from an image (shown after 8 wrong guesses)",
+  "builder.anyColorUpload": "Upload image",
+  "builder.anyColorClear": "Clear",
   // who-knows-more play + builder
   "play.wkPickWinner": "Who won the auction?",
   "play.wkClaim": "Claim",
@@ -1093,6 +1097,7 @@ const de = {
   "play.anyRemoteHint":
     "Wähle eine Figur aus der Liste. Namen außerhalb der Bibliothek zählen trotzdem (als komplette Fehlschläge).",
   "play.anyQuoteHint": "Zitat der Figur",
+  "play.anyColorHint": "Farbschema",
   "any.trait.species": "Spezies",
   "any.trait.gender": "Geschlecht",
   "any.trait.alignment": "Gesinnung",
@@ -1117,6 +1122,9 @@ const de = {
   "builder.anyTraits": "Eigenschaften",
   "builder.anyQuoteEn": "Zitat — Englisch (Hinweis nach 4 falschen Tipps)",
   "builder.anyQuoteDe": "Zitat — Deutsch",
+  "builder.anyColorHint": "Farb-Hinweis — drei Hauptfarben aus einem Bild wählen (erscheint nach 8 falschen Tipps)",
+  "builder.anyColorUpload": "Bild hochladen",
+  "builder.anyColorClear": "Entfernen",
   // who-knows-more play + builder
   "play.wkPickWinner": "Wer hat die Auktion gewonnen?",
   "play.wkClaim": "Behauptet",

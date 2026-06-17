@@ -696,6 +696,18 @@ function AnyTargetCard({ char, onEdit, onClear, t }) {
           {char.quote?.de && <p className="truncate">DE: „{char.quote.de}"</p>}
         </div>
       )}
+      {Array.isArray(char.colors) && char.colors.length > 0 && (
+        <div className="mt-2 flex items-center gap-1.5 border-t border-pink-200/60 pt-2 dark:border-pink-500/20">
+          {char.colors.map((c, i) => (
+            <span
+              key={i}
+              className="h-5 w-5 rounded border border-stone-200 dark:border-stone-700"
+              style={{ backgroundColor: c }}
+              title={c}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

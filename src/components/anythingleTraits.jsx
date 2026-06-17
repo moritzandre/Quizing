@@ -11,7 +11,7 @@
 
 import { useState, useRef, useEffect, useId, useMemo } from "react";
 import { ArrowUp, ArrowDown, Check, Plus } from "lucide-react";
-import { ANYTHINGLE_TRAITS, normText } from "../lib/model.js";
+import { ANYTHINGLE_TRAITS, normText, fileToDataUrl, extractColors } from "../lib/model.js";
 import { Avatar, inputCls, FOCUS } from "./ui.jsx";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 
@@ -38,8 +38,23 @@ const parseAliases = (s) =>
 export function TraitForm({ value, onChange, franchises = [], compact = false }) {
   const { t } = useI18n();
   const dlId = useId(); // unique datalist id per instance (the Builder mounts many)
+  const [colorBusy, setColorBusy] = useState(false);
   const v = value || {};
   const set = (key, val) => onChange({ ...v, [key]: val });
+  // Derive the 3-colour palette hint from an uploaded image (the image itself is
+  // not stored — only the extracted hex colours).
+  const onColorImage = async (file) => {
+    if (!file) return;
+    setColorBusy(true);
+    try {
+      const url = await fileToDataUrl(file, { maxDim: 256 });
+      const cols = await extractColors(url, 3);
+      if (cols.length) set("colors", cols);
+    } catch {
+      /* ignore unreadable images */
+    }
+    setColorBusy(false);
+  };
   // Toggle a token in a capped multi-value trait. `noneToken` (powers' "None")
   // is mutually exclusive with every other token.
   const toggleMulti = (key, token, max, noneToken) => {
@@ -178,6 +193,43 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
           />
         </label>
       </div>
+
+      {/* colour-scheme hint: upload an image → 3 dominant colours */}
+      <div>
+        <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">
+          {t("builder.anyColorHint")}
+        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <label
+            className={`cursor-pointer rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:border-stone-400 dark:border-stone-600 dark:text-stone-300 ${FOCUS}`}
+          >
+            {colorBusy ? "…" : t("builder.anyColorUpload")}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => onColorImage(e.target.files?.[0])}
+            />
+          </label>
+          {(v.colors || []).map((c, i) => (
+            <span
+              key={i}
+              className="h-7 w-7 rounded-md border border-stone-200 shadow-sm dark:border-stone-700"
+              style={{ backgroundColor: c }}
+              title={c}
+            />
+          ))}
+          {(v.colors || []).length > 0 && (
+            <button
+              type="button"
+              onClick={() => set("colors", [])}
+              className="text-xs text-stone-400 transition hover:text-red-500"
+            >
+              {t("builder.anyColorClear")}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -261,6 +313,29 @@ export function AnyQuote({ quote }) {
       <blockquote className="mt-1.5 text-lg font-medium italic leading-snug text-stone-700 dark:text-stone-200 md:text-xl">
         “{text}”
       </blockquote>
+    </div>
+  );
+}
+
+/** Colour-scheme hint: three dominant colours of the secret character. */
+export function AnyColors({ colors }) {
+  const { t } = useI18n();
+  const list = Array.isArray(colors) ? colors.filter((c) => /^#[0-9a-f]{6}$/i.test(c)).slice(0, 3) : [];
+  if (!list.length) return null;
+  return (
+    <div className="mx-auto mt-3 flex max-w-xs flex-col items-center gap-2 rounded-2xl border border-pink-200 bg-pink-50/70 px-5 py-3 dark:border-pink-500/30 dark:bg-pink-500/10">
+      <p className="font-pixel text-[8px] uppercase tracking-widest text-pink-500 dark:text-pink-300">
+        {t("play.anyColorHint")}
+      </p>
+      <div className="flex gap-3">
+        {list.map((c, i) => (
+          <span
+            key={i}
+            className="h-10 w-10 rounded-xl border border-white/70 shadow-sm dark:border-stone-900/50"
+            style={{ backgroundColor: c }}
+          />
+        ))}
+      </div>
     </div>
   );
 }

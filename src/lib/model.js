@@ -119,6 +119,8 @@ export const ANY_CLOSE_BAND = 15;
 export const ANY_MAX_GUESSES = 8;
 /** Wrong guesses after which the secret character's quote is revealed as a hint. */
 export const ANY_QUOTE_AFTER = 4;
+/** Wrong guesses after which the secret's colour-scheme hint (3 swatches) is shown. */
+export const ANY_COLORS_AFTER = 8;
 
 /**
  * The fixed 10-column comparison matrix. `type` drives both the editor control
@@ -332,6 +334,9 @@ export function makeAnyChar() {
     // A bilingual in-character quote, revealed as a hint after ANY_QUOTE_AFTER
     // wrong guesses. Not a graded trait.
     quote: { en: "", de: "" },
+    // Up to 3 dominant hex colours (from an author-uploaded image), shown as a
+    // palette hint after ANY_COLORS_AFTER wrong guesses. Not a graded trait.
+    colors: [],
   };
 }
 
@@ -378,7 +383,78 @@ export function normalizeAnyChar(raw) {
       en: str(raw.quote?.en).trim().slice(0, 300),
       de: str(raw.quote?.de).trim().slice(0, 300),
     },
+    colors: (Array.isArray(raw.colors) ? raw.colors : [])
+      .map((c) => str(c).trim().toLowerCase())
+      .filter((c) => /^#[0-9a-f]{6}$/.test(c))
+      .slice(0, 3),
   };
+}
+
+/**
+ * Extract up to `n` dominant, reasonably-distinct hex colours from an image
+ * (browser only — draws to a small canvas and buckets the pixels). Used by the
+ * Builder to derive a character's colour-scheme hint from an uploaded image.
+ * Resolves [] on any failure (load error, CORS-tainted canvas).
+ * @param {string} src Image URL or data URL.
+ * @param {number} [n] How many colours to return (default 3).
+ * @returns {Promise<string[]>} Hex colours like "#rrggbb".
+ */
+export function extractColors(src, n = 3) {
+  return new Promise((resolve) => {
+    if (!src) return resolve([]);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onerror = () => resolve([]);
+    img.onload = () => {
+      try {
+        const W = 56;
+        const H = Math.max(1, Math.round((img.height / Math.max(1, img.width)) * W));
+        const canvas = document.createElement("canvas");
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve([]);
+        ctx.drawImage(img, 0, 0, W, H);
+        const data = ctx.getImageData(0, 0, W, H).data;
+        const buckets = new Map(); // 3-bit-per-channel bucket -> {count, r, g, b}
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i + 3] < 125) continue; // skip transparent
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const key = ((r >> 5) << 6) | ((g >> 5) << 3) | (b >> 5);
+          const e = buckets.get(key);
+          if (e) {
+            e.count++;
+            e.r += r;
+            e.g += g;
+            e.b += b;
+          } else buckets.set(key, { count: 1, r, g, b });
+        }
+        const ranked = [...buckets.values()]
+          .map((e) => ({
+            count: e.count,
+            r: Math.round(e.r / e.count),
+            g: Math.round(e.g / e.count),
+            b: Math.round(e.b / e.count),
+          }))
+          .sort((a, b) => b.count - a.count);
+        const hex = (c) =>
+          "#" + [c.r, c.g, c.b].map((v) => Math.max(0, Math.min(255, v)).toString(16).padStart(2, "0")).join("");
+        const picked = [];
+        for (const c of ranked) {
+          if (picked.length >= n) break;
+          // skip near-duplicates so the palette reads as distinct colours
+          if (picked.some((p) => Math.abs(p.r - c.r) + Math.abs(p.g - c.g) + Math.abs(p.b - c.b) < 80)) continue;
+          picked.push(c);
+        }
+        resolve(picked.map(hex));
+      } catch {
+        resolve([]); // tainted canvas / decode failure
+      }
+    };
+    img.src = src;
+  });
 }
 
 /** Find the pool entry whose name/alias matches a typed guess (accent/case-insensitive). */
@@ -1262,6 +1338,12 @@ function normalizeAnyLive(raw) {
       raw.quote && typeof raw.quote === "object"
         ? { en: str(raw.quote.en).slice(0, 300), de: str(raw.quote.de).slice(0, 300) }
         : null,
+    colors: Array.isArray(raw.colors)
+      ? raw.colors
+          .map((c) => str(c).toLowerCase())
+          .filter((c) => /^#[0-9a-f]{6}$/.test(c))
+          .slice(0, 3)
+      : null,
     target: raw.target && typeof raw.target === "object" ? { name: str(raw.target.name) } : null,
   };
 }
@@ -1401,6 +1483,9 @@ function buildAnyLive(game, anyQuote) {
   const qt = anyQuote && (str(anyQuote.en) || str(anyQuote.de)) ? anyQuote : own;
   const quote =
     guessCount >= ANY_QUOTE_AFTER && qt && (str(qt.en) || str(qt.de)) ? { en: str(qt.en), de: str(qt.de) } : null;
+  // Colour-scheme hint: 3 swatches, shown even later than the quote.
+  const tc = Array.isArray(q?.target?.colors) ? q.target.colors.filter((c) => /^#[0-9a-f]{6}$/i.test(c)) : [];
+  const colors = guessCount >= ANY_COLORS_AFTER && tc.length ? tc.slice(0, 3) : null;
   return {
     turn: num(a.turn, 0),
     active: order.length ? info(order[num(a.turn, 0) % order.length]) : null,
@@ -1416,6 +1501,7 @@ function buildAnyLive(game, anyQuote) {
     })),
     solvedBy: info(a.solvedBy),
     quote,
+    colors,
     target: game.revealed && q ? { name: str(q.target?.name) } : null,
   };
 }

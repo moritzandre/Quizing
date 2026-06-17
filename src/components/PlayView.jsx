@@ -57,6 +57,7 @@ import {
   isAnyTarget,
   makeAnyChar,
   ANY_QUOTE_AFTER,
+  ANY_COLORS_AFTER,
 } from "../lib/model.js";
 import {
   TYPES,
@@ -82,7 +83,7 @@ import MediaPlayer from "./MediaPlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
-import { TraitForm, GuessGrid, TraitLegend, CharacterField, AnyQuote } from "./anythingleTraits.jsx";
+import { TraitForm, GuessGrid, TraitLegend, CharacterField, AnyQuote, AnyColors } from "./anythingleTraits.jsx";
 
 /** Map marker color for a player (their chosen color, else by index). */
 const colorFor = (p, i) => p?.color || colorAt(i);
@@ -2145,6 +2146,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
         {/* quote hint (after enough wrong guesses) */}
         {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_QUOTE_AFTER && <AnyQuote quote={anyQuote} />}
+
+        {/* colour-scheme hint (after even more wrong guesses) */}
+        {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_COLORS_AFTER && (
+          <AnyColors colors={q.target?.colors} />
+        )}
 
         {/* shared guess board */}
         <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
