@@ -545,9 +545,9 @@ const en = {
   "builder.anyAliases": "Aliases (comma-separated)",
   "builder.anyMaxGuesses": "Guess cap (display)",
   "builder.anyTraits": "Traits",
-  "builder.anyQuoteEn": "Quote — English (hint after 4 wrong guesses)",
+  "builder.anyQuoteEn": "Quote — English (hint after 10 wrong guesses)",
   "builder.anyQuoteDe": "Quote — German",
-  "builder.anyColorHint": "Colour hint — pick three main colours from an image (shown after 8 wrong guesses)",
+  "builder.anyColorHint": "Colour hint — pick three main colours from an image (shown after 5 wrong guesses)",
   "builder.anyColorUpload": "Upload image",
   "builder.anyColorClear": "Clear",
   // who-knows-more play + builder
@@ -1120,9 +1120,9 @@ const de = {
   "builder.anyAliases": "Aliasse (kommagetrennt)",
   "builder.anyMaxGuesses": "Tipp-Limit (Anzeige)",
   "builder.anyTraits": "Eigenschaften",
-  "builder.anyQuoteEn": "Zitat — Englisch (Hinweis nach 4 falschen Tipps)",
+  "builder.anyQuoteEn": "Zitat — Englisch (Hinweis nach 10 falschen Tipps)",
   "builder.anyQuoteDe": "Zitat — Deutsch",
-  "builder.anyColorHint": "Farb-Hinweis — drei Hauptfarben aus einem Bild wählen (erscheint nach 8 falschen Tipps)",
+  "builder.anyColorHint": "Farb-Hinweis — drei Hauptfarben aus einem Bild wählen (erscheint nach 5 falschen Tipps)",
   "builder.anyColorUpload": "Bild hochladen",
   "builder.anyColorClear": "Entfernen",
   // who-knows-more play + builder

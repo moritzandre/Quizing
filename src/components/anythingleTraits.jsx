@@ -241,11 +241,11 @@ function Cell({ cell, big, index = 0 }) {
   return (
     <div
       style={{ animationDelay: `${index * 0.12}s` }}
-      className={`qn-cell-in flex items-center justify-center gap-0.5 rounded-md border px-1 text-center font-semibold ${tone} ${
-        big ? "h-14 text-sm" : "h-11 text-[11px]"
+      className={`qn-cell-in flex h-full items-center justify-center gap-0.5 rounded-md border px-1 py-1 text-center font-semibold ${tone} ${
+        big ? "min-h-14 text-sm" : "min-h-11 text-[11px]"
       }`}
     >
-      <span className="line-clamp-2 leading-tight">{cell?.val || "—"}</span>
+      <span className="hyphens-auto break-words leading-tight">{cell?.val || "—"}</span>
       {cell?.dir === "up" && <ArrowUp size={big ? 16 : 12} className="shrink-0" />}
       {cell?.dir === "down" && <ArrowDown size={big ? 16 : 12} className="shrink-0" />}
     </div>
@@ -264,12 +264,12 @@ export function GuessGrid({ guesses = [], big = false }) {
     <div className="w-full overflow-x-auto">
       <div className="min-w-[58rem] space-y-1.5">
         {/* header */}
-        <div className="grid gap-1 text-center" style={{ gridTemplateColumns: template }}>
+        <div className="grid items-end gap-1 text-center" style={{ gridTemplateColumns: template }}>
           <div />
           {cols.map((c) => (
             <div
               key={c.key}
-              className={`truncate font-pixel uppercase tracking-wide text-stone-400 dark:text-stone-500 ${
+              className={`hyphens-auto break-words font-pixel uppercase leading-tight tracking-wide text-stone-400 dark:text-stone-500 ${
                 big ? "text-[9px]" : "text-[8px]"
               }`}
             >
@@ -284,10 +284,10 @@ export function GuessGrid({ guesses = [], big = false }) {
           .map((g, idx) => ({ g, idx }))
           .reverse()
           .map(({ g, idx }) => (
-            <div key={idx} className="grid items-center gap-1" style={{ gridTemplateColumns: template }}>
+            <div key={idx} className="grid items-stretch gap-1" style={{ gridTemplateColumns: template }}>
               <div className="flex min-w-0 items-center gap-1.5">
                 {g.by && <Avatar color={g.by.color} emoji={g.by.emoji} name={g.by.name} size={big ? 26 : 20} />}
-                <span className={`min-w-0 truncate font-semibold ${big ? "text-sm" : "text-xs"}`}>{g.name}</span>
+                <span className={`min-w-0 break-words font-semibold ${big ? "text-sm" : "text-xs"}`}>{g.name}</span>
               </div>
               {cols.map((c, ci) => (
                 <Cell key={c.key} cell={(g.cells || []).find((x) => x.key === c.key)} big={big} index={ci} />

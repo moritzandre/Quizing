@@ -42,6 +42,8 @@ import {
   isAnyTarget,
   anyTurnOrder,
   ANYTHINGLE_TRAITS,
+  ANY_QUOTE_AFTER,
+  ANY_COLORS_AFTER,
 } from "./model.js";
 import { ANYTHINGLE_DB, findAnyChar } from "../data/anythingle.js";
 
@@ -1532,24 +1534,52 @@ describe("Anythingle", () => {
 
   it("the secret quote is a hint: withheld from live until ANY_QUOTE_AFTER wrong guesses", () => {
     const cells = gradeAnythingle(LUKE, LUFFY);
-    const g3 = anyGame({
-      anythingle: {
-        order: ["a"],
-        turn: 0,
-        solvedBy: null,
-        guesses: Array.from({ length: 3 }, () => ({ name: "X", by: "a", cells })),
-      },
-    });
-    expect(buildLive(g3).anythingle.quote).toBeNull(); // too few guesses → no leak
-    const g4 = anyGame({
-      anythingle: {
-        order: ["a"],
-        turn: 0,
-        solvedBy: null,
-        guesses: Array.from({ length: 4 }, () => ({ name: "X", by: "a", cells })),
-      },
-    });
-    expect(buildLive(g4).anythingle.quote.en).toBe("I've got a bad feeling about this.");
+    const withGuesses = (n) =>
+      anyGame({
+        anythingle: {
+          order: ["a"],
+          turn: 0,
+          solvedBy: null,
+          guesses: Array.from({ length: n }, () => ({ name: "X", by: "a", cells })),
+        },
+      });
+    expect(buildLive(withGuesses(ANY_QUOTE_AFTER - 1)).anythingle.quote).toBeNull(); // too few → no leak
+    expect(buildLive(withGuesses(ANY_QUOTE_AFTER)).anythingle.quote.en).toBe("I've got a bad feeling about this.");
+  });
+
+  it("the colour-scheme hint is withheld from live until ANY_COLORS_AFTER wrong guesses", () => {
+    const palette = ["#112233", "#445566", "#778899"];
+    const cells = gradeAnythingle(LUKE, LUFFY);
+    const withGuesses = (n) =>
+      anyGame({
+        quiz: {
+          title: "T",
+          rounds: [
+            {
+              type: "anythingle",
+              title: "R",
+              questions: [{ q: "Guess", target: { ...LUKE, colors: palette }, pool: [LUFFY] }],
+            },
+          ],
+        },
+        anythingle: {
+          order: ["a"],
+          turn: 0,
+          solvedBy: null,
+          guesses: Array.from({ length: n }, () => ({ name: "X", by: "a", cells })),
+        },
+      });
+    expect(buildLive(withGuesses(ANY_COLORS_AFTER - 1)).anythingle.colors).toBeNull(); // too few → no leak
+    expect(buildLive(withGuesses(ANY_COLORS_AFTER)).anythingle.colors).toEqual(palette);
+    // the colour hint appears before the quote (vaguer hint first)
+    expect(ANY_COLORS_AFTER).toBeLessThan(ANY_QUOTE_AFTER);
+  });
+
+  it("normalizeAnyChar keeps up to three valid hex colours and drops bad ones", () => {
+    expect(
+      normalizeAnyChar({ name: "X", colors: ["#ABCDEF", "nope", "#123456", "#789ABC", "#fff000"] }).colors,
+    ).toEqual(["#abcdef", "#123456", "#789abc"]);
+    expect(normalizeAnyChar({ name: "X" }).colors).toEqual([]);
   });
 
   it("normalizeAnyChar keeps a bilingual quote (trimmed) and defaults it empty", () => {

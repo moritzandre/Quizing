@@ -117,10 +117,10 @@ export const ANY_MAX_ROLES = 3;
 export const ANY_CLOSE_BAND = 15;
 /** Soft per-round guess cap (display only; the host reveals when ready). */
 export const ANY_MAX_GUESSES = 8;
-/** Wrong guesses after which the secret character's quote is revealed as a hint. */
-export const ANY_QUOTE_AFTER = 4;
 /** Wrong guesses after which the secret's colour-scheme hint (3 swatches) is shown. */
-export const ANY_COLORS_AFTER = 8;
+export const ANY_COLORS_AFTER = 5;
+/** Wrong guesses after which the secret character's quote is revealed (later, stronger hint). */
+export const ANY_QUOTE_AFTER = 10;
 
 /**
  * The fixed 10-column comparison matrix. `type` drives both the editor control
@@ -1483,7 +1483,7 @@ function buildAnyLive(game, anyQuote) {
   const qt = anyQuote && (str(anyQuote.en) || str(anyQuote.de)) ? anyQuote : own;
   const quote =
     guessCount >= ANY_QUOTE_AFTER && qt && (str(qt.en) || str(qt.de)) ? { en: str(qt.en), de: str(qt.de) } : null;
-  // Colour-scheme hint: 3 swatches, shown even later than the quote.
+  // Colour-scheme hint: 3 swatches, shown earlier than the quote (vaguer hint).
   const tc = Array.isArray(q?.target?.colors) ? q.target.colors.filter((c) => /^#[0-9a-f]{6}$/i.test(c)) : [];
   const colors = guessCount >= ANY_COLORS_AFTER && tc.length ? tc.slice(0, 3) : null;
   return {
