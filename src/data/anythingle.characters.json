@@ -45831,5 +45831,2304 @@
       "en": "I adopted you because the world is in dire need of saving.",
       "de": "Ich habe dich adoptiert, weil die Welt dringend gerettet werden muss."
     }
+  },
+  {
+    "id": "marlowe-freudenberg",
+    "name": "Marlowe Freudenberg",
+    "aliases": ["Marlowe", "Marlo Freudenberg"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Survey Corps",
+    "origin": "Wall Sina interior",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "I joined to change the rotten core of the Military Police from the inside.",
+      "de": "Ich bin beigetreten, um den verdorbenen Kern der Militärpolizei von innen zu verändern."
+    }
+  },
+  {
+    "id": "hitch-dreyse",
+    "name": "Hitch Dreyse",
+    "aliases": ["Hitch"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Military Police Brigade",
+    "origin": "Wall Sina interior",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "Why bother working hard? Life in the interior is comfortable enough as it is.",
+      "de": "Warum sich so anstrengen? Das Leben im Inneren ist doch bequem genug."
+    }
+  },
+  {
+    "id": "nile-dok",
+    "name": "Nile Dok",
+    "aliases": ["Nile", "Commander Nile", "Nile Dawk"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Soldier"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Military Police Brigade",
+    "origin": "Wall Sina",
+    "medium": "Manga",
+    "year": 2011,
+    "quote": {
+      "en": "My duty is to keep order within the walls, no matter the cost.",
+      "de": "Meine Pflicht ist es, die Ordnung innerhalb der Mauern zu wahren, koste es, was es wolle."
+    }
+  },
+  {
+    "id": "onyankopon",
+    "name": "Onyankopon",
+    "aliases": [],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Soldier"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Anti-Marleyan Volunteers",
+    "origin": "Marley",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "We came here because we believe a world without that hatred is possible.",
+      "de": "Wir sind hierhergekommen, weil wir glauben, dass eine Welt ohne diesen Hass möglich ist."
+    }
+  },
+  {
+    "id": "colt-grice",
+    "name": "Colt Grice",
+    "aliases": ["Colt"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Marley Warriors",
+    "origin": "Liberio internment zone, Marley",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "Please, just give me a moment — let my brother get clear before you transform!",
+      "de": "Bitte, gib mir nur einen Moment — lass meinen Bruder in Sicherheit, bevor du dich verwandelst!"
+    }
+  },
+  {
+    "id": "petra-ral",
+    "name": "Petra Ral",
+    "aliases": ["Petra"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Survey Corps",
+    "origin": "Wall Rose",
+    "medium": "Manga",
+    "year": 2011,
+    "quote": {
+      "en": "Don't worry — we'll protect you, no matter what happens out here.",
+      "de": "Keine Sorge — wir werden dich beschützen, ganz gleich, was hier draußen passiert."
+    }
+  },
+  {
+    "id": "oluo-bozado",
+    "name": "Oluo Bozado",
+    "aliases": ["Oluo", "Auruo Bossard"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior"],
+    "powers": ["Weapon mastery", "Martial arts"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Survey Corps",
+    "origin": "Wall Rose",
+    "medium": "Manga",
+    "year": 2011,
+    "quote": {
+      "en": "A rookie like you wouldn't last a second out here without veterans watching your back.",
+      "de": "Ein Grünschnabel wie du würde hier draußen keine Sekunde überleben, ohne Veteranen, die dir den Rücken decken."
+    }
+  },
+  {
+    "id": "kitz-woermann",
+    "name": "Kitz Woermann",
+    "aliases": ["Commander Woermann", "Kitz Verman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Soldier"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Attack on Titan",
+    "affiliation": "Garrison",
+    "origin": "Trost District, Wall Rose",
+    "medium": "Manga",
+    "year": 2010,
+    "quote": {
+      "en": "It's a monster in human skin — open fire before it can move!",
+      "de": "Es ist ein Monster in menschlicher Haut — Feuer frei, bevor es sich bewegen kann!"
+    }
+  },
+  {
+    "id": "genryusai-shigekuni-yamamoto",
+    "name": "Genryusai Shigekuni Yamamoto",
+    "aliases": ["Yamamoto", "Old Man Yama", "Captain-Commander", "Genryusai"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Soldier"],
+    "powers": ["Elemental", "Energy/Beams", "Weapon mastery"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2002,
+    "quote": {
+      "en": "All things in the universe turn to ashes before the flames.",
+      "de": "Alle Dinge im Universum werden vor den Flammen zu Asche."
+    }
+  },
+  {
+    "id": "shunsui-kyoraku",
+    "name": "Shunsui Kyoraku",
+    "aliases": ["Shunsui", "Kyoraku", "Captain Kyoraku"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Soldier"],
+    "powers": ["Weapon mastery", "Energy/Beams", "Martial arts"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "I'd rather take a nap with a cup of sake than fight, but a duty is a duty.",
+      "de": "Lieber würde ich mit einem Becher Sake ein Nickerchen machen als zu kämpfen, doch Pflicht ist Pflicht."
+    }
+  },
+  {
+    "id": "jushiro-ukitake",
+    "name": "Jushiro Ukitake",
+    "aliases": ["Ukitake", "Captain Ukitake", "Jushiro"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Soldier"],
+    "powers": ["Energy/Beams", "Weapon mastery", "Elemental"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "Kindness is not a weakness; it is the truest mark of strength.",
+      "de": "Güte ist keine Schwäche; sie ist das wahrste Zeichen von Stärke."
+    }
+  },
+  {
+    "id": "kaname-tosen",
+    "name": "Kaname Tosen",
+    "aliases": ["Tosen", "Captain Tosen", "Kaname"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Soldier", "Leader"],
+    "powers": ["Weapon mastery", "Energy/Beams", "Stealth/Invisibility"],
+    "franchise": "Bleach",
+    "affiliation": "Aizen's Army",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "I walk the path with the least bloodshed — that is the only justice I follow.",
+      "de": "Ich gehe den Weg mit dem geringsten Blutvergießen — das ist die einzige Gerechtigkeit, der ich folge."
+    }
+  },
+  {
+    "id": "soi-fon",
+    "name": "Soi Fon",
+    "aliases": ["Sui-Feng", "Captain Soi Fon"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Spy", "Warrior"],
+    "powers": ["Martial arts", "Super speed", "Weapon mastery"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "Two strikes from my sting and you are already dead.",
+      "de": "Zwei Treffer meines Stachels und du bist bereits tot."
+    }
+  },
+  {
+    "id": "rangiku-matsumoto",
+    "name": "Rangiku Matsumoto",
+    "aliases": ["Rangiku", "Matsumoto", "Lieutenant Matsumoto"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Warrior"],
+    "powers": ["Elemental", "Weapon mastery", "Energy/Beams"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "Growl, and turn the world to ash and cinders.",
+      "de": "Knurre, und verwandle die Welt in Asche und Glut."
+    }
+  },
+  {
+    "id": "ikkaku-madarame",
+    "name": "Ikkaku Madarame",
+    "aliases": ["Ikkaku", "Madarame", "Baldy"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Athlete"],
+    "powers": ["Weapon mastery", "Super strength", "Martial arts"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "There's no greater joy than dying in battle against a worthy foe.",
+      "de": "Es gibt keine größere Freude, als im Kampf gegen einen würdigen Gegner zu sterben."
+    }
+  },
+  {
+    "id": "isshin-kurosaki",
+    "name": "Isshin Kurosaki",
+    "aliases": ["Isshin", "Isshin Shiba", "Dr. Kurosaki"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Healer", "Civilian"],
+    "powers": ["Weapon mastery", "Energy/Beams", "Super strength"],
+    "franchise": "Bleach",
+    "affiliation": "Gotei 13",
+    "origin": "Soul Society",
+    "medium": "Manga",
+    "year": 2002,
+    "quote": {
+      "en": "A father will always protect his children, no matter the cost.",
+      "de": "Ein Vater wird seine Kinder immer beschützen, koste es, was es wolle."
+    }
+  },
+  {
+    "id": "coyote-starrk",
+    "name": "Coyote Starrk",
+    "aliases": ["Starrk", "Primera Espada"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Energy/Beams", "Summoning", "Super speed"],
+    "franchise": "Bleach",
+    "affiliation": "Espada",
+    "origin": "Hueco Mundo",
+    "medium": "Manga",
+    "year": 2007,
+    "quote": {
+      "en": "Being too strong is its own kind of loneliness.",
+      "de": "Zu stark zu sein ist eine ganz eigene Art von Einsamkeit."
+    }
+  },
+  {
+    "id": "tier-harribel",
+    "name": "Tier Harribel",
+    "aliases": ["Harribel", "Tia Harribel", "Tercera Espada"],
+    "species": "Undead",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Warrior", "Royalty"],
+    "powers": ["Elemental", "Energy/Beams", "Weapon mastery"],
+    "franchise": "Bleach",
+    "affiliation": "Espada",
+    "origin": "Hueco Mundo",
+    "medium": "Manga",
+    "year": 2007,
+    "quote": {
+      "en": "I do not fight for myself — I fight to protect those who follow me.",
+      "de": "Ich kämpfe nicht für mich selbst — ich kämpfe, um jene zu beschützen, die mir folgen."
+    }
+  },
+  {
+    "id": "nelliel-tu-odelschwanck",
+    "name": "Nelliel Tu Odelschwanck",
+    "aliases": ["Nel", "Nelliel", "Nel Tu", "Tres Espada"],
+    "species": "Undead",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Healing/Regeneration", "Energy/Beams", "Super strength"],
+    "franchise": "Bleach",
+    "affiliation": "Espada",
+    "origin": "Hueco Mundo",
+    "medium": "Manga",
+    "year": 2006,
+    "quote": {
+      "en": "I'll send whatever you throw at me right back, twice as strong!",
+      "de": "Was immer du auf mich schleuderst, schicke ich dir doppelt so stark zurück!"
+    }
+  },
+  {
+    "id": "bazz-b",
+    "name": "Bazz-B",
+    "aliases": ["Bazzard Black", "The Heat"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Warrior"],
+    "powers": ["Elemental", "Energy/Beams", "Super speed"],
+    "franchise": "Bleach",
+    "affiliation": "Wandenreich",
+    "origin": "Wandenreich",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "Burn it all down — that's the only thing I'm good at.",
+      "de": "Brenn alles nieder — das ist das Einzige, worin ich gut bin."
+    }
+  },
+  {
+    "id": "genya-shinazugawa",
+    "name": "Genya Shinazugawa",
+    "aliases": ["Genya", "Shinazugawa Genya"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Weapon mastery", "Healing/Regeneration", "Super strength"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Demon Slayer Corps",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "I'll become strong enough to protect my brother, no matter what it takes.",
+      "de": "Ich werde stark genug, um meinen Bruder zu beschützen — koste es, was es wolle."
+    }
+  },
+  {
+    "id": "kanao-tsuyuri",
+    "name": "Kanao Tsuyuri",
+    "aliases": ["Kanao", "Tsuyuri Kanao"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student"],
+    "powers": ["Weapon mastery", "Peak human/Genius", "Super speed"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Demon Slayer Corps",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "I'll let the coin decide what I should do.",
+      "de": "Ich lasse die Münze entscheiden, was ich tun soll."
+    }
+  },
+  {
+    "id": "muichiro-tokito",
+    "name": "Muichiro Tokito",
+    "aliases": ["Muichiro", "Mist Hashira", "Tokito Muichiro"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Elemental", "Super speed"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Demon Slayer Corps",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "Those who waste time will never reach the top.",
+      "de": "Wer seine Zeit verschwendet, wird niemals die Spitze erreichen."
+    }
+  },
+  {
+    "id": "doma",
+    "name": "Doma",
+    "aliases": ["Douma", "Upper Rank Two"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Leader"],
+    "powers": ["Elemental", "Immortality", "Healing/Regeneration"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Twelve Kizuki",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "Don't cry. I'll always be by your side.",
+      "de": "Wein doch nicht. Ich werde immer an deiner Seite sein."
+    }
+  },
+  {
+    "id": "gyutaro",
+    "name": "Gyutaro",
+    "aliases": ["Gyuutarou", "Upper Rank Six"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Outlaw"],
+    "powers": ["Weapon mastery", "Immortality", "Healing/Regeneration"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Twelve Kizuki",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "Why is it always us who has to suffer and lose everything?",
+      "de": "Warum müssen immer wir leiden und alles verlieren?"
+    }
+  },
+  {
+    "id": "enmu",
+    "name": "Enmu",
+    "aliases": ["Lower Rank One"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster"],
+    "powers": ["Telepathy/Mind", "Immortality", "Healing/Regeneration"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Twelve Kizuki",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "The most blissful moment a person can experience is right inside a happy dream.",
+      "de": "Der seligste Augenblick im Leben eines Menschen liegt mitten in einem glücklichen Traum."
+    }
+  },
+  {
+    "id": "rui",
+    "name": "Rui",
+    "aliases": ["Lower Rank Five"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster"],
+    "powers": ["Elasticity/Stretch", "Immortality", "Super strength"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Twelve Kizuki",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "Family bonds are forged by emotion. You can't sever them so easily.",
+      "de": "Familienbande entstehen aus Gefühlen. So leicht kann man sie nicht zerschneiden."
+    }
+  },
+  {
+    "id": "tamayo",
+    "name": "Tamayo",
+    "aliases": ["Lady Tamayo"],
+    "species": "Undead",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Healer", "Scientist"],
+    "powers": ["Magic/Sorcery", "Immortality", "Healing/Regeneration"],
+    "franchise": "Demon Slayer",
+    "affiliation": "Tamayo's group",
+    "origin": "Japanese",
+    "medium": "Manga",
+    "year": 2016,
+    "quote": {
+      "en": "I have lived for hundreds of years to atone for my sins.",
+      "de": "Seit Hunderten von Jahren lebe ich, um für meine Sünden zu büßen."
+    }
+  },
+  {
+    "id": "yolei-inoue",
+    "name": "Yolei Inoue",
+    "aliases": ["Yolei", "Miyako Inoue", "Bearer of Love and Sincerity"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Warrior"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Digimon",
+    "affiliation": "DigiDestined",
+    "origin": "Odaiba, Tokyo",
+    "medium": "Anime",
+    "year": 2000,
+    "quote": {
+      "en": "Computers are my thing — leave the gadgets to me!",
+      "de": "Computer sind genau mein Ding — überlasst die Technik mir!"
+    }
+  },
+  {
+    "id": "cody-hida",
+    "name": "Cody Hida",
+    "aliases": ["Cody", "Iori Hida", "Bearer of Knowledge and Reliability"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Warrior"],
+    "powers": ["Martial arts"],
+    "franchise": "Digimon",
+    "affiliation": "DigiDestined",
+    "origin": "Odaiba, Tokyo",
+    "medium": "Anime",
+    "year": 2000,
+    "quote": {
+      "en": "My grandfather taught me to always do what's right, even when it's hard.",
+      "de": "Mein Großvater hat mir beigebracht, immer das Richtige zu tun, auch wenn es schwer ist."
+    }
+  },
+  {
+    "id": "henry-wong",
+    "name": "Henry Wong",
+    "aliases": ["Henry", "Jianliang Lee", "Jenrya Lee"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Warrior"],
+    "powers": ["Martial arts"],
+    "franchise": "Digimon",
+    "affiliation": "Tamers",
+    "origin": "Shinjuku, Tokyo",
+    "medium": "Anime",
+    "year": 2001,
+    "quote": {
+      "en": "Fighting isn't always the answer — but I'll stand by my partner no matter what.",
+      "de": "Kämpfen ist nicht immer die Lösung — aber ich stehe zu meinem Partner, egal was passiert."
+    }
+  },
+  {
+    "id": "rika-nonaka",
+    "name": "Rika Nonaka",
+    "aliases": ["Rika", "Ruki Makino", "Digimon Queen"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Warrior"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Digimon",
+    "affiliation": "Tamers",
+    "origin": "Shinjuku, Tokyo",
+    "medium": "Anime",
+    "year": 2001,
+    "quote": {
+      "en": "They're just data — or that's what I used to think.",
+      "de": "Sie sind nur Daten — zumindest dachte ich das früher."
+    }
+  },
+  {
+    "id": "takuya-kanbara",
+    "name": "Takuya Kanbara",
+    "aliases": ["Takuya", "Warrior of Flame", "Bearer of the Spirit of Fire"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Leader", "Warrior"],
+    "powers": ["Elemental", "Shapeshifting"],
+    "franchise": "Digimon",
+    "affiliation": "Legendary Warriors",
+    "origin": "Shibuya, Tokyo",
+    "medium": "Anime",
+    "year": 2002,
+    "quote": {
+      "en": "Execute! Spirit Evolution!",
+      "de": "Ausführen! Spirit-Evolution!"
+    }
+  },
+  {
+    "id": "wormmon",
+    "name": "Wormmon",
+    "aliases": ["Ken's Partner"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Civilian"],
+    "powers": ["Shapeshifting"],
+    "franchise": "Digimon",
+    "affiliation": "DigiDestined",
+    "origin": "Digital World",
+    "medium": "Anime",
+    "year": 2000,
+    "quote": {
+      "en": "I'll always be by your side, no matter what you've done.",
+      "de": "Ich werde immer an deiner Seite sein, egal was du getan hast."
+    }
+  },
+  {
+    "id": "terriermon",
+    "name": "Terriermon",
+    "aliases": ["Henry's Partner"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Civilian"],
+    "powers": ["Energy/Beams", "Shapeshifting"],
+    "franchise": "Digimon",
+    "affiliation": "Tamers",
+    "origin": "Digital World",
+    "medium": "Anime",
+    "year": 2001,
+    "quote": {
+      "en": "Momentai! Just take it easy.",
+      "de": "Momentai! Nimm's einfach locker."
+    }
+  },
+  {
+    "id": "impmon",
+    "name": "Impmon",
+    "aliases": ["Beelzemon's Rookie Form"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Elemental", "Shapeshifting"],
+    "franchise": "Digimon",
+    "affiliation": "Tamers",
+    "origin": "Digital World",
+    "medium": "Anime",
+    "year": 2001,
+    "quote": {
+      "en": "I don't need a Tamer — I do things my own way!",
+      "de": "Ich brauche keinen Tamer — ich mache die Dinge auf meine Weise!"
+    }
+  },
+  {
+    "id": "metalgreymon",
+    "name": "MetalGreymon",
+    "aliases": ["Cyborg Digimon"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Flight", "Energy/Beams"],
+    "franchise": "Digimon",
+    "affiliation": "DigiDestined",
+    "origin": "Digital World",
+    "medium": "Anime",
+    "year": 1999,
+    "quote": {
+      "en": "Giga Blaster! Feel the power of metal!",
+      "de": "Giga Blaster! Spür die Kraft des Metalls!"
+    }
+  },
+  {
+    "id": "diaboromon",
+    "name": "Diaboromon",
+    "aliases": ["Internet Demon"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Warrior"],
+    "powers": ["Super speed", "Energy/Beams", "Shapeshifting"],
+    "franchise": "Digimon",
+    "affiliation": "",
+    "origin": "The Internet",
+    "medium": "Anime",
+    "year": 2000,
+    "quote": {
+      "en": "I am everywhere and nowhere — your networks belong to me.",
+      "de": "Ich bin überall und nirgends — eure Netzwerke gehören mir."
+    }
+  },
+  {
+    "id": "future-trunks",
+    "name": "Future Trunks",
+    "aliases": ["Trunks", "Mirai Trunks"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Energy/Beams", "Weapon mastery"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Z Fighters",
+    "origin": "Earth (alternate timeline)",
+    "medium": "Manga",
+    "year": 1991,
+    "quote": {
+      "en": "I came back from the future to warn you about a terrible threat.",
+      "de": "Ich bin aus der Zukunft zurückgekommen, um euch vor einer schrecklichen Bedrohung zu warnen."
+    }
+  },
+  {
+    "id": "bardock",
+    "name": "Bardock",
+    "aliases": ["Burdock"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Energy/Beams", "Flight"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Frieza Force",
+    "origin": "Planet Vegeta",
+    "medium": "Anime",
+    "year": 1990,
+    "quote": {
+      "en": "I won't let you destroy my people without a fight!",
+      "de": "Ich lasse nicht zu, dass du mein Volk ohne Kampf vernichtest!"
+    }
+  },
+  {
+    "id": "android-16",
+    "name": "Android 16",
+    "aliases": ["No. 16", "Cyborg 16"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Energy/Beams", "Tech/Gadgets"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Red Ribbon Army",
+    "origin": "Earth",
+    "medium": "Manga",
+    "year": 1992,
+    "quote": {
+      "en": "It is not a sin to fight for the right cause.",
+      "de": "Es ist keine Sünde, für die richtige Sache zu kämpfen."
+    }
+  },
+  {
+    "id": "jiren",
+    "name": "Jiren",
+    "aliases": ["Jiren the Gray"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Energy/Beams", "Martial arts"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Pride Troopers",
+    "origin": "Universe 11",
+    "medium": "Anime",
+    "year": 2017,
+    "quote": {
+      "en": "Strength is everything. The strong overcome and the weak are defeated.",
+      "de": "Stärke ist alles. Die Starken siegen und die Schwachen werden besiegt."
+    }
+  },
+  {
+    "id": "hit",
+    "name": "Hit",
+    "aliases": ["Hit the Infallible", "Legendary Assassin"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw"],
+    "powers": ["Super speed", "Martial arts", "Energy/Beams"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Universe 6",
+    "origin": "Universe 6",
+    "medium": "Anime",
+    "year": 2016,
+    "quote": {
+      "en": "I'll improve in the midst of battle.",
+      "de": "Ich werde mich mitten im Kampf verbessern."
+    }
+  },
+  {
+    "id": "goku-black",
+    "name": "Goku Black",
+    "aliases": ["Black", "Son Goku Black"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Mystic"],
+    "powers": ["Super strength", "Energy/Beams", "Healing/Regeneration"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Supreme Kai apprentices",
+    "origin": "Universe 10 (alternate timeline)",
+    "medium": "Anime",
+    "year": 2016,
+    "quote": {
+      "en": "This world is beautiful, yet so flawed. I will purge the mortals.",
+      "de": "Diese Welt ist schön und doch so fehlerhaft. Ich werde die Sterblichen auslöschen."
+    }
+  },
+  {
+    "id": "caulifla",
+    "name": "Caulifla",
+    "aliases": [],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Super strength", "Energy/Beams", "Flight"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Universe 6",
+    "origin": "Planet Sadla",
+    "medium": "Anime",
+    "year": 2017,
+    "quote": {
+      "en": "Teach me how to get even stronger right now!",
+      "de": "Bring mir bei, wie ich sofort noch stärker werde!"
+    }
+  },
+  {
+    "id": "vados",
+    "name": "Vados",
+    "aliases": [],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Warrior"],
+    "powers": ["Magic/Sorcery", "Energy/Beams", "Flight"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Universe 6",
+    "origin": "Universe 6",
+    "medium": "Anime",
+    "year": 2015,
+    "quote": {
+      "en": "An angel must remain calm and serve their god of destruction.",
+      "de": "Ein Engel muss ruhig bleiben und seinem Gott der Zerstörung dienen."
+    }
+  },
+  {
+    "id": "king-kai",
+    "name": "King Kai",
+    "aliases": ["North Kai", "Kaio-sama"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Healer"],
+    "powers": ["Telepathy/Mind", "Energy/Beams", "Magic/Sorcery"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Kais",
+    "origin": "King Kai's Planet",
+    "medium": "Manga",
+    "year": 1989,
+    "quote": {
+      "en": "First you have to laugh at my joke before I'll train you.",
+      "de": "Zuerst musst du über meinen Witz lachen, bevor ich dich trainiere."
+    }
+  },
+  {
+    "id": "nappa",
+    "name": "Nappa",
+    "aliases": [],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Energy/Beams", "Flight"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Frieza Force",
+    "origin": "Planet Vegeta",
+    "medium": "Manga",
+    "year": 1989,
+    "quote": {
+      "en": "These weaklings aren't even worth my time.",
+      "de": "Diese Schwächlinge sind nicht einmal meine Zeit wert."
+    }
+  },
+  {
+    "id": "raditz",
+    "name": "Raditz",
+    "aliases": [],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Energy/Beams", "Flight"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Frieza Force",
+    "origin": "Planet Vegeta",
+    "medium": "Manga",
+    "year": 1988,
+    "quote": {
+      "en": "What? This scouter must be broken — that power level is impossible!",
+      "de": "Was? Dieser Scouter muss kaputt sein — diese Kampfkraft ist unmöglich!"
+    }
+  },
+  {
+    "id": "dabura",
+    "name": "Dabura",
+    "aliases": ["King of the Demon Realm"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Warrior", "Mage"],
+    "powers": ["Magic/Sorcery", "Super strength", "Energy/Beams"],
+    "franchise": "Dragon Ball",
+    "affiliation": "Babidi's forces",
+    "origin": "Demon Realm",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "My spit will turn you to stone, and then I shall shatter you.",
+      "de": "Meine Spucke verwandelt dich in Stein, und dann werde ich dich zerschmettern."
+    }
+  },
+  {
+    "id": "kite",
+    "name": "Kite",
+    "aliases": ["Kaito", "Kite the Hunter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Warrior", "Leader"],
+    "powers": ["Weapon mastery", "Summoning", "Peak human/Genius"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Hunter Association",
+    "origin": "Unknown wilderness",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "A real Hunter doesn't take a life without good reason.",
+      "de": "Ein echter Jäger nimmt kein Leben ohne guten Grund."
+    }
+  },
+  {
+    "id": "morel-mackernasey",
+    "name": "Morel Mackernasey",
+    "aliases": ["Morel", "The Smoke Wrestler"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Soldier"],
+    "powers": ["Elemental", "Summoning", "Martial arts"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Hunter Association",
+    "origin": "Republic of Padokea",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "Leave the smoke to me, kid — you just watch my back.",
+      "de": "Überlass den Rauch mir, Junge — du deckst mir nur den Rücken."
+    }
+  },
+  {
+    "id": "knov",
+    "name": "Knov",
+    "aliases": ["The Teleporter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Stealth/Invisibility", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Hunter Association",
+    "origin": "Republic of Padokea",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "Step through the door and you'll be somewhere else entirely.",
+      "de": "Tritt durch die Tür und du bist an einem völlig anderen Ort."
+    }
+  },
+  {
+    "id": "palm-siberia",
+    "name": "Palm Siberia",
+    "aliases": ["Palm", "Trick Tower's Stalker"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Spy", "Warrior"],
+    "powers": ["Telepathy/Mind", "Martial arts", "Peak human/Genius"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Hunter Association",
+    "origin": "Republic of Padokea",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "I can see anyone I've met, wherever they are — there's no hiding from me.",
+      "de": "Ich kann jeden sehen, den ich getroffen habe, egal wo er ist — vor mir gibt es kein Verstecken."
+    }
+  },
+  {
+    "id": "shaiapouf",
+    "name": "Shaiapouf",
+    "aliases": ["Pouf", "Beautiful Military Uniform"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Warrior", "Mystic"],
+    "powers": ["Flight", "Telepathy/Mind", "Shapeshifting"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Chimera Ant Royal Guard",
+    "origin": "NGL Chimera Ant nest",
+    "medium": "Manga",
+    "year": 2008,
+    "quote": {
+      "en": "Everything I do is for the sake of the King.",
+      "de": "Alles, was ich tue, geschieht zum Wohle des Königs."
+    }
+  },
+  {
+    "id": "komugi",
+    "name": "Komugi",
+    "aliases": ["The Gungi Champion"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Athlete", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "",
+    "origin": "Republic of East Gorteau",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "If I lose, I have promised to take my own life.",
+      "de": "Wenn ich verliere, habe ich versprochen, mir das Leben zu nehmen."
+    }
+  },
+  {
+    "id": "machi",
+    "name": "Machi",
+    "aliases": ["Machi Komacine"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior", "Healer"],
+    "powers": ["Weapon mastery", "Healing/Regeneration", "Martial arts"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Phantom Troupe",
+    "origin": "Meteor City",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "My threads can stitch a wound shut or slice you in two.",
+      "de": "Meine Fäden können eine Wunde verschließen oder dich entzweischneiden."
+    }
+  },
+  {
+    "id": "uvogin",
+    "name": "Uvogin",
+    "aliases": ["Uvo", "The Strongest of the Troupe"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Super strength", "Martial arts", "Peak human/Genius"],
+    "franchise": "Hunter x Hunter",
+    "affiliation": "Phantom Troupe",
+    "origin": "Meteor City",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "Bullets? They just bounce right off me.",
+      "de": "Kugeln? Die prallen einfach an mir ab."
+    }
+  },
+  {
+    "id": "maki-zenin",
+    "name": "Maki Zenin",
+    "aliases": ["Maki", "Maki Zen'in"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student"],
+    "powers": ["Weapon mastery", "Peak human/Genius", "Super strength"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Tokyo Jujutsu High",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "I'll show them all what someone with no talent can do.",
+      "de": "Ich werde ihnen allen zeigen, wozu jemand ohne Talent fähig ist."
+    }
+  },
+  {
+    "id": "toge-inumaki",
+    "name": "Toge Inumaki",
+    "aliases": ["Toge", "Inumaki"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Mystic"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Tokyo Jujutsu High",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "Salmon. Bonito flakes.",
+      "de": "Lachs. Bonitoflocken."
+    }
+  },
+  {
+    "id": "panda",
+    "name": "Panda",
+    "aliases": ["Gorilla Mode"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student"],
+    "powers": ["Super strength", "Shapeshifting", "Martial arts"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Tokyo Jujutsu High",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "I'm not a panda. I'm an Abrupt-Mutated Cursed Corpse!",
+      "de": "Ich bin kein Panda. Ich bin eine abrupt mutierte verfluchte Leiche!"
+    }
+  },
+  {
+    "id": "kento-nanami",
+    "name": "Kento Nanami",
+    "aliases": ["Nanami", "Nanamin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Worker", "Mystic"],
+    "powers": ["Weapon mastery", "Magic/Sorcery", "Peak human/Genius"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Tokyo Jujutsu High",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "From here on, it's overtime.",
+      "de": "Ab jetzt sind das Überstunden."
+    }
+  },
+  {
+    "id": "aoi-todo",
+    "name": "Aoi Todo",
+    "aliases": ["Todo"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Mystic"],
+    "powers": ["Super strength", "Magic/Sorcery", "Martial arts"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Kyoto Jujutsu High",
+    "origin": "Kyoto",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "What kind of woman is your type?",
+      "de": "Welche Art von Frau ist dein Typ?"
+    }
+  },
+  {
+    "id": "yuta-okkotsu",
+    "name": "Yuta Okkotsu",
+    "aliases": ["Yuta", "Okkotsu"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Mystic"],
+    "powers": ["Magic/Sorcery", "Summoning", "Weapon mastery"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Tokyo Jujutsu High",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "I have the right to live as much as anyone else!",
+      "de": "Ich habe genauso ein Recht zu leben wie jeder andere!"
+    }
+  },
+  {
+    "id": "mahito",
+    "name": "Mahito",
+    "aliases": [],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Mystic"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Healing/Regeneration"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Cursed Spirits",
+    "origin": "Japan",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "The human soul comes first, and the body comes after.",
+      "de": "Die menschliche Seele kommt zuerst, der Körper danach."
+    }
+  },
+  {
+    "id": "choso",
+    "name": "Choso",
+    "aliases": ["Choso Kamo"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mystic"],
+    "powers": ["Magic/Sorcery", "Martial arts", "Healing/Regeneration"],
+    "franchise": "Jujutsu Kaisen",
+    "affiliation": "Death Painting Wombs",
+    "origin": "Japan",
+    "medium": "Manga",
+    "year": 2019,
+    "quote": {
+      "en": "We're brothers. Bound by blood that can never be severed.",
+      "de": "Wir sind Brüder. Verbunden durch Blut, das niemals durchtrennt werden kann."
+    }
+  },
+  {
+    "id": "might-guy",
+    "name": "Might Guy",
+    "aliases": ["Maito Gai", "The Blue Beast of Konoha", "Konoha's Sublime Green Beast", "Eternal Rival"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Martial arts", "Super speed", "Super strength"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "The power of youth knows no limits!",
+      "de": "Die Kraft der Jugend kennt keine Grenzen!"
+    }
+  },
+  {
+    "id": "konan",
+    "name": "Konan",
+    "aliases": ["Angel", "God's Angel", "Lady Angel"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Elemental", "Flight"],
+    "franchise": "Naruto",
+    "affiliation": "Akatsuki",
+    "origin": "Hidden Rain Village (Amegakure)",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "I will become a person of faith who casts no doubt.",
+      "de": "Ich werde ein Mensch des Glaubens, der keinen Zweifel kennt."
+    }
+  },
+  {
+    "id": "tobirama-senju",
+    "name": "Tobirama Senju",
+    "aliases": ["Second Hokage", "Nidaime Hokage"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Scientist"],
+    "powers": ["Elemental", "Super speed", "Summoning"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 2001,
+    "quote": {
+      "en": "Those who break the rules are scum, but those who abandon their comrades are worse than scum.",
+      "de": "Wer die Regeln bricht, ist Abschaum, doch wer seine Kameraden im Stich lässt, ist schlimmer als Abschaum."
+    }
+  },
+  {
+    "id": "sai",
+    "name": "Sai",
+    "aliases": ["Root Member"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Artist", "Spy"],
+    "powers": ["Summoning", "Stealth/Invisibility"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 2006,
+    "quote": {
+      "en": "My drawings come to life when I need them to fight.",
+      "de": "Meine Zeichnungen erwachen zum Leben, wenn sie für mich kämpfen sollen."
+    }
+  },
+  {
+    "id": "choji-akimichi",
+    "name": "Choji Akimichi",
+    "aliases": ["Chubby", "Akimichi Clan Heir"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super strength", "Size-change"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "Don't ever call me fat again!",
+      "de": "Nenn mich nie wieder fett!"
+    }
+  },
+  {
+    "id": "ino-yamanaka",
+    "name": "Ino Yamanaka",
+    "aliases": ["Beautiful Wildflower", "Yamanaka Clan Heir"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Healer", "Spy"],
+    "powers": ["Telepathy/Mind"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "I can slip into your mind and take control of your body.",
+      "de": "Ich kann in deinen Geist eindringen und deinen Körper übernehmen."
+    }
+  },
+  {
+    "id": "kiba-inuzuka",
+    "name": "Kiba Inuzuka",
+    "aliases": ["Dog Boy", "Inuzuka Clan Member"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Super speed", "Martial arts"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "Me and my partner are gonna tear you apart!",
+      "de": "Mein Partner und ich werden dich in Stücke reißen!"
+    }
+  },
+  {
+    "id": "shino-aburame",
+    "name": "Shino Aburame",
+    "aliases": ["Bug User", "Aburame Clan Member"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Summoning", "Stealth/Invisibility"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "My insects will drain every last bit of your chakra.",
+      "de": "Meine Insekten werden dir noch das letzte bisschen Chakra entziehen."
+    }
+  },
+  {
+    "id": "temari",
+    "name": "Temari",
+    "aliases": ["Temari of the Desert", "Wind Mistress"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Elemental", "Weapon mastery"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Sand Village",
+    "origin": "Hidden Sand Village (Sunagakure)",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "One swing of my fan and the wind does the rest.",
+      "de": "Ein Schwung meines Fächers, und der Wind erledigt den Rest."
+    }
+  },
+  {
+    "id": "kankuro",
+    "name": "Kankuro",
+    "aliases": ["Puppet Master", "Crow User"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Artist"],
+    "powers": ["Weapon mastery", "Tech/Gadgets"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Sand Village",
+    "origin": "Hidden Sand Village (Sunagakure)",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "My puppets will dance you straight to your grave.",
+      "de": "Meine Marionetten tanzen dich direkt ins Grab."
+    }
+  },
+  {
+    "id": "kabuto-yakushi",
+    "name": "Kabuto Yakushi",
+    "aliases": ["The Spy", "Snake Sage"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Spy", "Healer", "Scientist"],
+    "powers": ["Healing/Regeneration", "Summoning", "Peak human/Genius"],
+    "franchise": "Naruto",
+    "affiliation": "Akatsuki",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "I no longer know who I am, so I will become everything.",
+      "de": "Ich weiß nicht mehr, wer ich bin, also werde ich zu allem."
+    }
+  },
+  {
+    "id": "asuma-sarutobi",
+    "name": "Asuma Sarutobi",
+    "aliases": ["Twelve Guardian", "Squad Leader of Team 10"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Soldier"],
+    "powers": ["Elemental", "Weapon mastery"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 2000,
+    "quote": {
+      "en": "The next generation will always surpass the one before it.",
+      "de": "Die nächste Generation wird stets die vorige übertreffen."
+    }
+  },
+  {
+    "id": "kurenai-yuhi",
+    "name": "Kurenai Yuhi",
+    "aliases": ["Genjutsu Mistress", "Squad Leader of Team 8"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "Step into my illusion and you'll never find your way out.",
+      "de": "Tritt in meine Illusion ein, und du findest nie wieder heraus."
+    }
+  },
+  {
+    "id": "danzo-shimura",
+    "name": "Danzo Shimura",
+    "aliases": ["The Darkness of the Shinobi", "Founder of Root", "Sixth Hokage Candidate"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Politician", "Spy"],
+    "powers": ["Magic/Sorcery", "Healing/Regeneration"],
+    "franchise": "Naruto",
+    "affiliation": "Hidden Leaf Village",
+    "origin": "Hidden Leaf Village (Konohagakure)",
+    "medium": "Manga",
+    "year": 2005,
+    "quote": {
+      "en": "Sacrifices in the shadows are the price of true peace.",
+      "de": "Opfer im Verborgenen sind der Preis für wahren Frieden."
+    }
+  },
+  {
+    "id": "hidan",
+    "name": "Hidan",
+    "aliases": ["The Immortal", "Zealot of Jashin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Outlaw", "Mystic"],
+    "powers": ["Immortality", "Weapon mastery"],
+    "franchise": "Naruto",
+    "affiliation": "Akatsuki",
+    "origin": "Hidden Hot Water Village (Yugakure)",
+    "medium": "Manga",
+    "year": 2006,
+    "quote": {
+      "en": "Cut me, stab me, it doesn't matter — I cannot die.",
+      "de": "Schneide mich, stich mich, es ist egal — ich kann nicht sterben."
+    }
+  },
+  {
+    "id": "yamato",
+    "name": "Yamato",
+    "aliases": ["Daughter of Kaido"],
+    "species": "Human",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Royalty"],
+    "powers": ["Super strength", "Shapeshifting", "Martial arts"],
+    "franchise": "One Piece",
+    "affiliation": "Beasts Pirates",
+    "origin": "Wano Country",
+    "medium": "Manga",
+    "year": 2020,
+    "quote": {
+      "en": "I will open the borders of this country to the world!",
+      "de": "Ich werde die Grenzen dieses Landes für die Welt öffnen!"
+    }
+  },
+  {
+    "id": "kuzan",
+    "name": "Kuzan",
+    "aliases": ["Aokiji", "Blue Pheasant", "Admiral Aokiji"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Warrior", "Leader"],
+    "powers": ["Elemental", "Super strength"],
+    "franchise": "One Piece",
+    "affiliation": "Blackbeard Pirates",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2003,
+    "quote": {
+      "en": "Justice will prevail, you say? But of course it will. Whoever wins this war becomes justice.",
+      "de": "Die Gerechtigkeit wird siegen, sagst du? Natürlich. Wer diesen Krieg gewinnt, wird zur Gerechtigkeit."
+    }
+  },
+  {
+    "id": "sakazuki",
+    "name": "Sakazuki",
+    "aliases": ["Akainu", "Red Dog", "Fleet Admiral"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Leader", "Warrior"],
+    "powers": ["Elemental", "Super strength"],
+    "franchise": "One Piece",
+    "affiliation": "Marines",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "A mere pirate dares to lecture me on justice?",
+      "de": "Ein gewöhnlicher Pirat wagt es, mir einen Vortrag über Gerechtigkeit zu halten?"
+    }
+  },
+  {
+    "id": "borsalino",
+    "name": "Borsalino",
+    "aliases": ["Kizaru", "Yellow Monkey", "Admiral Kizaru"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Warrior", "Leader"],
+    "powers": ["Elemental", "Super speed", "Energy/Beams"],
+    "franchise": "One Piece",
+    "affiliation": "Marines",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2008,
+    "quote": {
+      "en": "Scary, scary... isn't it just so terrifying?",
+      "de": "Beängstigend, beängstigend... ist das nicht einfach zu furchterregend?"
+    }
+  },
+  {
+    "id": "sengoku",
+    "name": "Sengoku",
+    "aliases": ["Buddha", "Sengoku the Buddha", "Fleet Admiral Sengoku"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Soldier", "Warrior"],
+    "powers": ["Shapeshifting", "Super strength", "Energy/Beams"],
+    "franchise": "One Piece",
+    "affiliation": "Marines",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "There is no place in this world without war.",
+      "de": "Es gibt keinen Ort auf dieser Welt ohne Krieg."
+    }
+  },
+  {
+    "id": "smoker",
+    "name": "Smoker",
+    "aliases": ["White Hunter", "Smoker the White Hunter", "Vice Admiral Smoker"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Warrior", "Detective"],
+    "powers": ["Elemental", "Weapon mastery"],
+    "franchise": "One Piece",
+    "affiliation": "Marines",
+    "origin": "Loguetown",
+    "medium": "Manga",
+    "year": 1999,
+    "quote": {
+      "en": "I don't care about your reasons. A criminal is a criminal.",
+      "de": "Deine Gründe interessieren mich nicht. Ein Verbrecher ist ein Verbrecher."
+    }
+  },
+  {
+    "id": "enel",
+    "name": "Enel",
+    "aliases": ["Eneru", "God Enel", "God of Skypiea"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Warrior", "Mystic"],
+    "powers": ["Electric/Lightning", "Telepathy/Mind", "Flight"],
+    "franchise": "One Piece",
+    "affiliation": "",
+    "origin": "Birka",
+    "medium": "Manga",
+    "year": 2002,
+    "quote": {
+      "en": "Fear me, for I am a god.",
+      "de": "Fürchtet mich, denn ich bin ein Gott."
+    }
+  },
+  {
+    "id": "bartholomew-kuma",
+    "name": "Bartholomew Kuma",
+    "aliases": ["Tyrant Kuma", "Kuma", "PX-0"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier", "Outlaw"],
+    "powers": ["Super strength", "Energy/Beams", "Tech/Gadgets"],
+    "franchise": "One Piece",
+    "affiliation": "Revolutionary Army",
+    "origin": "Sorbet Kingdom",
+    "medium": "Manga",
+    "year": 2008,
+    "quote": {
+      "en": "Where would you like to be sent flying off to?",
+      "de": "Wohin möchtest du fortgeschleudert werden?"
+    }
+  },
+  {
+    "id": "marco",
+    "name": "Marco",
+    "aliases": ["Marco the Phoenix", "Phoenix Marco", "First Division Commander"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Healer"],
+    "powers": ["Shapeshifting", "Healing/Regeneration", "Flight"],
+    "franchise": "One Piece",
+    "affiliation": "Whitebeard Pirates",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2009,
+    "quote": {
+      "en": "Blue flames will burn away my wounds and bring me back.",
+      "de": "Blaue Flammen werden meine Wunden hinwegbrennen und mich zurückholen."
+    }
+  },
+  {
+    "id": "kozuki-oden",
+    "name": "Kozuki Oden",
+    "aliases": ["Oden", "Lord Oden", "Daimyo of Kuri"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Royalty", "Adventurer"],
+    "powers": ["Super strength", "Weapon mastery", "Martial arts"],
+    "franchise": "One Piece",
+    "affiliation": "Kozuki Family",
+    "origin": "Wano Country",
+    "medium": "Manga",
+    "year": 2018,
+    "quote": {
+      "en": "If I'm going to be boiled anyway, I'll do it splendidly!",
+      "de": "Wenn ich ohnehin gekocht werde, dann tue ich es mit Glanz!"
+    }
+  },
+  {
+    "id": "queen",
+    "name": "Queen",
+    "aliases": ["Queen the Plague", "Master Queen", "Plague"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Scientist", "Outlaw"],
+    "powers": ["Shapeshifting", "Tech/Gadgets", "Super strength"],
+    "franchise": "One Piece",
+    "affiliation": "Beasts Pirates",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2019,
+    "quote": {
+      "en": "It's showtime, my groovy little plague has arrived!",
+      "de": "Es ist Showtime, meine groovige kleine Plage ist da!"
+    }
+  },
+  {
+    "id": "charlotte-katakuri",
+    "name": "Charlotte Katakuri",
+    "aliases": ["Katakuri", "Sweet Commander", "Strawberry Mochi"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Elasticity/Stretch", "Telepathy/Mind", "Super strength"],
+    "franchise": "One Piece",
+    "affiliation": "Big Mom Pirates",
+    "origin": "Totto Land",
+    "medium": "Manga",
+    "year": 2017,
+    "quote": {
+      "en": "A real man fixes his own mistakes with his own hands.",
+      "de": "Ein echter Mann korrigiert seine eigenen Fehler mit seinen eigenen Händen."
+    }
+  },
+  {
+    "id": "perona",
+    "name": "Perona",
+    "aliases": ["Ghost Princess", "Princess Perona", "Negative Hollow"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Mystic"],
+    "powers": ["Summoning", "Telepathy/Mind", "Stealth/Invisibility"],
+    "franchise": "One Piece",
+    "affiliation": "Thriller Bark Pirates",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2007,
+    "quote": {
+      "en": "Negative Hollow! Wish you'd never been born...",
+      "de": "Negativ-Geist! Wünschte, du wärst nie geboren worden..."
+    }
+  },
+  {
+    "id": "bentham",
+    "name": "Bentham",
+    "aliases": ["Bon Clay", "Mr. 2", "Bon Kurei"],
+    "species": "Human",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Artist"],
+    "powers": ["Shapeshifting", "Martial arts"],
+    "franchise": "One Piece",
+    "affiliation": "Baroque Works",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2001,
+    "quote": {
+      "en": "Friendship is something you can't put a price on, you know!",
+      "de": "Freundschaft ist etwas, das man mit nichts aufwiegen kann, weißt du!"
+    }
+  },
+  {
+    "id": "caesar-clown",
+    "name": "Caesar Clown",
+    "aliases": ["Master", "Gastino", "Clown"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Outlaw"],
+    "powers": ["Elemental", "Flight", "Tech/Gadgets"],
+    "franchise": "One Piece",
+    "affiliation": "",
+    "origin": "Unknown",
+    "medium": "Manga",
+    "year": 2012,
+    "quote": {
+      "en": "Experiments require sacrifices, shurororo!",
+      "de": "Experimente erfordern Opfer, shurororo!"
+    }
+  },
+  {
+    "id": "arlong",
+    "name": "Arlong",
+    "aliases": ["Saw-Tooth Arlong", "Arlong the Saw", "Fish-Man"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Super strength", "Martial arts"],
+    "franchise": "One Piece",
+    "affiliation": "Arlong Pirates",
+    "origin": "Fish-Man Island",
+    "medium": "Manga",
+    "year": 1998,
+    "quote": {
+      "en": "Humans should know their place beneath us.",
+      "de": "Menschen sollten ihren Platz unter uns kennen."
+    }
+  },
+  {
+    "id": "ash-ketchum",
+    "name": "Ash Ketchum",
+    "aliases": ["Ash", "Satoshi"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Athlete", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "",
+    "origin": "Pallet Town, Kanto",
+    "medium": "Anime",
+    "year": 1997,
+    "quote": {
+      "en": "I want to be the very best, like no one ever was!",
+      "de": "Ich will der Allerbeste sein, wie keiner vor mir war!"
+    }
+  },
+  {
+    "id": "misty",
+    "name": "Misty",
+    "aliases": ["Kasumi", "Tomboyish Mermaid"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Athlete", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Cerulean Gym",
+    "origin": "Cerulean City, Kanto",
+    "medium": "Anime",
+    "year": 1997,
+    "quote": {
+      "en": "Water types are the best — I'll prove it to you!",
+      "de": "Wasser-Typen sind die besten — das beweise ich dir!"
+    }
+  },
+  {
+    "id": "brock",
+    "name": "Brock",
+    "aliases": ["Takeshi", "The Rock Solid Trainer"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Healer", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Pewter Gym",
+    "origin": "Pewter City, Kanto",
+    "medium": "Anime",
+    "year": 1997,
+    "quote": {
+      "en": "I'll cook you the perfect meal before the next battle!",
+      "de": "Ich koche euch die perfekte Mahlzeit vor dem nächsten Kampf!"
+    }
+  },
+  {
+    "id": "gary-oak",
+    "name": "Gary Oak",
+    "aliases": ["Gary", "Shigeru"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Adventurer", "Scientist", "Athlete"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "",
+    "origin": "Pallet Town, Kanto",
+    "medium": "Anime",
+    "year": 1997,
+    "quote": {
+      "en": "Smell ya later — you'll never catch up to me!",
+      "de": "Bis später — du wirst mich nie einholen!"
+    }
+  },
+  {
+    "id": "professor-oak",
+    "name": "Professor Oak",
+    "aliases": ["Samuel Oak", "Yukinari Okido"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Healer", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Oak Laboratory",
+    "origin": "Pallet Town, Kanto",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "There is a time and place for everything, but not now.",
+      "de": "Es gibt für alles eine Zeit und einen Ort, aber nicht jetzt."
+    }
+  },
+  {
+    "id": "james",
+    "name": "James",
+    "aliases": ["Kojirō"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Spy", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Team Rocket",
+    "origin": "Kanto",
+    "medium": "Anime",
+    "year": 1997,
+    "quote": {
+      "en": "And make it double!",
+      "de": "Und macht es gleich doppelt!"
+    }
+  },
+  {
+    "id": "giovanni",
+    "name": "Giovanni",
+    "aliases": ["Sakaki", "The Boss"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Outlaw", "Warrior"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Team Rocket",
+    "origin": "Viridian City, Kanto",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "Power is everything. With it, nothing is out of my reach.",
+      "de": "Macht ist alles. Mit ihr ist nichts außerhalb meiner Reichweite."
+    }
+  },
+  {
+    "id": "cynthia",
+    "name": "Cynthia",
+    "aliases": ["Shirona", "Sinnoh Champion"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Scientist", "Adventurer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Sinnoh League",
+    "origin": "Celestic Town, Sinnoh",
+    "medium": "Video game",
+    "year": 2006,
+    "quote": {
+      "en": "Every move and every partner has its own merits — battle is endless.",
+      "de": "Jede Attacke und jeder Partner hat seine eigenen Stärken — der Kampf ist endlos."
+    }
+  },
+  {
+    "id": "blue",
+    "name": "Blue",
+    "aliases": ["Green", "Rival Blue"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Adventurer", "Athlete"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Viridian Gym",
+    "origin": "Pallet Town, Kanto",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "I'm the most powerful trainer in the world! Smell ya later!",
+      "de": "Ich bin der mächtigste Trainer der Welt! Bis später!"
+    }
+  },
+  {
+    "id": "leon",
+    "name": "Leon",
+    "aliases": ["Dande", "The Unbeatable Champion"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Athlete"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Galar League",
+    "origin": "Postwick, Galar",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "Get ready for an absolutely champion time!",
+      "de": "Macht euch bereit für eine absolut meisterliche Zeit!"
+    }
+  },
+  {
+    "id": "n",
+    "name": "N",
+    "aliases": ["Natural Harmonia Gropius", "King of Team Plasma"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Leader", "Mystic"],
+    "powers": ["Telepathy/Mind", "Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Team Plasma",
+    "origin": "Unova",
+    "medium": "Video game",
+    "year": 2010,
+    "quote": {
+      "en": "I can hear their voices — and they long to be free.",
+      "de": "Ich kann ihre Stimmen hören — und sie sehnen sich nach Freiheit."
+    }
+  },
+  {
+    "id": "lillie",
+    "name": "Lillie",
+    "aliases": ["Lily"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Healer"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Pokémon",
+    "affiliation": "Aether Foundation",
+    "origin": "Aether Paradise, Alola",
+    "medium": "Video game",
+    "year": 2016,
+    "quote": {
+      "en": "I want to become someone who can protect the ones I love.",
+      "de": "Ich möchte jemand werden, der die beschützen kann, die ich liebe."
+    }
+  },
+  {
+    "id": "charmander",
+    "name": "Charmander",
+    "aliases": ["Hitokage", "Lizard Pokémon"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Civilian"],
+    "powers": ["Elemental"],
+    "franchise": "Pokémon",
+    "affiliation": "",
+    "origin": "Kanto",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "The flame on its tail shows the strength of its life force.",
+      "de": "Die Flamme an seinem Schweif zeigt die Stärke seiner Lebenskraft."
+    }
+  },
+  {
+    "id": "ditto",
+    "name": "Ditto",
+    "aliases": ["Metamon", "Transform Pokémon"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Monster"],
+    "powers": ["Shapeshifting"],
+    "franchise": "Pokémon",
+    "affiliation": "",
+    "origin": "Kanto",
+    "medium": "Video game",
+    "year": 1996,
+    "quote": {
+      "en": "It can rearrange its cells to transform into anything it sees.",
+      "de": "Es kann seine Zellen umordnen, um sich in alles zu verwandeln, was es sieht."
+    }
+  },
+  {
+    "id": "gardevoir",
+    "name": "Gardevoir",
+    "aliases": ["Sirknight", "Embrace Pokémon"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Healer", "Warrior"],
+    "powers": ["Telepathy/Mind", "Energy/Beams", "Magic/Sorcery"],
+    "franchise": "Pokémon",
+    "affiliation": "",
+    "origin": "Hoenn",
+    "medium": "Video game",
+    "year": 2002,
+    "quote": {
+      "en": "To protect its trainer, it will create a small black hole.",
+      "de": "Um seinen Trainer zu schützen, erschafft es ein kleines schwarzes Loch."
+    }
+  },
+  {
+    "id": "cinderace",
+    "name": "Cinderace",
+    "aliases": ["Aceburn", "Striker Pokémon"],
+    "species": "Creature/Monster",
+    "gender": "None/Genderless",
+    "alignment": "Hero/Good",
+    "role": ["Athlete", "Warrior"],
+    "powers": ["Elemental", "Super speed", "Martial arts"],
+    "franchise": "Pokémon",
+    "affiliation": "",
+    "origin": "Galar",
+    "medium": "Video game",
+    "year": 2019,
+    "quote": {
+      "en": "It kicks a blazing ball of fire that strikes like a perfect goal.",
+      "de": "Es schießt einen lodernden Feuerball, der wie ein perfektes Tor einschlägt."
+    }
+  },
+  {
+    "id": "bakura-ryou",
+    "name": "Bakura Ryou",
+    "aliases": ["Ryo Bakura", "Bakura", "Host of the Ring"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Mystic", "Civilian"],
+    "powers": ["Summoning", "Magic/Sorcery"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Domino High School",
+    "origin": "Domino City",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "I just want to play a fun game with my friends.",
+      "de": "Ich will einfach nur ein schoenes Spiel mit meinen Freunden spielen."
+    }
+  },
+  {
+    "id": "odion-ishtar",
+    "name": "Odion Ishtar",
+    "aliases": ["Rishid", "Odion", "Guardian of the Tomb Keepers"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Worker", "Mystic"],
+    "powers": ["Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Tomb Keeper clan",
+    "origin": "Egypt",
+    "medium": "Manga",
+    "year": 1998,
+    "quote": {
+      "en": "I have devoted my life to protecting this family.",
+      "de": "Ich habe mein Leben dem Schutz dieser Familie gewidmet."
+    }
+  },
+  {
+    "id": "rebecca-hawkins",
+    "name": "Rebecca Hawkins",
+    "aliases": ["Rebecca", "Bunny", "Genius Girl"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Scientist", "Warrior"],
+    "powers": ["Summoning", "Peak human/Genius"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "",
+    "origin": "United States",
+    "medium": "Manga",
+    "year": 1997,
+    "quote": {
+      "en": "Don't underestimate me just because I'm young!",
+      "de": "Unterschaetze mich nicht, nur weil ich jung bin!"
+    }
+  },
+  {
+    "id": "solomon-muto",
+    "name": "Solomon Muto",
+    "aliases": ["Grandpa", "Sugoroku Mutou", "Solomon"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Adventurer", "Civilian"],
+    "powers": ["Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Kame Game Shop",
+    "origin": "Domino City",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "The cards always remember the heart of their owner.",
+      "de": "Die Karten erinnern sich immer an das Herz ihres Besitzers."
+    }
+  },
+  {
+    "id": "duke-devlin",
+    "name": "Duke Devlin",
+    "aliases": ["Ryuji Otogi", "Duke", "Dungeon Dice Master"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Leader", "Athlete"],
+    "powers": ["Summoning", "Peak human/Genius"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "Black Clown game shop",
+    "origin": "Domino City",
+    "medium": "Manga",
+    "year": 1998,
+    "quote": {
+      "en": "Roll the dice and let fate decide the game.",
+      "de": "Wirf die Wuerfel und lass das Schicksal das Spiel entscheiden."
+    }
+  },
+  {
+    "id": "weevil-underwood",
+    "name": "Weevil Underwood",
+    "aliases": ["Insector Haga", "Weevil", "Bug Duelist"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Student", "Outlaw", "Warrior"],
+    "powers": ["Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "",
+    "origin": "Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "My insects will swarm you and pick you clean!",
+      "de": "Meine Insekten werden dich umschwaermen und bis aufs Letzte aussaugen!"
+    }
+  },
+  {
+    "id": "rex-raptor",
+    "name": "Rex Raptor",
+    "aliases": ["Dinosaur Ryuzaki", "Rex", "Dino Duelist"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Student", "Outlaw", "Warrior"],
+    "powers": ["Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "",
+    "origin": "Japan",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "My dinosaurs will stomp you into extinction!",
+      "de": "Meine Dinosaurier werden dich in die Ausrottung trampeln!"
+    }
+  },
+  {
+    "id": "bonz",
+    "name": "Bonz",
+    "aliases": ["Ghost Kotsuzuka", "Zombie Duelist"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior", "Mystic"],
+    "powers": ["Summoning"],
+    "franchise": "Yu-Gi-Oh!",
+    "affiliation": "",
+    "origin": "Domino City",
+    "medium": "Manga",
+    "year": 1997,
+    "quote": {
+      "en": "My undead army rises from the grave to crush you!",
+      "de": "Meine untote Armee erhebt sich aus dem Grab, um dich zu zermalmen!"
+    }
   }
 ]
