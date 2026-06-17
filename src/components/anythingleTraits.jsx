@@ -154,6 +154,30 @@ export function TraitForm({ value, onChange, franchises = [], compact = false })
           </div>
         );
       })}
+
+      {/* bilingual quote (hint shown after enough wrong guesses) */}
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">
+            {t("builder.anyQuoteEn")}
+          </span>
+          <input
+            className={inputCls}
+            value={v.quote?.en || ""}
+            onChange={(e) => set("quote", { ...(v.quote || {}), en: e.target.value })}
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-stone-500 dark:text-stone-400">
+            {t("builder.anyQuoteDe")}
+          </span>
+          <input
+            className={inputCls}
+            value={v.quote?.de || ""}
+            onChange={(e) => set("quote", { ...(v.quote || {}), de: e.target.value })}
+          />
+        </label>
+      </div>
     </div>
   );
 }
@@ -219,6 +243,24 @@ export function GuessGrid({ guesses = [], big = false }) {
             </div>
           ))}
       </div>
+    </div>
+  );
+}
+
+/** The secret character's quote, shown as a hint (after enough wrong guesses).
+ * Picks the text for the current UI language, falling back to the other. */
+export function AnyQuote({ quote }) {
+  const { t, lang } = useI18n();
+  const text = quote?.[lang] || quote?.en || quote?.de || "";
+  if (!text) return null;
+  return (
+    <div className="mx-auto mt-3 max-w-2xl rounded-2xl border border-pink-200 bg-pink-50/70 px-5 py-3 text-center dark:border-pink-500/30 dark:bg-pink-500/10">
+      <p className="font-pixel text-[8px] uppercase tracking-widest text-pink-500 dark:text-pink-300">
+        {t("play.anyQuoteHint")}
+      </p>
+      <blockquote className="mt-1.5 text-lg font-medium italic leading-snug text-stone-700 dark:text-stone-200 md:text-xl">
+        “{text}”
+      </blockquote>
     </div>
   );
 }

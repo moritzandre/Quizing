@@ -1345,6 +1345,7 @@ describe("Anythingle", () => {
     origin: "Tatooine",
     medium: "Film/TV (live-action)",
     year: 1977,
+    quote: { en: "I've got a bad feeling about this.", de: "Mieses Gefuehl." },
   };
   const LUFFY = {
     name: "Monkey D. Luffy",
@@ -1527,6 +1528,36 @@ describe("Anythingle", () => {
     // once revealed, the target name is exposed via live
     const revealed = buildLive(anyGame({ revealed: true }));
     expect(revealed.anythingle.target.name).toBe("Luke Skywalker");
+  });
+
+  it("the secret quote is a hint: withheld from live until ANY_QUOTE_AFTER wrong guesses", () => {
+    const cells = gradeAnythingle(LUKE, LUFFY);
+    const g3 = anyGame({
+      anythingle: {
+        order: ["a"],
+        turn: 0,
+        solvedBy: null,
+        guesses: Array.from({ length: 3 }, () => ({ name: "X", by: "a", cells })),
+      },
+    });
+    expect(buildLive(g3).anythingle.quote).toBeNull(); // too few guesses → no leak
+    const g4 = anyGame({
+      anythingle: {
+        order: ["a"],
+        turn: 0,
+        solvedBy: null,
+        guesses: Array.from({ length: 4 }, () => ({ name: "X", by: "a", cells })),
+      },
+    });
+    expect(buildLive(g4).anythingle.quote.en).toBe("I've got a bad feeling about this.");
+  });
+
+  it("normalizeAnyChar keeps a bilingual quote (trimmed) and defaults it empty", () => {
+    expect(normalizeAnyChar({ name: "X", quote: { en: "  hi  ", de: "hallo" } }).quote).toEqual({
+      en: "hi",
+      de: "hallo",
+    });
+    expect(normalizeAnyChar({ name: "X" }).quote).toEqual({ en: "", de: "" });
   });
 
   it("host-only aux carries the secret target + pool (for the host remote)", () => {

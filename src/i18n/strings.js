@@ -521,6 +521,7 @@ const en = {
   "play.anyInLibrary": "In the character library — will be graded",
   "play.anyNewChar": "Not in the library — add it to grade",
   "play.anyRemoteHint": "Pick a character from the list. Names not in the library still score (as all-misses).",
+  "play.anyQuoteHint": "Quote from the character",
   "any.trait.species": "Species",
   "any.trait.gender": "Gender",
   "any.trait.alignment": "Alignment",
@@ -543,6 +544,8 @@ const en = {
   "builder.anyAliases": "Aliases (comma-separated)",
   "builder.anyMaxGuesses": "Guess cap (display)",
   "builder.anyTraits": "Traits",
+  "builder.anyQuoteEn": "Quote — English (hint after 4 wrong guesses)",
+  "builder.anyQuoteDe": "Quote — German",
   // who-knows-more play + builder
   "play.wkPickWinner": "Who won the auction?",
   "play.wkClaim": "Claim",
@@ -1089,6 +1092,7 @@ const de = {
   "play.anyNewChar": "Nicht in der Bibliothek — zum Bewerten hinzufügen",
   "play.anyRemoteHint":
     "Wähle eine Figur aus der Liste. Namen außerhalb der Bibliothek zählen trotzdem (als komplette Fehlschläge).",
+  "play.anyQuoteHint": "Zitat der Figur",
   "any.trait.species": "Spezies",
   "any.trait.gender": "Geschlecht",
   "any.trait.alignment": "Gesinnung",
@@ -1111,6 +1115,8 @@ const de = {
   "builder.anyAliases": "Aliasse (kommagetrennt)",
   "builder.anyMaxGuesses": "Tipp-Limit (Anzeige)",
   "builder.anyTraits": "Eigenschaften",
+  "builder.anyQuoteEn": "Zitat — Englisch (Hinweis nach 4 falschen Tipps)",
+  "builder.anyQuoteDe": "Zitat — Deutsch",
   // who-knows-more play + builder
   "play.wkPickWinner": "Wer hat die Auktion gewonnen?",
   "play.wkClaim": "Behauptet",

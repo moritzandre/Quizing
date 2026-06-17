@@ -117,6 +117,8 @@ export const ANY_MAX_ROLES = 3;
 export const ANY_CLOSE_BAND = 15;
 /** Soft per-round guess cap (display only; the host reveals when ready). */
 export const ANY_MAX_GUESSES = 8;
+/** Wrong guesses after which the secret character's quote is revealed as a hint. */
+export const ANY_QUOTE_AFTER = 4;
 
 /**
  * The fixed 10-column comparison matrix. `type` drives both the editor control
@@ -327,6 +329,9 @@ export function makeAnyChar() {
     origin: "",
     medium: "Film/TV (live-action)",
     year: null,
+    // A bilingual in-character quote, revealed as a hint after ANY_QUOTE_AFTER
+    // wrong guesses. Not a graded trait.
+    quote: { en: "", de: "" },
   };
 }
 
@@ -369,6 +374,10 @@ export function normalizeAnyChar(raw) {
     origin: str(raw.origin).trim(),
     medium: pick(str(raw.medium), ANY_MEDIA, "Web/Other"),
     year: numOrNull(raw.year),
+    quote: {
+      en: str(raw.quote?.en).trim().slice(0, 300),
+      de: str(raw.quote?.de).trim().slice(0, 300),
+    },
   };
 }
 
@@ -1249,6 +1258,10 @@ function normalizeAnyLive(raw) {
       })),
     })),
     solvedBy: info(raw.solvedBy),
+    quote:
+      raw.quote && typeof raw.quote === "object"
+        ? { en: str(raw.quote.en).slice(0, 300), de: str(raw.quote.de).slice(0, 300) }
+        : null,
     target: raw.target && typeof raw.target === "object" ? { name: str(raw.target.name) } : null,
   };
 }
@@ -1380,6 +1393,12 @@ function buildAnyLive(game) {
   };
   const order = Array.isArray(a.order) ? a.order : [];
   const q = currentQuestion(game);
+  const guessCount = Array.isArray(a.guesses) ? a.guesses.length : 0;
+  // The character's quote is a hint — only sent to the TV once enough wrong
+  // guesses have been made (it would leak the answer if sent earlier).
+  const qt = q?.target?.quote;
+  const quote =
+    guessCount >= ANY_QUOTE_AFTER && qt && (str(qt.en) || str(qt.de)) ? { en: str(qt.en), de: str(qt.de) } : null;
   return {
     turn: num(a.turn, 0),
     active: order.length ? info(order[num(a.turn, 0) % order.length]) : null,
@@ -1394,6 +1413,7 @@ function buildAnyLive(game) {
       })),
     })),
     solvedBy: info(a.solvedBy),
+    quote,
     target: game.revealed && q ? { name: str(q.target?.name) } : null,
   };
 }
