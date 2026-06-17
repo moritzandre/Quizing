@@ -265,7 +265,7 @@ export function GuessGrid({ guesses = [], big = false }) {
     ? `minmax(9rem, 1.5fr) repeat(${cols.length}, minmax(6.5rem, 1fr))`
     : `minmax(6.5rem, 1.3fr) repeat(${cols.length}, minmax(4.75rem, 1fr))`;
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="qn-scroll w-full overflow-x-auto">
       <div className={`space-y-1.5 ${big ? "min-w-[80rem]" : "min-w-[58rem]"}`}>
         {/* header */}
         <div className="grid items-end gap-1 text-center" style={{ gridTemplateColumns: template }}>

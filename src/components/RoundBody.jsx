@@ -370,30 +370,39 @@ export default function RoundBody({
     const guesses = a.guesses || [];
     const solved = a.solvedBy;
     return (
-      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
-        <Q>{q.q}</Q>
-        {a.active && !revealed && !solved && (
-          <p className="mt-2 inline-flex items-center gap-2 text-lg font-semibold text-pink-600 dark:text-pink-400">
-            <Avatar color={a.active.color} emoji={a.active.emoji} name={a.active.name} size={26} />
-            {t("play.anyTurn", { name: a.active.name })}
-          </p>
-        )}
-        {!revealed && !solved && <AnyColors colors={a.colors} />}
-        {!revealed && !solved && <AnyQuote quote={a.quote} />}
+      <div className="flex h-full min-h-0 flex-col items-center text-center">
+        {/* pinned header: prompt + turn + the colour/quote hints */}
+        <div className="w-full shrink-0">
+          <Q>{q.q}</Q>
+          {a.active && !revealed && !solved && (
+            <p className="mt-2 inline-flex items-center gap-2 text-lg font-semibold text-pink-600 dark:text-pink-400">
+              <Avatar color={a.active.color} emoji={a.active.emoji} name={a.active.name} size={26} />
+              {t("play.anyTurn", { name: a.active.name })}
+            </p>
+          )}
+          {!revealed && !solved && <AnyColors colors={a.colors} />}
+          {!revealed && !solved && <AnyQuote quote={a.quote} />}
+        </div>
         {guesses.length > 0 ? (
           <>
-            <div className={`mt-5 w-full ${compact ? "max-w-2xl" : "max-w-[112rem]"}`}>
+            {/* the board scrolls inside this box (newest on top) so a long run of
+                guesses never overflows the screen or the score belt below it */}
+            <div
+              className={`qn-scroll mt-4 min-h-0 w-full flex-1 overflow-y-auto ${compact ? "max-w-2xl" : "max-w-[112rem]"}`}
+            >
               <GuessGrid guesses={guesses} big={!compact} />
             </div>
-            <div className="mt-3">
+            <div className="mt-3 shrink-0">
               <TraitLegend />
             </div>
           </>
         ) : (
-          <p className="mt-8 text-stone-400 dark:text-stone-500">{t("play.anyNoGuesses")}</p>
+          <div className="flex flex-1 items-center justify-center">
+            <p className="text-stone-400 dark:text-stone-500">{t("play.anyNoGuesses")}</p>
+          </div>
         )}
         {(revealed || solved) && a.target?.name && (
-          <p className={answerCls}>
+          <p className={`${answerCls} shrink-0`}>
             {solved ? `${t("play.anySolvedBy", { name: solved.name })} ` : `${t("play.anySecret")}: `}
             {a.target.name}
           </p>

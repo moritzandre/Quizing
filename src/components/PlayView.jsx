@@ -2153,7 +2153,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {!game.revealed && !a.solvedBy && (a.guesses?.length || 0) >= ANY_QUOTE_AFTER && <AnyQuote quote={anyQuote} />}
 
         {/* shared guess board */}
-        <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
+        <div className="qn-scroll mt-3 min-h-0 flex-1 overflow-y-auto">
           {liveGuesses.length ? (
             <>
               <GuessGrid guesses={liveGuesses} />
