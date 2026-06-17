@@ -963,6 +963,15 @@ describe("presenter payloads", () => {
     expect(normalizeLive({ morphRunning: true }).morphRunning).toBe(true);
   });
 
+  it("buildLive/normalizeLive carry the question key (so the TV can ignore a stale reveal)", () => {
+    const g = game();
+    g.ri = 1;
+    g.qi = 2;
+    expect(buildLive(g).qKey).toBe("1-2");
+    expect(normalizeLive({ qKey: "3-4" }).qKey).toBe("3-4");
+    expect(normalizeLive({}).qKey).toBe("");
+  });
+
   it("normalizeLive validates the transport action + soundOnTv + volume against junk", () => {
     expect(normalizeLive({}).transport).toEqual({ n: 0, action: "idle" });
     expect(normalizeLive({}).volume).toBe(100);

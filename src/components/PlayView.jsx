@@ -201,6 +201,18 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const [paused, setPaused] = useState(false);
 
   /* current question value (points at stake) */
+  // Reset the morph clock SYNCHRONOUSLY when the question changes (render-time
+  // pattern), so the first paint of a new morph question never briefly shows the
+  // PREVIOUS question's progress — which flashed the fully-clear image for a
+  // moment before the post-paint reset effect ran.
+  const morphQKeyRef = useRef(qKey);
+  if (morphQKeyRef.current !== qKey) {
+    morphQKeyRef.current = qKey;
+    if (morphP !== 0) setMorphP(0);
+    if (morphStep !== 0) setMorphStep(0);
+    if (morphRunning) setMorphRunning(false);
+  }
+
   const value = (() => {
     if (!round) return 0;
     if (round.type === "jeopardy") {
@@ -601,7 +613,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (picked.length >= wk.claimed) {
       playSound("correct");
       upd({ players: game.players.map((p) => (p.id === wk.winnerId ? { ...p, score: p.score + wk.claimed } : p)) });
-      setWk({ ...wk, picked, phase: "done", result: "deliver" });
+      // Auto-reveal the full list at the end (got vs missed), no extra tap needed.
+      setWk({ ...wk, picked, phase: "done", result: "deliver", showAll: true });
     } else {
       setWk({ ...wk, picked });
     }
@@ -613,7 +626,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const gained = wk.picked.length;
     if (gained > 0)
       upd({ players: game.players.map((p) => (p.id !== wk.winnerId ? { ...p, score: p.score + gained } : p)) });
-    setWk({ ...wk, phase: "done", result: "bust" });
+    setWk({ ...wk, phase: "done", result: "bust", showAll: true });
     setWkLeft(0);
   };
 
@@ -2043,15 +2056,19 @@ export default function PlayView({ game, setGame, onExit, room }) {
                         key={ai}
                         className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm ${
                           got
-                            ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
-                            : "border-stone-200 bg-white text-stone-500 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-400"
+                            ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
+                            : "border-red-200 bg-red-50 text-red-600 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
                         }`}
                       >
                         <span>
                           {q.ordered ? `${ai + 1}. ` : ""}
                           {ans}
                         </span>
-                        {got && <Check size={15} className="shrink-0 text-emerald-600 dark:text-emerald-400" />}
+                        {got ? (
+                          <Check size={15} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                        ) : (
+                          <X size={15} className="shrink-0 text-red-500 dark:text-red-400" />
+                        )}
                       </div>
                     );
                   })}

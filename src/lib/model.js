@@ -1409,6 +1409,10 @@ export function buildLive(game, opts = {}) {
   }));
   const live = {
     v: 1,
+    // Which question this payload describes — the TV ignores a stale `reveal`
+    // (from the retained `live` topic) once it no longer matches the current
+    // `present` question, so e.g. a map never re-frames the previous answer.
+    qKey: `${num(game.ri, 0)}-${num(game.qi, 0)}`,
     stage: ["intro", "question", "board", "end"].includes(game.stage) ? game.stage : "intro",
     revealed: !!game.revealed,
     hintsShown: Math.max(1, num(game.hintsShown, 1)),
@@ -1511,6 +1515,7 @@ export function normalizeLive(raw) {
         .slice(0, 64); // the map round's revealed guess pins
   }
   return {
+    qKey: str(raw.qKey),
     stage: ["intro", "question", "board", "end"].includes(raw.stage) ? raw.stage : "intro",
     revealed: !!raw.revealed,
     hintsShown: Math.max(1, num(raw.hintsShown, 1)),

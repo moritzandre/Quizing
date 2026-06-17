@@ -179,18 +179,24 @@ export default function PresenterView({ code }) {
   }
 
   // question stage
+  const presentQKey = `${present.ri ?? 0}-${present.qi ?? 0}`;
+  // The `live` topic is retained and can briefly lag a question behind `present`.
+  // Only honour its reveal when it describes THIS question, so the map (and any
+  // answer) never shows the previous question's result on the new one.
+  const liveCurrent = !live?.qKey || live.qKey === presentQKey;
+  const revealed = liveCurrent && !!live?.revealed;
   return shell(
     <RoundBody
       type={present.roundType}
       q={present.q || {}}
-      revealed={!!live?.revealed}
+      revealed={revealed}
       hintsShown={live?.hintsShown || 1}
       step={live?.step || 0}
       morphProgress={live?.morphProgress || 0}
-      reveal={live?.reveal || null}
+      reveal={revealed ? live?.reveal || null : null}
       transport={live?.transport || null}
       stage={!!live?.soundOnTv && soundOn}
-      qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
+      qKey={presentQKey}
       volume={live?.volume ?? 100}
       whoknows={live?.whoknows || null}
       anythingle={live?.anythingle || null}

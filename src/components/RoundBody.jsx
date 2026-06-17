@@ -13,7 +13,7 @@ import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { optionsFor, Avatar } from "./ui.jsx";
 import { GuessGrid, TraitLegend } from "./anythingleTraits.jsx";
-import { Check, Target, Volume2 } from "lucide-react";
+import { Check, X, Target, Volume2 } from "lucide-react";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
@@ -340,14 +340,21 @@ export default function RoundBody({
                 {wkk.answers.map((ans, ai) => (
                   <div
                     key={ai}
-                    className={`rounded-lg border px-3 py-1.5 text-sm ${
+                    className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm ${
                       pickedIdx.has(ai)
-                        ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
-                        : "border-stone-200 bg-white text-stone-500 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-400"
+                        ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
+                        : "border-red-200 bg-red-50 text-red-600 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
                     }`}
                   >
-                    {wkk.ordered ? `${ai + 1}. ` : ""}
-                    {ans}
+                    {pickedIdx.has(ai) ? (
+                      <Check size={14} className="shrink-0" />
+                    ) : (
+                      <X size={14} className="shrink-0" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate">
+                      {wkk.ordered ? `${ai + 1}. ` : ""}
+                      {ans}
+                    </span>
                   </div>
                 ))}
               </div>
