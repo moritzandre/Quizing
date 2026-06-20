@@ -26,10 +26,11 @@ const fmt = (s) => {
  * forward playback) if the file can't be fetched/decoded — e.g. a CORS-blocked
  * host. Reversing is audio-only, so it always shows the audio cover.
  */
-function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
+function ReverseClip({ url, start, end, transport, controls, volume, revealed = false, onFail }) {
   const { t } = useI18n();
   const ctxRef = useRef(null);
-  const bufRef = useRef(null); // the REVERSED AudioBuffer
+  const revBufRef = useRef(null); // the REVERSED AudioBuffer (the puzzle)
+  const fwdBufRef = useRef(null); // the original FORWARD buffer (played on reveal)
   const gainRef = useRef(null);
   const srcRef = useRef(null);
   const fwdDurRef = useRef(0); // forward (== reversed) duration
@@ -42,9 +43,11 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
   startRef.current = start;
   const endRef = useRef(end);
   endRef.current = end;
+  const revealedRef = useRef(revealed); // read inside play()/clock without stale closures
+  revealedRef.current = revealed;
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
-  const [cur, setCur] = useState(0); // forward-time position (descends hi → lo)
+  const [cur, setCur] = useState(0); // window-time position (reverse: hi→lo, forward: lo→hi)
 
   // The forward trim window [lo, hi]; played backwards it runs hi → lo.
   const windowOf = () => {
@@ -56,7 +59,7 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
 
   // Lazy fetch + decode + reverse (once). Returns false (→ fallback) on failure.
   const ensure = async () => {
-    if (bufRef.current) return true;
+    if (revBufRef.current) return true;
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) throw new Error("no-webaudio");
@@ -70,7 +73,8 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
         const d = rev.getChannelData(ch);
         for (let i = 0, n = s.length; i < n; i++) d[i] = s[n - 1 - i];
       }
-      bufRef.current = rev;
+      revBufRef.current = rev;
+      fwdBufRef.current = decoded; // keep the forward buffer for the reveal play-through
       fwdDurRef.current = decoded.duration;
       const gain = ctx.createGain();
       gain.gain.value = muted ? 0 : Math.max(0, Math.min(1, volume / 100));
@@ -111,19 +115,22 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
         /* needs a gesture */
       }
     }
-    const { hi, len, dur } = windowOf();
+    const { lo, hi, len, dur } = windowOf();
     if (len <= 0) return;
     if (posRef.current >= len - 0.02) posRef.current = 0; // replay from the window start
     stopSrc();
+    const fwd = revealedRef.current; // reveal → play the real clip forwards
     const node = ctx.createBufferSource();
-    node.buffer = bufRef.current;
+    node.buffer = fwd ? fwdBufRef.current : revBufRef.current;
     node.connect(gainRef.current);
     node.onended = () => {
       if (stoppingRef.current) return; // manual stop, not the natural end
       posRef.current = len;
       setPlaying(false);
     };
-    node.start(0, dur - hi + posRef.current, len - posRef.current); // reversed-buffer offset
+    // forward: play [lo, hi]; reverse: play the same window from the mirrored offset
+    const offset = fwd ? lo + posRef.current : dur - hi + posRef.current;
+    node.start(0, offset, len - posRef.current);
     srcRef.current = node;
     startedAtRef.current = ctx.currentTime;
     setPlaying(true);
@@ -157,12 +164,22 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
       const { lo, hi, len } = windowOf();
       let played = posRef.current;
       if (playing && ctx) played = Math.min(len, posRef.current + (ctx.currentTime - startedAtRef.current));
-      setCur(Math.max(lo, hi - played));
+      setCur(revealedRef.current ? Math.min(hi, lo + played) : Math.max(lo, hi - played));
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [playing]);
+
+  // On reveal: stop the reversed playback and auto-play the clip FORWARD from the
+  // window start, so the answer is shown together with what it really sounded like.
+  useEffect(() => {
+    stopSrc();
+    posRef.current = 0;
+    setPlaying(false);
+    if (revealed) play();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealed]);
 
   // remote transport (host / TV stage / buzz auto-pause)
   useEffect(() => {
@@ -179,7 +196,8 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
   // reset + tear down the audio graph when the source changes
   useEffect(() => {
     stopSrc();
-    bufRef.current = null;
+    revBufRef.current = null;
+    fwdBufRef.current = null;
     posRef.current = 0;
     setPlaying(false);
     return () => {
@@ -194,7 +212,8 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
   }, [url]);
 
   const { lo, hi } = windowOf();
-  const pct = hi > lo ? ((hi - cur) / (hi - lo)) * 100 : 0;
+  const played = revealed ? cur - lo : hi - cur;
+  const pct = hi > lo ? Math.max(0, Math.min(100, (played / (hi - lo)) * 100)) : 0;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-stone-200 bg-black shadow-sm dark:border-stone-800">
@@ -210,7 +229,7 @@ function ReverseClip({ url, start, end, transport, controls, volume, onFail }) {
             ))}
           </div>
           <div className="flex items-center gap-2 text-sm font-medium text-stone-300">
-            <Music size={16} /> {t("play.audioReversed")}
+            <Music size={16} /> {revealed ? t("play.audioClip") : t("play.audioReversed")}
           </div>
         </div>
       </div>
@@ -259,6 +278,7 @@ export default function NativeMediaPlayer({
   media = "audio",
   audioOnly = false,
   reverse = false,
+  revealed = false,
   start = null,
   end = null,
   transport = null,
@@ -398,6 +418,7 @@ export default function NativeMediaPlayer({
         transport={transport}
         controls={controls}
         volume={volume}
+        revealed={revealed}
         onFail={() => setRevFailed(true)}
       />
     );

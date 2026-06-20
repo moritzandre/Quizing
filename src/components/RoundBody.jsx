@@ -126,6 +126,7 @@ export default function RoundBody({
                 url={q.url}
                 audioOnly={!!q.audioOnly}
                 reverse={!!q.reverse}
+                revealed={revealed}
                 start={q.start}
                 end={clipEnd(q, step)}
                 transport={transport}

@@ -36,6 +36,7 @@ export default function MediaPlayer({
   controls = true,
   volume = 100,
   reverse = false,
+  revealed = false,
 }) {
   const { t } = useI18n();
   const src = mediaSource(url);
@@ -59,6 +60,7 @@ export default function MediaPlayer({
         media={src.media}
         audioOnly={audioOnly}
         reverse={reverse}
+        revealed={revealed}
         start={start}
         end={end}
         transport={transport}

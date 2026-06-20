@@ -1603,6 +1603,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 url={q.url}
                 audioOnly={!!q.audioOnly}
                 reverse={!!q.reverse}
+                revealed={game.revealed}
                 start={q.start}
                 end={clipEnd(q, morphStep)}
                 transport={transport}
