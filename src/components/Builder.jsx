@@ -50,6 +50,8 @@ import MapillaryEmbed from "./MapillaryEmbed.jsx";
 // round-level "set all points" bulk control applies).
 const POINTS_TYPES = [
   "classic",
+  "hints",
+  "connect",
   "video",
   "clip",
   "image",
@@ -61,6 +63,7 @@ const POINTS_TYPES = [
   "number",
   "anythingle",
   "map",
+  "whoknows",
 ];
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -675,6 +678,54 @@ function TrimInputs({ start, end, onChange, t }) {
         onChange={(e) => onChange({ end: toSec(e.target.value) })}
       />
     </div>
+  );
+}
+
+/**
+ * Ladder scoring control: the value when only the first clue is shown (`points`)
+ * decaying down to the value when everything is revealed (`minPoints`). Used by
+ * the hint/connect editors (which otherwise had no points control).
+ */
+function LadderPoints({ item, onChange, t }) {
+  return (
+    <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-stone-400 dark:text-stone-500">
+      <span>{t("builder.ladderPoints")}</span>
+      <input
+        type="number"
+        aria-label={t("builder.points")}
+        title={t("builder.points")}
+        className={`${inputCls} w-20 py-1`}
+        value={item.points ?? 30}
+        onChange={(e) => onChange({ points: Math.max(1, +e.target.value || 0) })}
+      />
+      <span aria-hidden>→</span>
+      <input
+        type="number"
+        min="1"
+        aria-label={t("builder.minPoints")}
+        title={t("builder.minPoints")}
+        className={`${inputCls} w-20 py-1`}
+        value={item.minPoints ?? 10}
+        onChange={(e) => onChange({ minPoints: Math.max(1, Math.round(+e.target.value) || 1) })}
+      />
+    </div>
+  );
+}
+
+/** A standalone "min points (fully revealed)" input for the clip/morph/fusion
+ *  ladders, sitting beside their existing points + steps controls. */
+function MinPointsField({ value, onChange, t }) {
+  return (
+    <label className="inline-flex items-center gap-1 text-xs text-stone-400 dark:text-stone-500">
+      {t("builder.minPoints")}
+      <input
+        type="number"
+        min="1"
+        className={`${inputCls} w-16 py-1`}
+        value={value ?? 1}
+        onChange={(e) => onChange(Math.max(1, Math.round(+e.target.value) || 1))}
+      />
+    </label>
   );
 }
 
@@ -1311,6 +1362,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                               value={item.answer}
                               onChange={(e) => qRow(r, item, { answer: e.target.value })}
                             />
+                            <LadderPoints item={item} onChange={(p) => qRow(r, item, p)} t={t} />
                             <HintsField hints={item.hints} onChange={(h) => qRow(r, item, { hints: h })} t={t} />
                           </div>
                         )}
@@ -1347,6 +1399,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                               value={item.answer}
                               onChange={(e) => qRow(r, item, { answer: e.target.value })}
                             />
+                            <LadderPoints item={item} onChange={(p) => qRow(r, item, p)} t={t} />
                             <HintsField hints={item.clues} onChange={(c) => qRow(r, item, { clues: c })} t={t} />
                           </div>
                         )}
@@ -1416,7 +1469,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                               </label>
                               <TrimInputs start={item.start} end={item.end} onChange={(p) => qRow(r, item, p)} t={t} />
                               {r.type === "clip" && (
-                                <div className="mt-2 flex items-center gap-2">
+                                <div className="mt-2 flex flex-wrap items-center gap-2">
                                   <span className="text-xs text-stone-400 dark:text-stone-500">
                                     {t("builder.clipSteps")}
                                   </span>
@@ -1433,6 +1486,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                   <span className="text-xs text-stone-400 dark:text-stone-500">
                                     {t("builder.clipStepsHint")}
                                   </span>
+                                  <MinPointsField
+                                    value={item.minPoints}
+                                    onChange={(v) => qRow(r, item, { minPoints: v })}
+                                    t={t}
+                                  />
                                 </div>
                               )}
                               <input
@@ -1567,6 +1625,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                 value={item.points}
                                 onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
                               />
+                              <MinPointsField
+                                value={item.minPoints}
+                                onChange={(v) => qRow(r, item, { minPoints: v })}
+                                t={t}
+                              />
                             </div>
                           </div>
                         )}
@@ -1639,6 +1702,11 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                 title={t("builder.fullPoints")}
                                 value={item.points}
                                 onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                              />
+                              <MinPointsField
+                                value={item.minPoints}
+                                onChange={(v) => qRow(r, item, { minPoints: v })}
+                                t={t}
                               />
                             </div>
                           </div>
@@ -1931,6 +1999,18 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                 value={item.q}
                                 onChange={(e) => qRow(r, item, { q: e.target.value })}
                               />
+                              <div className="mt-2 flex items-center gap-2 text-xs text-stone-400 dark:text-stone-500">
+                                <span>{t("builder.wkPointsPer")}</span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  className={`${inputCls} w-20 py-1`}
+                                  value={item.points ?? 1}
+                                  onChange={(e) =>
+                                    qRow(r, item, { points: Math.max(1, Math.round(+e.target.value) || 1) })
+                                  }
+                                />
+                              </div>
                               <label className="mt-2 inline-flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-stone-300">
                                 <input
                                   type="checkbox"

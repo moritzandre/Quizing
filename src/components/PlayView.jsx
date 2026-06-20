@@ -40,6 +40,7 @@ import {
   haversineKm,
   morphValue,
   morphValueAt,
+  hintValue,
   clipLadderActive,
   clipEnd,
   hintHasContent,
@@ -224,12 +225,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
     }
     const q = round.questions[game.qi];
     if (!q) return 0;
-    if (round.type === "hints") return Math.max(1, realHints(q.hints).length - game.hintsShown + 1) * 10;
-    if (round.type === "connect") return Math.max(1, realHints(q.clues).length - game.hintsShown + 1) * 10;
-    if (round.type === "morph") return morphValueAt(q.points, morphP);
-    if (round.type === "fusion") return morphValue(q.points, q.steps, morphStep);
+    if (round.type === "hints") return hintValue(q.points, q.minPoints, game.hintsShown, realHints(q.hints).length);
+    if (round.type === "connect") return hintValue(q.points, q.minPoints, game.hintsShown, realHints(q.clues).length);
+    if (round.type === "morph") return morphValueAt(q.points, morphP, q.minPoints);
+    if (round.type === "fusion") return morphValue(q.points, q.steps, morphStep, q.minPoints);
     if ((round.type === "video" || round.type === "clip") && clipLadderActive(q))
-      return morphValue(q.points, q.steps, morphStep);
+      return morphValue(q.points, q.steps, morphStep, q.minPoints);
     if (round.type === "anythingle") return ptsOr(q.points, 30);
     return ptsOr(q.points, 10);
   })();
@@ -624,7 +625,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setWkLeft(wkSecs);
     if (picked.length >= wk.claimed) {
       playSound("correct");
-      upd({ players: game.players.map((p) => (p.id === wk.winnerId ? { ...p, score: p.score + wk.claimed } : p)) });
+      const per = ptsOr(wkQ?.points, 1); // points per correct answer
+      upd({
+        players: game.players.map((p) => (p.id === wk.winnerId ? { ...p, score: p.score + wk.claimed * per } : p)),
+      });
       // Auto-reveal the full list at the end (got vs missed), no extra tap needed.
       setWk({ ...wk, picked, phase: "done", result: "deliver", showAll: true });
     } else {
@@ -635,7 +639,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const wkBustNow = () => {
     if (wk.phase !== "answering") return;
     playSound("wrong");
-    const gained = wk.picked.length;
+    const gained = wk.picked.length * ptsOr(wkQ?.points, 1);
     if (gained > 0)
       upd({ players: game.players.map((p) => (p.id !== wk.winnerId ? { ...p, score: p.score + gained } : p)) });
     setWk({ ...wk, phase: "done", result: "bust", showAll: true });

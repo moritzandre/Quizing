@@ -10,6 +10,7 @@ import {
   haversineKm,
   morphValue,
   morphValueAt,
+  hintValue,
   clipLadderActive,
   clipEnd,
   summarizeGame,
@@ -161,6 +162,8 @@ describe("normalizeQuiz", () => {
               { type: "image", url: "https://e.com/p.jpg" },
               { type: "map", lat: 1, lng: 2, name: "n" },
             ],
+            points: 30,
+            minPoints: 10,
           },
         ],
       },
@@ -195,7 +198,17 @@ describe("normalizeQuiz", () => {
         type: "morph",
         title: "Mo",
         timer: null,
-        questions: [{ id: "mo1", url: "https://example.com/x.jpg", a: "A", points: 30, effect: "pixelate", steps: 5 }],
+        questions: [
+          {
+            id: "mo1",
+            url: "https://example.com/x.jpg",
+            a: "A",
+            points: 30,
+            effect: "pixelate",
+            steps: 5,
+            minPoints: 1,
+          },
+        ],
       },
       {
         id: "r8",
@@ -203,7 +216,15 @@ describe("normalizeQuiz", () => {
         title: "Fu",
         timer: null,
         questions: [
-          { id: "fu1", urlA: "https://e.com/a.jpg", urlB: "https://e.com/b.jpg", a: "A + B", points: 40, steps: 4 },
+          {
+            id: "fu1",
+            urlA: "https://e.com/a.jpg",
+            urlB: "https://e.com/b.jpg",
+            a: "A + B",
+            points: 40,
+            steps: 4,
+            minPoints: 1,
+          },
         ],
       },
       {
@@ -695,6 +716,12 @@ describe("morphValue", () => {
   it("never drops below 1", () => {
     expect(morphValue(2, 8, 8)).toBeGreaterThanOrEqual(1);
   });
+
+  it("honors an author-set minimum floor", () => {
+    expect(morphValue(30, 4, 0, 10)).toBe(30); // full at step 0
+    expect(morphValue(30, 4, 4, 10)).toBe(10); // floor raised from 6 to 10
+    expect(morphValue(30, 4, 4, 1)).toBe(6); // floor below natural end → no effect
+  });
 });
 
 describe("morphValueAt (continuous demorph)", () => {
@@ -707,6 +734,26 @@ describe("morphValueAt (continuous demorph)", () => {
     expect(morphValueAt(30, -1)).toBe(30);
     expect(morphValueAt(30, 2)).toBe(1);
     expect(morphValueAt(2, 0.99)).toBeGreaterThanOrEqual(1);
+  });
+  it("decays to the author-set floor at progress 1", () => {
+    expect(morphValueAt(30, 1, 10)).toBe(10);
+    expect(morphValueAt(30, 0, 10)).toBe(30);
+  });
+});
+
+describe("hintValue (hint/connect ladder)", () => {
+  it("is full at the first clue and reaches minPoints at the last", () => {
+    expect(hintValue(50, 10, 1, 5)).toBe(50); // only first clue
+    expect(hintValue(50, 10, 5, 5)).toBe(10); // all clues → floor
+    const seq = [1, 2, 3, 4, 5].map((s) => hintValue(50, 10, s, 5));
+    for (let i = 1; i < seq.length; i++) expect(seq[i]).toBeLessThanOrEqual(seq[i - 1]);
+  });
+  it("reproduces the old count×10 ladder with the default points/min", () => {
+    // 3 clues, points=30 (=3×10), min=10 → 30, 20, 10
+    expect([1, 2, 3].map((s) => hintValue(30, 10, s, 3))).toEqual([30, 20, 10]);
+  });
+  it("single clue → just the base value", () => {
+    expect(hintValue(40, 10, 1, 1)).toBe(40);
   });
 });
 

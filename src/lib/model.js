@@ -592,9 +592,9 @@ export function makeQuestion(type) {
     case "classic":
       return { id: uid(), q: "", a: "", points: 10 };
     case "hints":
-      return { id: uid(), answer: "", hints: ["", "", ""] };
+      return { id: uid(), answer: "", hints: ["", "", ""], points: 30, minPoints: 10 };
     case "connect":
-      return { id: uid(), answer: "", clues: ["", "", ""] };
+      return { id: uid(), answer: "", clues: ["", "", ""], points: 30, minPoints: 10 };
     case "video":
       return {
         id: uid(),
@@ -622,13 +622,14 @@ export function makeQuestion(type) {
         start: 0,
         end: 30,
         steps: 4,
+        minPoints: 1,
       };
     case "image":
       return { id: uid(), url: "", q: "What do you see?", a: "", points: 10 };
     case "morph":
-      return { id: uid(), url: "", a: "", points: 30, effect: "blur", steps: 4 };
+      return { id: uid(), url: "", a: "", points: 30, effect: "blur", steps: 4, minPoints: 1 };
     case "fusion":
-      return { id: uid(), urlA: "", urlB: "", a: "", points: 40, steps: 4 };
+      return { id: uid(), urlA: "", urlB: "", a: "", points: 40, steps: 4, minPoints: 1 };
     case "choice":
       return { id: uid(), q: "", options: ["", "", "", ""], correct: 0, points: 10 };
     case "truefalse":
@@ -655,7 +656,7 @@ export function makeQuestion(type) {
       // "Who Knows More": a category the host auctions; the winner must name
       // at least as many correct answers as they claimed. `answers` is the full
       // list (for clicking + showcase); `ordered` shows them numbered on reveal.
-      return { id: uid(), q: "", answers: ["", "", "", "", ""], ordered: false };
+      return { id: uid(), q: "", answers: ["", "", "", "", ""], ordered: false, points: 1 };
     case "anythingle":
       // Wordle x Guess-Who: a secret fictional character (target) the room
       // narrows down by guessing other characters; `pool` is an optional seed
@@ -720,16 +721,28 @@ export function normalizeQuiz(raw) {
         base.questions = (Array.isArray(r.questions) ? r.questions : []).map((q) => {
           const it = { id: str(q?.id) || uid() };
           if (r.type === "classic") Object.assign(it, { q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
-          if (r.type === "hints")
+          if (r.type === "hints") {
+            const hints = (Array.isArray(q?.hints) ? q.hints : [""]).map(normalizeHint);
+            const real = Math.max(1, hints.filter(hintHasContent).length);
             Object.assign(it, {
               answer: str(q?.answer),
-              hints: (Array.isArray(q?.hints) ? q.hints : [""]).map(normalizeHint),
+              hints,
+              // base points (first clue) decaying to minPoints (all clues); the
+              // default reproduces the old count×10 ladder for existing quizzes.
+              points: num(q?.points, real * 10),
+              minPoints: Math.max(1, num(q?.minPoints, 10)),
             });
-          if (r.type === "connect")
+          }
+          if (r.type === "connect") {
+            const clues = (Array.isArray(q?.clues) ? q.clues : [""]).map(normalizeHint);
+            const real = Math.max(1, clues.filter(hintHasContent).length);
             Object.assign(it, {
               answer: str(q?.answer),
-              clues: (Array.isArray(q?.clues) ? q.clues : [""]).map(normalizeHint),
+              clues,
+              points: num(q?.points, real * 10),
+              minPoints: Math.max(1, num(q?.minPoints, 10)),
             });
+          }
           if (r.type === "video")
             Object.assign(it, {
               url: str(q?.url),
@@ -752,6 +765,7 @@ export function normalizeQuiz(raw) {
               start: numOrNull(q?.start),
               end: numOrNull(q?.end),
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
+              minPoints: Math.max(1, num(q?.minPoints, 1)),
             });
           if (r.type === "image")
             Object.assign(it, { url: str(q?.url), q: str(q?.q), a: str(q?.a), points: num(q?.points, 10) });
@@ -762,6 +776,7 @@ export function normalizeQuiz(raw) {
               points: num(q?.points, 30),
               effect: MORPH_EFFECTS.includes(q?.effect) ? q.effect : "blur",
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
+              minPoints: Math.max(1, num(q?.minPoints, 1)),
             });
           if (r.type === "fusion")
             Object.assign(it, {
@@ -770,6 +785,7 @@ export function normalizeQuiz(raw) {
               a: str(q?.a),
               points: num(q?.points, 40),
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
+              minPoints: Math.max(1, num(q?.minPoints, 1)),
             });
           if (r.type === "choice") {
             // Cap at 6 options — the UI labels them A–F (Builder caps at 6 too).
@@ -802,6 +818,7 @@ export function normalizeQuiz(raw) {
                 .map((a) => (typeof a === "number" ? String(a) : str(a)))
                 .filter((a) => a.trim() !== ""),
               ordered: !!q?.ordered,
+              points: Math.max(1, num(q?.points, 1)), // points per correct answer
             });
           if (r.type === "map")
             Object.assign(it, {
@@ -1014,25 +1031,47 @@ export const countQuestions = (quiz) =>
   );
 
 /**
- * Points still at stake on a morph question at the current reveal step.
- * Full value when fully obscured (step 0), declining toward a floor as the
- * host demorphs (mirrors the hint ladder, but visual).
+ * Points still at stake on a step ladder (fusion defuse, clip extension) at the
+ * current reveal step. Full value when fully obscured (step 0), declining toward
+ * a floor as the host reveals. `min` is the author-set floor (never less than 1).
  * @param {number} points Full point value.
- * @param {number} steps Number of demorph steps.
- * @param {number} step Current step (0 = fully morphed).
+ * @param {number} steps Number of reveal steps.
+ * @param {number} step Current step (0 = fully hidden).
+ * @param {number} [min] Minimum award (floor), default 1.
  */
-export const morphValue = (points, steps, step) =>
-  Math.max(1, Math.round((num(points, 10) * (steps - step + 1)) / (steps + 1)));
+export const morphValue = (points, steps, step, min = 1) =>
+  Math.max(Math.max(1, num(min, 1)), Math.round((num(points, 10) * (steps - step + 1)) / (steps + 1)));
 
 /**
  * Points for the continuous morph demorph: full value while fully morphed
- * (progress 0), decaying linearly to a floor of 1 as it clears (progress 1).
+ * (progress 0), decaying linearly to the floor `min` as it clears (progress 1).
  * The earlier a player buzzes, the more it's worth.
  * @param {number} points Base points.
  * @param {number} progress 0 (morphed) → 1 (clear).
+ * @param {number} [min] Minimum award (floor), default 1.
  */
-export const morphValueAt = (points, progress) =>
-  Math.max(1, Math.round(num(points, 10) * (1 - Math.max(0, Math.min(1, num(progress, 0))))));
+export const morphValueAt = (points, progress, min = 1) => {
+  const floor = Math.max(1, num(min, 1));
+  return Math.max(floor, Math.round(num(points, 10) * (1 - Math.max(0, Math.min(1, num(progress, 0))))));
+};
+
+/**
+ * Ladder value for a hint/connect question: linear from `points` (only the first
+ * clue shown) down to `minPoints` (all clues shown). The earlier someone answers,
+ * the more it's worth.
+ * @param {number} points Value with just the first clue shown.
+ * @param {number} minPoints Floor value once everything is revealed.
+ * @param {number} shown How many clues are currently shown (1-based).
+ * @param {number} total Total number of (real) clues.
+ */
+export const hintValue = (points, minPoints, shown, total) => {
+  const max = num(points, 10);
+  const min = Math.max(1, num(minPoints, 1));
+  const n = Math.max(1, num(total, 1));
+  if (n <= 1) return Math.max(1, Math.round(max));
+  const frac = Math.max(0, Math.min(1, (Math.max(1, num(shown, 1)) - 1) / (n - 1)));
+  return Math.max(min, Math.round(max - frac * (max - min)));
+};
 
 /**
  * Video/audio "clip ladder": the host plays a short slice of the trimmed
