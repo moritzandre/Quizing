@@ -949,6 +949,38 @@ export function roundsFromImport(parsed) {
   return q ? q.rounds : [];
 }
 
+/**
+ * Extract question objects from pasted/imported JSON for appending into an
+ * EXISTING round of the given `type`. Accepts a single question object, an array
+ * of questions, a round ({type, questions}), an array of rounds, or a whole quiz
+ * — pulling the questions and coercing them to `type` via normalizeQuiz (so an
+ * imported question always gets the right shape/defaults and a fresh id is left
+ * to the caller). jeopardy is category-based and has no flat questions → [].
+ * @param {*} parsed Parsed JSON.
+ * @param {string} type Target round type.
+ * @returns {object[]} Normalized questions of `type` (empty on no match).
+ */
+export function questionsFromImport(parsed, type) {
+  if (type === "jeopardy") return [];
+  const isRound = (o) => o && typeof o === "object" && typeof o.type === "string" && Array.isArray(o.questions);
+  let qs = null;
+  if (Array.isArray(parsed)) {
+    qs = parsed.some(isRound) ? parsed.filter((r) => r.type === type).flatMap((r) => r.questions || []) : parsed; // a bare array of question objects
+  } else if (parsed && typeof parsed === "object") {
+    if (Array.isArray(parsed.questions) && !parsed.type)
+      qs = parsed.questions; // loose {questions:[...]}
+    else if (isRound(parsed)) qs = parsed.type === type ? parsed.questions : [];
+    else if (Array.isArray(parsed.rounds) || (parsed.quiz && Array.isArray(parsed.quiz.rounds)))
+      qs = roundsFromImport(parsed)
+        .filter((r) => r.type === type)
+        .flatMap((r) => r.questions || []);
+    else qs = [parsed]; // a single question object
+  }
+  if (!Array.isArray(qs) || !qs.length) return [];
+  const norm = normalizeQuiz({ rounds: [{ type, questions: qs }] });
+  return norm?.rounds?.[0]?.questions || [];
+}
+
 /* ---- quiz/game helpers ---- */
 
 /** True if a round has at least one question (or one jeopardy clue). */

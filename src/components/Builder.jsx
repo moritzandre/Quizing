@@ -31,6 +31,7 @@ import {
   hintHasContent,
   normalizeQuiz,
   roundsFromImport,
+  questionsFromImport,
   MORPH_EFFECTS,
   HINT_TYPES,
   makeAnyChar,
@@ -347,6 +348,86 @@ function RoundImportModal({ onClose, onAdd, t }) {
           </Button>
           <Button onClick={() => onAdd(rounds)} disabled={!rounds.length}>
             <Plus size={16} /> {t("builder.importAdd", { n: rounds.length })}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Import individual QUESTION(s) into an existing round. Accepts a single question,
+ * an array of questions, a round, or a quiz — pulling questions of `type` and
+ * coercing them. Appends to the round (caller assigns fresh ids).
+ */
+function QuestionImportModal({ type, onClose, onAdd, t }) {
+  const fileRef = useRef(null);
+  const [text, setText] = useState("");
+  const [err, setErr] = useState("");
+  let qs = [];
+  if (text.trim()) {
+    try {
+      qs = questionsFromImport(JSON.parse(text), type);
+    } catch {
+      qs = [];
+    }
+  }
+  const onFile = (e) => {
+    const f = e.target.files?.[0];
+    e.target.value = "";
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => setText(String(r.result));
+    r.onerror = () => setErr(t("builder.importBad"));
+    r.readAsText(f);
+  };
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 backdrop-blur-sm sm:items-center"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl border border-stone-200 bg-white p-5 shadow-xl dark:border-stone-800 dark:bg-stone-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-base font-semibold">
+            <FileJson size={18} /> {t("builder.importQuestions")}
+          </h3>
+          <IconButton label={t("common.cancel")} onClick={onClose}>
+            <X size={16} />
+          </IconButton>
+        </div>
+        <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
+          {t("builder.importQuestionsHint", { label: t(`round.${type}.label`) })}
+        </p>
+        <input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={onFile} />
+        <Button variant="outline" className="mb-2 px-3 py-2" onClick={() => fileRef.current?.click()}>
+          <Upload size={15} /> {t("builder.importFile")}
+        </Button>
+        <textarea
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+            setErr("");
+          }}
+          placeholder={t("builder.importPaste")}
+          rows={6}
+          className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 font-mono text-xs text-stone-900 placeholder-stone-400 focus:border-stone-400 focus:outline-none dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100"
+        />
+        {(err || text.trim()) && (
+          <p
+            className={`mt-2 text-sm ${qs.length ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
+          >
+            {err || (qs.length ? t("builder.importFound", { n: qs.length }) : t("builder.importBad"))}
+          </p>
+        )}
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={() => onAdd(qs)} disabled={!qs.length}>
+            <Plus size={16} /> {t("builder.importAdd", { n: qs.length })}
           </Button>
         </div>
       </div>
@@ -862,6 +943,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const [collapsed, setCollapsed] = useState({}); // round id -> collapsed?
   const toggleCollapsed = (rid) => setCollapsed((c) => ({ ...c, [rid]: !c[rid] }));
   const [bulkPts, setBulkPts] = useState({}); // round id -> pending "set all points" value
+  const [qImport, setQImport] = useState(null); // round id currently importing questions into
 
   // Functional updaters so back-to-back writes in one event compose (e.g. the
   // map search sets {lat,lng} and {name} in the same tick) instead of clobbering.
@@ -939,6 +1021,17 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   // Bulk-set the same points value on every question in a round (the ones that
   // carry a per-question `points` field).
   const setAllPoints = (r, pts) => setRound(r.id, { questions: r.questions.map((q) => ({ ...q, points: pts })) });
+  // Append imported questions (already coerced to the round type) with fresh ids.
+  const addImportedQuestions = (rid, qs) => {
+    if (qs?.length)
+      setQuiz((prev) => ({
+        ...prev,
+        rounds: prev.rounds.map((r) =>
+          r.id !== rid ? r : { ...r, questions: [...(r.questions || []), ...qs.map((q) => ({ ...q, id: uid() }))] },
+        ),
+      }));
+    setQImport(null);
+  };
 
   return (
     <div className="mx-auto max-w-2xl px-6 pb-24 pt-6">
@@ -1034,22 +1127,30 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               )}
               {!isCollapsed && (
                 <>
-                  {POINTS_TYPES.includes(r.type) && r.questions?.length > 0 && (
+                  {r.type !== "jeopardy" && (
                     <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-stone-400 dark:text-stone-500">
-                      <span>{t("builder.setAllPoints")}</span>
-                      <input
-                        type="number"
-                        className={`${inputCls} w-20`}
-                        value={bulkPts[r.id] ?? ""}
-                        onChange={(e) => setBulkPts((v) => ({ ...v, [r.id]: e.target.value }))}
-                      />
-                      <button
-                        type="button"
-                        disabled={bulkPts[r.id] == null || bulkPts[r.id] === ""}
-                        onClick={() => setAllPoints(r, Math.max(0, Math.round(+bulkPts[r.id]) || 0))}
-                        className={`${addBtnCls} disabled:opacity-40`}
-                      >
-                        {t("builder.apply")}
+                      {POINTS_TYPES.includes(r.type) && r.questions?.length > 0 && (
+                        <>
+                          <span>{t("builder.setAllPoints")}</span>
+                          <input
+                            type="number"
+                            className={`${inputCls} w-20`}
+                            value={bulkPts[r.id] ?? ""}
+                            onChange={(e) => setBulkPts((v) => ({ ...v, [r.id]: e.target.value }))}
+                          />
+                          <button
+                            type="button"
+                            disabled={bulkPts[r.id] == null || bulkPts[r.id] === ""}
+                            onClick={() => setAllPoints(r, Math.max(0, Math.round(+bulkPts[r.id]) || 0))}
+                            className={`${addBtnCls} disabled:opacity-40`}
+                          >
+                            {t("builder.apply")}
+                          </button>
+                          <span className="text-stone-300 dark:text-stone-600">·</span>
+                        </>
+                      )}
+                      <button type="button" onClick={() => setQImport(r.id)} className={addBtnCls}>
+                        <FileJson size={14} /> {t("builder.importQuestions")}
                       </button>
                     </div>
                   )}
@@ -2122,6 +2223,19 @@ export default function Builder({ initial, note, onSave, onCancel }) {
 
       {importing && <RoundImportModal onClose={() => setImporting(false)} onAdd={addImportedRounds} t={t} />}
       {creating && <RoundCreatorModal onClose={() => setCreating(false)} onAdd={addImportedRounds} t={t} />}
+      {qImport != null &&
+        (() => {
+          const r = quiz.rounds.find((x) => x.id === qImport);
+          if (!r) return null;
+          return (
+            <QuestionImportModal
+              type={r.type}
+              onClose={() => setQImport(null)}
+              onAdd={(qs) => addImportedQuestions(r.id, qs)}
+              t={t}
+            />
+          );
+        })()}
     </div>
   );
 }

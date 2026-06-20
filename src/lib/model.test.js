@@ -33,6 +33,7 @@ import {
   summarizeGamesFromResults,
   mapillaryEmbedUrl,
   roundsFromImport,
+  questionsFromImport,
   normText,
   makeAnyChar,
   normalizeAnyChar,
@@ -1363,6 +1364,33 @@ describe("roundsFromImport", () => {
     expect(roundsFromImport(42)).toEqual([]);
     expect(roundsFromImport("nope")).toEqual([]);
     expect(roundsFromImport({})).toEqual([]);
+  });
+});
+
+describe("questionsFromImport", () => {
+  it("takes a single question, an array, a round, and a quiz — coerced to the target type", () => {
+    expect(questionsFromImport({ q: "Q", a: "A", points: 5 }, "classic")).toHaveLength(1);
+    expect(questionsFromImport([{ q: "Q1" }, { q: "Q2" }], "classic")).toHaveLength(2);
+    const round = { type: "classic", questions: [{ q: "A" }, { q: "B" }] };
+    expect(questionsFromImport(round, "classic")).toHaveLength(2);
+    expect(questionsFromImport({ quiz: { rounds: [round] } }, "classic")).toHaveLength(2);
+    // normalized to the target shape (classic gets a, points)
+    expect(questionsFromImport({ q: "Q" }, "classic")[0]).toMatchObject({ q: "Q", a: "", points: 10 });
+  });
+
+  it("only pulls questions of the matching type from multi-type imports", () => {
+    const rounds = [
+      { type: "classic", questions: [{ q: "C" }] },
+      { type: "image", questions: [{ q: "I", url: "u" }] },
+    ];
+    expect(questionsFromImport(rounds, "image")).toHaveLength(1);
+    expect(questionsFromImport(rounds, "image")[0]).toMatchObject({ url: "u" });
+  });
+
+  it("returns [] for jeopardy (category-based) and for junk", () => {
+    expect(questionsFromImport({ q: "Q" }, "jeopardy")).toEqual([]);
+    expect(questionsFromImport(null, "classic")).toEqual([]);
+    expect(questionsFromImport("nope", "classic")).toEqual([]);
   });
 });
 

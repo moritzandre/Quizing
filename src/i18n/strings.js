@@ -131,6 +131,9 @@ const en = {
   "builder.orImport": "Or import from JSON",
   "builder.importRound": "Import round(s)",
   "builder.importRoundHint": "Paste a round, an array of rounds, or a whole quiz — or upload a .quiz.json file.",
+  "builder.importQuestions": "Import question(s)",
+  "builder.importQuestionsHint":
+    "Paste a question, an array of questions, a round, or a quiz — matching {label} questions are added to this round.",
   "builder.importFile": "Upload .json",
   "builder.importPaste": "Paste round/quiz JSON here…",
   "builder.importFound": "{n} round(s) found",
@@ -711,6 +714,9 @@ const de = {
   "builder.importRound": "Runde(n) importieren",
   "builder.importRoundHint":
     "Füge eine Runde, ein Array von Runden oder ein ganzes Quiz ein — oder lade eine .quiz.json-Datei hoch.",
+  "builder.importQuestions": "Frage(n) importieren",
+  "builder.importQuestionsHint":
+    "Füge eine Frage, ein Array von Fragen, eine Runde oder ein Quiz ein — passende {label}-Fragen werden dieser Runde hinzugefügt.",
   "builder.importFile": ".json hochladen",
   "builder.importPaste": "Runden-/Quiz-JSON hier einfügen…",
   "builder.importFound": "{n} Runde(n) gefunden",
