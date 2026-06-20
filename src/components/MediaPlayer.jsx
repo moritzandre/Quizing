@@ -24,6 +24,8 @@ import NativeMediaPlayer from "./NativeMediaPlayer.jsx";
  * @param {number|null} [props.end] Clip out-point (seconds) — the ladder's current end.
  * @param {{n:number,action:string}|null} [props.transport] Remote transport (play | pause | restart) on n change.
  * @param {boolean} [props.controls] Show the player's own control bar (false = headless, transport-driven).
+ * @param {boolean} [props.reverse] Play the audio reversed — only possible for direct file sources
+ *   (YouTube/Spotify embeds expose no samples), so it's a no-op for those.
  */
 export default function MediaPlayer({
   url,
@@ -33,6 +35,7 @@ export default function MediaPlayer({
   transport = null,
   controls = true,
   volume = 100,
+  reverse = false,
 }) {
   const { t } = useI18n();
   const src = mediaSource(url);
@@ -55,6 +58,7 @@ export default function MediaPlayer({
         url={src.url}
         media={src.media}
         audioOnly={audioOnly}
+        reverse={reverse}
         start={start}
         end={end}
         transport={transport}

@@ -603,6 +603,7 @@ export function makeQuestion(type) {
         a: "",
         points: 10,
         audioOnly: false,
+        reverse: false,
         start: null,
         end: null,
       };
@@ -617,6 +618,7 @@ export function makeQuestion(type) {
         a: "",
         points: 10,
         audioOnly: false,
+        reverse: false,
         start: 0,
         end: 30,
         steps: 4,
@@ -638,7 +640,17 @@ export function makeQuestion(type) {
     case "number":
       return { id: uid(), q: "", answer: null, unit: "", points: 10 };
     case "map":
-      return { id: uid(), q: "", name: "", lat: null, lng: null, points: 10, tileLayer: "map", street: "" };
+      return {
+        id: uid(),
+        q: "",
+        name: "",
+        lat: null,
+        lng: null,
+        points: 10,
+        tileLayer: "map",
+        phoneTileLayer: "map",
+        street: "",
+      };
     case "whoknows":
       // "Who Knows More": a category the host auctions; the winner must name
       // at least as many correct answers as they claimed. `answers` is the full
@@ -725,6 +737,7 @@ export function normalizeQuiz(raw) {
               a: str(q?.a),
               points: num(q?.points, 10),
               audioOnly: !!q?.audioOnly,
+              reverse: !!q?.reverse,
               start: numOrNull(q?.start),
               end: numOrNull(q?.end),
             });
@@ -735,6 +748,7 @@ export function normalizeQuiz(raw) {
               a: str(q?.a),
               points: num(q?.points, 10),
               audioOnly: !!q?.audioOnly,
+              reverse: !!q?.reverse,
               start: numOrNull(q?.start),
               end: numOrNull(q?.end),
               steps: Math.max(1, Math.min(8, num(q?.steps, 4))),
@@ -797,6 +811,8 @@ export function normalizeQuiz(raw) {
               lng: numOrNull(q?.lng),
               points: num(q?.points, 10),
               tileLayer: q?.tileLayer === "satellite" ? "satellite" : "map",
+              // separate layer for the players' phone pin-placement map
+              phoneTileLayer: q?.phoneTileLayer === "satellite" ? "satellite" : "map",
               street: str(q?.street),
             });
           if (r.type === "anythingle")
@@ -1234,6 +1250,7 @@ function presentQ(type, q) {
         q: str(q.q),
         url: str(q.url),
         audioOnly: !!q.audioOnly,
+        reverse: !!q.reverse,
         start: numOrNull(q.start),
         end: numOrNull(q.end),
       };
@@ -1242,6 +1259,7 @@ function presentQ(type, q) {
         q: str(q.q),
         url: str(q.url),
         audioOnly: !!q.audioOnly,
+        reverse: !!q.reverse,
         start: numOrNull(q.start),
         end: numOrNull(q.end),
         steps: num(q.steps, 4),

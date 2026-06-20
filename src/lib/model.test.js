@@ -169,7 +169,17 @@ describe("normalizeQuiz", () => {
         title: "V",
         timer: null,
         questions: [
-          { id: "v1", url: `https://youtu.be/${ID}`, q: "Q", a: "A", points: 10, audioOnly: true, start: 5, end: 20 },
+          {
+            id: "v1",
+            url: `https://youtu.be/${ID}`,
+            q: "Q",
+            a: "A",
+            points: 10,
+            audioOnly: true,
+            reverse: false,
+            start: 5,
+            end: 20,
+          },
         ],
       },
       {
@@ -215,7 +225,17 @@ describe("normalizeQuiz", () => {
         title: "M",
         timer: null,
         questions: [
-          { id: "m1", q: "Where?", name: "Spot", lat: 1.5, lng: -2.25, points: 10, tileLayer: "satellite", street: "" },
+          {
+            id: "m1",
+            q: "Where?",
+            name: "Spot",
+            lat: 1.5,
+            lng: -2.25,
+            points: 10,
+            tileLayer: "satellite",
+            phoneTileLayer: "map",
+            street: "",
+          },
         ],
       },
     ],
@@ -331,7 +351,13 @@ describe("normalizeQuiz", () => {
     });
     expect(q.rounds[0].questions[0]).toMatchObject({ url: "u", a: "A", start: 10, end: 40 });
     expect(q.rounds[0].questions[0].steps).toBeUndefined(); // plain video has no ladder
-    expect(q.rounds[1].questions[0]).toMatchObject({ audioOnly: false, points: 10, start: null, end: null });
+    expect(q.rounds[1].questions[0]).toMatchObject({
+      audioOnly: false,
+      reverse: false,
+      points: 10,
+      start: null,
+      end: null,
+    });
   });
 
   it("normalizes clip rounds: trim window + clip-ladder steps clamp (min 1) + defaults", () => {
@@ -441,14 +467,21 @@ describe("normalizeQuiz", () => {
     const q = normalizeQuiz({
       rounds: [
         { type: "video", questions: [{ url: "u", start: "5", end: "abc" }, {}] },
-        { type: "map", questions: [{ q: "W?", tileLayer: "satellite" }, { q: "W2?", tileLayer: "hack" }, {}] },
+        {
+          type: "map",
+          questions: [
+            { q: "W?", tileLayer: "satellite", phoneTileLayer: "satellite" },
+            { q: "W2?", tileLayer: "hack", phoneTileLayer: "hack" },
+            {},
+          ],
+        },
       ],
     });
     expect(q.rounds[0].questions[0]).toMatchObject({ start: 5, end: null });
     expect(q.rounds[0].questions[1]).toMatchObject({ start: null, end: null });
-    expect(q.rounds[1].questions[0].tileLayer).toBe("satellite");
-    expect(q.rounds[1].questions[1].tileLayer).toBe("map"); // unknown → map
-    expect(q.rounds[1].questions[2].tileLayer).toBe("map"); // missing → map
+    expect(q.rounds[1].questions[0]).toMatchObject({ tileLayer: "satellite", phoneTileLayer: "satellite" });
+    expect(q.rounds[1].questions[1]).toMatchObject({ tileLayer: "map", phoneTileLayer: "map" }); // unknown → map
+    expect(q.rounds[1].questions[2]).toMatchObject({ tileLayer: "map", phoneTileLayer: "map" }); // missing → map
   });
 
   it("builds a Mapillary embed URL from a share link, embed link, raw id, or nothing", () => {

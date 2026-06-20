@@ -1183,6 +1183,15 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             />
                             {t("builder.audioOnly")}
                           </label>
+                          <label className="mt-2 inline-flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-stone-300">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 rounded accent-indigo-600"
+                              checked={!!item.reverse}
+                              onChange={(e) => qRow(r, item, { reverse: e.target.checked })}
+                            />
+                            {t("builder.reverse")}
+                          </label>
                           <TrimInputs start={item.start} end={item.end} onChange={(p) => qRow(r, item, p)} t={t} />
                           {r.type === "clip" && (
                             <div className="mt-2 flex items-center gap-2">
@@ -1813,22 +1822,34 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                           value={item.name}
                           onChange={(e) => qRow(r, item, { name: e.target.value })}
                         />
-                        <div className="mt-2 inline-flex rounded-xl border border-stone-200 p-0.5 dark:border-stone-700">
+                        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
                           {[
-                            { k: "map", label: t("builder.layerMap") },
-                            { k: "satellite", label: t("builder.layerSatellite") },
-                          ].map(({ k, label }) => (
-                            <button
-                              key={k}
-                              onClick={() => qRow(r, item, { tileLayer: k })}
-                              className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${FOCUS} ${
-                                (item.tileLayer || "map") === k
-                                  ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
-                                  : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
-                              }`}
-                            >
-                              {label}
-                            </button>
+                            { field: "tileLayer", label: t("builder.tvMapLayer") },
+                            { field: "phoneTileLayer", label: t("builder.phoneMapLayer") },
+                          ].map(({ field, label }) => (
+                            <div key={field} className="flex flex-col gap-1">
+                              <span className="text-[11px] font-medium text-stone-400 dark:text-stone-500">
+                                {label}
+                              </span>
+                              <div className="inline-flex rounded-xl border border-stone-200 p-0.5 dark:border-stone-700">
+                                {[
+                                  { k: "map", label: t("builder.layerMap") },
+                                  { k: "satellite", label: t("builder.layerSatellite") },
+                                ].map(({ k, label: kl }) => (
+                                  <button
+                                    key={k}
+                                    onClick={() => qRow(r, item, { [field]: k })}
+                                    className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${FOCUS} ${
+                                      (item[field] || "map") === k
+                                        ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
+                                        : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
+                                    }`}
+                                  >
+                                    {kl}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
                           ))}
                         </div>
                         <div className="mt-2">

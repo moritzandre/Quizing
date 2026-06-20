@@ -367,8 +367,9 @@ export function useHostRoom() {
     pushState();
   }, [pushState]);
   const collectPins = useCallback(
-    (qKey) => {
-      phaseRef.current = { phase: "map", qKey };
+    (qKey, opts = {}) => {
+      // mapTile = which base layer the players' phone pin map should show.
+      phaseRef.current = { phase: "map", qKey, mapTile: opts.mapTile === "satellite" ? "satellite" : "map" };
       setPins({});
       pushState();
     },
@@ -515,6 +516,7 @@ export function usePlayerRoom(code) {
                 lockedBy: obj.lockedBy ?? null,
                 teams: Array.isArray(obj.teams) ? obj.teams : null,
                 options: Array.isArray(obj.options) ? obj.options : null,
+                mapTile: obj.mapTile === "satellite" ? "satellite" : "map",
                 scores: normalizePhoneScores(obj.scores),
                 ended: !!obj.ended,
                 gameId: str(obj.gameId),

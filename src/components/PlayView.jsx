@@ -284,7 +284,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     if (game.stage !== "question" || game.revealed) {
       room.idle();
     } else if (round?.type === "map") {
-      room.collectPins(qKey);
+      room.collectPins(qKey, { mapTile: round.questions[game.qi]?.phoneTileLayer });
     } else if (BINARY_TYPES.includes(round?.type)) {
       // Binary rounds (true/false, higher/lower) reuse the choice phase with fixed labels.
       room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
@@ -1602,6 +1602,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 key={qKey}
                 url={q.url}
                 audioOnly={!!q.audioOnly}
+                reverse={!!q.reverse}
                 start={q.start}
                 end={clipEnd(q, morphStep)}
                 transport={transport}

@@ -78,6 +78,7 @@ export default function JoinView({ code }) {
 
   const phase = room.state?.phase || "idle";
   const qKey = room.state?.qKey;
+  const mapTile = room.state?.mapTile === "satellite" ? "satellite" : "map";
   const lockedBy = room.state?.lockedBy || null;
   const teams = room.state?.teams || null;
   const options = room.state?.options || [];
@@ -815,6 +816,7 @@ export default function JoinView({ code }) {
                     key={qKey}
                     answer={myPin ? { lat: myPin.lat, lng: myPin.lng, label: room.name } : undefined}
                     onPick={placePin}
+                    tileLayer={mapTile}
                     className="h-full w-full"
                   />
                 </div>
