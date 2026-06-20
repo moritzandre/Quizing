@@ -156,7 +156,7 @@ function SortableList({ items, getKey, onReorder, onDuplicate, gap = "space-y-3"
     <div className={gap}>
       {items.map((item, i) => (
         <div
-          key={getKey(item)}
+          key={getKey(item, i)}
           draggable={armedIdx === i}
           onDragStart={(e) => {
             if (armedIdx !== i) return e.preventDefault();
@@ -732,95 +732,102 @@ function MinPointsField({ value, onChange, t }) {
 function HintsField({ hints, onChange, t }) {
   const set = (i, val) => onChange(hints.map((h, j) => (j === i ? val : h)));
   const del = (i) => onChange(hints.filter((_, j) => j !== i));
-  const move = (i, dir) => {
-    const j = i + dir;
-    if (j < 0 || j >= hints.length) return;
-    const copy = [...hints];
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-    onChange(copy);
-  };
   const count = hints.filter(hintHasContent).length;
   return (
     <div className="space-y-2">
-      {hints.map((h, i) => {
-        const type = hintTypeOf(h);
-        return (
-          <div key={i} className="rounded-lg border border-stone-200 p-2 dark:border-stone-700">
-            <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-xs font-bold text-stone-400 dark:text-stone-500">{i + 1}</span>
-              <select
-                value={type}
-                onChange={(e) => set(i, makeHint(e.target.value))}
-                aria-label={t("builder.hintType")}
-                className={`${inputCls} w-28 py-1`}
-              >
-                {HINT_TYPES.map((ty) => (
-                  <option key={ty} value={ty}>
-                    {t(HINT_TYPE_KEY[ty])}
-                  </option>
-                ))}
-              </select>
-              <div className="ml-auto flex items-center">
-                <IconButton label={t("builder.moveUp")} onClick={() => move(i, -1)}>
-                  <ChevronUp size={14} />
-                </IconButton>
-                <IconButton label={t("builder.moveDown")} onClick={() => move(i, 1)}>
-                  <ChevronDown size={14} />
-                </IconButton>
-                <ConfirmDelete label={t("builder.deleteHint")} onConfirm={() => del(i)} />
+      <SortableList
+        items={hints}
+        getKey={(_, i) => i}
+        onReorder={(f, to) => onChange(moveItem(hints, f, to))}
+        gap="space-y-2"
+      >
+        {(h, i, hp) => {
+          const type = hintTypeOf(h);
+          return (
+            <div className="rounded-lg border border-stone-200 p-2 dark:border-stone-700">
+              <div className="mb-1.5 flex items-center gap-2">
+                <DragHandle {...hp} />
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500">{i + 1}</span>
+                <select
+                  value={type}
+                  onChange={(e) => set(i, makeHint(e.target.value))}
+                  aria-label={t("builder.hintType")}
+                  className={`${inputCls} w-28 py-1`}
+                >
+                  {HINT_TYPES.map((ty) => (
+                    <option key={ty} value={ty}>
+                      {t(HINT_TYPE_KEY[ty])}
+                    </option>
+                  ))}
+                </select>
+                <div className="ml-auto flex items-center">
+                  <ConfirmDelete label={t("builder.deleteHint")} onConfirm={() => del(i)} />
+                </div>
               </div>
+              {type === "text" && (
+                <input
+                  className={inputCls}
+                  placeholder={t("builder.hintText")}
+                  value={typeof h === "string" ? h : ""}
+                  onChange={(e) => set(i, e.target.value)}
+                />
+              )}
+              {type === "image" && (
+                <ImageField value={h.url || ""} onChange={(url) => set(i, { type: "image", url })} />
+              )}
+              {type === "audio" && (
+                <>
+                  <input
+                    className={inputCls}
+                    placeholder={t("builder.audioUrl")}
+                    value={h.url || ""}
+                    onChange={(e) => set(i, { ...h, type: "audio", url: e.target.value })}
+                  />
+                  <TrimInputs
+                    start={h.start}
+                    end={h.end}
+                    onChange={(p) => set(i, { ...h, type: "audio", ...p })}
+                    t={t}
+                  />
+                </>
+              )}
+              {type === "video" && (
+                <>
+                  <input
+                    className={inputCls}
+                    placeholder={t("builder.videoUrl")}
+                    value={h.url || ""}
+                    onChange={(e) => set(i, { ...h, type: "video", url: e.target.value })}
+                  />
+                  <TrimInputs
+                    start={h.start}
+                    end={h.end}
+                    onChange={(p) => set(i, { ...h, type: "video", ...p })}
+                    t={t}
+                  />
+                </>
+              )}
+              {type === "map" && (
+                <div>
+                  <input
+                    className={`${inputCls} mb-2`}
+                    placeholder={t("builder.locationLabel")}
+                    value={h.name || ""}
+                    onChange={(e) =>
+                      set(i, { type: "map", lat: h.lat ?? null, lng: h.lng ?? null, name: e.target.value })
+                    }
+                  />
+                  <LeafletMap
+                    answer={h.lat != null ? { lat: h.lat, lng: h.lng, label: h.name } : undefined}
+                    onPick={(lat, lng) => set(i, { type: "map", lat, lng, name: h.name || "" })}
+                    className="h-56"
+                  />
+                </div>
+              )}
             </div>
-            {type === "text" && (
-              <input
-                className={inputCls}
-                placeholder={t("builder.hintText")}
-                value={typeof h === "string" ? h : ""}
-                onChange={(e) => set(i, e.target.value)}
-              />
-            )}
-            {type === "image" && <ImageField value={h.url || ""} onChange={(url) => set(i, { type: "image", url })} />}
-            {type === "audio" && (
-              <>
-                <input
-                  className={inputCls}
-                  placeholder={t("builder.audioUrl")}
-                  value={h.url || ""}
-                  onChange={(e) => set(i, { ...h, type: "audio", url: e.target.value })}
-                />
-                <TrimInputs start={h.start} end={h.end} onChange={(p) => set(i, { ...h, type: "audio", ...p })} t={t} />
-              </>
-            )}
-            {type === "video" && (
-              <>
-                <input
-                  className={inputCls}
-                  placeholder={t("builder.videoUrl")}
-                  value={h.url || ""}
-                  onChange={(e) => set(i, { ...h, type: "video", url: e.target.value })}
-                />
-                <TrimInputs start={h.start} end={h.end} onChange={(p) => set(i, { ...h, type: "video", ...p })} t={t} />
-              </>
-            )}
-            {type === "map" && (
-              <div>
-                <input
-                  className={`${inputCls} mb-2`}
-                  placeholder={t("builder.locationLabel")}
-                  value={h.name || ""}
-                  onChange={(e) =>
-                    set(i, { type: "map", lat: h.lat ?? null, lng: h.lng ?? null, name: e.target.value })
-                  }
-                />
-                <LeafletMap
-                  answer={h.lat != null ? { lat: h.lat, lng: h.lng, label: h.name } : undefined}
-                  onPick={(lat, lng) => set(i, { type: "map", lat, lng, name: h.name || "" })}
-                  className="h-56"
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        }}
+      </SortableList>
       <button
         onClick={() => onChange([...hints, makeHint("text")])}
         className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
@@ -1978,13 +1985,6 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       >
                         {(item, i, hp) => {
                           const answers = item.answers || [];
-                          const moveAns = (ai, dir) => {
-                            const j = ai + dir;
-                            if (j < 0 || j >= answers.length) return;
-                            const a = [...answers];
-                            [a[ai], a[j]] = [a[j], a[ai]];
-                            qRow(r, item, { answers: a });
-                          };
                           return (
                             <div className={panelCls}>
                               <div className={rowLabelCls}>
@@ -2020,9 +2020,15 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                 />
                                 {t("builder.wkOrdered")}
                               </label>
-                              <div className="mt-2 space-y-1.5">
-                                {answers.map((ans, ai) => (
-                                  <div key={ai} className="flex items-center gap-1.5">
+                              <SortableList
+                                items={answers}
+                                getKey={(_, ai) => ai}
+                                onReorder={(f, to) => qRow(r, item, { answers: moveItem(answers, f, to) })}
+                                gap="mt-2 space-y-1.5"
+                              >
+                                {(ans, ai, ahp) => (
+                                  <div className="flex items-center gap-1.5">
+                                    <DragHandle {...ahp} />
                                     {item.ordered && (
                                       <span className="w-5 shrink-0 text-right text-xs font-bold text-stone-400">
                                         {ai + 1}
@@ -2039,20 +2045,6 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                       }
                                     />
                                     <button
-                                      onClick={() => moveAns(ai, -1)}
-                                      aria-label="Move up"
-                                      className={`shrink-0 rounded-md border border-stone-200 p-1 text-stone-400 dark:border-stone-700 ${FOCUS}`}
-                                    >
-                                      <ChevronUp size={14} />
-                                    </button>
-                                    <button
-                                      onClick={() => moveAns(ai, 1)}
-                                      aria-label="Move down"
-                                      className={`shrink-0 rounded-md border border-stone-200 p-1 text-stone-400 dark:border-stone-700 ${FOCUS}`}
-                                    >
-                                      <ChevronDown size={14} />
-                                    </button>
-                                    <button
                                       onClick={() => qRow(r, item, { answers: answers.filter((_, j) => j !== ai) })}
                                       aria-label={t("builder.deleteOption")}
                                       className={`shrink-0 rounded-md border border-stone-200 p-1 text-stone-400 hover:text-red-500 dark:border-stone-700 ${FOCUS}`}
@@ -2060,8 +2052,8 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                                       <X size={14} />
                                     </button>
                                   </div>
-                                ))}
-                              </div>
+                                )}
+                              </SortableList>
                               <button
                                 onClick={() => qRow(r, item, { answers: [...answers, ""] })}
                                 className={`mt-2 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`}
