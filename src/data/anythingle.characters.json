@@ -50220,5 +50220,1563 @@
       "en": "I shall play my song and pray for the wind to return.",
       "de": "Ich werde mein Lied spielen und beten, dass der Wind zurückkehrt."
     }
+  },
+  {
+    "id": "she-hulk",
+    "name": "She-Hulk",
+    "aliases": ["Jennifer Walters", "Shulkie", "Sensational She-Hulk"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Politician", "Detective"],
+    "powers": ["Super strength", "Healing/Regeneration", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Los Angeles, California",
+    "medium": "Comic (Western)",
+    "year": 1980,
+    "quote": {
+      "en": "I'm a lawyer and a hero, and I object to your nonsense on both counts.",
+      "de": "Ich bin Anwältin und Heldin, und gegen deinen Unsinn lege ich in beiderlei Hinsicht Einspruch ein."
+    }
+  },
+  {
+    "id": "wonder-man",
+    "name": "Wonder Man",
+    "aliases": ["Simon Williams", "Ionic Man"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Artist", "Adventurer"],
+    "powers": ["Super strength", "Flight", "Energy/Beams"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Paterson, New Jersey",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "Ionic energy keeps me going long after a mortal body would have quit.",
+      "de": "Ionenenergie hält mich am Laufen, lange nachdem ein sterblicher Körper aufgegeben hätte."
+    }
+  },
+  {
+    "id": "sentry",
+    "name": "Sentry",
+    "aliases": ["Robert Reynolds", "The Golden Guardian of Good", "Bob"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Super strength", "Flight", "Energy/Beams"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "United States",
+    "medium": "Comic (Western)",
+    "year": 2000,
+    "quote": {
+      "en": "I have the power of a million exploding suns, and I'm terrified of every bit of it.",
+      "de": "Ich besitze die Macht von einer Million explodierender Sonnen, und ich fürchte mich vor jedem Funken davon."
+    }
+  },
+  {
+    "id": "moon-knight",
+    "name": "Moon Knight",
+    "aliases": ["Marc Spector", "Mr. Knight", "Fist of Khonshu"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Detective", "Mystic"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Chicago, Illinois",
+    "medium": "Comic (Western)",
+    "year": 1975,
+    "quote": {
+      "en": "The moon sees everything, and tonight it sees you.",
+      "de": "Der Mond sieht alles, und heute Nacht sieht er dich."
+    }
+  },
+  {
+    "id": "mockingbird",
+    "name": "Mockingbird",
+    "aliases": ["Bobbi Morse", "Agent 19", "Huntress"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Spy", "Scientist", "Warrior"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Marietta, Georgia",
+    "medium": "Comic (Western)",
+    "year": 1971,
+    "quote": {
+      "en": "Twin battle staves and a doctorate — try keeping up with that.",
+      "de": "Zwei Kampfstäbe und ein Doktortitel — versuch da mal mitzuhalten."
+    }
+  },
+  {
+    "id": "hellcat",
+    "name": "Hellcat",
+    "aliases": ["Patsy Walker", "Hedy"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Warrior", "Mystic"],
+    "powers": ["Martial arts", "Magic/Sorcery", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Centerville, California",
+    "medium": "Comic (Western)",
+    "year": 1944,
+    "quote": {
+      "en": "I've fought demons before breakfast, so don't think you scare me.",
+      "de": "Ich habe schon vor dem Frühstück gegen Dämonen gekämpft, also glaub bloß nicht, du würdest mir Angst einjagen."
+    }
+  },
+  {
+    "id": "tigra",
+    "name": "Tigra",
+    "aliases": ["Greer Nelson", "The Cat"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Mystic"],
+    "powers": ["Super strength", "Martial arts", "Healing/Regeneration"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Chicago, Illinois",
+    "medium": "Comic (Western)",
+    "year": 1972,
+    "quote": {
+      "en": "Claws out, senses sharp — there's a little wildcat in all of us.",
+      "de": "Krallen raus, Sinne geschärft — in uns allen steckt eine kleine Wildkatze."
+    }
+  },
+  {
+    "id": "black-knight",
+    "name": "Black Knight",
+    "aliases": ["Dane Whitman", "Wielder of the Ebony Blade"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Scientist", "Adventurer"],
+    "powers": ["Weapon mastery", "Martial arts", "Magic/Sorcery"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "Gloucestershire, England",
+    "medium": "Comic (Western)",
+    "year": 1967,
+    "quote": {
+      "en": "The cursed blade demands blood, and I must master it before it masters me.",
+      "de": "Die verfluchte Klinge verlangt nach Blut, und ich muss sie bezwingen, bevor sie mich bezwingt."
+    }
+  },
+  {
+    "id": "kang-the-conqueror",
+    "name": "Kang the Conqueror",
+    "aliases": ["Nathaniel Richards", "Rama-Tut", "Immortus", "The Conqueror"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Scientist"],
+    "powers": ["Tech/Gadgets", "Energy/Beams", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Council of Kangs",
+    "origin": "31st-century Earth",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "Time itself bends to my will — every era is mine to conquer.",
+      "de": "Die Zeit selbst beugt sich meinem Willen — jede Ära ist mein, um sie zu erobern."
+    }
+  },
+  {
+    "id": "baron-zemo",
+    "name": "Baron Zemo",
+    "aliases": ["Baron Heinrich Zemo", "Helmut Zemo", "Citizen V"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Warrior", "Scientist"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Masters of Evil",
+    "origin": "Leipzig, Germany",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "Heroes are so easily fooled when you give them exactly what they wish to believe.",
+      "de": "Helden lassen sich so leicht täuschen, wenn man ihnen genau das gibt, was sie glauben wollen."
+    }
+  },
+  {
+    "id": "korvac",
+    "name": "Korvac",
+    "aliases": ["Michael Korvac", "The Enemy", "Michael"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Scientist"],
+    "powers": ["Energy/Beams", "Flight", "Tech/Gadgets"],
+    "franchise": "Avengers",
+    "affiliation": "Badoon Empire",
+    "origin": "Brooklyn, 31st-century Earth",
+    "medium": "Comic (Western)",
+    "year": 1975,
+    "quote": {
+      "en": "I have touched the power cosmic, and now I will remake the universe in perfection.",
+      "de": "Ich habe die kosmische Macht berührt, und nun werde ich das Universum in Vollkommenheit neu erschaffen."
+    }
+  },
+  {
+    "id": "swordsman",
+    "name": "Swordsman",
+    "aliases": ["Jacques Duquesne", "The Swordsman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Adventurer"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Avengers",
+    "affiliation": "Avengers",
+    "origin": "France",
+    "medium": "Comic (Western)",
+    "year": 1965,
+    "quote": {
+      "en": "A blade in skilled hands is worth more than a hundred fancy powers.",
+      "de": "Eine Klinge in geübten Händen ist mehr wert als hundert ausgefallene Kräfte."
+    }
+  },
+  {
+    "id": "the-joker",
+    "name": "The Joker",
+    "aliases": ["Joker", "Clown Prince of Crime", "The Harlequin of Hate"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["Peak human/Genius", "Weapon mastery"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1940,
+    "quote": {
+      "en": "Why so serious? Let's put a smile on that face.",
+      "de": "Warum so ernst? Wir wollen doch ein Lächeln auf dein Gesicht zaubern."
+    }
+  },
+  {
+    "id": "tim-drake",
+    "name": "Tim Drake",
+    "aliases": ["Robin", "Red Robin", "Drake"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Warrior", "Student"],
+    "powers": ["Martial arts", "Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Batman",
+    "affiliation": "Bat-Family",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1989,
+    "quote": {
+      "en": "I figured it out before anyone else did — that's what I do.",
+      "de": "Ich habe es vor allen anderen herausgefunden — das ist es, was ich tue."
+    }
+  },
+  {
+    "id": "damian-wayne",
+    "name": "Damian Wayne",
+    "aliases": ["Robin", "Son of the Bat"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Detective", "Student"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Batman",
+    "affiliation": "Bat-Family",
+    "origin": "Nanda Parbat",
+    "medium": "Comic (Western)",
+    "year": 2006,
+    "quote": {
+      "en": "I was trained to be the world's greatest assassin. Try to keep up.",
+      "de": "Ich wurde zum größten Attentäter der Welt ausgebildet. Versuch mitzuhalten."
+    }
+  },
+  {
+    "id": "lucius-fox",
+    "name": "Lucius Fox",
+    "aliases": ["Mr. Fox"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Worker", "Leader"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Batman",
+    "affiliation": "Wayne Enterprises",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1979,
+    "quote": {
+      "en": "Let me make sure I understand. You want me to build the equipment, but not ask what it's for.",
+      "de": "Lass mich sehen, ob ich das richtig verstehe. Ich soll die Ausrüstung bauen, aber nicht fragen, wofür sie ist."
+    }
+  },
+  {
+    "id": "hugo-strange",
+    "name": "Hugo Strange",
+    "aliases": ["Professor Strange", "Dr. Hugo Strange"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Leader"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1940,
+    "quote": {
+      "en": "I know everything about you — your fears, your secrets, the man behind the mask.",
+      "de": "Ich weiß alles über dich — deine Ängste, deine Geheimnisse, den Mann hinter der Maske."
+    }
+  },
+  {
+    "id": "victor-zsasz",
+    "name": "Victor Zsasz",
+    "aliases": ["Mr. Zsasz", "Zsasz"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Monster"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1992,
+    "quote": {
+      "en": "Every one I free gets a tally. There's no more room left on my skin.",
+      "de": "Für jeden, den ich befreie, kommt eine Kerbe dazu. Auf meiner Haut ist kein Platz mehr."
+    }
+  },
+  {
+    "id": "hush",
+    "name": "Hush",
+    "aliases": ["Thomas Elliot", "Tommy Elliot"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Healer", "Outlaw"],
+    "powers": ["Peak human/Genius", "Weapon mastery"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 2002,
+    "quote": {
+      "en": "Like a surgeon, I cut away everything you love, piece by piece.",
+      "de": "Wie ein Chirurg schneide ich alles weg, was du liebst, Stück für Stück."
+    }
+  },
+  {
+    "id": "talia-al-ghul",
+    "name": "Talia al Ghul",
+    "aliases": ["Talia", "Daughter of the Demon"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Warrior", "Spy"],
+    "powers": ["Martial arts", "Peak human/Genius", "Weapon mastery"],
+    "franchise": "Batman",
+    "affiliation": "League of Assassins",
+    "origin": "Nanda Parbat",
+    "medium": "Comic (Western)",
+    "year": 1971,
+    "quote": {
+      "en": "My father's empire will be mine, and you will stand at my side — or fall.",
+      "de": "Das Reich meines Vaters wird mir gehören, und du wirst an meiner Seite stehen — oder fallen."
+    }
+  },
+  {
+    "id": "azrael",
+    "name": "Azrael",
+    "aliases": ["Jean-Paul Valley", "Avenging Angel"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Mystic", "Soldier"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Batman",
+    "affiliation": "Order of St. Dumas",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1992,
+    "quote": {
+      "en": "The System was forged in my blood. I am the sword of the order.",
+      "de": "Das System wurde in meinem Blut geschmiedet. Ich bin das Schwert des Ordens."
+    }
+  },
+  {
+    "id": "man-bat",
+    "name": "Man-Bat",
+    "aliases": ["Kirk Langstrom", "Dr. Langstrom"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Scientist", "Monster"],
+    "powers": ["Flight", "Super strength", "Healing/Regeneration"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1970,
+    "quote": {
+      "en": "The serum was meant to cure me — instead it set the beast free.",
+      "de": "Das Serum sollte mich heilen — stattdessen hat es die Bestie befreit."
+    }
+  },
+  {
+    "id": "mad-hatter",
+    "name": "Mad Hatter",
+    "aliases": ["Jervis Tetch", "The Hatter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Outlaw"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1948,
+    "quote": {
+      "en": "Twinkle, twinkle, little bat — one little chip and you're all mine.",
+      "de": "Funkel, funkel, kleine Fledermaus — ein winziger Chip und du gehörst mir."
+    }
+  },
+  {
+    "id": "black-mask",
+    "name": "Black Mask",
+    "aliases": ["Roman Sionis", "Sionis"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["Peak human/Genius", "Weapon mastery"],
+    "franchise": "Batman",
+    "affiliation": "False Face Society",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1985,
+    "quote": {
+      "en": "This city is mine. Every crook, every cop, every coward pays tribute.",
+      "de": "Diese Stadt gehört mir. Jeder Ganove, jeder Bulle, jeder Feigling zahlt Tribut."
+    }
+  },
+  {
+    "id": "firefly",
+    "name": "Firefly",
+    "aliases": ["Garfield Lynns", "Lynns"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Scientist"],
+    "powers": ["Elemental", "Tech/Gadgets"],
+    "franchise": "Batman",
+    "affiliation": "",
+    "origin": "Gotham City",
+    "medium": "Comic (Western)",
+    "year": 1952,
+    "quote": {
+      "en": "Watch it all burn — there's nothing more beautiful than the flames.",
+      "de": "Sieh zu, wie alles brennt — nichts ist schöner als die Flammen."
+    }
+  },
+  {
+    "id": "elektra",
+    "name": "Elektra",
+    "aliases": ["Elektra Natchios", "The Hand's Assassin"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Athlete"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Daredevil",
+    "affiliation": "The Hand",
+    "origin": "Greek",
+    "medium": "Comic (Western)",
+    "year": 1981,
+    "quote": {
+      "en": "Death follows me like a shadow, and I have learned to dance with it.",
+      "de": "Der Tod folgt mir wie ein Schatten, und ich habe gelernt, mit ihm zu tanzen."
+    }
+  },
+  {
+    "id": "bullseye",
+    "name": "Bullseye",
+    "aliases": ["Lester", "The Marksman", "Benjamin Poindexter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior", "Soldier"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Daredevil",
+    "affiliation": "Independent",
+    "origin": "American",
+    "medium": "Comic (Western)",
+    "year": 1976,
+    "quote": {
+      "en": "Anything in my hands becomes a weapon, and I never, ever miss.",
+      "de": "Alles in meinen Händen wird zur Waffe, und ich verfehle niemals, niemals mein Ziel."
+    }
+  },
+  {
+    "id": "stick",
+    "name": "Stick",
+    "aliases": ["Master Stick", "The Blind Sensei"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Leader", "Mystic"],
+    "powers": ["Martial arts", "Stealth/Invisibility", "Peak human/Genius"],
+    "franchise": "Daredevil",
+    "affiliation": "The Chaste",
+    "origin": "American",
+    "medium": "Comic (Western)",
+    "year": 1981,
+    "quote": {
+      "en": "Sight is a crutch, boy; close your eyes and finally learn to see.",
+      "de": "Sehen ist eine Krücke, Junge; schließ die Augen und lerne endlich zu sehen."
+    }
+  },
+  {
+    "id": "typhoid-mary",
+    "name": "Typhoid Mary",
+    "aliases": ["Mary Walker", "Typhoid", "Bloody Mary"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior", "Spy"],
+    "powers": ["Telepathy/Mind", "Elemental", "Martial arts"],
+    "franchise": "Daredevil",
+    "affiliation": "Independent",
+    "origin": "American",
+    "medium": "Comic (Western)",
+    "year": 1988,
+    "quote": {
+      "en": "There are so many of us in here, and not one of them likes you.",
+      "de": "Wir sind so viele hier drinnen, und keiner von uns mag dich."
+    }
+  },
+  {
+    "id": "foggy-nelson",
+    "name": "Foggy Nelson",
+    "aliases": ["Franklin Nelson", "Counselor"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Politician", "Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Daredevil",
+    "affiliation": "Nelson and Murdock",
+    "origin": "American",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "I may not be much in a fight, but in a courtroom I never back down.",
+      "de": "Im Kampf bin ich vielleicht nicht viel wert, aber im Gerichtssaal weiche ich niemals zurück."
+    }
+  },
+  {
+    "id": "karen-page",
+    "name": "Karen Page",
+    "aliases": ["Karen", "The Secretary"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Daredevil",
+    "affiliation": "Nelson and Murdock",
+    "origin": "American",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "Someone has to chase the truth in this city, even when it bites back.",
+      "de": "Irgendjemand muss in dieser Stadt der Wahrheit nachjagen, auch wenn sie zurückbeißt."
+    }
+  },
+  {
+    "id": "ajax",
+    "name": "Ajax",
+    "aliases": ["Francis Freeman", "Francis"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Warrior", "Spy"],
+    "powers": ["Super strength", "Martial arts", "Peak human/Genius"],
+    "franchise": "Deadpool",
+    "affiliation": "The Workshop",
+    "origin": "A clandestine mutant-experimentation lab",
+    "medium": "Film/TV (live-action)",
+    "year": 2016,
+    "quote": {
+      "en": "I don't feel pain. I feel nothing. And soon, neither will you.",
+      "de": "Ich fühle keinen Schmerz. Ich fühle gar nichts. Und bald wirst auch du nichts mehr fühlen."
+    }
+  },
+  {
+    "id": "blind-al",
+    "name": "Blind Al",
+    "aliases": ["Althea", "Al"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Spy", "Worker"],
+    "powers": ["None"],
+    "franchise": "Deadpool",
+    "affiliation": "",
+    "origin": "London, England",
+    "medium": "Comic (Western)",
+    "year": 1997,
+    "quote": {
+      "en": "I may be blind, but I see right through you, you idiot.",
+      "de": "Ich bin vielleicht blind, aber ich durchschaue dich trotzdem, du Idiot."
+    }
+  },
+  {
+    "id": "lady-deadpool",
+    "name": "Lady Deadpool",
+    "aliases": ["Wanda Wilson", "Wade Wilson of Earth-3010"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior", "Soldier"],
+    "powers": ["Healing/Regeneration", "Weapon mastery", "Martial arts"],
+    "franchise": "Deadpool",
+    "affiliation": "Deadpool Corps",
+    "origin": "Earth-3010",
+    "medium": "Comic (Western)",
+    "year": 2010,
+    "quote": {
+      "en": "Same chimichanga-loving chaos, just with better hair.",
+      "de": "Dasselbe Chimichanga-liebende Chaos, nur mit besseren Haaren."
+    }
+  },
+  {
+    "id": "headpool",
+    "name": "Headpool",
+    "aliases": ["Zombie Deadpool Head", "Wade Wilson of Earth-2149"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Immortality", "Healing/Regeneration"],
+    "franchise": "Deadpool",
+    "affiliation": "Deadpool Corps",
+    "origin": "Earth-2149, the zombie-overrun world",
+    "medium": "Comic (Western)",
+    "year": 2009,
+    "quote": {
+      "en": "I'm just a floating head with an appetite, what could possibly go wrong?",
+      "de": "Ich bin nur ein schwebender Kopf mit Appetit, was könnte da schon schiefgehen?"
+    }
+  },
+  {
+    "id": "garrison-kane",
+    "name": "Garrison Kane",
+    "aliases": ["Kane", "Weapon X"],
+    "species": "Cyborg/Augmented",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Warrior", "Spy"],
+    "powers": ["Super strength", "Weapon mastery", "Tech/Gadgets"],
+    "franchise": "Deadpool",
+    "affiliation": "Weapon X",
+    "origin": "A covert government weapons program",
+    "medium": "Comic (Western)",
+    "year": 1991,
+    "quote": {
+      "en": "These bionic arms didn't come cheap, so let me show you what they can do.",
+      "de": "Diese bionischen Arme waren nicht billig, also lass mich dir zeigen, was sie können."
+    }
+  },
+  {
+    "id": "black-bolt",
+    "name": "Black Bolt",
+    "aliases": ["Blackagar Boltagon", "The Silent King", "King of the Inhumans"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader", "Warrior"],
+    "powers": ["Energy/Beams", "Flight", "Super strength"],
+    "franchise": "Fantastic Four",
+    "affiliation": "The Inhuman Royal Family",
+    "origin": "Attilan",
+    "medium": "Comic (Western)",
+    "year": 1965,
+    "quote": {
+      "en": "A single word from me could level a city, so I choose silence.",
+      "de": "Ein einziges Wort von mir könnte eine Stadt dem Erdboden gleichmachen, also wähle ich das Schweigen."
+    }
+  },
+  {
+    "id": "crystal",
+    "name": "Crystal",
+    "aliases": ["Crystalia Amaquelin", "Crys"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Adventurer", "Warrior"],
+    "powers": ["Elemental"],
+    "franchise": "Fantastic Four",
+    "affiliation": "The Inhuman Royal Family",
+    "origin": "Attilan",
+    "medium": "Comic (Western)",
+    "year": 1965,
+    "quote": {
+      "en": "Earth, wind, fire, water — they all answer when I call.",
+      "de": "Erde, Wind, Feuer, Wasser — sie alle gehorchen, wenn ich rufe."
+    }
+  },
+  {
+    "id": "wyatt-wingfoot",
+    "name": "Wyatt Wingfoot",
+    "aliases": ["Wyatt"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Warrior", "Athlete"],
+    "powers": ["Peak human/Genius", "Martial arts"],
+    "franchise": "Fantastic Four",
+    "affiliation": "Keewazi Nation",
+    "origin": "Keewazi Reservation, Oklahoma",
+    "medium": "Comic (Western)",
+    "year": 1966,
+    "quote": {
+      "en": "I don't need powers to stand beside my friends in a fight.",
+      "de": "Ich brauche keine Kräfte, um in einem Kampf an der Seite meiner Freunde zu stehen."
+    }
+  },
+  {
+    "id": "klaw",
+    "name": "Klaw",
+    "aliases": ["Ulysses Klaue", "Master of Sound", "The Living Sound"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Scientist", "Warrior"],
+    "powers": ["Energy/Beams", "Tech/Gadgets"],
+    "franchise": "Fantastic Four",
+    "affiliation": "Masters of Evil",
+    "origin": "Belgium",
+    "medium": "Comic (Western)",
+    "year": 1966,
+    "quote": {
+      "en": "I am made of pure sound — and sound can never be silenced.",
+      "de": "Ich bestehe aus reinem Klang — und Klang kann niemals zum Schweigen gebracht werden."
+    }
+  },
+  {
+    "id": "puppet-master",
+    "name": "Puppet Master",
+    "aliases": ["Philip Masters", "Phillip Masters"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Artist", "Scientist"],
+    "powers": ["Tech/Gadgets", "Telepathy/Mind"],
+    "franchise": "Fantastic Four",
+    "affiliation": "Independent",
+    "origin": "Transia",
+    "medium": "Comic (Western)",
+    "year": 1962,
+    "quote": {
+      "en": "Mold a man in clay, and he will dance to my every whim.",
+      "de": "Forme einen Menschen aus Ton, und er wird nach jeder meiner Launen tanzen."
+    }
+  },
+  {
+    "id": "agatha-harkness",
+    "name": "Agatha Harkness",
+    "aliases": ["Agatha", "The Witch of New Salem"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Mystic", "Healer"],
+    "powers": ["Magic/Sorcery", "Immortality", "Summoning"],
+    "franchise": "Fantastic Four",
+    "affiliation": "Coven of New Salem",
+    "origin": "New Salem, Colorado",
+    "medium": "Comic (Western)",
+    "year": 1970,
+    "quote": {
+      "en": "Magic is a discipline, child, not a parlor trick.",
+      "de": "Magie ist eine Disziplin, Kind, kein billiger Salontrick."
+    }
+  },
+  {
+    "id": "vance-astro",
+    "name": "Vance Astro",
+    "aliases": ["Major Victory"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Soldier", "Adventurer"],
+    "powers": ["Telepathy/Mind", "Peak human/Genius"],
+    "franchise": "Guardians of the Galaxy",
+    "affiliation": "Guardians of the Galaxy",
+    "origin": "Saugerties, New York (31st century)",
+    "medium": "Comic (Western)",
+    "year": 1969,
+    "quote": {
+      "en": "A thousand years frozen in a copper-skinned suit, and still I fight for a future I'll never live to see.",
+      "de": "Tausend Jahre eingefroren in einem kupferhäutigen Anzug, und immer noch kämpfe ich für eine Zukunft, die ich nie erleben werde."
+    }
+  },
+  {
+    "id": "charlie-27",
+    "name": "Charlie-27",
+    "aliases": ["Jovian Soldier"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Pilot", "Warrior"],
+    "powers": ["Super strength", "Peak human/Genius"],
+    "franchise": "Guardians of the Galaxy",
+    "affiliation": "Guardians of the Galaxy",
+    "origin": "Jupiter colony (31st century)",
+    "medium": "Comic (Western)",
+    "year": 1969,
+    "quote": {
+      "en": "Eleven times Earth's gravity made me. One punch is all I'll ever need.",
+      "de": "Die elffache Schwerkraft der Erde hat mich geschaffen. Ein Schlag ist alles, was ich je brauchen werde."
+    }
+  },
+  {
+    "id": "martinex",
+    "name": "Martinex",
+    "aliases": ["Martinex T'Naga", "The Crystalline Pluvian"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Warrior", "Adventurer"],
+    "powers": ["Elemental", "Energy/Beams", "Peak human/Genius"],
+    "franchise": "Guardians of the Galaxy",
+    "affiliation": "Guardians of the Galaxy",
+    "origin": "Pluto colony (31st century)",
+    "medium": "Comic (Western)",
+    "year": 1969,
+    "quote": {
+      "en": "My right hand burns, my left hand freezes — and my mind solves what neither can.",
+      "de": "Meine rechte Hand brennt, meine linke gefriert — und mein Verstand löst, was keine von beiden vermag."
+    }
+  },
+  {
+    "id": "phyla-vell",
+    "name": "Phyla-Vell",
+    "aliases": ["Quasar", "Martyr", "Captain Marvel"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer", "Soldier"],
+    "powers": ["Flight", "Energy/Beams", "Super strength"],
+    "franchise": "Guardians of the Galaxy",
+    "affiliation": "Guardians of the Galaxy",
+    "origin": "Titan",
+    "medium": "Comic (Western)",
+    "year": 2004,
+    "quote": {
+      "en": "The Quantum Bands chose me, and I will burn brighter than any of them expected.",
+      "de": "Die Quantenbänder haben mich erwählt, und ich werde heller brennen, als irgendjemand erwartet hat."
+    }
+  },
+  {
+    "id": "bug",
+    "name": "Bug",
+    "aliases": ["Insectivorid"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Outlaw", "Adventurer"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "Guardians of the Galaxy",
+    "affiliation": "Guardians of the Galaxy",
+    "origin": "Coal Sack Nebula (Insectivorid homeworld)",
+    "medium": "Comic (Western)",
+    "year": 1979,
+    "quote": {
+      "en": "Small, fast, and far more trouble than I look — that's how I've always survived.",
+      "de": "Klein, schnell und weit mehr Ärger, als ich aussehe — so habe ich immer überlebt."
+    }
+  },
+  {
+    "id": "starhawk",
+    "name": "Starhawk",
+    "aliases": ["Stakar Ogord", "One Who Knows", "Aspirant"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Mystic", "Leader"],
+    "powers": ["Flight", "Energy/Beams", "Immortality"],
+    "franchise": "Guardians of the Galaxy",
+    "affiliation": "Guardians of the Galaxy",
+    "origin": "Arcturus IV",
+    "medium": "Comic (Western)",
+    "year": 1975,
+    "quote": {
+      "en": "I have lived this life before, and I remember how every battle ends.",
+      "de": "Ich habe dieses Leben schon einmal gelebt, und ich erinnere mich, wie jede Schlacht endet."
+    }
+  },
+  {
+    "id": "kyle-rayner",
+    "name": "Kyle Rayner",
+    "aliases": ["Green Lantern", "Ion", "The Torchbearer", "White Lantern"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Warrior", "Adventurer"],
+    "powers": ["Energy/Beams", "Flight", "Tech/Gadgets"],
+    "franchise": "Justice League",
+    "affiliation": "Green Lantern Corps",
+    "origin": "Los Angeles",
+    "medium": "Comic (Western)",
+    "year": 1994,
+    "quote": {
+      "en": "My ring is only limited by my imagination, and I've got plenty of that.",
+      "de": "Mein Ring wird nur von meiner Vorstellungskraft begrenzt, und davon habe ich reichlich."
+    }
+  },
+  {
+    "id": "guy-gardner",
+    "name": "Guy Gardner",
+    "aliases": ["Green Lantern", "Warrior"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Adventurer"],
+    "powers": ["Energy/Beams", "Flight", "Super strength"],
+    "franchise": "Justice League",
+    "affiliation": "Green Lantern Corps",
+    "origin": "Baltimore",
+    "medium": "Comic (Western)",
+    "year": 1968,
+    "quote": {
+      "en": "One punch! I took him down with one punch!",
+      "de": "Ein Schlag! Ich habe ihn mit einem einzigen Schlag erledigt!"
+    }
+  },
+  {
+    "id": "red-tornado",
+    "name": "Red Tornado",
+    "aliases": ["John Smith", "Ulthoon", "The Tornado Champion"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Elemental", "Flight", "Super speed"],
+    "franchise": "Justice League",
+    "affiliation": "Justice League",
+    "origin": "T.O. Morrow's laboratory",
+    "medium": "Comic (Western)",
+    "year": 1968,
+    "quote": {
+      "en": "I am an android, yet I feel. Does that not make me human enough?",
+      "de": "Ich bin ein Android, und doch fühle ich. Macht mich das nicht menschlich genug?"
+    }
+  },
+  {
+    "id": "starro",
+    "name": "Starro",
+    "aliases": ["Starro the Conqueror", "The Star Conqueror"],
+    "species": "Alien",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Leader"],
+    "powers": ["Telepathy/Mind", "Size-change", "Energy/Beams"],
+    "franchise": "Justice League",
+    "affiliation": "",
+    "origin": "Distant alien star system",
+    "medium": "Comic (Western)",
+    "year": 1960,
+    "quote": {
+      "en": "Your minds are mine. Submit, and become one with the swarm.",
+      "de": "Eure Gedanken gehören mir. Ergebt euch und werdet eins mit dem Schwarm."
+    }
+  },
+  {
+    "id": "despero",
+    "name": "Despero",
+    "aliases": ["The Three-Eyed Tyrant", "Lord Despero"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Warrior", "Mystic"],
+    "powers": ["Telepathy/Mind", "Super strength", "Energy/Beams"],
+    "franchise": "Justice League",
+    "affiliation": "",
+    "origin": "Kalanor",
+    "medium": "Comic (Western)",
+    "year": 1960,
+    "quote": {
+      "en": "Kneel before the third eye, and despair at your own insignificance.",
+      "de": "Knie nieder vor dem dritten Auge und verzweifle an deiner eigenen Bedeutungslosigkeit."
+    }
+  },
+  {
+    "id": "stargirl",
+    "name": "Stargirl",
+    "aliases": ["Courtney Whitmore", "Star-Spangled Kid"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior", "Adventurer"],
+    "powers": ["Energy/Beams", "Flight", "Weapon mastery"],
+    "franchise": "Justice League",
+    "affiliation": "Justice Society of America",
+    "origin": "Blue Valley, Nebraska",
+    "medium": "Comic (Western)",
+    "year": 1999,
+    "quote": {
+      "en": "Heroes aren't born. You decide to become one, every single day.",
+      "de": "Helden werden nicht geboren. Man entscheidet sich jeden einzelnen Tag aufs Neue, einer zu sein."
+    }
+  },
+  {
+    "id": "power-girl",
+    "name": "Power Girl",
+    "aliases": ["Kara Zor-L", "Karen Starr", "PG"],
+    "species": "Alien",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Adventurer"],
+    "powers": ["Super strength", "Flight", "Energy/Beams"],
+    "franchise": "Justice League",
+    "affiliation": "Justice Society of America",
+    "origin": "Krypton (Earth-Two)",
+    "medium": "Comic (Western)",
+    "year": 1976,
+    "quote": {
+      "en": "I don't need anyone's permission to be exactly who I am.",
+      "de": "Ich brauche niemandes Erlaubnis, um genau die zu sein, die ich bin."
+    }
+  },
+  {
+    "id": "vandal-savage",
+    "name": "Vandal Savage",
+    "aliases": ["Vandar Adg", "The Immortal Caveman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Scientist"],
+    "powers": ["Immortality", "Healing/Regeneration", "Peak human/Genius"],
+    "franchise": "Justice League",
+    "affiliation": "Legion of Doom",
+    "origin": "Cro-Magnon era, prehistoric Earth",
+    "medium": "Comic (Western)",
+    "year": 1943,
+    "quote": {
+      "en": "I have outlived empires, and I will outlive you all.",
+      "de": "Ich habe Imperien überlebt, und ich werde euch alle überleben."
+    }
+  },
+  {
+    "id": "carnage",
+    "name": "Carnage",
+    "aliases": ["Cletus Kasady"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Monster", "Warrior"],
+    "powers": ["Shapeshifting", "Super strength", "Healing/Regeneration"],
+    "franchise": "Spider-Man",
+    "affiliation": "Symbiotes",
+    "origin": "New York City",
+    "medium": "Comic (Western)",
+    "year": 1991,
+    "quote": {
+      "en": "Chaos is the only true freedom there is.",
+      "de": "Chaos ist die einzige wahre Freiheit, die es gibt."
+    }
+  },
+  {
+    "id": "sandman",
+    "name": "Sandman",
+    "aliases": ["Flint Marko", "William Baker"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Shapeshifting", "Super strength", "Elemental"],
+    "franchise": "Spider-Man",
+    "affiliation": "Sinister Six",
+    "origin": "Queens, New York City",
+    "medium": "Comic (Western)",
+    "year": 1963,
+    "quote": {
+      "en": "I'm not a bad person. I've just had bad luck.",
+      "de": "Ich bin kein schlechter Mensch. Ich hatte nur Pech."
+    }
+  },
+  {
+    "id": "kraven-the-hunter",
+    "name": "Kraven the Hunter",
+    "aliases": ["Sergei Kravinoff", "The Hunter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Adventurer", "Outlaw"],
+    "powers": ["Super strength", "Peak human/Genius", "Martial arts"],
+    "franchise": "Spider-Man",
+    "affiliation": "Sinister Six",
+    "origin": "Volgograd, Russia",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "I have hunted every beast that walks the earth. You are merely the last.",
+      "de": "Ich habe jedes Tier gejagt, das auf der Erde wandelt. Du bist nur das letzte."
+    }
+  },
+  {
+    "id": "electro",
+    "name": "Electro",
+    "aliases": ["Max Dillon", "Maxwell Dillon"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Worker", "Warrior"],
+    "powers": ["Electric/Lightning", "Energy/Beams", "Flight"],
+    "franchise": "Spider-Man",
+    "affiliation": "Sinister Six",
+    "origin": "Endicott, New York",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "I am a living dynamo, and the whole city is my circuit.",
+      "de": "Ich bin ein lebender Dynamo, und die ganze Stadt ist mein Stromkreis."
+    }
+  },
+  {
+    "id": "lizard",
+    "name": "Lizard",
+    "aliases": ["Curt Connors", "Dr. Curtis Connors"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Monster"],
+    "powers": ["Super strength", "Healing/Regeneration", "Peak human/Genius"],
+    "franchise": "Spider-Man",
+    "affiliation": "",
+    "origin": "Florida Everglades",
+    "medium": "Comic (Western)",
+    "year": 1963,
+    "quote": {
+      "en": "The reptile brain is stronger than the man. Soon there will be no man left.",
+      "de": "Das Reptiliengehirn ist stärker als der Mensch. Bald wird kein Mensch mehr übrig sein."
+    }
+  },
+  {
+    "id": "hobgoblin",
+    "name": "Hobgoblin",
+    "aliases": ["Roderick Kingsley", "Hobby"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Leader", "Worker"],
+    "powers": ["Tech/Gadgets", "Weapon mastery", "Super strength"],
+    "franchise": "Spider-Man",
+    "affiliation": "",
+    "origin": "New York City",
+    "medium": "Comic (Western)",
+    "year": 1983,
+    "quote": {
+      "en": "Why do the dirty work yourself when you can buy someone to do it for you?",
+      "de": "Warum die Drecksarbeit selbst machen, wenn man jemanden dafür kaufen kann?"
+    }
+  },
+  {
+    "id": "morbius",
+    "name": "Morbius",
+    "aliases": ["Michael Morbius", "The Living Vampire"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Scientist", "Monster", "Adventurer"],
+    "powers": ["Super strength", "Flight", "Healing/Regeneration"],
+    "franchise": "Spider-Man",
+    "affiliation": "",
+    "origin": "Nafplio, Greece",
+    "medium": "Comic (Western)",
+    "year": 1971,
+    "quote": {
+      "en": "My cure became my curse, and now the thirst never ends.",
+      "de": "Meine Heilung wurde mein Fluch, und nun endet der Durst nie."
+    }
+  },
+  {
+    "id": "mary-jane-watson",
+    "name": "Mary Jane Watson",
+    "aliases": ["MJ", "Red", "Tiger"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Spider-Man",
+    "affiliation": "",
+    "origin": "Pittsburgh, Pennsylvania",
+    "medium": "Comic (Western)",
+    "year": 1965,
+    "quote": {
+      "en": "Face it, tiger — you just hit the jackpot.",
+      "de": "Sieh es ein, Tiger — du hast gerade den Hauptgewinn gezogen."
+    }
+  },
+  {
+    "id": "j-jonah-jameson",
+    "name": "J. Jonah Jameson",
+    "aliases": ["JJ", "Jonah", "Triple J"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Leader", "Politician"],
+    "powers": ["None"],
+    "franchise": "Spider-Man",
+    "affiliation": "Daily Bugle",
+    "origin": "New York City",
+    "medium": "Comic (Western)",
+    "year": 1963,
+    "quote": {
+      "en": "He's a menace! I want pictures, and I want them on my desk by morning!",
+      "de": "Er ist eine Bedrohung! Ich will Fotos, und zwar bis morgen früh auf meinem Schreibtisch!"
+    }
+  },
+  {
+    "id": "lana-lang",
+    "name": "Lana Lang",
+    "aliases": ["Insect Queen", "Smallville Sweetheart"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Worker"],
+    "powers": ["None"],
+    "franchise": "Superman",
+    "affiliation": "Smallville",
+    "origin": "Smallville, Kansas",
+    "medium": "Comic (Western)",
+    "year": 1950,
+    "quote": {
+      "en": "I knew the boy before he ever learned to fly.",
+      "de": "Ich kannte den Jungen, bevor er jemals fliegen lernte."
+    }
+  },
+  {
+    "id": "martha-kent",
+    "name": "Martha Kent",
+    "aliases": ["Ma Kent", "Mary Kent"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Worker"],
+    "powers": ["None"],
+    "franchise": "Superman",
+    "affiliation": "Kent Family",
+    "origin": "Smallville, Kansas",
+    "medium": "Comic (Western)",
+    "year": 1939,
+    "quote": {
+      "en": "You don't owe this world a thing. You never did. But you give anyway.",
+      "de": "Du schuldest dieser Welt nichts. Das hast du nie. Und doch gibst du immer."
+    }
+  },
+  {
+    "id": "cat-grant",
+    "name": "Cat Grant",
+    "aliases": ["Catherine Grant"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Superman",
+    "affiliation": "Daily Planet",
+    "origin": "Metropolis",
+    "medium": "Comic (Western)",
+    "year": 1987,
+    "quote": {
+      "en": "A good headline can make a hero or bury one. Choose carefully.",
+      "de": "Eine gute Schlagzeile kann einen Helden machen oder begraben. Wähle mit Bedacht."
+    }
+  },
+  {
+    "id": "imperiex",
+    "name": "Imperiex",
+    "aliases": ["Imperiex-Prime", "Embodiment of Entropy"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Warrior"],
+    "powers": ["Energy/Beams", "Super strength", "Elemental"],
+    "franchise": "Superman",
+    "affiliation": "Independent",
+    "origin": "The Big Bang",
+    "medium": "Comic (Western)",
+    "year": 2000,
+    "quote": {
+      "en": "Existence is flawed. I am the cleansing fire that ends it.",
+      "de": "Die Existenz ist fehlerhaft. Ich bin das reinigende Feuer, das sie beendet."
+    }
+  },
+  {
+    "id": "bibbo-bibbowski",
+    "name": "Bibbo Bibbowski",
+    "aliases": ["Bibbo", "The Champ"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian", "Athlete"],
+    "powers": ["None"],
+    "franchise": "Superman",
+    "affiliation": "Ace o' Clubs",
+    "origin": "Metropolis",
+    "medium": "Comic (Western)",
+    "year": 1987,
+    "quote": {
+      "en": "This here's the best bar in town, an' don't ya forget it!",
+      "de": "Das hier ist die beste Kneipe der Stadt, und das vergisst du besser nicht!"
+    }
+  },
+  {
+    "id": "lar-gand",
+    "name": "Lar Gand",
+    "aliases": ["Mon-El", "Valor", "M'Onel"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Soldier", "Warrior"],
+    "powers": ["Super strength", "Flight", "Energy/Beams"],
+    "franchise": "Superman",
+    "affiliation": "Legion of Super-Heroes",
+    "origin": "Daxam",
+    "medium": "Comic (Western)",
+    "year": 1961,
+    "quote": {
+      "en": "A thousand years in limbo taught me patience. Now I fight for a brighter age.",
+      "de": "Tausend Jahre im Limbo lehrten mich Geduld. Nun kämpfe ich für eine hellere Zeit."
+    }
+  },
+  {
+    "id": "northstar",
+    "name": "Northstar",
+    "aliases": ["Jean-Paul Beaubier", "Vol-de-Nuit"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Athlete"],
+    "powers": ["Super speed", "Flight"],
+    "franchise": "X-Men",
+    "affiliation": "Alpha Flight",
+    "origin": "Montreal, Quebec",
+    "medium": "Comic (Western)",
+    "year": 1979,
+    "quote": {
+      "en": "Try to keep up with me, if you can.",
+      "de": "Versuch mitzuhalten, wenn du kannst."
+    }
+  },
+  {
+    "id": "multiple-man",
+    "name": "Multiple Man",
+    "aliases": ["Jamie Madrox"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Warrior"],
+    "powers": ["Summoning"],
+    "franchise": "X-Men",
+    "affiliation": "X-Factor",
+    "origin": "Kansas",
+    "medium": "Comic (Western)",
+    "year": 1975,
+    "quote": {
+      "en": "Why send one man when you can send a hundred?",
+      "de": "Warum einen schicken, wenn man hundert schicken kann?"
+    }
+  },
+  {
+    "id": "cannonball",
+    "name": "Cannonball",
+    "aliases": ["Sam Guthrie"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Leader", "Worker"],
+    "powers": ["Flight", "Super strength"],
+    "franchise": "X-Men",
+    "affiliation": "New Mutants",
+    "origin": "Cumberland County, Kentucky",
+    "medium": "Comic (Western)",
+    "year": 1982,
+    "quote": {
+      "en": "When I'm blasting, ain't nothing on this earth can stop me.",
+      "de": "Wenn ich loslege, kann mich nichts auf dieser Welt aufhalten."
+    }
+  },
+  {
+    "id": "sunfire",
+    "name": "Sunfire",
+    "aliases": ["Shiro Yoshida"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Soldier"],
+    "powers": ["Elemental", "Flight", "Energy/Beams"],
+    "franchise": "X-Men",
+    "affiliation": "X-Men",
+    "origin": "Agarashima, Japan",
+    "medium": "Comic (Western)",
+    "year": 1970,
+    "quote": {
+      "en": "The fire of the rising sun burns in my veins.",
+      "de": "Das Feuer der aufgehenden Sonne brennt in meinen Adern."
+    }
+  },
+  {
+    "id": "wolfsbane",
+    "name": "Wolfsbane",
+    "aliases": ["Rahne Sinclair"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Healer"],
+    "powers": ["Shapeshifting", "Healing/Regeneration"],
+    "franchise": "X-Men",
+    "affiliation": "New Mutants",
+    "origin": "Ullapool, Scotland",
+    "medium": "Comic (Western)",
+    "year": 1982,
+    "quote": {
+      "en": "The beast inside me is faithful, and it answers to me alone.",
+      "de": "Die Bestie in mir ist treu, und sie gehorcht nur mir allein."
+    }
+  },
+  {
+    "id": "mister-sinister",
+    "name": "Mister Sinister",
+    "aliases": ["Nathaniel Essex", "Sinister"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Leader"],
+    "powers": ["Telepathy/Mind", "Immortality", "Energy/Beams"],
+    "franchise": "X-Men",
+    "affiliation": "Marauders",
+    "origin": "Victorian London, England",
+    "medium": "Comic (Western)",
+    "year": 1987,
+    "quote": {
+      "en": "Genetics is destiny, and destiny belongs to me.",
+      "de": "Genetik ist Schicksal, und das Schicksal gehört mir."
+    }
+  },
+  {
+    "id": "avalanche",
+    "name": "Avalanche",
+    "aliases": ["Dominikos Petrakis"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Elemental"],
+    "franchise": "X-Men",
+    "affiliation": "Brotherhood of Mutants",
+    "origin": "Greece",
+    "medium": "Comic (Western)",
+    "year": 1981,
+    "quote": {
+      "en": "I'll bring the whole mountain down on your heads.",
+      "de": "Ich lasse den ganzen Berg auf eure Köpfe niedergehen."
+    }
+  },
+  {
+    "id": "blob",
+    "name": "Blob",
+    "aliases": ["Fred Dukes"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Super strength"],
+    "franchise": "X-Men",
+    "affiliation": "Brotherhood of Mutants",
+    "origin": "Lubbock, Texas",
+    "medium": "Comic (Western)",
+    "year": 1964,
+    "quote": {
+      "en": "Nothing moves me unless I want to be moved.",
+      "de": "Nichts bewegt mich, es sei denn, ich will bewegt werden."
+    }
+  },
+  {
+    "id": "mojo",
+    "name": "Mojo",
+    "aliases": ["The Spineless One"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Politician", "Artist"],
+    "powers": ["Shapeshifting", "Magic/Sorcery"],
+    "franchise": "X-Men",
+    "affiliation": "Mojoverse",
+    "origin": "Mojoworld",
+    "medium": "Comic (Western)",
+    "year": 1985,
+    "quote": {
+      "en": "Ratings, darling! It's all about the ratings!",
+      "de": "Einschaltquoten, Liebling! Es geht nur um die Einschaltquoten!"
+    }
+  },
+  {
+    "id": "sentinel",
+    "name": "Sentinel",
+    "aliases": ["Master Mold", "Mutant Hunter"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Monster"],
+    "powers": ["Flight", "Energy/Beams", "Tech/Gadgets"],
+    "franchise": "X-Men",
+    "affiliation": "Trask Industries",
+    "origin": "United States",
+    "medium": "Comic (Western)",
+    "year": 1965,
+    "quote": {
+      "en": "Mutant detected. Apprehension is the only acceptable outcome.",
+      "de": "Mutant erkannt. Festnahme ist das einzige akzeptable Ergebnis."
+    }
+  },
+  {
+    "id": "caliban",
+    "name": "Caliban",
+    "aliases": ["The Tracker"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Detective", "Warrior"],
+    "powers": ["Telepathy/Mind", "Super strength"],
+    "franchise": "X-Men",
+    "affiliation": "Morlocks",
+    "origin": "The Morlock Tunnels, New York City",
+    "medium": "Comic (Western)",
+    "year": 1981,
+    "quote": {
+      "en": "I can feel every one of my kind, no matter how deep they hide.",
+      "de": "Ich kann jeden meiner Art spüren, egal wie tief er sich versteckt."
+    }
   }
 ]
