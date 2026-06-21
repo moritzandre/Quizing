@@ -55160,5 +55160,2152 @@
       "en": "Do you like basketball?",
       "de": "Magst du Basketball?"
     }
+  },
+  {
+    "id": "benjamin-blumchen",
+    "name": "Benjamin Blümchen",
+    "aliases": ["Benjamin", "der sprechende Elefant", "Benjamin the Elephant"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Benjamin Blümchen",
+    "affiliation": "Neustädter Zoo",
+    "origin": "the Neustadt Zoo",
+    "medium": "Web/Other",
+    "year": 1977,
+    "quote": {
+      "en": "Toeroeoe!",
+      "de": "Törö!"
+    }
+  },
+  {
+    "id": "otto",
+    "name": "Otto",
+    "aliases": ["the elephant's best friend"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Benjamin Blümchen",
+    "affiliation": "Neustädter Zoo",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1977,
+    "quote": {
+      "en": "Come on, let's go on an adventure together!",
+      "de": "Komm, lass uns zusammen ein Abenteuer erleben!"
+    }
+  },
+  {
+    "id": "karla-kolumna",
+    "name": "Karla Kolumna",
+    "aliases": ["die rasende Reporterin", "Karla", "the speeding reporter"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Benjamin Blümchen",
+    "affiliation": "Neustädter Tagblatt",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1977,
+    "quote": {
+      "en": "Sensational, simply sensational! That's front-page news!",
+      "de": "Sensationell, einfach sensationell! Das ist eine Schlagzeile!"
+    }
+  },
+  {
+    "id": "herr-tierlieb",
+    "name": "Herr Tierlieb",
+    "aliases": ["der Tierwärter", "the zookeeper", "Tierlieb"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Healer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Benjamin Blümchen",
+    "affiliation": "Neustädter Zoo",
+    "origin": "the Neustadt Zoo",
+    "medium": "Web/Other",
+    "year": 1977,
+    "quote": {
+      "en": "Don't worry, I'll take good care of all the animals.",
+      "de": "Keine Sorge, ich kümmere mich gut um alle Tiere."
+    }
+  },
+  {
+    "id": "der-burgermeister",
+    "name": "Der Bürgermeister",
+    "aliases": ["the Mayor", "Bürgermeister von Neustadt"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Politician", "Leader"],
+    "powers": ["None"],
+    "franchise": "Benjamin Blümchen",
+    "affiliation": "Stadtverwaltung Neustadt",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1977,
+    "quote": {
+      "en": "That costs money, much too much money!",
+      "de": "Das kostet Geld, viel zu viel Geld!"
+    }
+  },
+  {
+    "id": "bibi-blocksberg",
+    "name": "Bibi Blocksberg",
+    "aliases": ["Bibi"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Mage", "Civilian"],
+    "powers": ["Magic/Sorcery", "Flight", "Summoning"],
+    "franchise": "Bibi Blocksberg",
+    "affiliation": "Familie Blocksberg",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1980,
+    "quote": {
+      "en": "Hex-hex!",
+      "de": "Hex-hex!"
+    }
+  },
+  {
+    "id": "barbara-blocksberg",
+    "name": "Barbara Blocksberg",
+    "aliases": ["Mama", "Mutter"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Healer", "Civilian"],
+    "powers": ["Magic/Sorcery", "Flight"],
+    "franchise": "Bibi Blocksberg",
+    "affiliation": "Familie Blocksberg",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1980,
+    "quote": {
+      "en": "A real witch always knows what to do.",
+      "de": "Eine richtige Hexe weiß immer, was zu tun ist."
+    }
+  },
+  {
+    "id": "bernhard-blocksberg",
+    "name": "Bernhard Blocksberg",
+    "aliases": ["Papa", "Vater"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Bibi Blocksberg",
+    "affiliation": "Familie Blocksberg",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1980,
+    "quote": {
+      "en": "No more magic in this house, please!",
+      "de": "In diesem Haus wird nicht mehr gehext!"
+    }
+  },
+  {
+    "id": "walpurgia-besenstiel",
+    "name": "Walpurgia Besenstiel",
+    "aliases": ["Walpurgia", "Oberhexe"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mage", "Leader", "Mystic"],
+    "powers": ["Magic/Sorcery", "Flight"],
+    "franchise": "Bibi Blocksberg",
+    "affiliation": "Hexenrat",
+    "origin": "Blocksberg",
+    "medium": "Web/Other",
+    "year": 1980,
+    "quote": {
+      "en": "Rules among witches must be obeyed.",
+      "de": "Die Regeln unter Hexen sind einzuhalten."
+    }
+  },
+  {
+    "id": "schubia-wanzhaar",
+    "name": "Schubia Wanzhaar",
+    "aliases": ["Schubia"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Mage"],
+    "powers": ["Magic/Sorcery", "Flight"],
+    "franchise": "Bibi Blocksberg",
+    "affiliation": "Junghexen",
+    "origin": "Neustadt",
+    "medium": "Web/Other",
+    "year": 1980,
+    "quote": {
+      "en": "Chill out, I'll just shake off that tracking spell!",
+      "de": "Locker bleiben, den Suchzauber häng ich einfach ab!"
+    }
+  },
+  {
+    "id": "tina-martin",
+    "name": "Tina Martin",
+    "aliases": ["Tina"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Athlete", "Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Bibi und Tina",
+    "affiliation": "Martinshof",
+    "origin": "Martinshof",
+    "medium": "Web/Other",
+    "year": 1991,
+    "quote": {
+      "en": "Come on, let's go for a ride across the meadows!",
+      "de": "Komm, wir reiten über die Wiesen!"
+    }
+  },
+  {
+    "id": "amadeus",
+    "name": "Amadeus",
+    "aliases": ["Amadeus der Hengst"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Athlete", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Bibi und Tina",
+    "affiliation": "Martinshof",
+    "origin": "Martinshof",
+    "medium": "Web/Other",
+    "year": 1991,
+    "quote": {
+      "en": "A soft whinny, and off we gallop together.",
+      "de": "Ein leises Wiehern, und schon galoppieren wir los."
+    }
+  },
+  {
+    "id": "alexander-von-falkenstein",
+    "name": "Alexander von Falkenstein",
+    "aliases": ["Alex", "Alexander", "Alex von Falkenstein"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Bibi und Tina",
+    "affiliation": "Familie von Falkenstein",
+    "origin": "Schloss Falkenstein",
+    "medium": "Web/Other",
+    "year": 1991,
+    "quote": {
+      "en": "Father always wants me to behave like a proper count's son.",
+      "de": "Vater will immer, dass ich mich wie ein echter Grafensohn benehme."
+    }
+  },
+  {
+    "id": "graf-falko-von-falkenstein",
+    "name": "Graf Falko von Falkenstein",
+    "aliases": ["Falko", "Graf Falko", "Count Falko"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Royalty", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Bibi und Tina",
+    "affiliation": "Familie von Falkenstein",
+    "origin": "Schloss Falkenstein",
+    "medium": "Web/Other",
+    "year": 1991,
+    "quote": {
+      "en": "This castle has belonged to my family for generations!",
+      "de": "Dieses Schloss gehört seit Generationen meiner Familie!"
+    }
+  },
+  {
+    "id": "kapt-n-blaubar",
+    "name": "Käpt'n Blaubär",
+    "aliases": ["Blaubär", "Captain Bluebear", "Der Käpt'n"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Käpt'n Blaubär",
+    "affiliation": "Crew of the MS Hein Blöd",
+    "origin": "the high seas",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "And believe me, every single word of it is true—well, almost every word!",
+      "de": "Und glaubt mir, jedes Wort davon ist wahr – na ja, fast jedes Wort!"
+    }
+  },
+  {
+    "id": "hein-blod",
+    "name": "Hein Blöd",
+    "aliases": ["Hein", "Blöd", "Dummerchen"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Käpt'n Blaubär",
+    "affiliation": "Crew of the MS Hein Blöd",
+    "origin": "the high seas",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "Aye aye—uh, what was I supposed to do again?",
+      "de": "Aye aye – äh, was sollte ich noch mal machen?"
+    }
+  },
+  {
+    "id": "die-barchen",
+    "name": "Die Bärchen",
+    "aliases": ["Bärchen", "Die Enkel", "The Little Bears"],
+    "species": "Animal",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Student"],
+    "powers": ["None"],
+    "franchise": "Käpt'n Blaubär",
+    "affiliation": "the Captain's grandchildren",
+    "origin": "the high seas",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "Oh come on, Grandpa, that can't possibly be true—tell us another one!",
+      "de": "Ach komm, Opa, das kann doch gar nicht stimmen – erzähl uns noch eine!"
+    }
+  },
+  {
+    "id": "firedrake",
+    "name": "Firedrake",
+    "aliases": ["Lung", "the silver dragon"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Warrior"],
+    "powers": ["Flight", "Elemental"],
+    "franchise": "Dragon Rider",
+    "affiliation": "The dragon community of the Scottish valley",
+    "origin": "a hidden valley in the Scottish Highlands",
+    "medium": "Novel/Prose",
+    "year": 1997,
+    "quote": {
+      "en": "We are searching for the Rim of Heaven, where dragons can live in peace.",
+      "de": "Wir suchen den Saum des Himmels, wo Drachen in Frieden leben können."
+    }
+  },
+  {
+    "id": "ben",
+    "name": "Ben",
+    "aliases": ["the dragon rider", "Drachenreiter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Dragon Rider",
+    "affiliation": "The Greenbloom family",
+    "origin": "the streets of a human city",
+    "medium": "Novel/Prose",
+    "year": 1997,
+    "quote": {
+      "en": "I'll go with you, all the way to the Rim of Heaven.",
+      "de": "Ich komme mit dir, den ganzen Weg bis zum Saum des Himmels."
+    }
+  },
+  {
+    "id": "sorrel",
+    "name": "Sorrel",
+    "aliases": ["Schwefelfell", "the brownie"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Dragon Rider",
+    "affiliation": "The dragon community of the Scottish valley",
+    "origin": "a hidden valley in the Scottish Highlands",
+    "medium": "Novel/Prose",
+    "year": 1997,
+    "quote": {
+      "en": "By my fur and whiskers, where do you think you're dragging us now?",
+      "de": "Bei meinem Fell und meinen Barthaaren, wohin schleppst du uns denn jetzt?"
+    }
+  },
+  {
+    "id": "nettlebrand",
+    "name": "Nettlebrand",
+    "aliases": ["Nesselbrand", "the Golden One"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Warrior"],
+    "powers": ["Super strength", "Immortality"],
+    "franchise": "Dragon Rider",
+    "affiliation": "",
+    "origin": "the alchemist's workshop where he was forged",
+    "medium": "Novel/Prose",
+    "year": 1997,
+    "quote": {
+      "en": "I was made to hunt dragons, and hunt them I will, to the very last.",
+      "de": "Ich wurde geschaffen, um Drachen zu jagen, und ich werde sie jagen, bis zum allerletzten."
+    }
+  },
+  {
+    "id": "jupiter-jones",
+    "name": "Jupiter Jones",
+    "aliases": ["Justus Jonas", "Jupe", "First Investigator"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Leader", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "The Three Investigators",
+    "affiliation": "The Three Investigators",
+    "origin": "Rocky Beach, California",
+    "medium": "Novel/Prose",
+    "year": 1964,
+    "quote": {
+      "en": "We investigate anything.",
+      "de": "Wir übernehmen jeden Fall."
+    }
+  },
+  {
+    "id": "pete-crenshaw",
+    "name": "Pete Crenshaw",
+    "aliases": ["Peter Shaw", "Pete", "Second Investigator"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Athlete", "Student"],
+    "powers": ["None"],
+    "franchise": "The Three Investigators",
+    "affiliation": "The Three Investigators",
+    "origin": "Rocky Beach, California",
+    "medium": "Novel/Prose",
+    "year": 1964,
+    "quote": {
+      "en": "I've got a really bad feeling about this.",
+      "de": "Ich hab da ein ganz mieses Gefühl."
+    }
+  },
+  {
+    "id": "bob-andrews",
+    "name": "Bob Andrews",
+    "aliases": ["Bob", "Records and Research"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student"],
+    "powers": ["None"],
+    "franchise": "The Three Investigators",
+    "affiliation": "The Three Investigators",
+    "origin": "Rocky Beach, California",
+    "medium": "Novel/Prose",
+    "year": 1964,
+    "quote": {
+      "en": "I'll look it up in the records.",
+      "de": "Das schlage ich in den Akten nach."
+    }
+  },
+  {
+    "id": "inspector-cotta",
+    "name": "Inspector Cotta",
+    "aliases": ["Kommissar Cotta", "Cotta"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective"],
+    "powers": ["None"],
+    "franchise": "The Three Investigators",
+    "affiliation": "Rocky Beach Police Department",
+    "origin": "Rocky Beach, California",
+    "medium": "Novel/Prose",
+    "year": 1964,
+    "quote": {
+      "en": "Leave the police work to the professionals, boys.",
+      "de": "Überlasst die Polizeiarbeit lieber den Profis, Jungs."
+    }
+  },
+  {
+    "id": "aunt-mathilda",
+    "name": "Aunt Mathilda",
+    "aliases": ["Tante Mathilda", "Mathilda Jonas"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Three Investigators",
+    "affiliation": "The Jones Salvage Yard",
+    "origin": "Rocky Beach, California",
+    "medium": "Novel/Prose",
+    "year": 1964,
+    "quote": {
+      "en": "There's plenty of work to be done around the yard!",
+      "de": "Auf dem Schrottplatz gibt es genug zu tun!"
+    }
+  },
+  {
+    "id": "heidi",
+    "name": "Heidi",
+    "aliases": ["Adelheid", "Das Heidi"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Worker"],
+    "powers": ["None"],
+    "franchise": "Heidi",
+    "affiliation": "the Alm-Öhi's household",
+    "origin": "the Swiss Alps",
+    "medium": "Anime",
+    "year": 1880,
+    "quote": {
+      "en": "Up on the mountain, the air is so clear and the sky is so blue!",
+      "de": "Oben auf der Alm ist die Luft so klar und der Himmel so blau!"
+    }
+  },
+  {
+    "id": "peter",
+    "name": "Peter",
+    "aliases": ["Geißenpeter", "Peter the goatherd"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Heidi",
+    "affiliation": "the mountain village",
+    "origin": "the Swiss Alps",
+    "medium": "Anime",
+    "year": 1880,
+    "quote": {
+      "en": "Come on, the goats are already waiting up on the pasture!",
+      "de": "Komm, die Geißen warten schon oben auf der Weide!"
+    }
+  },
+  {
+    "id": "alm-ohi",
+    "name": "Alm-Öhi",
+    "aliases": ["Grandfather", "Almöhi", "Großvater"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Heidi",
+    "affiliation": "his Alpine hut",
+    "origin": "the Swiss Alps",
+    "medium": "Anime",
+    "year": 1880,
+    "quote": {
+      "en": "I have no need of anyone down in the village.",
+      "de": "Ich brauche keinen von denen da unten im Dorf."
+    }
+  },
+  {
+    "id": "clara-sesemann",
+    "name": "Clara Sesemann",
+    "aliases": ["Klara", "Clara"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Student"],
+    "powers": ["None"],
+    "franchise": "Heidi",
+    "affiliation": "the Sesemann family",
+    "origin": "Frankfurt",
+    "medium": "Anime",
+    "year": 1880,
+    "quote": {
+      "en": "Please stay with me, I'm so happy when you're here.",
+      "de": "Bitte bleib bei mir, ich bin so froh, wenn du da bist."
+    }
+  },
+  {
+    "id": "fraulein-rottenmeier",
+    "name": "Fräulein Rottenmeier",
+    "aliases": ["Miss Rottenmeier", "Rottenmeier"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Worker", "Leader"],
+    "powers": ["None"],
+    "franchise": "Heidi",
+    "affiliation": "the Sesemann household",
+    "origin": "Frankfurt",
+    "medium": "Anime",
+    "year": 1880,
+    "quote": {
+      "en": "In this house there are rules, and they will be obeyed!",
+      "de": "In diesem Hause gibt es Regeln, und die werden befolgt!"
+    }
+  },
+  {
+    "id": "robber-hotzenplotz",
+    "name": "Robber Hotzenplotz",
+    "aliases": ["Räuber Hotzenplotz", "Hotzenplotz"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw"],
+    "powers": ["Weapon mastery"],
+    "franchise": "The Robber Hotzenplotz",
+    "affiliation": "",
+    "origin": "the forest of a Bavarian-Bohemian village",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "Hands up, or I'll shoot you full of holes!",
+      "de": "Hände hoch, oder ich schieße euch zu Brei!"
+    }
+  },
+  {
+    "id": "kasperl",
+    "name": "Kasperl",
+    "aliases": ["Kasper", "Kasperle"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Robber Hotzenplotz",
+    "affiliation": "Grandmother's household",
+    "origin": "a small Bavarian-Bohemian village",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "We'll catch that scoundrel, you'll see!",
+      "de": "Diesen Spitzbuben werden wir schon kriegen, das wirst du sehen!"
+    }
+  },
+  {
+    "id": "seppel",
+    "name": "Seppel",
+    "aliases": ["Seppl"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Robber Hotzenplotz",
+    "affiliation": "Grandmother's household",
+    "origin": "a small Bavarian-Bohemian village",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "Wherever you go, I'll go too, that's for sure!",
+      "de": "Wo du hingehst, da geh ich auch hin, das ist doch klar!"
+    }
+  },
+  {
+    "id": "sergeant-dimpfelmoser",
+    "name": "Sergeant Dimpfelmoser",
+    "aliases": ["Wachtmeister Dimpfelmoser", "Alois Dimpfelmoser"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Detective"],
+    "powers": ["None"],
+    "franchise": "The Robber Hotzenplotz",
+    "affiliation": "village police",
+    "origin": "a small Bavarian-Bohemian village",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "In the name of the law, I order you to surrender at once!",
+      "de": "Im Namen des Gesetzes, ich fordere Sie auf, sich augenblicklich zu ergeben!"
+    }
+  },
+  {
+    "id": "petrosilius-zwackelmann",
+    "name": "Petrosilius Zwackelmann",
+    "aliases": ["Zwackelmann", "the wizard", "der Zauberer"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Mystic"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "The Robber Hotzenplotz",
+    "affiliation": "",
+    "origin": "a castle deep in the forest",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "I can conjure anything in the world, except for one wretched potato!",
+      "de": "Alles auf der Welt kann ich herbeizaubern, nur diese elenden Kartoffeln nicht!"
+    }
+  },
+  {
+    "id": "amaryllis",
+    "name": "Amaryllis",
+    "aliases": ["Fairy Amaryllis", "Fee Amaryllis", "the unlucky fairy", "Unke"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mystic"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "The Robber Hotzenplotz",
+    "affiliation": "",
+    "origin": "the fairy realm",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "Free me from this spell, and you shall have a wish granted!",
+      "de": "Erlöse mich von diesem Zauber, und du sollst einen Wunsch frei haben!"
+    }
+  },
+  {
+    "id": "meggie-folchart",
+    "name": "Meggie Folchart",
+    "aliases": ["Meggie"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "Inkheart",
+    "affiliation": "Folchart family",
+    "origin": "northern Italy",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "Books have to be heavy because the whole world's inside them.",
+      "de": "Bücher müssen schwer sein, weil die ganze Welt in ihnen steckt."
+    }
+  },
+  {
+    "id": "mortimer-folchart",
+    "name": "Mortimer Folchart",
+    "aliases": ["Mo", "Silvertongue", "Zauberzunge"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Summoning"],
+    "franchise": "Inkheart",
+    "affiliation": "Folchart family",
+    "origin": "northern Italy",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "When you read aloud, sometimes the words come true.",
+      "de": "Wenn man laut vorliest, werden die Worte manchmal wahr."
+    }
+  },
+  {
+    "id": "dustfinger",
+    "name": "Dustfinger",
+    "aliases": ["Staubfinger", "Fire-Dancer", "Feuertänzer"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Artist", "Adventurer"],
+    "powers": ["Elemental"],
+    "franchise": "Inkheart",
+    "affiliation": "",
+    "origin": "the Inkworld",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "Fire only obeys those who are not afraid of it.",
+      "de": "Das Feuer gehorcht nur dem, der keine Angst vor ihm hat."
+    }
+  },
+  {
+    "id": "capricorn",
+    "name": "Capricorn",
+    "aliases": [],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Leader", "Outlaw"],
+    "powers": ["None"],
+    "franchise": "Inkheart",
+    "affiliation": "Capricorn's men",
+    "origin": "the Inkworld",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "Fear is the only fire I need to keep my men warm.",
+      "de": "Die Angst ist das einzige Feuer, das meine Leute warm hält."
+    }
+  },
+  {
+    "id": "basta",
+    "name": "Basta",
+    "aliases": ["Basta the Knife"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Soldier"],
+    "powers": ["Weapon mastery"],
+    "franchise": "Inkheart",
+    "affiliation": "Capricorn's men",
+    "origin": "the Inkworld",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "A blade keeps its promises better than any man.",
+      "de": "Ein Messer hält seine Versprechen besser als jeder Mensch."
+    }
+  },
+  {
+    "id": "elinor-loredan",
+    "name": "Elinor Loredan",
+    "aliases": ["Elinor", "Aunt Elinor", "Tante Elinor"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Inkheart",
+    "affiliation": "Folchart family",
+    "origin": "Lake Como, Italy",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "I trust my books far more than I trust people.",
+      "de": "Meinen Büchern vertraue ich weit mehr als den Menschen."
+    }
+  },
+  {
+    "id": "farid",
+    "name": "Farid",
+    "aliases": ["The boy from the Arabian Nights"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Artist"],
+    "powers": ["Elemental"],
+    "franchise": "Inkheart",
+    "affiliation": "",
+    "origin": "the world of A Thousand and One Nights",
+    "medium": "Novel/Prose",
+    "year": 2003,
+    "quote": {
+      "en": "I would follow him through fire, and I have.",
+      "de": "Ich würde ihm durchs Feuer folgen, und das habe ich getan."
+    }
+  },
+  {
+    "id": "jim-button",
+    "name": "Jim Button",
+    "aliases": ["Jim Knopf"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Jim Button",
+    "affiliation": "Lummerland",
+    "origin": "Lummerland",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "I want to find out where I really come from, even if I have to travel to the end of the world.",
+      "de": "Ich will herausfinden, woher ich wirklich komme, und wenn ich bis ans Ende der Welt reisen muss."
+    }
+  },
+  {
+    "id": "luke-the-engine-driver",
+    "name": "Luke the Engine Driver",
+    "aliases": ["Lukas", "Lukas der Lokomotivführer"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Adventurer", "Pilot"],
+    "powers": ["None"],
+    "franchise": "Jim Button",
+    "affiliation": "Lummerland",
+    "origin": "Lummerland",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "As long as we stick together, my old engine and I can manage just about anything.",
+      "de": "Solange wir zusammenhalten, schaffen meine alte Lokomotive und ich so ziemlich alles."
+    }
+  },
+  {
+    "id": "emma-the-locomotive",
+    "name": "Emma the Locomotive",
+    "aliases": ["Emma", "Emma die Lokomotive"],
+    "species": "Object/Other",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Jim Button",
+    "affiliation": "Lummerland",
+    "origin": "Lummerland",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "Puff, puff, puff — over land and even across the sea I'll carry you.",
+      "de": "Tuff, tuff, tuff — über Land und sogar übers Meer trage ich euch."
+    }
+  },
+  {
+    "id": "king-alfons-the-quarter-to-twelfth",
+    "name": "King Alfons the Quarter-to-Twelfth",
+    "aliases": ["König Alfons der Viertel-vor-Zwölfte", "König Alfons"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Leader"],
+    "powers": ["None"],
+    "franchise": "Jim Button",
+    "affiliation": "Lummerland",
+    "origin": "Lummerland",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "As ruler of this little kingdom, I must consider every matter most carefully.",
+      "de": "Als Herrscher dieses kleinen Königreichs muss ich jede Sache aufs Sorgfältigste bedenken."
+    }
+  },
+  {
+    "id": "mrs-whaat",
+    "name": "Mrs. Whaat",
+    "aliases": ["Frau Waas"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Jim Button",
+    "affiliation": "Lummerland",
+    "origin": "Lummerland",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "Come in, come in — there's always fresh ice cream and a warm meal for everyone here.",
+      "de": "Kommt herein, kommt herein — hier gibt es immer frisches Eis und ein warmes Essen für alle."
+    }
+  },
+  {
+    "id": "mr-tur-tur",
+    "name": "Mr. Tur Tur",
+    "aliases": ["Herr Tur Tur", "der Scheinriese"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Mystic"],
+    "powers": ["Size-change"],
+    "franchise": "Jim Button",
+    "affiliation": "the Desert at the End of the World",
+    "origin": "the Desert called the End of the World",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "Do not be afraid — the closer you come, the smaller I become; I only seem to be a giant.",
+      "de": "Hab keine Angst — je näher du kommst, desto kleiner werde ich; ich bin nur ein Scheinriese."
+    }
+  },
+  {
+    "id": "mrs-grindtooth",
+    "name": "Mrs. Grindtooth",
+    "aliases": ["Frau Mahlzahn"],
+    "species": "Creature/Monster",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Outlaw"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "Jim Button",
+    "affiliation": "the Dragon City of Sorrow",
+    "origin": "the Dragon City of Sorrow",
+    "medium": "Novel/Prose",
+    "year": 1960,
+    "quote": {
+      "en": "Sit down and be quiet, you wretched children, or you'll feel the heat of my breath!",
+      "de": "Setzt euch und seid still, ihr elenden Kinder, sonst bekommt ihr meinen heißen Atem zu spüren!"
+    }
+  },
+  {
+    "id": "karlsson",
+    "name": "Karlsson",
+    "aliases": ["Karlsson vom Dach", "Karlsson-on-the-Roof", "the world's best Karlsson"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Flight"],
+    "franchise": "Karlsson on the Roof",
+    "affiliation": "",
+    "origin": "a little house on the roof of an apartment block in Stockholm",
+    "medium": "Novel/Prose",
+    "year": 1955,
+    "quote": {
+      "en": "A handsome, thoroughly clever and perfectly plump man in his prime.",
+      "de": "Ein schöner, grundgescheiter und gerade richtig dicker Mann in den besten Jahren."
+    }
+  },
+  {
+    "id": "lillebror",
+    "name": "Lillebror",
+    "aliases": ["Svante Svantesson", "Little Brother", "Smidge"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Karlsson on the Roof",
+    "affiliation": "Svantesson family",
+    "origin": "an ordinary apartment in Stockholm",
+    "medium": "Novel/Prose",
+    "year": 1955,
+    "quote": {
+      "en": "I do wish I had a dog of my very own.",
+      "de": "Ich wünsche mir so sehr einen eigenen Hund."
+    }
+  },
+  {
+    "id": "miss-bock",
+    "name": "Miss Bock",
+    "aliases": ["Fräulein Bock", "Hildur Bock", "Housekeeper Bock"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Karlsson on the Roof",
+    "affiliation": "Svantesson household",
+    "origin": "the Svantessons' apartment in Stockholm",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "There will be order in this house as long as I am running it!",
+      "de": "In diesem Haus wird Ordnung herrschen, solange ich hier das Sagen habe!"
+    }
+  },
+  {
+    "id": "the-little-witch",
+    "name": "The Little Witch",
+    "aliases": ["Die kleine Hexe", "Little Witch"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Mystic"],
+    "powers": ["Magic/Sorcery", "Flight"],
+    "franchise": "The Little Witch",
+    "affiliation": "",
+    "origin": "a small cottage deep in the forest",
+    "medium": "Novel/Prose",
+    "year": 1957,
+    "quote": {
+      "en": "I want to be a good witch and do nothing but good things!",
+      "de": "Ich will eine gute Hexe sein und nichts als gute Dinge tun!"
+    }
+  },
+  {
+    "id": "abraxas",
+    "name": "Abraxas",
+    "aliases": ["Abraxas the Raven", "the Raven"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Mystic"],
+    "powers": ["None"],
+    "franchise": "The Little Witch",
+    "affiliation": "",
+    "origin": "the witch's forest cottage",
+    "medium": "Novel/Prose",
+    "year": 1957,
+    "quote": {
+      "en": "A good witch? There is no such thing as a good witch!",
+      "de": "Eine gute Hexe? So etwas wie eine gute Hexe gibt es doch gar nicht!"
+    }
+  },
+  {
+    "id": "aunt-rumpumpel",
+    "name": "Aunt Rumpumpel",
+    "aliases": ["Muhme Rumpumpel", "Rumpumpel"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Mystic"],
+    "powers": ["Magic/Sorcery", "Flight"],
+    "franchise": "The Little Witch",
+    "affiliation": "the council of witches",
+    "origin": "the witches' realm",
+    "medium": "Novel/Prose",
+    "year": 1957,
+    "quote": {
+      "en": "I will mount my broom and report every last thing to the head of the council!",
+      "de": "Ich steige auf meinen Besen und melde der Obersten alles haarklein!"
+    }
+  },
+  {
+    "id": "the-head-witch",
+    "name": "The Head Witch",
+    "aliases": ["Oberhexe", "Head Witch"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Mage"],
+    "powers": ["Magic/Sorcery", "Flight"],
+    "franchise": "The Little Witch",
+    "affiliation": "the council of witches",
+    "origin": "the Blocksberg",
+    "medium": "Novel/Prose",
+    "year": 1957,
+    "quote": {
+      "en": "Whoever is too young may not dance with us on Walpurgis Night!",
+      "de": "Wer noch zu jung ist, darf in der Walpurgisnacht nicht mit uns tanzen!"
+    }
+  },
+  {
+    "id": "rudiger-von-schlotterstein",
+    "name": "Rüdiger von Schlotterstein",
+    "aliases": ["Rudolph Sackville-Bagg", "Rüdiger", "The Little Vampire"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Flight", "Immortality", "Shapeshifting"],
+    "franchise": "The Little Vampire",
+    "affiliation": "Von Schlotterstein family",
+    "origin": "the crypt in the cemetery",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Don't be afraid, I only bite people I don't like.",
+      "de": "Hab keine Angst, ich beiße nur Leute, die ich nicht leiden kann."
+    }
+  },
+  {
+    "id": "anton-bohnsack",
+    "name": "Anton Bohnsack",
+    "aliases": ["Tony Thompson", "Anton"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "The Little Vampire",
+    "affiliation": "Bohnsack family",
+    "origin": "his parents' apartment in the city",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "I'm not scared of vampires — at least, not of the ones I'm friends with.",
+      "de": "Ich habe keine Angst vor Vampiren — jedenfalls nicht vor denen, mit denen ich befreundet bin."
+    }
+  },
+  {
+    "id": "anna-von-schlotterstein",
+    "name": "Anna von Schlotterstein",
+    "aliases": ["Anna Sackville-Bagg", "Anna", "Anna die Zahnlose"],
+    "species": "Undead",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["Flight", "Immortality", "Shapeshifting"],
+    "franchise": "The Little Vampire",
+    "affiliation": "Von Schlotterstein family",
+    "origin": "the crypt in the cemetery",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "I think you're nice — much nicer than a real boy ought to be.",
+      "de": "Ich finde dich nett — viel netter, als ein richtiger Junge sein sollte."
+    }
+  },
+  {
+    "id": "lumpi-von-schlotterstein",
+    "name": "Lumpi von Schlotterstein",
+    "aliases": ["Gregory Sackville-Bagg", "Lumpi", "Ludwig der Fürchterliche"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Civilian"],
+    "powers": ["Flight", "Immortality", "Super strength"],
+    "franchise": "The Little Vampire",
+    "affiliation": "Von Schlotterstein family",
+    "origin": "the crypt in the cemetery",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Stay out of my way, little human, or you'll regret it!",
+      "de": "Geh mir aus dem Weg, du kleiner Mensch, sonst wirst du es bereuen!"
+    }
+  },
+  {
+    "id": "geiermeier",
+    "name": "Geiermeier",
+    "aliases": ["Rookery", "Friedhofswärter Geiermeier", "der Geiermeier"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Worker"],
+    "powers": ["None"],
+    "franchise": "The Little Vampire",
+    "affiliation": "the cemetery",
+    "origin": "the cemetery lodge",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "I'll catch every last one of those bloodsuckers and drive a stake through them!",
+      "de": "Ich werde jeden einzelnen dieser Blutsauger fangen und ihm einen Pfahl ins Herz treiben!"
+    }
+  },
+  {
+    "id": "krabat",
+    "name": "Krabat",
+    "aliases": ["the Apprentice", "der Lehrjunge"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Mage", "Worker"],
+    "powers": ["Magic/Sorcery", "Shapeshifting"],
+    "franchise": "Krabat",
+    "affiliation": "The Mill in the Koselbruch",
+    "origin": "Schwarzkollm, Lusatia",
+    "medium": "Novel/Prose",
+    "year": 1971,
+    "quote": {
+      "en": "I want to learn the milling trade.",
+      "de": "Ich möchte das Müllerhandwerk erlernen."
+    }
+  },
+  {
+    "id": "der-meister",
+    "name": "Der Meister",
+    "aliases": ["the Master", "the Miller", "the One-Eyed Master"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader", "Worker"],
+    "powers": ["Magic/Sorcery", "Shapeshifting", "Summoning"],
+    "franchise": "Krabat",
+    "affiliation": "The Mill in the Koselbruch",
+    "origin": "Schwarzkollm, Lusatia",
+    "medium": "Novel/Prose",
+    "year": 1971,
+    "quote": {
+      "en": "I will teach you more than just milling.",
+      "de": "Ich werde dich mehr lehren als nur das Müllern."
+    }
+  },
+  {
+    "id": "tonda",
+    "name": "Tonda",
+    "aliases": ["the Head Journeyman", "der Altgesell"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Mage", "Leader"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "Krabat",
+    "affiliation": "The Mill in the Koselbruch",
+    "origin": "Schwarzkollm, Lusatia",
+    "medium": "Novel/Prose",
+    "year": 1971,
+    "quote": {
+      "en": "Keep heart, no matter what happens.",
+      "de": "Fasse Mut, was auch immer geschieht."
+    }
+  },
+  {
+    "id": "juro",
+    "name": "Juro",
+    "aliases": ["the Cook", "the Clever Fool"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Mage"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "Krabat",
+    "affiliation": "The Mill in the Koselbruch",
+    "origin": "Schwarzkollm, Lusatia",
+    "medium": "Novel/Prose",
+    "year": 1971,
+    "quote": {
+      "en": "One only has to use one's head a little.",
+      "de": "Man muss nur ein bisschen den Kopf gebrauchen."
+    }
+  },
+  {
+    "id": "die-kantorka",
+    "name": "Die Kantorka",
+    "aliases": ["the Singer", "the Cantor's Girl", "the Choir Girl"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Artist"],
+    "powers": ["None"],
+    "franchise": "Krabat",
+    "affiliation": "Village of Schwarzkollm",
+    "origin": "Schwarzkollm, Lusatia",
+    "medium": "Novel/Prose",
+    "year": 1971,
+    "quote": {
+      "en": "Set him free, I beg you.",
+      "de": "Gib ihn frei, ich bitte dich."
+    }
+  },
+  {
+    "id": "maya",
+    "name": "Maya",
+    "aliases": ["Maya the Bee", "Biene Maja", "Maja"],
+    "species": "Animal",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Flight"],
+    "franchise": "Maya the Bee",
+    "affiliation": "The Beehive",
+    "origin": "the Poppy Meadow beehive",
+    "medium": "Novel/Prose",
+    "year": 1912,
+    "quote": {
+      "en": "The world is so wonderful, I simply have to see all of it!",
+      "de": "Die Welt ist so wunderschön, ich muss einfach alles davon sehen!"
+    }
+  },
+  {
+    "id": "willi",
+    "name": "Willi",
+    "aliases": ["Willy", "Willi the Bee"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["Flight"],
+    "franchise": "Maya the Bee",
+    "affiliation": "The Beehive",
+    "origin": "the Poppy Meadow beehive",
+    "medium": "Anime",
+    "year": 1975,
+    "quote": {
+      "en": "Couldn't we just have a little nap first? Adventures make me so hungry.",
+      "de": "Können wir nicht erst ein kleines Nickerchen machen? Abenteuer machen mich so hungrig."
+    }
+  },
+  {
+    "id": "flip",
+    "name": "Flip",
+    "aliases": ["Flip the Grasshopper", "Flip der Grashüpfer"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Super speed"],
+    "franchise": "Maya the Bee",
+    "affiliation": "",
+    "origin": "the Poppy Meadow",
+    "medium": "Novel/Prose",
+    "year": 1912,
+    "quote": {
+      "en": "One good jump and your troubles are far behind you!",
+      "de": "Ein guter Sprung und deine Sorgen sind weit hinter dir!"
+    }
+  },
+  {
+    "id": "thekla",
+    "name": "Thekla",
+    "aliases": ["Thekla the Spider", "Thekla die Spinne"],
+    "species": "Animal",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Maya the Bee",
+    "affiliation": "",
+    "origin": "her web in the Poppy Meadow",
+    "medium": "Novel/Prose",
+    "year": 1912,
+    "quote": {
+      "en": "Come a little closer, my dear, my web is ever so cozy.",
+      "de": "Komm ein bisschen näher, meine Liebe, mein Netz ist so gemütlich."
+    }
+  },
+  {
+    "id": "momo",
+    "name": "Momo",
+    "aliases": [],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Momo",
+    "affiliation": "The amphitheatre community",
+    "origin": "The ruined amphitheatre on the edge of a big city",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "You can listen so well that even foolish people suddenly have wise thoughts.",
+      "de": "Sie konnte so zuhören, dass dummen Leuten plötzlich sehr gescheite Gedanken kamen."
+    }
+  },
+  {
+    "id": "beppo-roadsweeper",
+    "name": "Beppo Roadsweeper",
+    "aliases": ["Beppo Straßenkehrer", "Beppo", "Old Beppo"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Mystic"],
+    "powers": ["None"],
+    "franchise": "Momo",
+    "affiliation": "The amphitheatre community",
+    "origin": "The ruined amphitheatre on the edge of a big city",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "One must never think of the whole street at once. One must only think of the next step, the next breath, the next sweep.",
+      "de": "Man darf nie an die ganze Straße auf einmal denken. Man muss nur an den nächsten Schritt denken, den nächsten Atemzug, den nächsten Besenstrich."
+    }
+  },
+  {
+    "id": "gigi",
+    "name": "Gigi",
+    "aliases": ["Girolamo", "Gigi the Tour Guide", "Gigi Fremdenführer", "Gigi Reiseleiter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Artist", "Worker"],
+    "powers": ["None"],
+    "franchise": "Momo",
+    "affiliation": "The amphitheatre community",
+    "origin": "The ruined amphitheatre on the edge of a big city",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "A real story never truly ends, but I will leave you here at a happy point in this one.",
+      "de": "Eine richtige Geschichte hört eigentlich niemals auf, aber ich will euch an dieser glücklichen Stelle gern verlassen."
+    }
+  },
+  {
+    "id": "master-hora",
+    "name": "Master Hora",
+    "aliases": ["Meister Hora", "Secundus Minutius Hora", "Master Secundus Minutius Hora"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Leader"],
+    "powers": ["Immortality", "Magic/Sorcery"],
+    "franchise": "Momo",
+    "affiliation": "Administrator of Time",
+    "origin": "The Nowhere House in Never Lane",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "There is one great secret, which is your secret. Just as you have eyes to see light with, you have a heart to feel time with.",
+      "de": "Es gibt ein großes und doch alltägliches Geheimnis. So wie man Augen hat, um das Licht zu sehen, so hat man ein Herz, um damit die Zeit zu fühlen."
+    }
+  },
+  {
+    "id": "the-men-in-grey",
+    "name": "The Men in Grey",
+    "aliases": ["Die grauen Herren", "Grey Gentlemen", "Time Thieves", "Agents of the Timesavings Bank"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Worker"],
+    "powers": ["Stealth/Invisibility", "Telepathy/Mind"],
+    "franchise": "Momo",
+    "affiliation": "The Timesavings Bank",
+    "origin": "The Timesavings Bank in the big city",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "Save time, and you will have time. Trust no one, and entrust your hours to us.",
+      "de": "Spare Zeit, dann hast du Zeit. Vertraue niemandem und übergib uns deine Stunden."
+    }
+  },
+  {
+    "id": "bastian-balthazar-bux",
+    "name": "Bastian Balthazar Bux",
+    "aliases": ["Bastian", "Bastian Bux", "Savior of Fantastica"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Royalty"],
+    "powers": ["Magic/Sorcery"],
+    "franchise": "The Neverending Story",
+    "affiliation": "The Bux family",
+    "origin": "the human world; later Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Do what you wish.",
+      "de": "Tu, was du willst."
+    }
+  },
+  {
+    "id": "atreyu",
+    "name": "Atreyu",
+    "aliases": ["Atréju", "The Greenskin", "Little One"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "The Neverending Story",
+    "affiliation": "The Grassy Ocean people; the Childlike Empress",
+    "origin": "the Grassy Ocean of Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "I will find a cure, even if I have to cross the whole of the realm.",
+      "de": "Ich werde ein Heilmittel finden, und müsste ich das ganze Reich durchqueren."
+    }
+  },
+  {
+    "id": "falkor",
+    "name": "Falkor",
+    "aliases": ["Fuchur", "the Luckdragon", "Glücksdrache"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Warrior"],
+    "powers": ["Flight", "Healing/Regeneration", "Magic/Sorcery"],
+    "franchise": "The Neverending Story",
+    "affiliation": "Atreyu's companions",
+    "origin": "Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Luckdragons always believe in luck.",
+      "de": "Glücksdrachen glauben immer an das Glück."
+    }
+  },
+  {
+    "id": "the-childlike-empress",
+    "name": "The Childlike Empress",
+    "aliases": ["Die kindliche Kaiserin", "Moon Child", "Mondenkind", "Golden-eyed Commander of Wishes"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty", "Mystic", "Leader"],
+    "powers": ["Immortality", "Magic/Sorcery"],
+    "franchise": "The Neverending Story",
+    "affiliation": "Ruler of Fantastica",
+    "origin": "the Ivory Tower of Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Give me a new name, and I shall live.",
+      "de": "Gib mir einen neuen Namen, dann werde ich leben."
+    }
+  },
+  {
+    "id": "gmork",
+    "name": "Gmork",
+    "aliases": ["the Werewolf", "Servant of the Nothing", "der Werwolf"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Spy", "Warrior", "Monster"],
+    "powers": ["Shapeshifting", "Stealth/Invisibility"],
+    "franchise": "The Neverending Story",
+    "affiliation": "The Nothing",
+    "origin": "Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "When you do not know where you belong, you will fall prey to the Nothing.",
+      "de": "Wer nicht weiß, wohin er gehört, der verfällt dem Nichts."
+    }
+  },
+  {
+    "id": "morla-the-aged-one",
+    "name": "Morla the Aged One",
+    "aliases": ["Morla", "Morla die Uralte", "the Ancient One"],
+    "species": "Animal",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Mystic", "Civilian"],
+    "powers": ["Immortality"],
+    "franchise": "The Neverending Story",
+    "affiliation": "",
+    "origin": "the Swamps of Sadness in Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "We don't care about anything anymore. It's all the same to us.",
+      "de": "Es ist uns alles gleich. Uns ist es einerlei."
+    }
+  },
+  {
+    "id": "rock-biter",
+    "name": "Rock Biter",
+    "aliases": ["Pyornkrachzark", "Felsenbeißer", "the Rockchewer"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Worker", "Adventurer"],
+    "powers": ["Super strength"],
+    "franchise": "The Neverending Story",
+    "affiliation": "Messengers to the Ivory Tower",
+    "origin": "the mountains of Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "They look like good strong hands, don't they? I always thought they were.",
+      "de": "Das sind doch gute, starke Hände, nicht wahr? Ich dachte immer, sie wären gut."
+    }
+  },
+  {
+    "id": "xayide",
+    "name": "Xayide",
+    "aliases": ["the Sorceress", "Mistress of the Will"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Mage", "Leader"],
+    "powers": ["Magic/Sorcery", "Telepathy/Mind", "Summoning"],
+    "franchise": "The Neverending Story",
+    "affiliation": "Commander of the Armored Giants",
+    "origin": "the Horok Castle in Fantastica",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "True power lies in bending another's will to your own.",
+      "de": "Die wahre Macht besteht darin, den Willen eines anderen dem eigenen zu unterwerfen."
+    }
+  },
+  {
+    "id": "tommy-settergren",
+    "name": "Tommy Settergren",
+    "aliases": ["Tommy", "Thomas Settergren"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Pippi Longstocking",
+    "affiliation": "Settergren family",
+    "origin": "a small Swedish town next to Villa Villekulla",
+    "medium": "Novel/Prose",
+    "year": 1945,
+    "quote": {
+      "en": "We have never had such a fun friend on our street before.",
+      "de": "So einen lustigen Freund haben wir noch nie in unserer Straße gehabt."
+    }
+  },
+  {
+    "id": "annika-settergren",
+    "name": "Annika Settergren",
+    "aliases": ["Annika", "Anika"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Pippi Longstocking",
+    "affiliation": "Settergren family",
+    "origin": "a small Swedish town next to Villa Villekulla",
+    "medium": "Novel/Prose",
+    "year": 1945,
+    "quote": {
+      "en": "But you can't really do that, can you?",
+      "de": "Aber das darf man doch gar nicht, oder?"
+    }
+  },
+  {
+    "id": "captain-ephraim-longstocking",
+    "name": "Captain Ephraim Longstocking",
+    "aliases": ["Kapitän Efraim Langstrumpf", "Ephraim Longstocking", "Südseekönig"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Royalty", "Adventurer"],
+    "powers": ["Super strength"],
+    "franchise": "Pippi Longstocking",
+    "affiliation": "Longstocking family",
+    "origin": "the South Sea island of Kurrekurredutt",
+    "medium": "Novel/Prose",
+    "year": 1945,
+    "quote": {
+      "en": "My daughter is the strongest girl in the world.",
+      "de": "Meine Tochter ist das stärkste Mädchen der Welt."
+    }
+  },
+  {
+    "id": "mr-nilsson",
+    "name": "Mr. Nilsson",
+    "aliases": ["Herr Nilsson", "Mister Nilsson", "Nilsson"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Pippi Longstocking",
+    "affiliation": "Longstocking household",
+    "origin": "Villa Villekulla",
+    "medium": "Novel/Prose",
+    "year": 1945,
+    "quote": {
+      "en": "Chatter, chatter — and a straw hat tipped politely.",
+      "de": "Schnatter, schnatter — und höflich lüpft er den Strohhut."
+    }
+  },
+  {
+    "id": "mrs-prysselius",
+    "name": "Mrs. Prysselius",
+    "aliases": ["Prussiluskan", "Fräulein Prysselius", "Miss Prysselius", "Prysselius"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Pippi Longstocking",
+    "affiliation": "Town child welfare board",
+    "origin": "a small Swedish town next to Villa Villekulla",
+    "medium": "Novel/Prose",
+    "year": 1945,
+    "quote": {
+      "en": "A child like that belongs in a children's home!",
+      "de": "So ein Kind gehört in ein Kinderheim!"
+    }
+  },
+  {
+    "id": "pumuckl",
+    "name": "Pumuckl",
+    "aliases": ["Pumuckel", "Kobold Pumuckl"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian"],
+    "powers": ["Stealth/Invisibility"],
+    "franchise": "Pumuckl",
+    "affiliation": "Klabautermänner",
+    "origin": "Meister Eder's carpentry workshop in Munich",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "Whoever sees me, to him I belong!",
+      "de": "Wer mich sieht, dem gehöre ich!"
+    }
+  },
+  {
+    "id": "meister-eder",
+    "name": "Meister Eder",
+    "aliases": ["Franz Eder", "der Schreinermeister", "Eder"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Artist"],
+    "powers": ["None"],
+    "franchise": "Pumuckl",
+    "affiliation": "Eder's carpentry workshop",
+    "origin": "Munich, Bavaria",
+    "medium": "Novel/Prose",
+    "year": 1962,
+    "quote": {
+      "en": "But that's impossible, nobody can be invisible!",
+      "de": "Aber das gibt's doch nicht, unsichtbar kann doch keiner sein!"
+    }
+  },
+  {
+    "id": "ronja",
+    "name": "Ronja",
+    "aliases": ["Ronia", "Ronja Mattisdottir", "Ronja Räubertochter"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Outlaw", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Ronja the Robber's Daughter",
+    "affiliation": "Mattis's robber band",
+    "origin": "Mattis's Fort",
+    "medium": "Novel/Prose",
+    "year": 1981,
+    "quote": {
+      "en": "I can take care of myself, you know.",
+      "de": "Ich kann auf mich selbst aufpassen, das weißt du doch."
+    }
+  },
+  {
+    "id": "birk-borkason",
+    "name": "Birk Borkason",
+    "aliases": ["Birk", "Birk Borkasson"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Outlaw", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Ronja the Robber's Daughter",
+    "affiliation": "Borka's robber band",
+    "origin": "Borka's Keep",
+    "medium": "Novel/Prose",
+    "year": 1981,
+    "quote": {
+      "en": "Call me your sister, then, and I'll call you my brother.",
+      "de": "Nenn mich deine Schwester, dann nenne ich dich meinen Bruder."
+    }
+  },
+  {
+    "id": "mattis",
+    "name": "Mattis",
+    "aliases": ["Matt", "Mattis the robber chief"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["None"],
+    "franchise": "Ronja the Robber's Daughter",
+    "affiliation": "Mattis's robber band",
+    "origin": "Mattis's Fort",
+    "medium": "Novel/Prose",
+    "year": 1981,
+    "quote": {
+      "en": "I have no child anymore!",
+      "de": "Ich habe kein Kind mehr!"
+    }
+  },
+  {
+    "id": "lovis",
+    "name": "Lovis",
+    "aliases": ["Lovisa", "Mother Lovis"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Outlaw", "Healer"],
+    "powers": ["None"],
+    "franchise": "Ronja the Robber's Daughter",
+    "affiliation": "Mattis's robber band",
+    "origin": "Mattis's Fort",
+    "medium": "Novel/Prose",
+    "year": 1981,
+    "quote": {
+      "en": "Now I am going to sing, whether you like it or not.",
+      "de": "Jetzt singe ich, ob es euch passt oder nicht."
+    }
+  },
+  {
+    "id": "borka",
+    "name": "Borka",
+    "aliases": ["Borka the robber chief"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Leader"],
+    "powers": ["None"],
+    "franchise": "Ronja the Robber's Daughter",
+    "affiliation": "Borka's robber band",
+    "origin": "Borka's Keep",
+    "medium": "Novel/Prose",
+    "year": 1981,
+    "quote": {
+      "en": "This fort is mine now, and here I'll stay!",
+      "de": "Diese Burg gehört jetzt mir, und hier bleibe ich!"
+    }
+  },
+  {
+    "id": "das-sams",
+    "name": "Das Sams",
+    "aliases": ["Sams"],
+    "species": "Creature/Monster",
+    "gender": "Non-binary/Fluid",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Summoning"],
+    "franchise": "Das Sams",
+    "affiliation": "Familie Taschenbier",
+    "origin": "Herrn Taschenbiers Wohnung",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "If you've got a wish, then take a look: a blue dot will set it loose!",
+      "de": "Wer einen Wunsch hat, der schau nur her: Ein blauer Punkt, und schon gibt's mehr!"
+    }
+  },
+  {
+    "id": "herr-bruno-taschenbier",
+    "name": "Herr Bruno Taschenbier",
+    "aliases": ["Bruno Taschenbier", "Herr Taschenbier", "Papa"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Das Sams",
+    "affiliation": "Familie Taschenbier",
+    "origin": "Frau Rotkohls Pension",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "Oh dear, oh dear, what on earth will the neighbours think?",
+      "de": "Ach du liebe Zeit, was sollen denn bloß die Leute denken?"
+    }
+  },
+  {
+    "id": "herr-mon",
+    "name": "Herr Mon",
+    "aliases": ["Mon"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Das Sams",
+    "affiliation": "Büro",
+    "origin": "das Büro",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "There must be order in the office, after all.",
+      "de": "Im Büro muss schließlich Ordnung herrschen."
+    }
+  },
+  {
+    "id": "frau-rotkohl",
+    "name": "Frau Rotkohl",
+    "aliases": ["Rotkohl", "die Wirtin"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Das Sams",
+    "affiliation": "Pension Rotkohl",
+    "origin": "Frau Rotkohls Pension",
+    "medium": "Novel/Prose",
+    "year": 1973,
+    "quote": {
+      "en": "Not in my house! I run a respectable establishment here.",
+      "de": "Nicht in meinem Haus! Ich führe hier ein anständiges Haus."
+    }
+  },
+  {
+    "id": "tabaluga",
+    "name": "Tabaluga",
+    "aliases": ["The little green dragon", "Der kleine grüne Drache"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Elemental"],
+    "franchise": "Tabaluga",
+    "affiliation": "Greenland",
+    "origin": "Greenland (Grünland)",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "I want to learn to breathe fire like a real dragon.",
+      "de": "Ich will Feuer spucken lernen, wie ein echter Drache."
+    }
+  },
+  {
+    "id": "lilli",
+    "name": "Lilli",
+    "aliases": ["The ice princess", "Die Eisprinzessin"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Royalty"],
+    "powers": ["Elemental"],
+    "franchise": "Tabaluga",
+    "affiliation": "Iceland",
+    "origin": "Iceland (Eisland)",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "Even an icy heart can learn to feel warmth.",
+      "de": "Auch ein eisiges Herz kann lernen, Wärme zu fühlen."
+    }
+  },
+  {
+    "id": "arktos",
+    "name": "Arktos",
+    "aliases": ["The ice ruler", "Der Eisriese", "Lord of Iceland"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Leader"],
+    "powers": ["Elemental"],
+    "franchise": "Tabaluga",
+    "affiliation": "Iceland",
+    "origin": "Iceland (Eisland)",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "Everything shall freeze beneath my eternal frost.",
+      "de": "Alles soll unter meinem ewigen Frost erstarren."
+    }
+  },
+  {
+    "id": "nessaja",
+    "name": "Nessaja",
+    "aliases": ["The wise turtle", "Die alte Schildkröte"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Healer"],
+    "powers": ["None"],
+    "franchise": "Tabaluga",
+    "affiliation": "Greenland",
+    "origin": "Greenland (Grünland)",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "Never was I young, child, but I have always been wise.",
+      "de": "Ich war niemals jung, Kind, doch ich war immer schon weise."
+    }
+  },
+  {
+    "id": "tim",
+    "name": "Tim",
+    "aliases": ["Tarzan", "Peter Carsten", "TKKG-Anführer"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student", "Leader"],
+    "powers": ["Martial arts", "Peak human/Genius"],
+    "franchise": "TKKG",
+    "affiliation": "TKKG",
+    "origin": "an unnamed German city",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Come on, gang — we'll crack this case together!",
+      "de": "Los, Leute — den Fall knacken wir gemeinsam!"
+    }
+  },
+  {
+    "id": "karl",
+    "name": "Karl",
+    "aliases": ["Computer", "Klugscheißer", "Karl Vierstein"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "TKKG",
+    "affiliation": "TKKG",
+    "origin": "an unnamed German city",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Statistically, the culprit must be hiding right here.",
+      "de": "Statistisch gesehen muss der Täter sich genau hier verstecken."
+    }
+  },
+  {
+    "id": "klo-chen",
+    "name": "Klößchen",
+    "aliases": ["Willi Sauerlich", "Klosschen", "Dumpling"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "TKKG",
+    "affiliation": "TKKG",
+    "origin": "an unnamed German city",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "Could we maybe solve this after a little snack?",
+      "de": "Können wir das nicht nach einem kleinen Snack lösen?"
+    }
+  },
+  {
+    "id": "gaby",
+    "name": "Gaby",
+    "aliases": ["Gaby Glockner", "Pfötchen", "Gabriele"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "TKKG",
+    "affiliation": "TKKG",
+    "origin": "an unnamed German city",
+    "medium": "Novel/Prose",
+    "year": 1979,
+    "quote": {
+      "en": "My dog already sniffed out the trail — follow me!",
+      "de": "Mein Hund hat die Spur längst aufgenommen — kommt mit!"
+    }
+  },
+  {
+    "id": "vicky",
+    "name": "Vicky",
+    "aliases": ["Wickie", "Vicke", "Wickie der kleine Wikinger"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Vicky the Viking",
+    "affiliation": "The Vikings of Flake",
+    "origin": "Flake",
+    "medium": "Novel/Prose",
+    "year": 1963,
+    "quote": {
+      "en": "When you rub your nose like this, a clever idea will come!",
+      "de": "Wenn man sich so an der Nase reibt, kommt einem eine gute Idee!"
+    }
+  },
+  {
+    "id": "halvar",
+    "name": "Halvar",
+    "aliases": ["Halvar der Starke", "Häuptling Halvar", "Vicky's father"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior"],
+    "powers": ["None"],
+    "franchise": "Vicky the Viking",
+    "affiliation": "The Vikings of Flake",
+    "origin": "Flake",
+    "medium": "Novel/Prose",
+    "year": 1963,
+    "quote": {
+      "en": "By Odin's beard, that's my son!",
+      "de": "Bei Odins Bart, das ist mein Sohn!"
+    }
+  },
+  {
+    "id": "ylva",
+    "name": "Ylva",
+    "aliases": ["Ylva von Flake", "Vicky's mother", "Wickies Mutter"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Vicky the Viking",
+    "affiliation": "The Vikings of Flake",
+    "origin": "Flake",
+    "medium": "Novel/Prose",
+    "year": 1963,
+    "quote": {
+      "en": "Be careful out there, my little one, and come home safe.",
+      "de": "Pass gut auf dich auf, mein Kleiner, und komm heil wieder heim."
+    }
+  },
+  {
+    "id": "faxe",
+    "name": "Faxe",
+    "aliases": ["Faxe der Starke", "Faxe the Strong", "Dicker Faxe"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Vicky the Viking",
+    "affiliation": "The Vikings of Flake",
+    "origin": "Flake",
+    "medium": "Novel/Prose",
+    "year": 1963,
+    "quote": {
+      "en": "I'm so hungry I could eat a whole roasted ox!",
+      "de": "Ich hab so einen Hunger, ich könnte einen ganzen Ochsen verputzen!"
+    }
   }
 ]
