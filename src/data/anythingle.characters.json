@@ -57307,5 +57307,2437 @@
       "en": "I'm so hungry I could eat a whole roasted ox!",
       "de": "Ich hab so einen Hunger, ich könnte einen ganzen Ochsen verputzen!"
     }
+  },
+  {
+    "id": "jake-long",
+    "name": "Jake Long",
+    "aliases": ["The American Dragon", "Am Drag", "Der amerikanische Drache"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior", "Adventurer"],
+    "powers": ["Shapeshifting", "Flight", "Elemental"],
+    "franchise": "American Dragon: Jake Long",
+    "affiliation": "Magical Community / Dragon Council",
+    "origin": "New York City",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "Yo, yo, yo! Time to bring the heat, baby!",
+      "de": "Yo, yo, yo! Jetzt wird's heiss, Baby!"
+    }
+  },
+  {
+    "id": "lao-shi",
+    "name": "Lao Shi",
+    "aliases": ["Grandpa", "Luong Lao Shi", "Opa Lao Shi"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Mage", "Worker"],
+    "powers": ["Shapeshifting", "Flight", "Magic/Sorcery"],
+    "franchise": "American Dragon: Jake Long",
+    "affiliation": "Dragon Council",
+    "origin": "China",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "You have much to learn, young dragon.",
+      "de": "Du hast noch viel zu lernen, junger Drache."
+    }
+  },
+  {
+    "id": "fu-dog",
+    "name": "Fu Dog",
+    "aliases": ["Fu", "Hund Fu"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mystic", "Healer", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Immortality", "Healing/Regeneration"],
+    "franchise": "American Dragon: Jake Long",
+    "affiliation": "Magical Community",
+    "origin": "China",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "Trust me, kid, I've been around for six hundred years.",
+      "de": "Glaub mir, Kleiner, ich bin schon seit sechshundert Jahren dabei."
+    }
+  },
+  {
+    "id": "rose",
+    "name": "Rose",
+    "aliases": ["Huntsgirl", "Thorn", "Huntsmaedchen"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Student", "Spy"],
+    "powers": ["Martial arts", "Weapon mastery", "Peak human/Genius"],
+    "franchise": "American Dragon: Jake Long",
+    "affiliation": "Huntsclan",
+    "origin": "New York City",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "I was raised to slay your kind, but I can't.",
+      "de": "Ich wurde dazu erzogen, deinesgleichen zu jagen, aber ich kann es nicht."
+    }
+  },
+  {
+    "id": "ben-tennyson",
+    "name": "Ben Tennyson",
+    "aliases": ["Ben 10", "Benjamin Kirby Tennyson", "Ben Ten"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Warrior", "Student"],
+    "powers": ["Shapeshifting", "Tech/Gadgets"],
+    "franchise": "Ben 10",
+    "affiliation": "Tennyson family",
+    "origin": "Bellwood",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "It's hero time!",
+      "de": "Es ist Zeit fuer Helden!"
+    }
+  },
+  {
+    "id": "gwen-tennyson",
+    "name": "Gwen Tennyson",
+    "aliases": ["Gwendolyn Tennyson", "Lucky Girl"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Student", "Adventurer"],
+    "powers": ["Magic/Sorcery", "Energy/Beams"],
+    "franchise": "Ben 10",
+    "affiliation": "Tennyson family",
+    "origin": "Bellwood",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "You are such a dweeb.",
+      "de": "Du bist so ein Trottel."
+    }
+  },
+  {
+    "id": "grandpa-max",
+    "name": "Grandpa Max",
+    "aliases": ["Max Tennyson", "Maxwell Tennyson"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Soldier", "Adventurer", "Leader"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Ben 10",
+    "affiliation": "Plumbers",
+    "origin": "Bellwood",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "Let me tell you, this is gonna be the best summer ever.",
+      "de": "Glaub mir, das wird der beste Sommer aller Zeiten."
+    }
+  },
+  {
+    "id": "kevin-levin",
+    "name": "Kevin Levin",
+    "aliases": ["Kevin 11", "Kevin Ethan Levin"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior", "Adventurer"],
+    "powers": ["Shapeshifting", "Super strength", "Tech/Gadgets"],
+    "franchise": "Ben 10",
+    "affiliation": "Tennyson family",
+    "origin": "Bellwood",
+    "medium": "Animation/Cartoon",
+    "year": 2006,
+    "quote": {
+      "en": "I'm gonna pound you into the ground.",
+      "de": "Ich stampfe dich in den Boden."
+    }
+  },
+  {
+    "id": "vilgax",
+    "name": "Vilgax",
+    "aliases": ["Conqueror of Ten Worlds", "Vilgax the Conqueror"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Leader", "Outlaw"],
+    "powers": ["Super strength", "Energy/Beams", "Flight"],
+    "franchise": "Ben 10",
+    "affiliation": "",
+    "origin": "Vilgaxia",
+    "medium": "Animation/Cartoon",
+    "year": 2005,
+    "quote": {
+      "en": "The Omnitrix will be mine.",
+      "de": "Das Allwesen wird mir gehoeren."
+    }
+  },
+  {
+    "id": "jeremy-belpois",
+    "name": "Jeremy Belpois",
+    "aliases": ["Jeremie", "Einstein"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student", "Leader"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Code Lyoko",
+    "affiliation": "Lyoko Warriors",
+    "origin": "Kadic Academy, France",
+    "medium": "Animation/Cartoon",
+    "year": 2003,
+    "quote": {
+      "en": "Return to the past, now!",
+      "de": "Rückkehr in die Vergangenheit, jetzt!"
+    }
+  },
+  {
+    "id": "aelita-hopper",
+    "name": "Aelita Hopper",
+    "aliases": ["Aelita Stones", "Aelita Schaeffer"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Adventurer"],
+    "powers": ["Energy/Beams", "Tech/Gadgets", "Flight"],
+    "franchise": "Code Lyoko",
+    "affiliation": "Lyoko Warriors",
+    "origin": "Lyoko",
+    "medium": "Animation/Cartoon",
+    "year": 2003,
+    "quote": {
+      "en": "Energy field!",
+      "de": "Energiefeld!"
+    }
+  },
+  {
+    "id": "ulrich-stern",
+    "name": "Ulrich Stern",
+    "aliases": ["Ulrich"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Athlete"],
+    "powers": ["Super speed", "Martial arts", "Weapon mastery"],
+    "franchise": "Code Lyoko",
+    "affiliation": "Lyoko Warriors",
+    "origin": "Kadic Academy, France",
+    "medium": "Animation/Cartoon",
+    "year": 2003,
+    "quote": {
+      "en": "Super Sprint!",
+      "de": "Superlauf!"
+    }
+  },
+  {
+    "id": "odd-della-robbia",
+    "name": "Odd Della Robbia",
+    "aliases": ["Odd"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Artist"],
+    "powers": ["Energy/Beams", "Martial arts", "Peak human/Genius"],
+    "franchise": "Code Lyoko",
+    "affiliation": "Lyoko Warriors",
+    "origin": "Kadic Academy, France",
+    "medium": "Animation/Cartoon",
+    "year": 2003,
+    "quote": {
+      "en": "Laser arrow!",
+      "de": "Laserpfeil!"
+    }
+  },
+  {
+    "id": "x-a-n-a",
+    "name": "X.A.N.A.",
+    "aliases": ["XANA", "Xana"],
+    "species": "Robot/AI",
+    "gender": "None/Genderless",
+    "alignment": "Villain/Evil",
+    "role": ["Monster", "Mystic"],
+    "powers": ["Electric/Lightning", "Tech/Gadgets", "Shapeshifting"],
+    "franchise": "Code Lyoko",
+    "affiliation": "",
+    "origin": "The Supercomputer / Lyoko",
+    "medium": "Animation/Cartoon",
+    "year": 2003,
+    "quote": {
+      "en": "I will destroy the human race and rule the network.",
+      "de": "Ich werde die Menschheit vernichten und das Netzwerk beherrschen."
+    }
+  },
+  {
+    "id": "courage",
+    "name": "Courage",
+    "aliases": ["Courage the Cowardly Dog", "Stupid Dog", "Mah Pink Fluffy"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Courage the Cowardly Dog",
+    "affiliation": "Bagge family",
+    "origin": "Middle of Nowhere, Kansas",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "The things I do for love.",
+      "de": "Was ich nicht alles aus Liebe tue."
+    }
+  },
+  {
+    "id": "muriel-bagge",
+    "name": "Muriel Bagge",
+    "aliases": ["Muriel", "Grandma"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Courage the Cowardly Dog",
+    "affiliation": "Bagge family",
+    "origin": "Middle of Nowhere, Kansas",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "Want some tea?",
+      "de": "Möchtest du etwas Tee?"
+    }
+  },
+  {
+    "id": "eustace-bagge",
+    "name": "Eustace Bagge",
+    "aliases": ["Eustace", "Old Man Bagge"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Courage the Cowardly Dog",
+    "affiliation": "Bagge family",
+    "origin": "Middle of Nowhere, Kansas",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "Stupid dog! You make me look bad!",
+      "de": "Blöder Hund! Du blamierst mich!"
+    }
+  },
+  {
+    "id": "katz",
+    "name": "Katz",
+    "aliases": ["Katz the Cat"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Worker"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Courage the Cowardly Dog",
+    "affiliation": "",
+    "origin": "Katz Motel",
+    "medium": "Animation/Cartoon",
+    "year": 1999,
+    "quote": {
+      "en": "I don't like dogs. Allow me to introduce you to my pet spiders.",
+      "de": "Ich mag keine Hunde. Darf ich dir meine Spinnen vorstellen?"
+    }
+  },
+  {
+    "id": "danny-fenton",
+    "name": "Danny Fenton",
+    "aliases": ["Danny Phantom", "Inviso-Bill", "Daniel Fenton"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior"],
+    "powers": ["Flight", "Energy/Beams", "Stealth/Invisibility"],
+    "franchise": "Danny Phantom",
+    "affiliation": "Team Phantom",
+    "origin": "Amity Park",
+    "medium": "Animation/Cartoon",
+    "year": 2004,
+    "quote": {
+      "en": "I'm going ghost!",
+      "de": "Ich werde zum Geist!"
+    }
+  },
+  {
+    "id": "sam-manson",
+    "name": "Sam Manson",
+    "aliases": ["Samantha Manson", "Sam"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Danny Phantom",
+    "affiliation": "Team Phantom",
+    "origin": "Amity Park",
+    "medium": "Animation/Cartoon",
+    "year": 2004,
+    "quote": {
+      "en": "I'm an ultra-recyclo-vegetarian. I don't eat anything with a face.",
+      "de": "Ich bin Ultra-Recyclo-Vegetarierin. Ich esse nichts, was ein Gesicht hat."
+    }
+  },
+  {
+    "id": "tucker-foley",
+    "name": "Tucker Foley",
+    "aliases": ["Tuck", "Too Fine Tucker", "Tucker"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["Tech/Gadgets"],
+    "franchise": "Danny Phantom",
+    "affiliation": "Team Phantom",
+    "origin": "Amity Park",
+    "medium": "Animation/Cartoon",
+    "year": 2004,
+    "quote": {
+      "en": "I am a techno-geek, and I'm proud!",
+      "de": "Ich bin ein Techno-Freak, und ich bin stolz darauf!"
+    }
+  },
+  {
+    "id": "vlad-masters",
+    "name": "Vlad Masters",
+    "aliases": ["Vlad Plasmius", "Wisconsin Ghost"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Politician", "Scientist"],
+    "powers": ["Flight", "Energy/Beams", "Shapeshifting"],
+    "franchise": "Danny Phantom",
+    "affiliation": "",
+    "origin": "Wisconsin",
+    "medium": "Animation/Cartoon",
+    "year": 2004,
+    "quote": {
+      "en": "Oh, what a pleasant surprise. The boy who could have been my son.",
+      "de": "Oh, was für eine angenehme Überraschung. Der Junge, der mein Sohn hätte sein können."
+    }
+  },
+  {
+    "id": "skulker",
+    "name": "Skulker",
+    "aliases": ["The Ghost Zone's Greatest Hunter"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Outlaw", "Warrior"],
+    "powers": ["Flight", "Weapon mastery", "Tech/Gadgets"],
+    "franchise": "Danny Phantom",
+    "affiliation": "",
+    "origin": "Ghost Zone",
+    "medium": "Animation/Cartoon",
+    "year": 2004,
+    "quote": {
+      "en": "Your pelt will look magnificent at the foot of my bed!",
+      "de": "Dein Fell wird sich prächtig am Fuße meines Bettes machen!"
+    }
+  },
+  {
+    "id": "conan-edogawa",
+    "name": "Conan Edogawa",
+    "aliases": ["Shinichi Kudo", "Jimmy Kudo"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Detective Conan",
+    "affiliation": "Detective Boys",
+    "origin": "Beika, Tokyo",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "There is only one truth!",
+      "de": "Es gibt immer nur eine Wahrheit!"
+    }
+  },
+  {
+    "id": "ran-mouri",
+    "name": "Ran Mouri",
+    "aliases": ["Rachel Moore", "Ran"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Athlete"],
+    "powers": ["Martial arts"],
+    "franchise": "Detective Conan",
+    "affiliation": "Teitan High School",
+    "origin": "Beika, Tokyo",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "I'll always believe in you and wait for you.",
+      "de": "Ich werde immer an dich glauben und auf dich warten."
+    }
+  },
+  {
+    "id": "kogoro-mouri",
+    "name": "Kogoro Mouri",
+    "aliases": ["Richard Moore", "Sleeping Kogoro", "Schlafender Kogoro"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Worker"],
+    "powers": ["None"],
+    "franchise": "Detective Conan",
+    "affiliation": "Mouri Detective Agency",
+    "origin": "Beika, Tokyo",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "Leave the deductions to me, the great detective!",
+      "de": "Überlasst das Kombinieren ruhig mir, dem großen Meisterdetektiv!"
+    }
+  },
+  {
+    "id": "ai-haibara",
+    "name": "Ai Haibara",
+    "aliases": ["Shiho Miyano", "Sherry", "Anita Hailey"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Detective Conan",
+    "affiliation": "Detective Boys",
+    "origin": "Beika, Tokyo",
+    "medium": "Manga",
+    "year": 1998,
+    "quote": {
+      "en": "Don't you dare die before I find the antidote.",
+      "de": "Wag es ja nicht zu sterben, bevor ich das Gegenmittel gefunden habe."
+    }
+  },
+  {
+    "id": "heiji-hattori",
+    "name": "Heiji Hattori",
+    "aliases": ["Harley Hartwell", "Heiji"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student"],
+    "powers": ["Peak human/Genius", "Martial arts"],
+    "franchise": "Detective Conan",
+    "affiliation": "Osaka Police (family ties)",
+    "origin": "Osaka",
+    "medium": "Manga",
+    "year": 1996,
+    "quote": {
+      "en": "Just leave it to the great detective of the West!",
+      "de": "Überlasst das nur dem großen Meisterdetektiv des Westens!"
+    }
+  },
+  {
+    "id": "kaito-kid",
+    "name": "Kaito Kid",
+    "aliases": ["Kaito Kuroba", "Phantom Thief 1412", "Phantomdieb Kid"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Artist"],
+    "powers": ["Stealth/Invisibility", "Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Detective Conan",
+    "affiliation": "Independent (phantom thief)",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 1997,
+    "quote": {
+      "en": "A magician never reveals his secrets.",
+      "de": "Ein Magier verrät niemals seine Geheimnisse."
+    }
+  },
+  {
+    "id": "hiroshi-agasa",
+    "name": "Hiroshi Agasa",
+    "aliases": ["Professor Agasa", "Doc"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Detective Conan",
+    "affiliation": "Detective Boys (supporter)",
+    "origin": "Beika, Tokyo",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "I made another new invention for you!",
+      "de": "Ich habe wieder eine neue Erfindung für dich gebastelt!"
+    }
+  },
+  {
+    "id": "juzo-megure",
+    "name": "Juzo Megure",
+    "aliases": ["Inspector Megure", "Inspector Maguire", "Kommissar Megure"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Leader"],
+    "powers": ["None"],
+    "franchise": "Detective Conan",
+    "affiliation": "Tokyo Metropolitan Police",
+    "origin": "Tokyo",
+    "medium": "Manga",
+    "year": 1994,
+    "quote": {
+      "en": "Seal off the area, no one leaves this crime scene!",
+      "de": "Riegelt alles ab, niemand verlässt diesen Tatort!"
+    }
+  },
+  {
+    "id": "dexter",
+    "name": "Dexter",
+    "aliases": ["Boy Genius"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Dexter's Laboratory",
+    "affiliation": "",
+    "origin": "Suburban family home with a secret laboratory",
+    "medium": "Animation/Cartoon",
+    "year": 1995,
+    "quote": {
+      "en": "You keep out of my laboratory!",
+      "de": "Bleib aus meinem Labor!"
+    }
+  },
+  {
+    "id": "dee-dee",
+    "name": "Dee Dee",
+    "aliases": ["Didi"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Artist"],
+    "powers": ["None"],
+    "franchise": "Dexter's Laboratory",
+    "affiliation": "",
+    "origin": "Suburban family home above the laboratory",
+    "medium": "Animation/Cartoon",
+    "year": 1995,
+    "quote": {
+      "en": "Ooh, what does this button do?",
+      "de": "Oh, was macht denn dieser Knopf?"
+    }
+  },
+  {
+    "id": "mandark",
+    "name": "Mandark",
+    "aliases": ["Susan Astronomonov"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Student"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Dexter's Laboratory",
+    "affiliation": "",
+    "origin": "Rival laboratory in the same neighborhood",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "Ha ha ha! Your inferior brain is no match for mine!",
+      "de": "Ha ha ha! Dein unterlegenes Hirn ist mir nicht gewachsen!"
+    }
+  },
+  {
+    "id": "monkey",
+    "name": "Monkey",
+    "aliases": ["Dexter's Monkey", "Affe"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Adventurer"],
+    "powers": ["Super strength", "Flight", "Energy/Beams"],
+    "franchise": "Dexter's Laboratory",
+    "affiliation": "",
+    "origin": "Dexter's laboratory, where he was a lab experiment",
+    "medium": "Animation/Cartoon",
+    "year": 1995,
+    "quote": {
+      "en": "Ooh ooh ooh!",
+      "de": "Ooh ooh ooh!"
+    }
+  },
+  {
+    "id": "hidetoshi-dekisugi",
+    "name": "Hidetoshi Dekisugi",
+    "aliases": ["Dekisugi", "Dekisugi Hidetoshi", "Klaus Streber"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Doraemon",
+    "affiliation": "Nobita's class",
+    "origin": "Tokyo, Japan",
+    "medium": "Manga",
+    "year": 1970,
+    "quote": {
+      "en": "Studying is actually a lot of fun once you understand it.",
+      "de": "Lernen macht eigentlich richtig Spaß, wenn man es erst mal verstanden hat."
+    }
+  },
+  {
+    "id": "tamako-nobi",
+    "name": "Tamako Nobi",
+    "aliases": ["Tamako", "Nobita's Mother", "Mama"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Doraemon",
+    "affiliation": "Nobi family",
+    "origin": "Tokyo, Japan",
+    "medium": "Manga",
+    "year": 1970,
+    "quote": {
+      "en": "How many times do I have to tell you to do your homework first?",
+      "de": "Wie oft muss ich dir noch sagen, dass du zuerst deine Hausaufgaben machst?"
+    }
+  },
+  {
+    "id": "nobisuke-nobi",
+    "name": "Nobisuke Nobi",
+    "aliases": ["Nobisuke", "Nobita's Father", "Papa"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Doraemon",
+    "affiliation": "Nobi family",
+    "origin": "Tokyo, Japan",
+    "medium": "Manga",
+    "year": 1970,
+    "quote": {
+      "en": "When I was your age, I had it much harder than you.",
+      "de": "Als ich in deinem Alter war, hatte ich es viel schwerer als du."
+    }
+  },
+  {
+    "id": "jaiko",
+    "name": "Jaiko",
+    "aliases": ["Jaiko Goda", "Christine", "Gians Schwester"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Artist"],
+    "powers": ["None"],
+    "franchise": "Doraemon",
+    "affiliation": "Goda family",
+    "origin": "Tokyo, Japan",
+    "medium": "Manga",
+    "year": 1970,
+    "quote": {
+      "en": "One day I'll become a famous manga artist, just you wait!",
+      "de": "Eines Tages werde ich eine berühmte Manga-Zeichnerin, das schwöre ich dir!"
+    }
+  },
+  {
+    "id": "sewashi-nobi",
+    "name": "Sewashi Nobi",
+    "aliases": ["Sewashi", "Nobita's great-great-grandson"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer"],
+    "powers": ["Tech/Gadgets"],
+    "franchise": "Doraemon",
+    "affiliation": "Nobi family",
+    "origin": "Tokyo, 22nd century",
+    "medium": "Manga",
+    "year": 1970,
+    "quote": {
+      "en": "I sent you a robot from the future to fix your whole life!",
+      "de": "Ich habe dir einen Roboter aus der Zukunft geschickt, der dein ganzes Leben in Ordnung bringt!"
+    }
+  },
+  {
+    "id": "ed",
+    "name": "Ed",
+    "aliases": ["Big Ed", "Lumpy", "Monobrow"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Worker"],
+    "powers": ["Super strength"],
+    "franchise": "Ed, Edd n Eddy",
+    "affiliation": "The Eds",
+    "origin": "Peach Creek (the Cul-de-Sac)",
+    "medium": "Animation/Cartoon",
+    "year": 1999,
+    "quote": {
+      "en": "Gravy!",
+      "de": "Bratensoße!"
+    }
+  },
+  {
+    "id": "edd",
+    "name": "Edd",
+    "aliases": ["Double D", "Sockhead", "Doppel D"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Scientist"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Ed, Edd n Eddy",
+    "affiliation": "The Eds",
+    "origin": "Peach Creek (the Cul-de-Sac)",
+    "medium": "Animation/Cartoon",
+    "year": 1999,
+    "quote": {
+      "en": "Filthy! This is absolutely filthy!",
+      "de": "Schmutzig! Das ist ja absolut schmutzig!"
+    }
+  },
+  {
+    "id": "eddy",
+    "name": "Eddy",
+    "aliases": ["The Mastermind", "Money-Grubber"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Student", "Outlaw"],
+    "powers": ["None"],
+    "franchise": "Ed, Edd n Eddy",
+    "affiliation": "The Eds",
+    "origin": "Peach Creek (the Cul-de-Sac)",
+    "medium": "Animation/Cartoon",
+    "year": 1999,
+    "quote": {
+      "en": "Jawbreakers, here we come!",
+      "de": "Kaubonbons, wir kommen!"
+    }
+  },
+  {
+    "id": "rolf",
+    "name": "Rolf",
+    "aliases": ["Son of a Shepherd", "The Farm Boy"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Worker", "Student"],
+    "powers": ["Super strength"],
+    "franchise": "Ed, Edd n Eddy",
+    "affiliation": "Cul-de-Sac kids",
+    "origin": "Peach Creek (the Cul-de-Sac); the Old Country",
+    "medium": "Animation/Cartoon",
+    "year": 1999,
+    "quote": {
+      "en": "Back, back to the deep watery abyss with you!",
+      "de": "Zurück, zurück in den tiefen Abgrund mit dir!"
+    }
+  },
+  {
+    "id": "timmy-turner",
+    "name": "Timmy Turner",
+    "aliases": ["Timmy", "Cleft the Boy Chin Wonder"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Fairly OddParents",
+    "affiliation": "",
+    "origin": "Dimmsdale, California",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "I wish for a thousand more wishes!",
+      "de": "Ich wünsche mir tausend weitere Wünsche!"
+    }
+  },
+  {
+    "id": "cosmo",
+    "name": "Cosmo",
+    "aliases": ["Cosmo Cosma", "Cosmo Julius Cosma"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Civilian"],
+    "powers": ["Magic/Sorcery", "Flight", "Shapeshifting"],
+    "franchise": "The Fairly OddParents",
+    "affiliation": "Fairy World",
+    "origin": "Fairy World",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "I'm a magical pony and I don't pay taxes!",
+      "de": "Ich bin ein magisches Pony und ich zahle keine Steuern!"
+    }
+  },
+  {
+    "id": "wanda",
+    "name": "Wanda",
+    "aliases": ["Wanda Fairywinkle-Cosma", "Wanda Venus Fairywinkle"],
+    "species": "Deity/Spirit",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Mage", "Civilian"],
+    "powers": ["Magic/Sorcery", "Flight", "Shapeshifting"],
+    "franchise": "The Fairly OddParents",
+    "affiliation": "Fairy World",
+    "origin": "Fairy World",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Sweetie, I really don't think this is a good idea.",
+      "de": "Schatz, ich glaube wirklich nicht, dass das eine gute Idee ist."
+    }
+  },
+  {
+    "id": "denzel-crocker",
+    "name": "Denzel Crocker",
+    "aliases": ["Mr. Crocker", "Denzel Quincy Crocker"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Worker", "Scientist"],
+    "powers": ["None"],
+    "franchise": "The Fairly OddParents",
+    "affiliation": "Dimmsdale Elementary School",
+    "origin": "Dimmsdale, California",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "I know you have magical helpers, and I will prove it!",
+      "de": "Ich weiß, dass du magische Helfer hast, und ich werde es beweisen!"
+    }
+  },
+  {
+    "id": "jorgen-von-strangle",
+    "name": "Jorgen Von Strangle",
+    "aliases": ["Jorgen", "The Toughest Fairy in the Universe"],
+    "species": "Deity/Spirit",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Soldier"],
+    "powers": ["Magic/Sorcery", "Super strength", "Flight"],
+    "franchise": "The Fairly OddParents",
+    "affiliation": "Fairy World",
+    "origin": "Fairy World",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Silence! I am the toughest in the universe!",
+      "de": "Ruhe! Ich bin der Stärkste im ganzen Universum!"
+    }
+  },
+  {
+    "id": "cornelius-fillmore",
+    "name": "Cornelius Fillmore",
+    "aliases": ["Fillmore", "Cornelius"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Fillmore!",
+    "affiliation": "X Middle School Safety Patrol",
+    "origin": "X Middle School",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Once a delinquent, now I keep these halls safe.",
+      "de": "Früher ein Schläger, heute halte ich diese Flure sauber."
+    }
+  },
+  {
+    "id": "ingrid-third",
+    "name": "Ingrid Third",
+    "aliases": ["Ingrid", "Third"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Fillmore!",
+    "affiliation": "X Middle School Safety Patrol",
+    "origin": "X Middle School",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "I have a photographic memory, and I remember everything.",
+      "de": "Ich habe ein fotografisches Gedächtnis und erinnere mich an alles."
+    }
+  },
+  {
+    "id": "principal-folsom",
+    "name": "Principal Folsom",
+    "aliases": ["Dawn Folsom", "Principal"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Leader", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Fillmore!",
+    "affiliation": "X Middle School",
+    "origin": "X Middle School",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "I want this case closed, and I want it closed now.",
+      "de": "Ich will diesen Fall abgeschlossen sehen, und zwar sofort."
+    }
+  },
+  {
+    "id": "junior-commissioner-vallejo",
+    "name": "Junior Commissioner Vallejo",
+    "aliases": ["Vallejo"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Detective", "Student"],
+    "powers": ["None"],
+    "franchise": "Fillmore!",
+    "affiliation": "X Middle School Safety Patrol",
+    "origin": "X Middle School",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "My patrol gets results, so don't make me regret backing you.",
+      "de": "Meine Truppe liefert Ergebnisse, also lass mich es nicht bereuen."
+    }
+  },
+  {
+    "id": "arnold",
+    "name": "Arnold",
+    "aliases": ["Arnold Shortman", "Football Head", "Arnold Phillip Shortman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Hey Arnold!",
+    "affiliation": "Sunset Arms Boarding House",
+    "origin": "Hillwood",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "I'm gonna do the right thing, no matter what.",
+      "de": "Ich werde das Richtige tun, egal was passiert."
+    }
+  },
+  {
+    "id": "helga-pataki",
+    "name": "Helga Pataki",
+    "aliases": ["Helga G. Pataki", "Helga Geraldine Pataki", "Olga's sister"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Civilian", "Artist"],
+    "powers": ["None"],
+    "franchise": "Hey Arnold!",
+    "affiliation": "P.S. 118",
+    "origin": "Hillwood",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "Move it, Football Head!",
+      "de": "Beweg dich, Footballkopf!"
+    }
+  },
+  {
+    "id": "gerald-johanssen",
+    "name": "Gerald Johanssen",
+    "aliases": ["Gerald", "Tall Hair Boy", "Gerald Martin Johanssen"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Hey Arnold!",
+    "affiliation": "P.S. 118",
+    "origin": "Hillwood",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "That's a bold move, my friend.",
+      "de": "Das ist eine mutige Aktion, mein Freund."
+    }
+  },
+  {
+    "id": "grandpa-phil",
+    "name": "Grandpa Phil",
+    "aliases": ["Phil", "Grandpa", "Steely Phil"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Hey Arnold!",
+    "affiliation": "Sunset Arms Boarding House",
+    "origin": "Hillwood",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "Listen, short man, let me tell you a little story.",
+      "de": "Hör zu, kleiner Mann, ich erzähl dir mal eine Geschichte."
+    }
+  },
+  {
+    "id": "mr-hyunh",
+    "name": "Mr. Hyunh",
+    "aliases": ["Hyunh", "Mr. Huynh"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Worker", "Civilian", "Artist"],
+    "powers": ["None"],
+    "franchise": "Hey Arnold!",
+    "affiliation": "Sunset Arms Boarding House",
+    "origin": "Vietnam",
+    "medium": "Animation/Cartoon",
+    "year": 1996,
+    "quote": {
+      "en": "I sing for you a country-western song!",
+      "de": "Ich singe für euch ein Country-Western-Lied!"
+    }
+  },
+  {
+    "id": "zim",
+    "name": "Zim",
+    "aliases": ["Invader Zim", "Earth-monkey"],
+    "species": "Alien",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Soldier", "Scientist"],
+    "powers": ["Tech/Gadgets", "Stealth/Invisibility"],
+    "franchise": "Invader Zim",
+    "affiliation": "The Irken Empire",
+    "origin": "Planet Irk",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "I am normal! NORMAL! Do you hear me?!",
+      "de": "Ich bin normal! NORMAL! Hört ihr mich?!"
+    }
+  },
+  {
+    "id": "gir",
+    "name": "GIR",
+    "aliases": ["G.I.R.", "Robot dog"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Soldier", "Worker"],
+    "powers": ["Tech/Gadgets", "Flight"],
+    "franchise": "Invader Zim",
+    "affiliation": "The Irken Empire",
+    "origin": "Planet Irk",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "I'm gonna sing the Doom Song now!",
+      "de": "Ich sing jetzt das Lied des Verderbens!"
+    }
+  },
+  {
+    "id": "dib",
+    "name": "Dib",
+    "aliases": ["Dib Membrane", "Big-head"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Detective"],
+    "powers": ["None"],
+    "franchise": "Invader Zim",
+    "affiliation": "Swollen Eyeball Network",
+    "origin": "Earth",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "You're an alien! I knew it, and I can prove it!",
+      "de": "Du bist ein Alien! Ich wusste es, und ich kann es beweisen!"
+    }
+  },
+  {
+    "id": "gaz",
+    "name": "Gaz",
+    "aliases": ["Gaz Membrane"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Invader Zim",
+    "affiliation": "",
+    "origin": "Earth",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Touch my game, and you will writhe in horrible pain.",
+      "de": "Fass mein Spiel an, und du wirst dich in furchtbaren Schmerzen winden."
+    }
+  },
+  {
+    "id": "jimmy-neutron",
+    "name": "Jimmy Neutron",
+    "aliases": ["James Isaac Neutron", "The Boy Genius", "Jimmy"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student", "Adventurer"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Jimmy Neutron",
+    "affiliation": "Neutron family",
+    "origin": "Retroville",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Gotta blast!",
+      "de": "Auf geht's!"
+    }
+  },
+  {
+    "id": "goddard",
+    "name": "Goddard",
+    "aliases": ["Robot Dog", "Roboterhund"],
+    "species": "Robot/AI",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Tech/Gadgets", "Flight"],
+    "franchise": "Jimmy Neutron",
+    "affiliation": "Neutron family",
+    "origin": "Retroville",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Bark! Bark!",
+      "de": "Wuff! Wuff!"
+    }
+  },
+  {
+    "id": "carl-wheezer",
+    "name": "Carl Wheezer",
+    "aliases": ["Carl"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Jimmy Neutron",
+    "affiliation": "Jimmy's friends",
+    "origin": "Retroville",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "I love llamas.",
+      "de": "Ich liebe Lamas."
+    }
+  },
+  {
+    "id": "sheen-estevez",
+    "name": "Sheen Estevez",
+    "aliases": ["Sheen", "Ultra Lord fan"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Jimmy Neutron",
+    "affiliation": "Jimmy's friends",
+    "origin": "Retroville",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Ultra Lord, away!",
+      "de": "Ultra Lord, los geht's!"
+    }
+  },
+  {
+    "id": "kim-possible",
+    "name": "Kim Possible",
+    "aliases": ["Kim", "KP", "Kimberly Ann Possible"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer", "Athlete"],
+    "powers": ["Martial arts", "Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Kim Possible",
+    "affiliation": "Team Possible",
+    "origin": "Middleton",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "What's the sitch?",
+      "de": "Was ist los?"
+    }
+  },
+  {
+    "id": "ron-stoppable",
+    "name": "Ron Stoppable",
+    "aliases": ["Ron", "Zorpox the Conqueror"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Adventurer"],
+    "powers": ["Martial arts", "Magic/Sorcery"],
+    "franchise": "Kim Possible",
+    "affiliation": "Team Possible",
+    "origin": "Middleton",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Booyah!",
+      "de": "Booyah!"
+    }
+  },
+  {
+    "id": "rufus",
+    "name": "Rufus",
+    "aliases": ["Rufus the naked mole-rat", "Little buddy"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Kim Possible",
+    "affiliation": "Team Possible",
+    "origin": "Middleton",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Hnk-hnk! Cheese!",
+      "de": "Hnk-hnk! Käse!"
+    }
+  },
+  {
+    "id": "dr-drakken",
+    "name": "Dr. Drakken",
+    "aliases": ["Drew Theodore P. Lipsky"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Leader", "Outlaw"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Kim Possible",
+    "affiliation": "Team Drakken",
+    "origin": "Middleton",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "You think you're all that, but you're not!",
+      "de": "Du denkst, du bist die Größte, aber das bist du nicht!"
+    }
+  },
+  {
+    "id": "shego",
+    "name": "Shego",
+    "aliases": ["Miss Go"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Outlaw"],
+    "powers": ["Energy/Beams", "Martial arts"],
+    "franchise": "Kim Possible",
+    "affiliation": "Team Drakken",
+    "origin": "Go City",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Ugh, do I have to do everything myself?",
+      "de": "Pff, muss ich denn wirklich alles selbst machen?"
+    }
+  },
+  {
+    "id": "wade",
+    "name": "Wade",
+    "aliases": ["Wade Load"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Kim Possible",
+    "affiliation": "Team Possible",
+    "origin": "Middleton",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "I've got you on the line — what do you need?",
+      "de": "Ich bin in der Leitung — was brauchst du?"
+    }
+  },
+  {
+    "id": "numbuh-1",
+    "name": "Numbuh 1",
+    "aliases": ["Nigel Uno", "Numbuh Eins"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Soldier", "Adventurer"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "Codename: Kids Next Door",
+    "affiliation": "Sector V",
+    "origin": "Cleveland, Virginia",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Kids of the world, to your battle stations!",
+      "de": "Kinder der Welt, auf eure Gefechtsstationen!"
+    }
+  },
+  {
+    "id": "numbuh-2",
+    "name": "Numbuh 2",
+    "aliases": ["Hoagie P. Gilligan", "Hoagie Pennywhistle Gilligan Jr."],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Pilot", "Scientist", "Soldier"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Codename: Kids Next Door",
+    "affiliation": "Sector V",
+    "origin": "Cleveland, Virginia",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Why did the cookie go to the doctor? Because it was feeling crummy!",
+      "de": "Warum ging der Keks zum Arzt? Weil er sich so zerbröselt fühlte!"
+    }
+  },
+  {
+    "id": "numbuh-4",
+    "name": "Numbuh 4",
+    "aliases": ["Wallabee Beetles", "Wally"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Soldier", "Athlete"],
+    "powers": ["Martial arts", "Tech/Gadgets"],
+    "franchise": "Codename: Kids Next Door",
+    "affiliation": "Sector V",
+    "origin": "Cleveland, Virginia",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Let's just punch 'em already!",
+      "de": "Lass sie uns einfach verkloppen!"
+    }
+  },
+  {
+    "id": "numbuh-5",
+    "name": "Numbuh 5",
+    "aliases": ["Abigail Lincoln", "Abby"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Spy", "Soldier", "Leader"],
+    "powers": ["Peak human/Genius", "Stealth/Invisibility"],
+    "franchise": "Codename: Kids Next Door",
+    "affiliation": "Sector V",
+    "origin": "Cleveland, Virginia",
+    "medium": "Animation/Cartoon",
+    "year": 2002,
+    "quote": {
+      "en": "Keep your cool, and you'll be just fine.",
+      "de": "Bleib cool, dann läuft alles glatt."
+    }
+  },
+  {
+    "id": "arsene-lupin-iii",
+    "name": "Arsène Lupin III",
+    "aliases": ["Lupin", "Wolf", "Rupan Sansei"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Adventurer", "Spy"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets", "Stealth/Invisibility"],
+    "franchise": "Lupin III",
+    "affiliation": "Lupin Gang",
+    "origin": "France/Japan (grandson of the original gentleman thief)",
+    "medium": "Manga",
+    "year": 1967,
+    "quote": {
+      "en": "I'll steal it right from under your nose, and you'll thank me for the show!",
+      "de": "Ich stehle es dir direkt vor der Nase weg, und du wirst mir noch für die Vorstellung danken!"
+    }
+  },
+  {
+    "id": "daisuke-jigen",
+    "name": "Daisuke Jigen",
+    "aliases": ["Jigen", "The Sharpshooter"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Warrior", "Spy"],
+    "powers": ["Weapon mastery", "Peak human/Genius"],
+    "franchise": "Lupin III",
+    "affiliation": "Lupin Gang",
+    "origin": "United States (gunslinger of unknown American roots)",
+    "medium": "Manga",
+    "year": 1967,
+    "quote": {
+      "en": "I can draw and fire in three-tenths of a second. Don't blink.",
+      "de": "Ich ziehe und schieße in drei Zehntelsekunden. Blinzle bloß nicht."
+    }
+  },
+  {
+    "id": "goemon-ishikawa-xiii",
+    "name": "Goemon Ishikawa XIII",
+    "aliases": ["Goemon", "Ishikawa", "The Swordsman"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Warrior", "Outlaw", "Mystic"],
+    "powers": ["Weapon mastery", "Martial arts", "Peak human/Genius"],
+    "franchise": "Lupin III",
+    "affiliation": "Lupin Gang",
+    "origin": "Japan (descendant of the legendary samurai thief)",
+    "medium": "Manga",
+    "year": 1967,
+    "quote": {
+      "en": "Once again, I have cut a worthless object.",
+      "de": "Wieder einmal habe ich etwas Wertloses zerschnitten."
+    }
+  },
+  {
+    "id": "fujiko-mine",
+    "name": "Fujiko Mine",
+    "aliases": ["Fujiko", "Lady"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Spy", "Adventurer"],
+    "powers": ["Peak human/Genius", "Stealth/Invisibility", "Tech/Gadgets"],
+    "franchise": "Lupin III",
+    "affiliation": "Lupin Gang (freelance)",
+    "origin": "Unknown (a globe-trotting femme fatale)",
+    "medium": "Manga",
+    "year": 1967,
+    "quote": {
+      "en": "Darling, the treasure is already mine — you just don't know it yet.",
+      "de": "Schätzchen, der Schatz gehört längst mir — du weißt es nur noch nicht."
+    }
+  },
+  {
+    "id": "koichi-zenigata",
+    "name": "Koichi Zenigata",
+    "aliases": ["Inspector Zenigata", "Pops"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Detective", "Leader"],
+    "powers": ["Peak human/Genius", "Martial arts"],
+    "franchise": "Lupin III",
+    "affiliation": "Interpol / ICPO",
+    "origin": "Japan (Tokyo police inspector turned global pursuer)",
+    "medium": "Manga",
+    "year": 1967,
+    "quote": {
+      "en": "You're under arrest! This time you won't slip away!",
+      "de": "Sie sind verhaftet! Diesmal entkommen Sie mir nicht!"
+    }
+  },
+  {
+    "id": "kermit-the-frog",
+    "name": "Kermit the Frog",
+    "aliases": ["Kermit", "Kermit der Frosch"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Artist"],
+    "powers": ["None"],
+    "franchise": "The Muppets",
+    "affiliation": "The Muppets",
+    "origin": "Leland, Mississippi swamp",
+    "medium": "Film/TV (live-action)",
+    "year": 1955,
+    "quote": {
+      "en": "It's not easy being green.",
+      "de": "Es ist nicht leicht, grün zu sein."
+    }
+  },
+  {
+    "id": "miss-piggy",
+    "name": "Miss Piggy",
+    "aliases": ["Piggy", "Pigathius"],
+    "species": "Animal",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Artist", "Athlete"],
+    "powers": ["Martial arts"],
+    "franchise": "The Muppets",
+    "affiliation": "The Muppets",
+    "origin": "A small town in Iowa",
+    "medium": "Film/TV (live-action)",
+    "year": 1976,
+    "quote": {
+      "en": "Hiiii-yah!",
+      "de": "Hiiii-jaaa!"
+    }
+  },
+  {
+    "id": "fozzie-bear",
+    "name": "Fozzie Bear",
+    "aliases": ["Fozzie", "The Great Fozzini"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Civilian"],
+    "powers": ["None"],
+    "franchise": "The Muppets",
+    "affiliation": "The Muppets",
+    "origin": "El Sleezo Cafe stage circuit",
+    "medium": "Film/TV (live-action)",
+    "year": 1976,
+    "quote": {
+      "en": "Wocka wocka wocka!",
+      "de": "Wokka wokka wokka!"
+    }
+  },
+  {
+    "id": "gonzo",
+    "name": "Gonzo",
+    "aliases": ["The Great Gonzo", "Gonzo the Great"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Artist", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "The Muppets",
+    "affiliation": "The Muppets",
+    "origin": "Outer space (unknown homeworld)",
+    "medium": "Film/TV (live-action)",
+    "year": 1970,
+    "quote": {
+      "en": "I'm going to do something nobody's ever done before!",
+      "de": "Ich werde etwas tun, das noch nie jemand getan hat!"
+    }
+  },
+  {
+    "id": "animal",
+    "name": "Animal",
+    "aliases": ["Das Tier"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Artist", "Athlete"],
+    "powers": ["Super strength"],
+    "franchise": "The Muppets",
+    "affiliation": "Dr. Teeth and The Electric Mayhem",
+    "origin": "The Muppet Theatre",
+    "medium": "Film/TV (live-action)",
+    "year": 1976,
+    "quote": {
+      "en": "Beat the drums! Beat the drums!",
+      "de": "Trommeln! Trommeln!"
+    }
+  },
+  {
+    "id": "rowlf-the-dog",
+    "name": "Rowlf the Dog",
+    "aliases": ["Rowlf", "Rowlf der Hund"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Artist"],
+    "powers": ["None"],
+    "franchise": "The Muppets",
+    "affiliation": "The Muppets",
+    "origin": "The Muppet Theatre",
+    "medium": "Film/TV (live-action)",
+    "year": 1962,
+    "quote": {
+      "en": "I never sing while I'm playing the piano.",
+      "de": "Ich singe nie, während ich Klavier spiele."
+    }
+  },
+  {
+    "id": "sam-the-eagle",
+    "name": "Sam the Eagle",
+    "aliases": ["Sam", "Sam der Adler", "Sam Eagle"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "The Muppets",
+    "affiliation": "The Muppets",
+    "origin": "The Muppet Theatre",
+    "medium": "Film/TV (live-action)",
+    "year": 1976,
+    "quote": {
+      "en": "This is exactly the kind of thing I'm talking about. Disgusting!",
+      "de": "Genau das meine ich. Widerlich!"
+    }
+  },
+  {
+    "id": "dr-bunsen-honeydew",
+    "name": "Dr. Bunsen Honeydew",
+    "aliases": ["Bunsen", "Dr. Honeydew"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "The Muppets",
+    "affiliation": "Muppet Labs",
+    "origin": "Muppet Labs",
+    "medium": "Film/TV (live-action)",
+    "year": 1976,
+    "quote": {
+      "en": "Greetings, and welcome again to the home of the future, today.",
+      "de": "Seien Sie gegrüßt und willkommen in der Heimat der Zukunft, heute."
+    }
+  },
+  {
+    "id": "charlie-brown",
+    "name": "Charlie Brown",
+    "aliases": ["Chuck", "Good ol' Charlie Brown", "Karl Braun"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Athlete", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Peanuts",
+    "affiliation": "The neighborhood gang",
+    "origin": "An American suburban neighborhood",
+    "medium": "Comic (Western)",
+    "year": 1950,
+    "quote": {
+      "en": "Good grief!",
+      "de": "Du meine Güte!"
+    }
+  },
+  {
+    "id": "snoopy",
+    "name": "Snoopy",
+    "aliases": ["Joe Cool", "The World War I Flying Ace", "Der Hund"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Pilot", "Artist"],
+    "powers": ["None"],
+    "franchise": "Peanuts",
+    "affiliation": "The neighborhood gang",
+    "origin": "Daisy Hill Puppy Farm",
+    "medium": "Comic (Western)",
+    "year": 1950,
+    "quote": {
+      "en": "It was a dark and stormy night.",
+      "de": "Es war eine dunkle und stürmische Nacht."
+    }
+  },
+  {
+    "id": "lucy-van-pelt",
+    "name": "Lucy van Pelt",
+    "aliases": ["Lucy", "The doctor is in"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Healer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Peanuts",
+    "affiliation": "The neighborhood gang",
+    "origin": "An American suburban neighborhood",
+    "medium": "Comic (Western)",
+    "year": 1952,
+    "quote": {
+      "en": "The doctor is in. Psychiatric help, five cents.",
+      "de": "Der Doktor ist da. Psychiatrische Hilfe, fünf Cent."
+    }
+  },
+  {
+    "id": "linus-van-pelt",
+    "name": "Linus van Pelt",
+    "aliases": ["Linus", "The blanket boy"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Mystic", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Peanuts",
+    "affiliation": "The neighborhood gang",
+    "origin": "An American suburban neighborhood",
+    "medium": "Comic (Western)",
+    "year": 1952,
+    "quote": {
+      "en": "The Great Pumpkin will rise out of the pumpkin patch tonight.",
+      "de": "Der Große Kürbis wird heute Nacht aus dem Kürbisbeet steigen."
+    }
+  },
+  {
+    "id": "schroeder",
+    "name": "Schroeder",
+    "aliases": ["The little Beethoven", "Schröder"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Artist", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Peanuts",
+    "affiliation": "The neighborhood gang",
+    "origin": "An American suburban neighborhood",
+    "medium": "Comic (Western)",
+    "year": 1951,
+    "quote": {
+      "en": "Beethoven was the greatest, and I'll thank you not to insult his music.",
+      "de": "Beethoven war der Größte, und ich verbitte mir jede Beleidigung seiner Musik."
+    }
+  },
+  {
+    "id": "peppermint-patty",
+    "name": "Peppermint Patty",
+    "aliases": ["Patty", "Sir"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Athlete", "Leader"],
+    "powers": ["None"],
+    "franchise": "Peanuts",
+    "affiliation": "The neighborhood gang",
+    "origin": "An American suburban neighborhood",
+    "medium": "Comic (Western)",
+    "year": 1966,
+    "quote": {
+      "en": "I got a D-minus again. Why do they always pick on me?",
+      "de": "Schon wieder eine Fünf minus. Warum hacken die immer auf mir herum?"
+    }
+  },
+  {
+    "id": "phineas-flynn",
+    "name": "Phineas Flynn",
+    "aliases": ["Phineas"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Scientist", "Leader"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Phineas and Ferb",
+    "affiliation": "Flynn-Fletcher family",
+    "origin": "Danville",
+    "medium": "Animation/Cartoon",
+    "year": 2007,
+    "quote": {
+      "en": "Hey, where's Perry?",
+      "de": "Hey, wo ist Perry?"
+    }
+  },
+  {
+    "id": "ferb-fletcher",
+    "name": "Ferb Fletcher",
+    "aliases": ["Ferb"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Scientist", "Worker"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Phineas and Ferb",
+    "affiliation": "Flynn-Fletcher family",
+    "origin": "Danville",
+    "medium": "Animation/Cartoon",
+    "year": 2007,
+    "quote": {
+      "en": "Yes. Yes, I do.",
+      "de": "Ja. Ja, das tue ich."
+    }
+  },
+  {
+    "id": "candace-flynn",
+    "name": "Candace Flynn",
+    "aliases": ["Candace"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Student", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Phineas and Ferb",
+    "affiliation": "Flynn-Fletcher family",
+    "origin": "Danville",
+    "medium": "Animation/Cartoon",
+    "year": 2007,
+    "quote": {
+      "en": "Mom! Mom! You've gotta come see what they're doing!",
+      "de": "Mom! Mom! Du musst kommen und sehen, was die da machen!"
+    }
+  },
+  {
+    "id": "perry-the-platypus",
+    "name": "Perry the Platypus",
+    "aliases": ["Agent P", "Perry"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Spy", "Warrior"],
+    "powers": ["Martial arts", "Tech/Gadgets", "Stealth/Invisibility"],
+    "franchise": "Phineas and Ferb",
+    "affiliation": "O.W.C.A.",
+    "origin": "Danville",
+    "medium": "Animation/Cartoon",
+    "year": 2007,
+    "quote": {
+      "en": "(chatters teeth)",
+      "de": "(klappert mit den Zähnen)"
+    }
+  },
+  {
+    "id": "dr-heinz-doofenshmirtz",
+    "name": "Dr. Heinz Doofenshmirtz",
+    "aliases": ["Doof", "Heinz Doofenshmirtz", "Dr. Doofenshmirtz"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Outlaw"],
+    "powers": ["Tech/Gadgets"],
+    "franchise": "Phineas and Ferb",
+    "affiliation": "L.O.V.E.M.U.F.F.I.N.",
+    "origin": "Gimmelshtump, Drusselstein",
+    "medium": "Animation/Cartoon",
+    "year": 2007,
+    "quote": {
+      "en": "Behold! My latest -inator!",
+      "de": "Seht her! Mein neuester -inator!"
+    }
+  },
+  {
+    "id": "isabella-garcia-shapiro",
+    "name": "Isabella Garcia-Shapiro",
+    "aliases": ["Isabella", "Izzy"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Leader", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Phineas and Ferb",
+    "affiliation": "Fireside Girls Troop 46231",
+    "origin": "Danville",
+    "medium": "Animation/Cartoon",
+    "year": 2007,
+    "quote": {
+      "en": "Whatcha doin'?",
+      "de": "Was macht ihr da?"
+    }
+  },
+  {
+    "id": "blossom",
+    "name": "Blossom",
+    "aliases": ["The Commander and the Leader"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Warrior", "Student"],
+    "powers": ["Flight", "Super strength", "Elemental"],
+    "franchise": "The Powerpuff Girls",
+    "affiliation": "The Powerpuff Girls",
+    "origin": "Townsville",
+    "medium": "Animation/Cartoon",
+    "year": 1998,
+    "quote": {
+      "en": "We can't give up now, girls!",
+      "de": "Wir dürfen jetzt nicht aufgeben, Mädels!"
+    }
+  },
+  {
+    "id": "buttercup",
+    "name": "Buttercup",
+    "aliases": ["The Toughest Fighter"],
+    "species": "Humanoid",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student", "Athlete"],
+    "powers": ["Flight", "Super strength", "Super speed"],
+    "franchise": "The Powerpuff Girls",
+    "affiliation": "The Powerpuff Girls",
+    "origin": "Townsville",
+    "medium": "Animation/Cartoon",
+    "year": 1998,
+    "quote": {
+      "en": "Let's get 'em!",
+      "de": "Schnappen wir sie uns!"
+    }
+  },
+  {
+    "id": "mojo-jojo",
+    "name": "Mojo Jojo",
+    "aliases": ["Jojo", "The Evil Monkey"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Scientist", "Outlaw", "Warrior"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets", "Super strength"],
+    "franchise": "The Powerpuff Girls",
+    "affiliation": "",
+    "origin": "Townsville",
+    "medium": "Animation/Cartoon",
+    "year": 1998,
+    "quote": {
+      "en": "I shall destroy you all, every last one of you!",
+      "de": "Ich werde euch alle vernichten, jeden Einzelnen von euch!"
+    }
+  },
+  {
+    "id": "professor-utonium",
+    "name": "Professor Utonium",
+    "aliases": ["The Professor", "Dad"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Civilian"],
+    "powers": ["Peak human/Genius", "Tech/Gadgets"],
+    "franchise": "The Powerpuff Girls",
+    "affiliation": "",
+    "origin": "Townsville",
+    "medium": "Animation/Cartoon",
+    "year": 1998,
+    "quote": {
+      "en": "Sugar, spice, and everything nice.",
+      "de": "Zucker, Gewürze und ganz viel Schönes."
+    }
+  },
+  {
+    "id": "t-j-detweiler",
+    "name": "T.J. Detweiler",
+    "aliases": ["Theodore Jasper Detweiler", "TJ"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Student"],
+    "powers": ["None"],
+    "franchise": "Recess",
+    "affiliation": "The Recess Gang",
+    "origin": "Third Street School, USA",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "This means war!",
+      "de": "Das bedeutet Krieg!"
+    }
+  },
+  {
+    "id": "ashley-spinelli",
+    "name": "Ashley Spinelli",
+    "aliases": ["Spinelli", "Ashley Funicello Spinelli"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Warrior", "Student"],
+    "powers": ["None"],
+    "franchise": "Recess",
+    "affiliation": "The Recess Gang",
+    "origin": "Third Street School, USA",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "You wanna take this outside, tough guy?",
+      "de": "Willst du das draußen klären, Großmaul?"
+    }
+  },
+  {
+    "id": "gretchen-grundler",
+    "name": "Gretchen Grundler",
+    "aliases": ["Gretch", "The Brain"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Scientist", "Student"],
+    "powers": ["Peak human/Genius"],
+    "franchise": "Recess",
+    "affiliation": "The Recess Gang",
+    "origin": "Third Street School, USA",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "Whomever shall control the playground, controls the school.",
+      "de": "Wer den Schulhof beherrscht, beherrscht die ganze Schule."
+    }
+  },
+  {
+    "id": "vince-lasalle",
+    "name": "Vince LaSalle",
+    "aliases": ["Vince", "Vincent LaSalle"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Athlete", "Student"],
+    "powers": ["None"],
+    "franchise": "Recess",
+    "affiliation": "The Recess Gang",
+    "origin": "Third Street School, USA",
+    "medium": "Animation/Cartoon",
+    "year": 1997,
+    "quote": {
+      "en": "I'm the best athlete this playground has ever seen.",
+      "de": "Ich bin der beste Sportler, den dieser Schulhof je gesehen hat."
+    }
+  },
+  {
+    "id": "tommy-pickles",
+    "name": "Tommy Pickles",
+    "aliases": ["Tommy"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Rugrats",
+    "affiliation": "The Babies",
+    "origin": "Yucaipa, California",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "A baby's gotta do what a baby's gotta do.",
+      "de": "Ein Baby muss tun, was ein Baby tun muss."
+    }
+  },
+  {
+    "id": "chuckie-finster",
+    "name": "Chuckie Finster",
+    "aliases": ["Chuckie", "Charles Crandall Norbert Finster Jr."],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Adventurer", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Rugrats",
+    "affiliation": "The Babies",
+    "origin": "Yucaipa, California",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "I don't think this is a very good idea.",
+      "de": "Ich glaube, das ist keine besonders gute Idee."
+    }
+  },
+  {
+    "id": "angelica-pickles",
+    "name": "Angelica Pickles",
+    "aliases": ["Angelica"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Outlaw", "Civilian"],
+    "powers": ["None"],
+    "franchise": "Rugrats",
+    "affiliation": "Pickles family",
+    "origin": "Yucaipa, California",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "You dumb babies!",
+      "de": "Ihr blöden Babys!"
+    }
+  },
+  {
+    "id": "susie-carmichael",
+    "name": "Susie Carmichael",
+    "aliases": ["Susie"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Civilian", "Adventurer"],
+    "powers": ["None"],
+    "franchise": "Rugrats",
+    "affiliation": "Carmichael family",
+    "origin": "Yucaipa, California",
+    "medium": "Animation/Cartoon",
+    "year": 1993,
+    "quote": {
+      "en": "You can't push us around just 'cause you're bigger!",
+      "de": "Du kannst uns nicht herumschubsen, nur weil du größer bist!"
+    }
+  },
+  {
+    "id": "spike",
+    "name": "Spike",
+    "aliases": ["Spike the Dog"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Rugrats",
+    "affiliation": "Pickles family",
+    "origin": "Yucaipa, California",
+    "medium": "Animation/Cartoon",
+    "year": 1991,
+    "quote": {
+      "en": "Woof! Woof!",
+      "de": "Wuff! Wuff!"
+    }
+  },
+  {
+    "id": "big-bird",
+    "name": "Big Bird",
+    "aliases": ["Bibo"],
+    "species": "Animal",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1969,
+    "quote": {
+      "en": "Asking questions is a good way of finding things out!",
+      "de": "Fragen zu stellen ist eine gute Art, Dinge herauszufinden!"
+    }
+  },
+  {
+    "id": "elmo",
+    "name": "Elmo",
+    "aliases": [],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1980,
+    "quote": {
+      "en": "I love you!",
+      "de": "Ich hab dich lieb!"
+    }
+  },
+  {
+    "id": "cookie-monster",
+    "name": "Cookie Monster",
+    "aliases": ["Krümelmonster"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1969,
+    "quote": {
+      "en": "Me want cookie!",
+      "de": "Ich will Keks!"
+    }
+  },
+  {
+    "id": "bert",
+    "name": "Bert",
+    "aliases": ["Ernie's roommate"],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1969,
+    "quote": {
+      "en": "I just love my paper clip collection.",
+      "de": "Ich liebe einfach meine Büroklammer-Sammlung."
+    }
+  },
+  {
+    "id": "ernie",
+    "name": "Ernie",
+    "aliases": [],
+    "species": "Humanoid",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1969,
+    "quote": {
+      "en": "Rubber Duckie, you're the one!",
+      "de": "Quietsche-Entchen, du bist toll!"
+    }
+  },
+  {
+    "id": "oscar-the-grouch",
+    "name": "Oscar the Grouch",
+    "aliases": ["Oscar", "Oskar aus der Mülltonne"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Neutral/Anti-hero",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "A trash can on Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1969,
+    "quote": {
+      "en": "Scram! I love trash!",
+      "de": "Hau ab! Ich liebe Müll!"
+    }
+  },
+  {
+    "id": "count-von-count",
+    "name": "Count von Count",
+    "aliases": ["The Count", "Graf Zahl"],
+    "species": "Undead",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Civilian"],
+    "powers": ["None"],
+    "franchise": "Sesame Street",
+    "affiliation": "Sesame Street neighborhood",
+    "origin": "A castle on Sesame Street, New York City",
+    "medium": "Film/TV (live-action)",
+    "year": 1972,
+    "quote": {
+      "en": "One! Ah-ah-ah! Two! Ah-ah-ah!",
+      "de": "Eins! Ah-ah-ah! Zwei! Ah-ah-ah!"
+    }
+  },
+  {
+    "id": "clover",
+    "name": "Clover",
+    "aliases": ["Clo"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Spy", "Student"],
+    "powers": ["Martial arts", "Tech/Gadgets"],
+    "franchise": "Totally Spies!",
+    "affiliation": "WOOHP",
+    "origin": "Beverly Hills, California",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Ugh, totally not the cute outfit I wanted for this mission!",
+      "de": "Igitt, das ist sowas von nicht das süße Outfit, das ich für die Mission wollte!"
+    }
+  },
+  {
+    "id": "jerry",
+    "name": "Jerry",
+    "aliases": ["Jerry Lewis"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Spy"],
+    "powers": ["Tech/Gadgets", "Peak human/Genius"],
+    "franchise": "Totally Spies!",
+    "affiliation": "WOOHP",
+    "origin": "United Kingdom",
+    "medium": "Animation/Cartoon",
+    "year": 2001,
+    "quote": {
+      "en": "Ladies, there's a new mission, and I need you at headquarters at once.",
+      "de": "Meine Damen, es gibt einen neuen Auftrag, und ich brauche Sie sofort in der Zentrale."
+    }
+  },
+  {
+    "id": "will-vandom",
+    "name": "Will Vandom",
+    "aliases": ["Will", "Wilhelmina Vandom", "Keeper of the Heart"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Leader", "Student", "Warrior"],
+    "powers": ["Energy/Beams", "Electric/Lightning", "Flight"],
+    "franchise": "W.I.T.C.H.",
+    "affiliation": "Guardians of Kandrakar",
+    "origin": "Heatherfield",
+    "medium": "Comic (Western)",
+    "year": 2001,
+    "quote": {
+      "en": "Together we're stronger than anything they can throw at us.",
+      "de": "Zusammen sind wir stärker als alles, was sie uns entgegenwerfen können."
+    }
+  },
+  {
+    "id": "irma-lair",
+    "name": "Irma Lair",
+    "aliases": ["Irma", "Guardian of Water"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior"],
+    "powers": ["Elemental", "Telepathy/Mind", "Flight"],
+    "franchise": "W.I.T.C.H.",
+    "affiliation": "Guardians of Kandrakar",
+    "origin": "Heatherfield",
+    "medium": "Comic (Western)",
+    "year": 2001,
+    "quote": {
+      "en": "Why be serious when you can make a splash?",
+      "de": "Warum ernst sein, wenn man auch für Wirbel sorgen kann?"
+    }
+  },
+  {
+    "id": "cornelia-hale",
+    "name": "Cornelia Hale",
+    "aliases": ["Cornelia", "Guardian of Earth"],
+    "species": "Human",
+    "gender": "Female",
+    "alignment": "Hero/Good",
+    "role": ["Student", "Warrior"],
+    "powers": ["Elemental", "Flight"],
+    "franchise": "W.I.T.C.H.",
+    "affiliation": "Guardians of Kandrakar",
+    "origin": "Heatherfield",
+    "medium": "Comic (Western)",
+    "year": 2001,
+    "quote": {
+      "en": "I can make the very ground rise up against you.",
+      "de": "Ich kann den Boden selbst gegen dich aufstehen lassen."
+    }
+  },
+  {
+    "id": "phobos",
+    "name": "Phobos",
+    "aliases": ["Prince Phobos", "Lord Phobos"],
+    "species": "Human",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Royalty", "Mage"],
+    "powers": ["Magic/Sorcery", "Energy/Beams", "Immortality"],
+    "franchise": "W.I.T.C.H.",
+    "affiliation": "Throne of Meridian",
+    "origin": "Meridian",
+    "medium": "Comic (Western)",
+    "year": 2001,
+    "quote": {
+      "en": "This world and all its power belong to me alone.",
+      "de": "Diese Welt und all ihre Macht gehören allein mir."
+    }
+  },
+  {
+    "id": "cedric",
+    "name": "Cedric",
+    "aliases": ["Cedric the Snake", "Lord Cedric"],
+    "species": "Creature/Monster",
+    "gender": "Male",
+    "alignment": "Villain/Evil",
+    "role": ["Warrior", "Spy", "Monster"],
+    "powers": ["Shapeshifting", "Super strength", "Magic/Sorcery"],
+    "franchise": "W.I.T.C.H.",
+    "affiliation": "Throne of Meridian",
+    "origin": "Meridian",
+    "medium": "Comic (Western)",
+    "year": 2001,
+    "quote": {
+      "en": "You should never have come here, little ones.",
+      "de": "Ihr hättet niemals herkommen dürfen, ihr Kleinen."
+    }
   }
 ]
