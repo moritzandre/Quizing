@@ -11,6 +11,7 @@ import {
   morphValue,
   morphValueAt,
   hintValue,
+  crowdWinners,
   clipLadderActive,
   clipEnd,
   summarizeGame,
@@ -429,6 +430,27 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[1].questions[1]).toMatchObject({ correct: 0, points: 10 });
   });
 
+  it("normalizes crowdsays rounds: coerces options, defaults mode/points, caps at 6", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "crowdsays",
+          questions: [{ q: "Pizza topping?", options: ["a", 7, "c"], mode: "minority", points: 15 }],
+        },
+        { type: "crowdsays", questions: [{ mode: "bogus" }] },
+        { type: "crowdsays", questions: [{ options: ["a", "b", "c", "d", "e", "f", "g"] }] },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({
+      q: "Pizza topping?",
+      options: ["a", "", "c"],
+      mode: "minority",
+      points: 15,
+    });
+    expect(q.rounds[1].questions[0]).toMatchObject({ options: ["", "", "", ""], mode: "majority", points: 10 });
+    expect(q.rounds[2].questions[0].options).toEqual(["a", "b", "c", "d", "e", "f"]); // capped at 6
+  });
+
   it("normalizes number rounds: numeric answer or null", () => {
     const q = normalizeQuiz({
       rounds: [{ type: "number", questions: [{ q: "How many?", answer: "42", unit: "kg" }, { answer: "" }] }],
@@ -754,6 +776,27 @@ describe("hintValue (hint/connect ladder)", () => {
   });
   it("single clue → just the base value", () => {
     expect(hintValue(40, 10, 1, 1)).toBe(40);
+  });
+});
+
+describe("crowdWinners (Crowd Says)", () => {
+  it("majority → every option tied for the most votes", () => {
+    expect(crowdWinners([3, 1, 0], "majority")).toEqual([0]);
+    expect(crowdWinners([2, 2, 1], "majority")).toEqual([0, 1]); // tie → both win
+  });
+  it("minority → the fewest but still non-zero votes", () => {
+    expect(crowdWinners([3, 1, 5], "minority")).toEqual([1]);
+    expect(crowdWinners([2, 2, 0], "minority")).toEqual([0, 1]); // 0-vote option ignored
+  });
+  it("poll → nobody wins (no scoring)", () => {
+    expect(crowdWinners([5, 1], "poll")).toEqual([]);
+  });
+  it("no votes cast → empty", () => {
+    expect(crowdWinners([0, 0, 0], "majority")).toEqual([]);
+    expect(crowdWinners([], "minority")).toEqual([]);
+  });
+  it("coerces junk counts to 0", () => {
+    expect(crowdWinners([null, "2", undefined], "majority")).toEqual([1]);
   });
 });
 

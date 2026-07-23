@@ -9,7 +9,7 @@
    / LeafletMap). The host screen keeps its own interactive rendering.
    ==================================================================== */
 
-import { hintHasContent, mapillaryEmbedUrl, clipEnd } from "../lib/model.js";
+import { hintHasContent, mapillaryEmbedUrl, clipEnd, crowdWinners } from "../lib/model.js";
 import { useI18n } from "../i18n/I18nProvider.jsx";
 import { optionsFor, Avatar } from "./ui.jsx";
 import { GuessGrid, TraitLegend, AnyQuote, AnyColors } from "./anythingleTraits.jsx";
@@ -57,6 +57,7 @@ export default function RoundBody({
   volume = 100,
   whoknows = null,
   anythingle = null,
+  tally = null,
 }) {
   const { t } = useI18n();
 
@@ -257,6 +258,52 @@ export default function RoundBody({
         {revealed && binary && reveal?.note && (
           <p className="mx-auto mt-4 max-w-xl text-sm text-stone-500 dark:text-stone-400">{reveal.note}</p>
         )}
+      </div>
+    );
+  }
+
+  if (type === "crowdsays") {
+    const options = q.options || [];
+    const counts = options.map((_, oi) => (Array.isArray(tally) ? Math.max(0, tally[oi] || 0) : 0));
+    const total = counts.reduce((a, b) => a + b, 0);
+    const winners = revealed && q.mode !== "poll" ? crowdWinners(counts, q.mode) : [];
+    const capKey =
+      q.mode === "minority" ? "play.crowdMinority" : q.mode === "poll" ? "play.crowdPoll" : "play.crowdMajority";
+    return (
+      <div className="flex h-full min-h-0 flex-col justify-center overflow-y-auto text-center">
+        <Q>{q.q}</Q>
+        <div className="mx-auto mt-6 w-full max-w-2xl space-y-2.5">
+          {options.map((opt, oi) => {
+            const won = winners.includes(oi);
+            const pct = total ? Math.round((counts[oi] / total) * 100) : 0;
+            return (
+              <div
+                key={oi}
+                className={`relative overflow-hidden rounded-2xl border px-4 py-3 text-left transition ${
+                  revealed && !won ? "opacity-50" : ""
+                } ${
+                  won
+                    ? "border-rose-400 bg-rose-50 dark:border-rose-500/50 dark:bg-rose-500/10"
+                    : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                }`}
+              >
+                <div
+                  className="absolute inset-y-0 left-0 bg-rose-100 transition-[width] duration-500 dark:bg-rose-500/15"
+                  style={{ width: `${pct}%` }}
+                />
+                <div className="relative flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-100 text-sm font-bold text-stone-500 dark:bg-stone-700 dark:text-stone-200">
+                    {LETTERS[oi]}
+                  </span>
+                  <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
+                  {won && <Check size={18} className="text-rose-600 dark:text-rose-400" />}
+                  <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {revealed && <p className={`${answerCls} md:text-3xl`}>{t(capKey)}</p>}
       </div>
     );
   }

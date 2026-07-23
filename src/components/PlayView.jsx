@@ -41,6 +41,7 @@ import {
   morphValue,
   morphValueAt,
   hintValue,
+  crowdWinners,
   clipLadderActive,
   clipEnd,
   hintHasContent,
@@ -286,6 +287,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.idle();
     } else if (round?.type === "map") {
       room.collectPins(qKey, { mapTile: round.questions[game.qi]?.phoneTileLayer });
+    } else if (round?.type === "crowdsays") {
+      // Opinion vote reuses the choice phone phase (tap one of N); no correct key.
+      room.collectAnswers(qKey, { phase: "choice", options: round.questions[game.qi]?.options || [] });
     } else if (BINARY_TYPES.includes(round?.type)) {
       // Binary rounds (true/false, higher/lower) reuse the choice phase with fixed labels.
       room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
@@ -341,6 +345,15 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const hit = tgt?.name ? anyDbRef.current?.findAnyChar?.(tgt.name) : null;
     return hit?.quote || null;
   })();
+  // Crowd Says: stream the live vote tally (counts per option) so the TV shows the
+  // bars fill in real time. No correct answer rides this — the winner is derived at reveal.
+  const crowdTally =
+    round?.type === "crowdsays" && buzzerOn
+      ? (round.questions[game.qi]?.options || []).map(
+          (_, oi) => Object.values(mapByEntity(room.answers)).filter((v) => v === oi).length,
+        )
+      : null;
+  const crowdSig = crowdTally ? crowdTally.join(",") : "";
   // quantize the morph demorph for the TV (smooth via CSS transition; ~50 updates max)
   const morphStreamP = Math.round(morphP * 50) / 50;
   useEffect(() => {
@@ -363,10 +376,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         volume,
         whoknows: wkLive,
         anyQuote,
+        tally: crowdTally,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft, crowdSig]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -486,6 +500,24 @@ export default function PlayView({ game, setGame, onExit, room }) {
     const awarded = {};
     const players = game.players.map((p) => {
       if (ans[p.id] === q.correct) {
+        awarded[p.id] = q.points;
+        return { ...p, score: p.score + q.points };
+      }
+      return p;
+    });
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
+  };
+
+  // Crowd Says reveal: tally the votes and award the crowd-matching entities
+  // (majority/minority; poll scores nobody).
+  const revealCrowd = (q) => {
+    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const counts = (q.options || []).map((_, oi) => Object.values(ans).filter((v) => v === oi).length);
+    const winners = q.mode === "poll" ? [] : crowdWinners(counts, q.mode);
+    const awarded = {};
+    const players = game.players.map((p) => {
+      if (winners.includes(ans[p.id])) {
         awarded[p.id] = q.points;
         return { ...p, score: p.score + q.points };
       }
@@ -765,6 +797,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         case "reveal":
           if (game.stage === "question" && !game.revealed && cq) {
             if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
+            else if (round.type === "crowdsays") revealCrowd(cq);
             else if (round.type === "number") revealNumber(cq);
             else if (round.type === "map") revealMap(cq);
             else if (round.type === "anythingle") revealAnythingle();
@@ -873,6 +906,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       if (!q) return;
       if (k === "r" && !game.revealed) {
         if (BINARY_TYPES.includes(round.type)) revealChoice(q);
+        else if (round.type === "crowdsays") revealCrowd(q);
         else if (round.type === "number") revealNumber(q);
         else if (round.type === "map") revealMap(q);
         else if (round.type === "anythingle") revealAnythingle();
@@ -1798,6 +1832,68 @@ export default function PlayView({ game, setGame, onExit, room }) {
               </p>
               <div className="mt-3">{NextBtn}</div>
             </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (round.type === "crowdsays") {
+    const ans = buzzerOn ? mapByEntity(room.answers) : {};
+    const counts = (q.options || []).map((_, oi) => Object.values(ans).filter((v) => v === oi).length);
+    const total = counts.reduce((a, b) => a + b, 0);
+    const answered = Object.keys(ans).length;
+    const winners = game.revealed && q.mode !== "poll" ? crowdWinners(counts, q.mode) : [];
+    const letters = ["A", "B", "C", "D", "E", "F"];
+    const capKey =
+      q.mode === "minority" ? "play.crowdMinority" : q.mode === "poll" ? "play.crowdPoll" : "play.crowdMajority";
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+        {buzzerOn && !game.revealed && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-3 py-1 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+            <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
+          </p>
+        )}
+        <div className="mx-auto mt-6 max-w-2xl space-y-2.5">
+          {(q.options || []).map((opt, oi) => {
+            const won = winners.includes(oi);
+            const pct = total ? Math.round((counts[oi] / total) * 100) : 0;
+            return (
+              <div
+                key={oi}
+                className={`relative overflow-hidden rounded-2xl border px-4 py-3 text-left transition ${
+                  game.revealed && !won ? "opacity-50" : ""
+                } ${won ? "border-rose-400 dark:border-rose-500/50" : "border-stone-200 dark:border-stone-800"}`}
+              >
+                <div
+                  className="absolute inset-y-0 left-0 bg-rose-100 transition-[width] duration-500 dark:bg-rose-500/15"
+                  style={{ width: `${pct}%` }}
+                />
+                <div className="relative flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-100 text-sm font-bold text-stone-500 dark:bg-stone-700 dark:text-stone-200">
+                    {letters[oi]}
+                  </span>
+                  <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
+                  {won && <Check size={18} className="text-rose-600 dark:text-rose-400" />}
+                  {buzzerOn && <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {game.revealed && (
+          <p className="qn-pop mt-4 text-lg font-semibold text-rose-600 dark:text-rose-400">{t(capKey)}</p>
+        )}
+        <div className="mt-6">
+          {game.revealed ? (
+            NextBtn
+          ) : (
+            <Button className="px-6 py-3.5 text-base" onClick={() => revealCrowd(q)}>
+              <Eye size={18} /> {t("play.revealAnswer")}
+            </Button>
           )}
         </div>
       </div>

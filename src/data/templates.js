@@ -187,6 +187,28 @@ export const ROUND_TEMPLATES = [
     },
   },
   {
+    key: "crowd-says",
+    type: "crowdsays",
+    round: {
+      type: "crowdsays",
+      title: "Crowd Says",
+      questions: [
+        {
+          q: "Best pizza topping?",
+          options: ["Pepperoni", "Mushroom", "Pineapple", "Extra cheese"],
+          mode: "majority",
+          points: 10,
+        },
+        {
+          q: "Pick a number — the rarest pick wins!",
+          options: ["1", "2", "3", "4"],
+          mode: "minority",
+          points: 15,
+        },
+      ],
+    },
+  },
+  {
     key: "truefalse-quiz",
     type: "truefalse",
     round: {
@@ -401,6 +423,8 @@ const ROUND_SHAPES = {
     'questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]',
   map: 'questions: [{ "q": string, "name": string, "lat": number, "lng": number, "points": number, "tileLayer": "map"|"satellite" }]',
   choice: 'questions: [{ "q": string, "options": [string,...], "correct": <0-based index>, "points": number }]',
+  crowdsays:
+    'questions: [{ "q": string (an opinion/prediction prompt — NO single right answer), "options": [string,...] (2-6), "mode": "majority"|"minority"|"poll", "points": number }]   // players vote; majority = match the crowd, minority = pick the rarest non-empty option, poll = just for fun (no points)',
   truefalse:
     'questions: [{ "q": string (a statement), "correct": 0|1 (0 = True, 1 = False), "points": number, "note": string (optional, shown on reveal) }]',
   higherlower:
@@ -449,6 +473,7 @@ Round types and their question shapes:
 - "fusion":   questions: [{ "urlA": "https://.../a.jpg", "urlB": "https://.../b.jpg", "a": string, "points": number, "steps": 1-8 }]
 - "map":      questions: [{ "q": string, "name": string, "lat": number, "lng": number, "points": number, "tileLayer": "map"|"satellite" }]
 - "choice":   questions: [{ "q": string, "options": [string,...], "correct": <0-based index>, "points": number }]
+- "crowdsays": questions: [{ "q": string (opinion/prediction — NO single right answer), "options": [string,...] (2-6), "mode": "majority"|"minority"|"poll", "points": number }]   // players vote; majority = match the crowd, minority = pick the rarest non-empty option, poll = no points
 - "truefalse": questions: [{ "q": string (a statement), "correct": 0|1 (0=True, 1=False), "points": number, "note": string (optional, shown on reveal) }]
 - "higherlower": questions: [{ "q": string (e.g. "X is N. Is Y higher or lower?"), "correct": 0|1 (0=Higher, 1=Lower), "points": number, "note": string (optional fact) }]
 - "whoknows":  top-level may add "timer": number (seconds per answer). questions: [{ "q": string (the category prompt), "answers": [string, ...] (ALL correct answers), "ordered": boolean (true = ranked, shown numbered) }]   // an auction: the winner must name as many as they claim

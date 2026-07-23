@@ -25,6 +25,7 @@ import {
   Hash,
   Gavel,
   Drama,
+  Users,
   Trash2,
   Sun,
   Moon,
@@ -137,6 +138,12 @@ export const TYPES = {
     dot: "bg-pink-500",
     desc: "Guess the secret fictional character. Each guess reveals how its traits compare — Wordle-style. Players take turns by standings; first to name it wins.",
   },
+  crowdsays: {
+    label: "Crowd Says",
+    icon: Users,
+    dot: "bg-rose-500",
+    desc: "An opinion question with no right answer — players vote from their phones and score by matching the crowd (majority), being the brave few (minority), or just for fun (poll).",
+  },
 };
 
 /** Per-round accent classes (full literals so Tailwind keeps them). */
@@ -161,6 +168,7 @@ const ACCENT = {
     solid: "bg-emerald-500",
   },
   choice: { soft: "bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300", solid: "bg-teal-500" },
+  crowdsays: { soft: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", solid: "bg-rose-500" },
   truefalse: { soft: "bg-lime-100 text-lime-700 dark:bg-lime-500/20 dark:text-lime-300", solid: "bg-lime-500" },
   higherlower: { soft: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300", solid: "bg-cyan-500" },
   number: { soft: "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300", solid: "bg-orange-500" },

@@ -142,6 +142,7 @@ export default function HostRemoteView({ code }) {
               qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
               whoknows={live?.whoknows || null}
               anythingle={live?.anythingle || null}
+              tally={live?.tally || null}
             />
           </div>
         </div>

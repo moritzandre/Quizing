@@ -64,6 +64,7 @@ const POINTS_TYPES = [
   "anythingle",
   "map",
   "whoknows",
+  "crowdsays",
 ];
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -1816,6 +1817,103 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       </SortableList>
                       <button
                         onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("choice")] })}
+                        className={`mt-3 ${addBtnCls}`}
+                      >
+                        <Plus size={15} /> {t("builder.addQuestion")}
+                      </button>
+                    </>
+                  )}
+
+                  {/* crowd-says (opinion vote — no correct answer, a scoring mode instead) */}
+                  {r.type === "crowdsays" && (
+                    <>
+                      <SortableList
+                        items={r.questions}
+                        getKey={(x) => x.id}
+                        onReorder={(f, to) => reorderQuestions(r, f, to)}
+                        onDuplicate={(f) => dupQuestion(r, f)}
+                      >
+                        {(item, i, hp) => (
+                          <div className={panelCls}>
+                            <div className={rowLabelCls}>
+                              <span className="flex items-center gap-1">
+                                <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                              </span>
+                              <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                            </div>
+                            <input
+                              className={inputCls}
+                              placeholder={t("builder.question")}
+                              value={item.q}
+                              onChange={(e) => qRow(r, item, { q: e.target.value })}
+                            />
+                            <div className="mt-2 space-y-1.5">
+                              {item.options.map((opt, oi) => (
+                                <div key={oi} className="flex items-center gap-2">
+                                  <span className="w-5 shrink-0 text-center text-xs font-bold text-stone-400">
+                                    {String.fromCharCode(65 + oi)}
+                                  </span>
+                                  <input
+                                    className={`${inputCls} flex-1`}
+                                    placeholder={t("builder.optionN", { n: oi + 1 })}
+                                    value={opt}
+                                    onChange={(e) =>
+                                      qRow(r, item, {
+                                        options: item.options.map((o, j) => (j === oi ? e.target.value : o)),
+                                      })
+                                    }
+                                  />
+                                  {item.options.length > 2 && (
+                                    <ConfirmDelete
+                                      label={t("builder.deleteOption")}
+                                      onConfirm={() =>
+                                        qRow(r, item, { options: item.options.filter((_, j) => j !== oi) })
+                                      }
+                                    />
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                              {item.options.length < 6 && (
+                                <button
+                                  onClick={() => qRow(r, item, { options: [...item.options, ""] })}
+                                  className={`rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS} inline-flex items-center gap-1`}
+                                >
+                                  <Plus size={13} /> {t("builder.addOption")}
+                                </button>
+                              )}
+                              <span className="ml-auto text-xs text-stone-400 dark:text-stone-500">
+                                {t("builder.crowdMode")}
+                              </span>
+                              <select
+                                className={`${inputCls} w-auto`}
+                                value={item.mode || "majority"}
+                                onChange={(e) => qRow(r, item, { mode: e.target.value })}
+                                title={t(
+                                  `builder.crowd${item.mode === "minority" ? "Minority" : item.mode === "poll" ? "Poll" : "Majority"}Hint`,
+                                )}
+                              >
+                                <option value="majority">{t("builder.crowdMajority")}</option>
+                                <option value="minority">{t("builder.crowdMinority")}</option>
+                                <option value="poll">{t("builder.crowdPoll")}</option>
+                              </select>
+                              {item.mode !== "poll" && (
+                                <input
+                                  type="number"
+                                  aria-label={t("builder.points")}
+                                  className={`${inputCls} w-20`}
+                                  title={t("builder.points")}
+                                  value={item.points}
+                                  onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </SortableList>
+                      <button
+                        onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("crowdsays")] })}
                         className={`mt-3 ${addBtnCls}`}
                       >
                         <Plus size={15} /> {t("builder.addQuestion")}

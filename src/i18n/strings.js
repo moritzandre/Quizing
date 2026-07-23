@@ -515,6 +515,21 @@ const en = {
   "round.anythingle.label": "Anythingle",
   "round.anythingle.desc":
     "Guess the secret fictional character. Each guess is graded trait-by-trait — Wordle-style. Players take turns by standings; first to name the character wins.",
+  "round.crowdsays.label": "Crowd Says",
+  "round.crowdsays.desc":
+    "An opinion question with no right answer — players vote from their phones and score by matching the crowd (majority), being the brave few (minority), or just for fun (poll).",
+  // crowd-says (opinion vote) — builder + play
+  "builder.crowdMode": "Scoring",
+  "builder.crowdMajority": "Majority",
+  "builder.crowdMinority": "Minority",
+  "builder.crowdPoll": "Poll (no score)",
+  "builder.crowdMajorityHint": "Match the most-picked option",
+  "builder.crowdMinorityHint": "Score for the least-picked non-empty option",
+  "builder.crowdPollHint": "Just a vote — no points",
+  "play.crowdMajority": "The crowd says…",
+  "play.crowdMinority": "The brave few…",
+  "play.crowdPoll": "The results",
+  "play.crowdVotes": "{n} votes",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name}'s turn",
   "play.anyGuessPlaceholder": "Type any character…",
@@ -1107,6 +1122,21 @@ const de = {
   "round.anythingle.label": "Anythingle",
   "round.anythingle.desc":
     "Errate die geheime fiktive Figur. Jeder Tipp wird Eigenschaft für Eigenschaft bewertet – wie bei Wordle. Reihum nach Punktestand; wer sie zuerst nennt, gewinnt.",
+  "round.crowdsays.label": "Die Masse sagt",
+  "round.crowdsays.desc":
+    "Eine Meinungsfrage ohne richtige Antwort — Spieler stimmen vom Handy ab und punkten, indem sie mit der Mehrheit gehen (Mehrheit), zu den mutigen Wenigen gehören (Minderheit) oder einfach so (Umfrage).",
+  // crowd-says (opinion vote) — builder + play
+  "builder.crowdMode": "Wertung",
+  "builder.crowdMajority": "Mehrheit",
+  "builder.crowdMinority": "Minderheit",
+  "builder.crowdPoll": "Umfrage (ohne Punkte)",
+  "builder.crowdMajorityHint": "Triff die meistgewählte Option",
+  "builder.crowdMinorityHint": "Punkte für die am wenigsten gewählte, nicht leere Option",
+  "builder.crowdPollHint": "Nur abstimmen — keine Punkte",
+  "play.crowdMajority": "Die Masse sagt…",
+  "play.crowdMinority": "Die mutigen Wenigen…",
+  "play.crowdPoll": "Das Ergebnis",
+  "play.crowdVotes": "{n} Stimmen",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name} ist dran",
   "play.anyGuessPlaceholder": "Beliebige Figur eingeben…",

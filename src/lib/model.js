@@ -26,10 +26,30 @@ export const ROUND_TYPES = [
   "number",
   "whoknows",
   "anythingle",
+  "crowdsays",
 ];
 
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
 export const BINARY_TYPES = ["choice", "truefalse", "higherlower"];
+
+/** Crowd Says scoring modes: reward the plurality, the brave minority, or score nothing. */
+export const CROWD_MODES = ["majority", "minority", "poll"];
+
+/**
+ * The winning option index(es) of a Crowd Says vote given per-option counts.
+ * majority → the most-picked option(s); minority → the least-picked NON-EMPTY
+ * option(s); poll → none (unscored). Ties return every tied option. Pure.
+ * @param {number[]} counts Votes per option.
+ * @param {string} mode One of CROWD_MODES.
+ * @returns {number[]} Winning option indices (empty = no winner).
+ */
+export function crowdWinners(counts, mode) {
+  const c = (Array.isArray(counts) ? counts : []).map((n) => num(n, 0));
+  const cast = c.filter((n) => n > 0);
+  if (mode === "poll" || !cast.length) return [];
+  const target = mode === "minority" ? Math.min(...cast) : Math.max(...cast);
+  return c.map((n, i) => (n > 0 && n === target ? i : -1)).filter((i) => i >= 0);
+}
 
 /* ---- Anythingle (Wordle x Guess-Who) — fictional-character trait matrix ----
    A secret fictional character is broken down across a fixed, objective 8-column
@@ -669,6 +689,11 @@ export function makeQuestion(type) {
         points: 30,
         maxGuesses: ANY_MAX_GUESSES,
       };
+    case "crowdsays":
+      // Opinion/vote round: no author key — players tap one option and score by
+      // matching the crowd (majority), being the brave few (minority), or not at
+      // all (poll). Reuses the phone "choice" phase.
+      return { id: uid(), q: "", options: ["", "", "", ""], points: 10, mode: "majority" };
     default:
       return { id: uid() };
   }
@@ -795,6 +820,15 @@ export function normalizeQuiz(raw) {
               options,
               correct: Math.max(0, Math.min(options.length - 1, num(q?.correct, 0))),
               points: num(q?.points, 10),
+            });
+          }
+          if (r.type === "crowdsays") {
+            const options = (Array.isArray(q?.options) ? q.options.slice(0, 6) : ["", "", "", ""]).map((o) => str(o));
+            Object.assign(it, {
+              q: str(q?.q),
+              options,
+              points: num(q?.points, 10),
+              mode: CROWD_MODES.includes(q?.mode) ? q.mode : "majority",
             });
           }
           if (r.type === "truefalse" || r.type === "higherlower")
@@ -1345,6 +1379,13 @@ function presentQ(type, q) {
       return { q: str(q.q), tileLayer: q.tileLayer === "satellite" ? "satellite" : "map", street: str(q.street) };
     case "choice":
       return { q: str(q.q), options: (Array.isArray(q.options) ? q.options : []).map(str) };
+    case "crowdsays":
+      // No secret to hide (there's no author key) — options + mode are safe to send.
+      return {
+        q: str(q.q),
+        options: (Array.isArray(q.options) ? q.options : []).map(str),
+        mode: str(q.mode) || "majority",
+      };
     case "truefalse":
     case "higherlower":
       // Options are fixed UI labels (synthesized per locale); the answer/note stay in revealData.
@@ -1635,6 +1676,9 @@ export function buildLive(game, opts = {}) {
     volume: Math.max(0, Math.min(100, num(opts.volume, 100))),
     whoknows: opts.whoknows ? normalizeWhoknows(opts.whoknows) : null,
     anythingle: buildAnyLive(game, opts.anyQuote),
+    // Crowd Says live vote counts per option (safe — there's no secret key). The
+    // TV shows the bars and, on reveal, computes the winner via crowdWinners.
+    tally: Array.isArray(opts.tally) ? opts.tally.map((n) => Math.max(0, Math.round(num(n, 0)))) : null,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -1740,6 +1784,7 @@ export function normalizeLive(raw) {
     volume: Math.max(0, Math.min(100, num(raw.volume, 100))),
     whoknows: raw.whoknows ? normalizeWhoknows(raw.whoknows) : null,
     anythingle: normalizeAnyLive(raw.anythingle),
+    tally: Array.isArray(raw.tally) ? raw.tally.slice(0, 8).map((n) => Math.max(0, Math.round(num(n, 0)))) : null,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",
