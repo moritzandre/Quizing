@@ -28,6 +28,7 @@ export const ROUND_TYPES = [
   "anythingle",
   "crowdsays",
   "typeit",
+  "spectrum",
 ];
 
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
@@ -66,6 +67,29 @@ export function matchTyped(guess, answer, accept = []) {
   if (!g) return false;
   if (normText(answer) === g) return true;
   return (Array.isArray(accept) ? accept : []).some((a) => normText(a) === g);
+}
+
+/**
+ * Graduated Spectrum score for a 0–100 slider guess vs a hidden target, on a
+ * bullseye of half-width `band`: within band → full points, within 2×band → 60%,
+ * within 3×band → 30%, else 0. A non-finite guess scores 0. Pure — everyone close
+ * enough scores (no single winner), so it plays as a party estimate, not a race.
+ * @param {number} guess The player's 0–100 position.
+ * @param {number} target The hidden 0–100 target.
+ * @param {number} points Full (bullseye) points.
+ * @param {number} band Bullseye half-width (1–50).
+ * @returns {number} Points earned (0..points).
+ */
+export function spectrumScore(guess, target, points, band) {
+  const g = num(guess, NaN);
+  if (!Number.isFinite(g)) return 0;
+  const d = Math.abs(g - num(target, 50));
+  const b = Math.max(1, num(band, 15));
+  const pts = Math.max(0, num(points, 10));
+  if (d <= b) return pts;
+  if (d <= b * 2) return Math.round(pts * 0.6);
+  if (d <= b * 3) return Math.round(pts * 0.3);
+  return 0;
 }
 
 /* ---- Anythingle (Wordle x Guess-Who) — fictional-character trait matrix ----
@@ -715,6 +739,10 @@ export function makeQuestion(type) {
       // Free-text round: players type an answer on their phones, auto-graded by
       // normText against `answer` + any `accept` alt spellings. Reuses a "text" phase.
       return { id: uid(), q: "", answer: "", accept: [], points: 10 };
+    case "spectrum":
+      // Estimate-on-a-spectrum: a hidden 0–100 target between two labelled poles;
+      // players slide to guess and score by graduated bands (spectrumScore).
+      return { id: uid(), q: "", left: "", right: "", target: 50, band: 15, points: 10 };
     default:
       return { id: uid() };
   }
@@ -874,6 +902,15 @@ export function normalizeQuiz(raw) {
                 .map((a) => (typeof a === "number" ? String(a) : str(a)))
                 .filter((a) => a.trim() !== "")
                 .slice(0, 12),
+              points: num(q?.points, 10),
+            });
+          if (r.type === "spectrum")
+            Object.assign(it, {
+              q: str(q?.q),
+              left: str(q?.left),
+              right: str(q?.right),
+              target: Math.max(0, Math.min(100, Math.round(num(q?.target, 50)))),
+              band: Math.max(1, Math.min(50, Math.round(num(q?.band, 15)))),
               points: num(q?.points, 10),
             });
           if (r.type === "whoknows")
@@ -1426,6 +1463,9 @@ function presentQ(type, q) {
     case "typeit":
       // Only the prompt — the answer/accept spellings stay in revealData (reveal-safety).
       return { q: str(q.q) };
+    case "spectrum":
+      // Poles are safe to show; the hidden target/band stay in revealData (reveal-safety).
+      return { q: str(q.q), left: str(q.left), right: str(q.right) };
     case "whoknows":
       // The full answer list is NEVER sent here (it would leak); the picked /
       // showcased answers travel in the live payload (whoknows) instead.
@@ -1539,6 +1579,8 @@ function revealData(type, q) {
       return { answer: numOrNull(q.answer), unit: str(q.unit) };
     case "typeit":
       return { answer: str(q.answer) };
+    case "spectrum":
+      return { target: Math.max(0, Math.min(100, num(q.target, 50))), band: Math.max(1, num(q.band, 15)) };
     case "anythingle":
       return { answer: str(q.target?.name) };
     default:
@@ -1733,6 +1775,18 @@ export function buildLive(game, opts = {}) {
         })
         .filter(Boolean);
     }
+    // Revealed spectrum: send each entity's 0–100 slider mark (safe now) so the TV
+    // can scatter the guesses along the bar next to the target. Supplied by opts.
+    if (round.type === "spectrum" && live.reveal && Array.isArray(opts.spectrumGuesses)) {
+      live.reveal.marks = opts.spectrumGuesses
+        .filter((m) => m && typeof m === "object" && Number.isFinite(+m.value))
+        .map((m) => ({
+          value: Math.max(0, Math.min(100, num(m.value, 50))),
+          color: typeof m.color === "string" ? m.color : null,
+          label: str(m.label),
+        }))
+        .slice(0, 64);
+    }
   }
   return live;
 }
@@ -1752,7 +1806,8 @@ export function normalizePresent(raw) {
   if (raw.q && typeof raw.q === "object" && !Array.isArray(raw.q)) {
     const q = raw.q;
     const o = { audioOnly: !!q.audioOnly };
-    for (const k of ["q", "clue", "url", "urlA", "urlB", "unit", "street"]) if (typeof q[k] === "string") o[k] = q[k];
+    for (const k of ["q", "clue", "url", "urlA", "urlB", "unit", "street", "left", "right"])
+      if (typeof q[k] === "string") o[k] = q[k];
     if (typeof q.effect === "string") o.effect = MORPH_EFFECTS.includes(q.effect) ? q.effect : "blur";
     if (typeof q.tileLayer === "string") o.tileLayer = q.tileLayer === "satellite" ? "satellite" : "map";
     if (q.steps != null) o.steps = num(q.steps, 4);
@@ -1781,6 +1836,8 @@ export function normalizeLive(raw) {
     if (Array.isArray(r.options)) reveal.options = r.options.map(str).slice(0, 8);
     if (typeof r.unit === "string") reveal.unit = r.unit;
     if (typeof r.note === "string") reveal.note = r.note; // true/false + higher/lower reveal fact
+    if (r.target != null) reveal.target = Math.max(0, Math.min(100, num(r.target, 50))); // spectrum hidden position
+    if (r.band != null) reveal.band = Math.max(1, num(r.band, 15)); // spectrum bullseye half-width
     if (Array.isArray(r.guesses))
       reveal.guesses = r.guesses
         .filter((g) => g && typeof g === "object")
@@ -1792,6 +1849,15 @@ export function normalizeLive(raw) {
         }))
         .filter((g) => g.lat != null && g.lng != null)
         .slice(0, 64); // the map round's revealed guess pins
+    if (Array.isArray(r.marks))
+      reveal.marks = r.marks
+        .filter((m) => m && typeof m === "object" && m.value != null)
+        .map((m) => ({
+          value: Math.max(0, Math.min(100, num(m.value, 50))),
+          color: typeof m.color === "string" ? m.color : null,
+          label: str(m.label),
+        }))
+        .slice(0, 64); // the spectrum round's revealed guess marks
   }
   return {
     qKey: str(raw.qKey),

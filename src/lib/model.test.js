@@ -13,6 +13,7 @@ import {
   hintValue,
   crowdWinners,
   matchTyped,
+  spectrumScore,
   clipLadderActive,
   clipEnd,
   summarizeGame,
@@ -473,6 +474,47 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[0].questions[1]).toMatchObject({ q: "", answer: "", accept: [], points: 10 });
   });
 
+  it("normalizes spectrum rounds: clamps target 0–100 and band 1–50, defaults", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "spectrum",
+          questions: [
+            { q: "Q", left: "Cold", right: "Hot", target: 140, band: 99, points: 20 },
+            { q: "Q2", target: -5, band: 0 },
+            {},
+          ],
+        },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({ left: "Cold", right: "Hot", target: 100, band: 50, points: 20 });
+    expect(q.rounds[0].questions[1]).toMatchObject({ target: 0, band: 1 });
+    expect(q.rounds[0].questions[2]).toMatchObject({ left: "", right: "", target: 50, band: 15, points: 10 });
+  });
+
+  it("presentQ never leaks a spectrum target; revealData carries it", () => {
+    const game = normalizeGame({
+      quiz: {
+        rounds: [
+          { type: "spectrum", questions: [{ q: "Q", left: "L", right: "R", target: 73, band: 12, points: 10 }] },
+        ],
+      },
+      players: [{ id: "p1", name: "A", score: 0 }],
+      stage: "question",
+      ri: 0,
+      qi: 0,
+    });
+    const present = buildPresentQ(game);
+    expect(JSON.stringify(present)).not.toContain("73");
+    expect(present.q).toMatchObject({ left: "L", right: "R" });
+    const revealed = buildLive(
+      { ...game, revealed: true },
+      { spectrumGuesses: [{ value: 70, color: "#fff", label: "A" }] },
+    );
+    expect(revealed.reveal).toMatchObject({ target: 73, band: 12 });
+    expect(revealed.reveal.marks).toEqual([{ value: 70, color: "#fff", label: "A" }]);
+  });
+
   it("presentQ never leaks a typeit answer; revealData carries it", () => {
     const game = normalizeGame({
       quiz: { rounds: [{ type: "typeit", questions: [{ q: "Q", answer: "Secret", accept: ["Sekret"], points: 10 }] }] },
@@ -855,6 +897,28 @@ describe("matchTyped (Type It grading)", () => {
   it("tolerates junk accept lists", () => {
     expect(matchTyped("x", "y", null)).toBe(false);
     expect(matchTyped("x", "y", "nope")).toBe(false);
+  });
+});
+
+describe("spectrumScore (Spectrum bands)", () => {
+  it("full points inside the bullseye band, tapering outward, zero far away", () => {
+    expect(spectrumScore(50, 50, 10, 15)).toBe(10); // dead-on
+    expect(spectrumScore(64, 50, 10, 15)).toBe(10); // within band
+    expect(spectrumScore(75, 50, 10, 15)).toBe(6); // within 2×band → 60%
+    expect(spectrumScore(88, 50, 10, 15)).toBe(3); // within 3×band → 30%
+    expect(spectrumScore(97, 50, 10, 15)).toBe(0); // beyond 3×band
+  });
+  it("is symmetric around the target", () => {
+    expect(spectrumScore(30, 50, 10, 15)).toBe(spectrumScore(70, 50, 10, 15));
+  });
+  it("a non-finite / missing guess scores 0", () => {
+    expect(spectrumScore(undefined, 50, 10, 15)).toBe(0);
+    expect(spectrumScore(NaN, 50, 10, 15)).toBe(0);
+    expect(spectrumScore("", 50, 10, 15)).toBe(0);
+  });
+  it("clamps a junk band to at least 1", () => {
+    expect(spectrumScore(50, 50, 10, 0)).toBe(10); // dead-on always full
+    expect(spectrumScore(54, 50, 10, 0)).toBe(0); // band→1, so 54 is 4 away → beyond 3×1
   });
 });
 

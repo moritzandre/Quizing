@@ -544,6 +544,20 @@ const en = {
   "play.typeMissed": "Missed",
   "play.typeNoAnswer": "—",
   "play.typeCorrectCount": "{n} correct",
+  "round.spectrum.label": "Spectrum",
+  "round.spectrum.desc":
+    "A hidden point on a scale between two poles — players slide to guess where it lands. The closer to the target band, the more points; several can score.",
+  // spectrum (slider estimate) — builder + play + join
+  "builder.spectrumLeft": "Left pole",
+  "builder.spectrumRight": "Right pole",
+  "builder.spectrumTarget": "Target (0–100)",
+  "builder.spectrumBand": "Band (±)",
+  "builder.spectrumBandHint": "Half-width of the full-points zone; near misses score less",
+  "builder.spectrumHint": "The hidden spot on the scale players slide to find",
+  "join.slideGuess": "Slide to your guess",
+  "join.slideValue": "Your guess: {n}",
+  "play.spectrumTargetAt": "Target: {n}",
+  "play.spectrumScorers": "{n} scored",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name}'s turn",
   "play.anyGuessPlaceholder": "Type any character…",
@@ -1166,6 +1180,20 @@ const de = {
   "play.typeMissed": "Daneben",
   "play.typeNoAnswer": "—",
   "play.typeCorrectCount": "{n} richtig",
+  "round.spectrum.label": "Spektrum",
+  "round.spectrum.desc":
+    "Ein versteckter Punkt auf einer Skala zwischen zwei Polen — Spieler schieben den Regler zum Tipp. Je näher an der Zielzone, desto mehr Punkte; mehrere können punkten.",
+  // spectrum (Regler-Schätzung) — builder + play + join
+  "builder.spectrumLeft": "Linker Pol",
+  "builder.spectrumRight": "Rechter Pol",
+  "builder.spectrumTarget": "Ziel (0–100)",
+  "builder.spectrumBand": "Zone (±)",
+  "builder.spectrumBandHint": "Halbe Breite der Volltreffer-Zone; knappe Fehler geben weniger",
+  "builder.spectrumHint": "Der versteckte Punkt auf der Skala, den die Spieler finden sollen",
+  "join.slideGuess": "Schiebe zu deinem Tipp",
+  "join.slideValue": "Dein Tipp: {n}",
+  "play.spectrumTargetAt": "Ziel: {n}",
+  "play.spectrumScorers": "{n} haben gepunktet",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name} ist dran",
   "play.anyGuessPlaceholder": "Beliebige Figur eingeben…",

@@ -43,6 +43,7 @@ import {
   hintValue,
   crowdWinners,
   matchTyped,
+  spectrumScore,
   clipLadderActive,
   clipEnd,
   hintHasContent,
@@ -86,6 +87,7 @@ import MediaPlayer from "./MediaPlayer.jsx";
 import MorphImage from "./MorphImage.jsx";
 import FusionImage from "./FusionImage.jsx";
 import HintMedia from "./HintMedia.jsx";
+import SpectrumBar from "./SpectrumBar.jsx";
 import { TraitForm, GuessGrid, TraitLegend, CharacterField, AnyQuote, AnyColors } from "./anythingleTraits.jsx";
 
 /** Map marker color for a player (their chosen color, else by index). */
@@ -298,6 +300,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.collectAnswers(qKey, { phase: "number" });
     } else if (round?.type === "typeit") {
       room.collectAnswers(qKey, { phase: "text" });
+    } else if (round?.type === "spectrum") {
+      // Slider phase — the poles ride in `options` so the phone can label the ends.
+      const sq = round.questions[game.qi];
+      room.collectAnswers(qKey, { phase: "slider", options: [sq?.left || "", sq?.right || ""] });
     } else if (round?.type === "whoknows" || round?.type === "anythingle") {
       room.idle(); // host-driven rounds — phones aren't used for input
     } else {
@@ -357,6 +363,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
         )
       : null;
   const crowdSig = crowdTally ? crowdTally.join(",") : "";
+  // Spectrum: on reveal, hand the TV each entity's 0–100 mark so it can scatter the
+  // guesses along the bar. Only computed once revealed (a one-shot, not per-move).
+  const spectrumGuesses =
+    round?.type === "spectrum" && buzzerOn && game.revealed
+      ? game.players
+          .map((p, i) => ({ value: +mapByEntity(room.answers)[p.id], color: colorFor(p, i), label: p.name }))
+          .filter((m) => Number.isFinite(m.value))
+      : null;
   // quantize the morph demorph for the TV (smooth via CSS transition; ~50 updates max)
   const morphStreamP = Math.round(morphP * 50) / 50;
   useEffect(() => {
@@ -380,6 +394,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         whoknows: wkLive,
         anyQuote,
         tally: crowdTally,
+        spectrumGuesses,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -558,6 +573,23 @@ export default function PlayView({ game, setGame, onExit, room }) {
       if (matchTyped(ans[p.id], q.answer, q.accept)) {
         awarded[p.id] = q.points;
         return { ...p, score: p.score + q.points };
+      }
+      return p;
+    });
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
+  };
+
+  // Spectrum reveal: graduated banded scoring — every entity close enough to the
+  // hidden target earns tiered points (spectrumScore); no single winner.
+  const revealSpectrum = (q) => {
+    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const awarded = {};
+    const players = game.players.map((p) => {
+      const pts = spectrumScore(ans[p.id], q.target, q.points, q.band);
+      if (Number.isFinite(+ans[p.id]) && pts > 0) {
+        awarded[p.id] = pts;
+        return { ...p, score: p.score + pts };
       }
       return p;
     });
@@ -818,6 +850,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             else if (round.type === "crowdsays") revealCrowd(cq);
             else if (round.type === "number") revealNumber(cq);
             else if (round.type === "typeit") revealTypeit(cq);
+            else if (round.type === "spectrum") revealSpectrum(cq);
             else if (round.type === "map") revealMap(cq);
             else if (round.type === "anythingle") revealAnythingle();
             else reveal();
@@ -928,6 +961,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         else if (round.type === "crowdsays") revealCrowd(q);
         else if (round.type === "number") revealNumber(q);
         else if (round.type === "typeit") revealTypeit(q);
+        else if (round.type === "spectrum") revealSpectrum(q);
         else if (round.type === "map") revealMap(q);
         else if (round.type === "anythingle") revealAnythingle();
         else reveal();
@@ -2118,6 +2152,81 @@ export default function PlayView({ game, setGame, onExit, room }) {
           </div>
         )}
         {game.revealed && <div className="mt-6">{NextBtn}</div>}
+      </div>
+    );
+  }
+
+  if (round.type === "spectrum") {
+    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answered = Object.values(answersByEntity).filter((v) => Number.isFinite(+v)).length;
+    const scored = game.players
+      .map((p, i) => ({ p, i, g: +answersByEntity[p.id] }))
+      .filter((x) => Number.isFinite(x.g))
+      .map((x) => ({ ...x, pts: spectrumScore(x.g, q.target, q.points, q.band) }))
+      .sort((a, b) => b.pts - a.pts || Math.abs(a.g - q.target) - Math.abs(b.g - q.target));
+    const marks = scored.map((x) => ({ value: x.g, color: colorFor(x.p, x.i), label: x.p.name }));
+    const scorers = scored.filter((x) => x.pts > 0).length;
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+        {buzzerOn && !game.revealed && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-sm text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">
+            <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
+          </p>
+        )}
+        <div className="mt-8">
+          <SpectrumBar
+            left={q.left}
+            right={q.right}
+            target={game.revealed ? q.target : null}
+            band={q.band}
+            marks={game.revealed ? marks : []}
+            revealed={game.revealed}
+          />
+        </div>
+        <div className="mt-6">
+          {game.revealed ? (
+            <>
+              <p className="qn-pop text-lg font-semibold text-violet-600 dark:text-violet-400">
+                {t("play.spectrumTargetAt", { n: q.target })} · {t("play.spectrumScorers", { n: scorers })}
+              </p>
+              {scored.length > 0 && (
+                <div className="mx-auto mt-4 max-w-md space-y-1.5 text-left">
+                  {scored.map((x) => (
+                    <div
+                      key={x.p.id}
+                      className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-sm ${
+                        x.pts > 0
+                          ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                          : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                      }`}
+                    >
+                      <span className="flex min-w-0 items-center gap-2 font-medium">
+                        <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
+                        <span className="shrink-0">{x.p.name}</span>
+                        <span className="text-stone-400">→ {x.g}</span>
+                      </span>
+                      <span
+                        className={`shrink-0 font-semibold tabular-nums ${
+                          x.pts > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400 dark:text-stone-500"
+                        }`}
+                      >
+                        {x.pts > 0 ? `+${x.pts}` : "0"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6">{NextBtn}</div>
+            </>
+          ) : (
+            <Button className="px-6 py-3.5 text-base" onClick={() => revealSpectrum(q)}>
+              <Eye size={18} /> {t("play.revealAnswer")}
+            </Button>
+          )}
+        </div>
       </div>
     );
   }

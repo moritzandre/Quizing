@@ -66,6 +66,7 @@ const POINTS_TYPES = [
   "whoknows",
   "crowdsays",
   "typeit",
+  "spectrum",
 ];
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -2146,6 +2147,101 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       </SortableList>
                       <button
                         onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("typeit")] })}
+                        className={`mt-3 ${addBtnCls}`}
+                      >
+                        <Plus size={15} /> {t("builder.addQuestion")}
+                      </button>
+                    </>
+                  )}
+
+                  {/* spectrum (slider estimate) */}
+                  {r.type === "spectrum" && (
+                    <>
+                      <SortableList
+                        items={r.questions}
+                        getKey={(x) => x.id}
+                        onReorder={(f, to) => reorderQuestions(r, f, to)}
+                        onDuplicate={(f) => dupQuestion(r, f)}
+                      >
+                        {(item, i, hp) => (
+                          <div className={panelCls}>
+                            <div className={rowLabelCls}>
+                              <span className="flex items-center gap-1">
+                                <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                              </span>
+                              <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                            </div>
+                            <input
+                              className={inputCls}
+                              placeholder={t("builder.question")}
+                              value={item.q}
+                              onChange={(e) => qRow(r, item, { q: e.target.value })}
+                            />
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <label className="flex-1 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                {t("builder.spectrumLeft")}
+                                <input
+                                  className={`${inputCls} mt-1`}
+                                  value={item.left}
+                                  onChange={(e) => qRow(r, item, { left: e.target.value })}
+                                />
+                              </label>
+                              <label className="flex-1 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                {t("builder.spectrumRight")}
+                                <input
+                                  className={`${inputCls} mt-1`}
+                                  value={item.right}
+                                  onChange={(e) => qRow(r, item, { right: e.target.value })}
+                                />
+                              </label>
+                            </div>
+                            <label className="mt-2 block text-xs font-medium text-stone-500 dark:text-stone-400">
+                              {t("builder.spectrumTarget")} — {item.target}
+                              <span className="ml-1 font-normal text-stone-400 dark:text-stone-500">
+                                ({t("builder.spectrumHint")})
+                              </span>
+                              <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="1"
+                                className="mt-1 w-full accent-violet-500"
+                                value={item.target}
+                                onChange={(e) => qRow(r, item, { target: +e.target.value })}
+                              />
+                            </label>
+                            <div className="mt-2 flex flex-wrap items-end gap-2">
+                              <label className="w-28 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                {t("builder.spectrumBand")}
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max="50"
+                                  className={`${inputCls} mt-1`}
+                                  title={t("builder.spectrumBandHint")}
+                                  value={item.band}
+                                  onChange={(e) =>
+                                    qRow(r, item, {
+                                      band: Math.max(1, Math.min(50, Math.floor(+e.target.value || 15))),
+                                    })
+                                  }
+                                />
+                              </label>
+                              <label className="w-20 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                {t("builder.points")}
+                                <input
+                                  type="number"
+                                  className={`${inputCls} mt-1`}
+                                  value={item.points}
+                                  onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                                />
+                              </label>
+                            </div>
+                          </div>
+                        )}
+                      </SortableList>
+                      <button
+                        onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("spectrum")] })}
                         className={`mt-3 ${addBtnCls}`}
                       >
                         <Plus size={15} /> {t("builder.addQuestion")}

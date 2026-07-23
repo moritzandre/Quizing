@@ -265,6 +265,32 @@ export const ROUND_TEMPLATES = [
     },
   },
   {
+    key: "spectrum-slider",
+    type: "spectrum",
+    round: {
+      type: "spectrum",
+      title: "Spectrum",
+      questions: [
+        {
+          q: "How spicy is a jalapeño, really?",
+          left: "Mild",
+          right: "Fiery",
+          target: 35,
+          band: 15,
+          points: 10,
+        },
+        {
+          q: "Where does pineapple on pizza land?",
+          left: "Crime",
+          right: "Delicious",
+          target: 60,
+          band: 20,
+          points: 10,
+        },
+      ],
+    },
+  },
+  {
     key: "number-guess",
     type: "number",
     round: {
@@ -458,6 +484,8 @@ const ROUND_SHAPES = {
   number: 'questions: [{ "q": string, "answer": number, "unit": string, "points": number }]',
   typeit:
     'questions: [{ "q": string, "answer": string (the canonical answer), "accept": [string,...] (alternative spellings/synonyms that also score — case & accents are ignored, so no need to list case variants), "points": number }]   // players type on their phones; EVERY correct speller scores (no buzzer race)',
+  spectrum:
+    'questions: [{ "q": string (the prompt/clue), "left": string (left-pole label), "right": string (right-pole label), "target": number 0-100 (the HIDDEN correct spot on the scale), "band": number 1-50 (half-width of the full-points zone), "points": number }]   // players slide 0-100 to guess the hidden target; graduated banded scoring (closer = more), several can score',
 };
 
 /**
@@ -504,5 +532,6 @@ Round types and their question shapes:
 - "anythingle": questions: [{ "q": string, "points": number, "maxGuesses": number, "target": <CHAR>, "pool": [<CHAR>] }]   // Wordle x Guess-Who for FICTIONAL characters. <CHAR> = { name, aliases:[string], species (Human/Alien/Robot/AI/Creature/Monster/Cyborg/Augmented/Deity/Spirit/Animal/Humanoid/Undead/Object/Other), gender (Male/Female/Non-binary/Fluid/None/Genderless), alignment (Hero/Good, Villain/Evil, Neutral/Anti-hero), role (up to 3 of: Warrior, Royalty, Leader, Detective, Mage, Outlaw, Scientist, Student, Soldier, Adventurer, Pilot, Artist, Healer, Spy, Monster, Athlete, Worker, Politician, Mystic, Civilian), powers (up to 3 of: Magic/Sorcery, Super strength, Flight, Tech/Gadgets, Martial arts, Weapon mastery, Peak human/Genius, Energy/Beams, Telepathy/Mind, Elemental, Electric/Lightning, Healing/Regeneration, Shapeshifting, Elasticity/Stretch, Immortality, Summoning, Stealth/Invisibility, Super speed, Size-change — or ["None"]), franchise (canonical, or "Standalone"), affiliation (in-story group/team or "Independent"), origin (the character home: real nationality if real-world else fictional realm like "Hyrule"), medium (Manga/Anime/Film/TV (live-action)/Novel/Prose/Comic (Western)/Animation/Cartoon/Video game/Stage/Theatre/Mythology/Folklore/Web/Other), year (first appearance), quote {en, de} (iconic in-character line shown as a hint after 4 wrong guesses — recognisable but not naming the character/franchise; natural German) }. target = the secret; pool = optional likely guesses. Tag traits ACCURATELY.
 - "number":   questions: [{ "q": string, "answer": number, "unit": string, "points": number }]
 - "typeit":   questions: [{ "q": string, "answer": string, "accept": [string,...] (alt spellings/synonyms that also score; case & accents ignored), "points": number }]   // players type on their phones; every correct speller scores
+- "spectrum": questions: [{ "q": string, "left": string (left pole), "right": string (right pole), "target": number 0-100 (hidden spot), "band": number 1-50 (full-points half-width), "points": number }]   // players slide 0-100 to find the hidden target; closer scores more, several can score
 
 Rules: omit "id" fields (they are generated). Use real, publicly reachable image/video URLs, or leave url empty for the host to fill in. Keep 3-6 questions per round. Make answers unambiguous.`;

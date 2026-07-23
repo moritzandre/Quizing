@@ -20,6 +20,7 @@ import HintMedia from "./HintMedia.jsx";
 import MediaPlayer from "./MediaPlayer.jsx";
 import LeafletMap from "./LeafletMap.jsx";
 import MapillaryEmbed from "./MapillaryEmbed.jsx";
+import SpectrumBar from "./SpectrumBar.jsx";
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
 const answerCls = "qn-pop qn-answer mt-6 text-3xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl";
@@ -327,6 +328,28 @@ export default function RoundBody({
       <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
         <Q>{q.q}</Q>
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer || "—"}</p>}
+      </div>
+    );
+  }
+
+  if (type === "spectrum") {
+    return (
+      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
+        <Q>{q.q}</Q>
+        <div className="mt-8 w-full">
+          <SpectrumBar
+            left={q.left}
+            right={q.right}
+            target={revealed ? (reveal?.target ?? null) : null}
+            band={reveal?.band ?? 15}
+            marks={revealed ? reveal?.marks || [] : []}
+            revealed={revealed}
+            compact={compact}
+          />
+        </div>
+        {revealed && reveal?.target != null && (
+          <p className={`${answerCls} md:text-3xl`}>{t("play.spectrumTargetAt", { n: reveal.target })}</p>
+        )}
       </div>
     );
   }

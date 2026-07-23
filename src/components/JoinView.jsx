@@ -18,6 +18,7 @@ import {
   ListChecks,
   Hash,
   Keyboard,
+  SlidersHorizontal,
   Loader2,
   X,
   Trophy,
@@ -944,11 +945,49 @@ export default function JoinView({ code }) {
               </div>
             )}
 
+            {phase === "slider" && (
+              <div className="flex flex-1 flex-col justify-center">
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
+                  <SlidersHorizontal size={16} /> {t("join.slideGuess")}
+                </div>
+                <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-700 dark:bg-stone-900">
+                  <div className="mb-2 flex items-center justify-between gap-3 text-sm font-semibold text-stone-600 dark:text-stone-300">
+                    <span className="min-w-0 flex-1 truncate text-left">◀ {options[0] || ""}</span>
+                    <span className="min-w-0 flex-1 truncate text-right">{options[1] || ""} ▶</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    className="w-full accent-violet-500"
+                    value={answer ?? 50}
+                    onChange={(e) => {
+                      setAnswer(+e.target.value);
+                      setAnswerSent(false);
+                    }}
+                  />
+                  <p className="mt-2 text-center text-2xl font-bold text-violet-600 dark:text-violet-400">
+                    {answer ?? 50}
+                  </p>
+                </div>
+                <Button
+                  variant="accent"
+                  className="mt-4 w-full px-6 py-3.5 text-base"
+                  disabled={answerSent}
+                  onClick={() => pick(answer ?? 50)}
+                >
+                  {answerSent ? t("join.submitted") : t("join.submit")}
+                </Button>
+              </div>
+            )}
+
             {phase !== "buzz" &&
               phase !== "map" &&
               phase !== "choice" &&
               phase !== "number" &&
               phase !== "text" &&
+              phase !== "slider" &&
               (sorted.length > 0 ? (
                 <div className="flex min-h-0 flex-1 flex-col">
                   <p className="mb-3 flex shrink-0 items-center justify-center gap-2 font-pixel text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">

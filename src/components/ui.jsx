@@ -27,6 +27,7 @@ import {
   Drama,
   Users,
   Keyboard,
+  SlidersHorizontal,
   Trash2,
   Sun,
   Moon,
@@ -151,6 +152,12 @@ export const TYPES = {
     dot: "bg-cyan-500",
     desc: "Players type their answer on their phones. Every correct spelling scores — auto-graded, no buzzer race. Great for spelling, names and one-word answers.",
   },
+  spectrum: {
+    label: "Spectrum",
+    icon: SlidersHorizontal,
+    dot: "bg-violet-500",
+    desc: "A hidden point on a scale between two poles (Cold ↔ Hot, Overrated ↔ Underrated). Players slide to guess where it lands — the closer, the more points.",
+  },
 };
 
 /** Per-round accent classes (full literals so Tailwind keeps them). */
@@ -185,6 +192,10 @@ const ACCENT = {
   },
   anythingle: { soft: "bg-pink-100 text-pink-700 dark:bg-pink-500/20 dark:text-pink-300", solid: "bg-pink-500" },
   typeit: { soft: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300", solid: "bg-cyan-500" },
+  spectrum: {
+    soft: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
+    solid: "bg-violet-500",
+  },
 };
 /** Accent class set for a round type (soft chip bg/text + solid dot). */
 export const accentFor = (type) => ACCENT[type] || ACCENT.classic;
