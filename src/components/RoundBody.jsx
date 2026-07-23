@@ -322,6 +322,15 @@ export default function RoundBody({
     );
   }
 
+  if (type === "typeit") {
+    return (
+      <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
+        <Q>{q.q}</Q>
+        {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer || "—"}</p>}
+      </div>
+    );
+  }
+
   if (type === "whoknows") {
     const wkk = whoknows || {};
     const picked = wkk.picked || [];

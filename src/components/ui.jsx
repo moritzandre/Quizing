@@ -26,6 +26,7 @@ import {
   Gavel,
   Drama,
   Users,
+  Keyboard,
   Trash2,
   Sun,
   Moon,
@@ -144,6 +145,12 @@ export const TYPES = {
     dot: "bg-rose-500",
     desc: "An opinion question with no right answer — players vote from their phones and score by matching the crowd (majority), being the brave few (minority), or just for fun (poll).",
   },
+  typeit: {
+    label: "Type It",
+    icon: Keyboard,
+    dot: "bg-cyan-500",
+    desc: "Players type their answer on their phones. Every correct spelling scores — auto-graded, no buzzer race. Great for spelling, names and one-word answers.",
+  },
 };
 
 /** Per-round accent classes (full literals so Tailwind keeps them). */
@@ -177,6 +184,7 @@ const ACCENT = {
     solid: "bg-violet-500",
   },
   anythingle: { soft: "bg-pink-100 text-pink-700 dark:bg-pink-500/20 dark:text-pink-300", solid: "bg-pink-500" },
+  typeit: { soft: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300", solid: "bg-cyan-500" },
 };
 /** Accent class set for a round type (soft chip bg/text + solid dot). */
 export const accentFor = (type) => ACCENT[type] || ACCENT.classic;

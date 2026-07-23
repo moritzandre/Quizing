@@ -42,6 +42,7 @@ import {
   morphValueAt,
   hintValue,
   crowdWinners,
+  matchTyped,
   clipLadderActive,
   clipEnd,
   hintHasContent,
@@ -295,6 +296,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.collectAnswers(qKey, { phase: "choice", options: optionsFor(round.type, round.questions[game.qi], t) });
     } else if (round?.type === "number") {
       room.collectAnswers(qKey, { phase: "number" });
+    } else if (round?.type === "typeit") {
+      room.collectAnswers(qKey, { phase: "text" });
     } else if (round?.type === "whoknows" || round?.type === "anythingle") {
       room.idle(); // host-driven rounds — phones aren't used for input
     } else {
@@ -543,6 +546,21 @@ export default function PlayView({ game, setGame, onExit, room }) {
         players = game.players.map((p) => (p.id === winnerId ? { ...p, score: p.score + q.points } : p));
       }
     }
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
+  };
+
+  // Type-It reveal: auto-award EVERY entity whose typed answer matches (normalized).
+  const revealTypeit = (q) => {
+    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const awarded = {};
+    const players = game.players.map((p) => {
+      if (matchTyped(ans[p.id], q.answer, q.accept)) {
+        awarded[p.id] = q.points;
+        return { ...p, score: p.score + q.points };
+      }
+      return p;
+    });
     playSound(Object.keys(awarded).length ? "correct" : "reveal");
     upd({ revealed: true, players, awarded });
   };
@@ -799,6 +817,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
             if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
             else if (round.type === "crowdsays") revealCrowd(cq);
             else if (round.type === "number") revealNumber(cq);
+            else if (round.type === "typeit") revealTypeit(cq);
             else if (round.type === "map") revealMap(cq);
             else if (round.type === "anythingle") revealAnythingle();
             else reveal();
@@ -908,6 +927,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         if (BINARY_TYPES.includes(round.type)) revealChoice(q);
         else if (round.type === "crowdsays") revealCrowd(q);
         else if (round.type === "number") revealNumber(q);
+        else if (round.type === "typeit") revealTypeit(q);
         else if (round.type === "map") revealMap(q);
         else if (round.type === "anythingle") revealAnythingle();
         else reveal();
@@ -2022,6 +2042,77 @@ export default function PlayView({ game, setGame, onExit, room }) {
                 <span className="tabular-nums text-stone-500 dark:text-stone-400">
                   Δ {Math.round(x.diff * 100) / 100}
                 </span>
+              </div>
+            ))}
+          </div>
+        )}
+        {game.revealed && <div className="mt-6">{NextBtn}</div>}
+      </div>
+    );
+  }
+
+  if (round.type === "typeit") {
+    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answered = Object.values(answersByEntity).filter((v) => String(v ?? "").trim() !== "").length;
+    const graded = game.players
+      .map((p, i) => ({ p, i, g: String(answersByEntity[p.id] ?? "") }))
+      .filter((x) => x.g.trim() !== "")
+      .map((x) => ({ ...x, ok: matchTyped(x.g, q.answer, q.accept) }));
+    const correctCount = graded.filter((x) => x.ok).length;
+    body = (
+      <div className="text-center">
+        {Progress}
+        {TimerPill}
+        <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+        {buzzerOn && !game.revealed && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-3 py-1 text-sm text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300">
+            <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
+          </p>
+        )}
+        <div className="mt-8" style={{ minHeight: 72 }}>
+          {game.revealed ? (
+            <p className="qn-pop qn-answer text-3xl font-bold text-indigo-600 dark:text-indigo-400 md:text-5xl">
+              {q.answer || "—"}
+            </p>
+          ) : (
+            <Button className="px-6 py-3.5 text-base" onClick={() => revealTypeit(q)}>
+              <Eye size={18} /> {t("play.revealAnswer")}
+            </Button>
+          )}
+        </div>
+        {game.revealed && q.accept?.length > 0 && (
+          <p className="mt-2 text-sm text-stone-400 dark:text-stone-500">
+            {t("builder.alsoAccept")}: {q.accept.join(", ")}
+          </p>
+        )}
+        {game.revealed && (
+          <p className="mt-3 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            {t("play.typeCorrectCount", { n: correctCount })}
+          </p>
+        )}
+        {game.revealed && graded.length > 0 && (
+          <div className="mx-auto mt-4 max-w-md space-y-1.5 text-left">
+            {graded.map((x) => (
+              <div
+                key={x.p.id}
+                className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-sm ${
+                  x.ok
+                    ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                    : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                }`}
+              >
+                <span className="flex min-w-0 items-center gap-2 font-medium">
+                  <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
+                  <span className="shrink-0">{x.p.name}</span>
+                  <span className="min-w-0 truncate text-stone-400">“{x.g}”</span>
+                </span>
+                {x.ok ? (
+                  <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <Check size={14} /> {t("play.typeGotIt")}
+                  </span>
+                ) : (
+                  <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">{t("play.typeMissed")}</span>
+                )}
               </div>
             ))}
           </div>

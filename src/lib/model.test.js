@@ -12,6 +12,7 @@ import {
   morphValueAt,
   hintValue,
   crowdWinners,
+  matchTyped,
   clipLadderActive,
   clipEnd,
   summarizeGame,
@@ -451,6 +452,41 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[2].questions[0].options).toEqual(["a", "b", "c", "d", "e", "f"]); // capped at 6
   });
 
+  it("normalizes typeit rounds: coerces answer, drops blank accepts, caps at 12", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "typeit",
+          questions: [
+            { q: "Capital of Australia?", answer: "Canberra", accept: ["Canbera", "", "  ", 42], points: 15 },
+            {},
+          ],
+        },
+      ],
+    });
+    expect(q.rounds[0].questions[0]).toMatchObject({
+      q: "Capital of Australia?",
+      answer: "Canberra",
+      accept: ["Canbera", "42"],
+      points: 15,
+    });
+    expect(q.rounds[0].questions[1]).toMatchObject({ q: "", answer: "", accept: [], points: 10 });
+  });
+
+  it("presentQ never leaks a typeit answer; revealData carries it", () => {
+    const game = normalizeGame({
+      quiz: { rounds: [{ type: "typeit", questions: [{ q: "Q", answer: "Secret", accept: ["Sekret"], points: 10 }] }] },
+      players: [{ id: "p1", name: "A", score: 0 }],
+      stage: "question",
+      ri: 0,
+      qi: 0,
+    });
+    const present = buildPresentQ(game);
+    expect(JSON.stringify(present)).not.toContain("Secret");
+    const revealed = buildLive({ ...game, revealed: true }, {});
+    expect(revealed.reveal).toMatchObject({ answer: "Secret" });
+  });
+
   it("normalizes number rounds: numeric answer or null", () => {
     const q = normalizeQuiz({
       rounds: [{ type: "number", questions: [{ q: "How many?", answer: "42", unit: "kg" }, { answer: "" }] }],
@@ -797,6 +833,28 @@ describe("crowdWinners (Crowd Says)", () => {
   });
   it("coerces junk counts to 0", () => {
     expect(crowdWinners([null, "2", undefined], "majority")).toEqual([1]);
+  });
+});
+
+describe("matchTyped (Type It grading)", () => {
+  it("matches the canonical answer ignoring case, accents, punctuation, whitespace", () => {
+    expect(matchTyped("canberra", "Canberra")).toBe(true);
+    expect(matchTyped("  CANBERRA ", "Canberra")).toBe(true);
+    expect(matchTyped("Zurich", "Zürich")).toBe(true); // diacritics stripped both sides
+    expect(matchTyped("Wrong", "Canberra")).toBe(false);
+  });
+  it("matches any accepted alternative", () => {
+    expect(matchTyped("Canbera", "Canberra", ["Canbera", "Canbrra"])).toBe(true);
+    expect(matchTyped("nope", "Canberra", ["Canbera"])).toBe(false);
+  });
+  it("a blank / missing guess never matches (even an empty answer)", () => {
+    expect(matchTyped("", "Canberra")).toBe(false);
+    expect(matchTyped(undefined, "Canberra")).toBe(false);
+    expect(matchTyped("", "")).toBe(false);
+  });
+  it("tolerates junk accept lists", () => {
+    expect(matchTyped("x", "y", null)).toBe(false);
+    expect(matchTyped("x", "y", "nope")).toBe(false);
   });
 });
 

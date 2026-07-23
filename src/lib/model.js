@@ -27,6 +27,7 @@ export const ROUND_TYPES = [
   "whoknows",
   "anythingle",
   "crowdsays",
+  "typeit",
 ];
 
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
@@ -49,6 +50,22 @@ export function crowdWinners(counts, mode) {
   if (mode === "poll" || !cast.length) return [];
   const target = mode === "minority" ? Math.min(...cast) : Math.max(...cast);
   return c.map((n, i) => (n > 0 && n === target ? i : -1)).filter((i) => i >= 0);
+}
+
+/**
+ * True if a typed Type-It guess matches the answer or any accepted alt spelling,
+ * compared through normText (case/diacritic/punctuation/whitespace-insensitive).
+ * A blank guess never matches. Pure — the single source of truth for grading.
+ * @param {string} guess The player's typed answer.
+ * @param {string} answer The canonical answer.
+ * @param {string[]} [accept] Additional accepted spellings/aliases.
+ * @returns {boolean}
+ */
+export function matchTyped(guess, answer, accept = []) {
+  const g = normText(guess);
+  if (!g) return false;
+  if (normText(answer) === g) return true;
+  return (Array.isArray(accept) ? accept : []).some((a) => normText(a) === g);
 }
 
 /* ---- Anythingle (Wordle x Guess-Who) — fictional-character trait matrix ----
@@ -694,6 +711,10 @@ export function makeQuestion(type) {
       // matching the crowd (majority), being the brave few (minority), or not at
       // all (poll). Reuses the phone "choice" phase.
       return { id: uid(), q: "", options: ["", "", "", ""], points: 10, mode: "majority" };
+    case "typeit":
+      // Free-text round: players type an answer on their phones, auto-graded by
+      // normText against `answer` + any `accept` alt spellings. Reuses a "text" phase.
+      return { id: uid(), q: "", answer: "", accept: [], points: 10 };
     default:
       return { id: uid() };
   }
@@ -843,6 +864,16 @@ export function normalizeQuiz(raw) {
               q: str(q?.q),
               answer: numOrNull(q?.answer),
               unit: str(q?.unit),
+              points: num(q?.points, 10),
+            });
+          if (r.type === "typeit")
+            Object.assign(it, {
+              q: str(q?.q),
+              answer: str(q?.answer),
+              accept: (Array.isArray(q?.accept) ? q.accept : [])
+                .map((a) => (typeof a === "number" ? String(a) : str(a)))
+                .filter((a) => a.trim() !== "")
+                .slice(0, 12),
               points: num(q?.points, 10),
             });
           if (r.type === "whoknows")
@@ -1392,6 +1423,9 @@ function presentQ(type, q) {
       return { q: str(q.q) };
     case "number":
       return { q: str(q.q), unit: str(q.unit) };
+    case "typeit":
+      // Only the prompt — the answer/accept spellings stay in revealData (reveal-safety).
+      return { q: str(q.q) };
     case "whoknows":
       // The full answer list is NEVER sent here (it would leak); the picked /
       // showcased answers travel in the live payload (whoknows) instead.
@@ -1503,6 +1537,8 @@ function revealData(type, q) {
       return { correct: num(q.correct, 0) === 1 ? 1 : 0, note: str(q.note) };
     case "number":
       return { answer: numOrNull(q.answer), unit: str(q.unit) };
+    case "typeit":
+      return { answer: str(q.answer) };
     case "anythingle":
       return { answer: str(q.target?.name) };
     default:

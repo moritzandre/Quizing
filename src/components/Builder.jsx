@@ -65,6 +65,7 @@ const POINTS_TYPES = [
   "map",
   "whoknows",
   "crowdsays",
+  "typeit",
 ];
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -2053,6 +2054,98 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       </SortableList>
                       <button
                         onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("number")] })}
+                        className={`mt-3 ${addBtnCls}`}
+                      >
+                        <Plus size={15} /> {t("builder.addQuestion")}
+                      </button>
+                    </>
+                  )}
+
+                  {/* type it (free-text, auto-graded) */}
+                  {r.type === "typeit" && (
+                    <>
+                      <SortableList
+                        items={r.questions}
+                        getKey={(x) => x.id}
+                        onReorder={(f, to) => reorderQuestions(r, f, to)}
+                        onDuplicate={(f) => dupQuestion(r, f)}
+                      >
+                        {(item, i, hp) => {
+                          const accept = item.accept || [];
+                          return (
+                            <div className={panelCls}>
+                              <div className={rowLabelCls}>
+                                <span className="flex items-center gap-1">
+                                  <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                                </span>
+                                <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                              </div>
+                              <input
+                                className={inputCls}
+                                placeholder={t("builder.question")}
+                                value={item.q}
+                                onChange={(e) => qRow(r, item, { q: e.target.value })}
+                              />
+                              <div className="mt-2 flex flex-wrap items-end gap-2">
+                                <label className="flex-1 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                  {t("builder.typeAnswer")}
+                                  <input
+                                    className={`${inputCls} mt-1`}
+                                    placeholder={t("builder.typeAnswer")}
+                                    value={item.answer}
+                                    onChange={(e) => qRow(r, item, { answer: e.target.value })}
+                                  />
+                                </label>
+                                <label className="w-20 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                  {t("builder.points")}
+                                  <input
+                                    type="number"
+                                    className={`${inputCls} mt-1`}
+                                    value={item.points}
+                                    onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                                  />
+                                </label>
+                              </div>
+                              <p className="mt-3 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                {t("builder.alsoAccept")}
+                                <span className="ml-1 font-normal text-stone-400 dark:text-stone-500">
+                                  — {t("builder.alsoAcceptHint")}
+                                </span>
+                              </p>
+                              <div className="mt-1.5 space-y-1.5">
+                                {accept.map((alt, ai) => (
+                                  <div key={ai} className="flex items-center gap-2">
+                                    <input
+                                      className={`${inputCls} flex-1`}
+                                      placeholder={t("builder.acceptN", { n: ai + 1 })}
+                                      value={alt}
+                                      onChange={(e) =>
+                                        qRow(r, item, {
+                                          accept: accept.map((a, j) => (j === ai ? e.target.value : a)),
+                                        })
+                                      }
+                                    />
+                                    <ConfirmDelete
+                                      label={t("builder.deleteOption")}
+                                      onConfirm={() => qRow(r, item, { accept: accept.filter((_, j) => j !== ai) })}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                              {accept.length < 12 && (
+                                <button
+                                  onClick={() => qRow(r, item, { accept: [...accept, ""] })}
+                                  className={`mt-2 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS} inline-flex items-center gap-1`}
+                                >
+                                  <Plus size={13} /> {t("builder.addAccept")}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        }}
+                      </SortableList>
+                      <button
+                        onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("typeit")] })}
                         className={`mt-3 ${addBtnCls}`}
                       >
                         <Plus size={15} /> {t("builder.addQuestion")}

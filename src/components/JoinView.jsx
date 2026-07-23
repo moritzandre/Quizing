@@ -17,6 +17,7 @@ import {
   MapPin,
   ListChecks,
   Hash,
+  Keyboard,
   Loader2,
   X,
   Trophy,
@@ -906,10 +907,48 @@ export default function JoinView({ code }) {
               </div>
             )}
 
+            {phase === "text" && (
+              <div className="flex flex-1 flex-col justify-center">
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300">
+                  <Keyboard size={16} /> {t("join.typeAnswer")}
+                </div>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const v = (answer ?? "").trim();
+                    if (!v) return;
+                    pick(v);
+                  }}
+                >
+                  <input
+                    type="text"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    className={`${inputCls} text-center text-2xl font-bold`}
+                    placeholder="…"
+                    value={answer ?? ""}
+                    onChange={(e) => {
+                      setAnswer(e.target.value);
+                      setAnswerSent(false);
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    variant="accent"
+                    className="mt-4 w-full px-6 py-3.5 text-base"
+                    disabled={!(answer ?? "").trim() || answerSent}
+                  >
+                    {answerSent ? t("join.submitted") : t("join.submit")}
+                  </Button>
+                </form>
+              </div>
+            )}
+
             {phase !== "buzz" &&
               phase !== "map" &&
               phase !== "choice" &&
               phase !== "number" &&
+              phase !== "text" &&
               (sorted.length > 0 ? (
                 <div className="flex min-h-0 flex-1 flex-col">
                   <p className="mb-3 flex shrink-0 items-center justify-center gap-2 font-pixel text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">

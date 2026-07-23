@@ -530,6 +530,20 @@ const en = {
   "play.crowdMinority": "The brave few…",
   "play.crowdPoll": "The results",
   "play.crowdVotes": "{n} votes",
+  "round.typeit.label": "Type It",
+  "round.typeit.desc":
+    "Players type their answer on their phones — every accepted spelling scores, auto-graded, no buzzer race. Great for names, spelling and one-word answers.",
+  // type-it (free-text) — builder + play + join
+  "builder.typeAnswer": "Answer",
+  "builder.alsoAccept": "Also accept",
+  "builder.alsoAcceptHint": "Alternative spellings / synonyms that also score (case & accents ignored)",
+  "builder.addAccept": "Add accepted answer",
+  "builder.acceptN": "Accepted answer {n}",
+  "join.typeAnswer": "Type your answer",
+  "play.typeGotIt": "Got it",
+  "play.typeMissed": "Missed",
+  "play.typeNoAnswer": "—",
+  "play.typeCorrectCount": "{n} correct",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name}'s turn",
   "play.anyGuessPlaceholder": "Type any character…",
@@ -1137,6 +1151,21 @@ const de = {
   "play.crowdMinority": "Die mutigen Wenigen…",
   "play.crowdPoll": "Das Ergebnis",
   "play.crowdVotes": "{n} Stimmen",
+  "round.typeit.label": "Tipp es",
+  "round.typeit.desc":
+    "Spieler tippen ihre Antwort am Handy — jede akzeptierte Schreibweise zählt, automatisch bewertet, kein Buzzer-Wettrennen. Ideal für Namen, Rechtschreibung und Ein-Wort-Antworten.",
+  // type-it (Freitext) — builder + play + join
+  "builder.typeAnswer": "Antwort",
+  "builder.alsoAccept": "Auch akzeptieren",
+  "builder.alsoAcceptHint":
+    "Alternative Schreibweisen / Synonyme, die ebenfalls zählen (Groß-/Kleinschreibung & Akzente egal)",
+  "builder.addAccept": "Akzeptierte Antwort hinzufügen",
+  "builder.acceptN": "Akzeptierte Antwort {n}",
+  "join.typeAnswer": "Tippe deine Antwort",
+  "play.typeGotIt": "Richtig",
+  "play.typeMissed": "Daneben",
+  "play.typeNoAnswer": "—",
+  "play.typeCorrectCount": "{n} richtig",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name} ist dran",
   "play.anyGuessPlaceholder": "Beliebige Figur eingeben…",
