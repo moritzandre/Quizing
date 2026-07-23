@@ -343,6 +343,31 @@ export async function loadRecentResults(limit = 400) {
   }
 }
 
+/**
+ * Best-effort BACKUP of a quiz to the DB (admin-gated server-side via upsert_quiz;
+ * see migration 0007). Called whenever an admin creates or edits a quiz so the
+ * server copy stays in sync. Backup only — the app never reads quizzes back from
+ * here. No-ops (returns false) when unconfigured, offline, or the caller isn't an
+ * admin. Never throws — a failed backup must never disrupt saving locally.
+ * @param {object} quiz The full quiz object (must have an id).
+ * @returns {Promise<boolean>} true if the row was upserted.
+ */
+export async function backupQuiz(quiz) {
+  try {
+    if (!isSupabaseConfigured || !quiz || !quiz.id) return false;
+    const sb = await getSupabaseClient();
+    if (!sb) return false;
+    const { data, error } = await sb.rpc("upsert_quiz", {
+      p_id: String(quiz.id),
+      p_title: String(quiz.title || "").slice(0, 300),
+      p_data: quiz,
+    });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
 /** A player's own result rows, newest first. Returns an array (never throws). */
 export async function loadPlayerStats(id) {
   try {

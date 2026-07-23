@@ -28,7 +28,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { storage, loadJSON, saveJSON, removeKey, loadWithLegacy } from "./lib/storage.js";
-import { isSupabaseConfigured } from "./lib/supabase.js";
+import { isSupabaseConfigured, backupQuiz } from "./lib/supabase.js";
 import {
   uid,
   deepClone,
@@ -613,11 +613,13 @@ function App() {
     copy.sample = false;
     copy.title = quiz.title + t("home.copySuffix");
     persistQuizzes([...quizzes, copy]);
+    backupQuiz(copy); // best-effort DB backup (no-op unless Supabase + admin)
   };
 
   const saveQuiz = (q) => {
     const exists = quizzes.some((x) => x.id === q.id);
     persistQuizzes(exists ? quizzes.map((x) => (x.id === q.id ? q : x)) : [...quizzes, q]);
+    backupQuiz(q); // mirror every create/edit to the DB backup
     go({ name: "home" });
   };
 
@@ -634,6 +636,7 @@ function App() {
         quiz.id = uid();
         quiz.sample = false;
         persistQuizzes([...quizzes, quiz]);
+        backupQuiz(quiz);
         setImportError("");
       } catch {
         setImportError(t("home.importError"));
@@ -659,6 +662,7 @@ function App() {
       quiz.id = uid();
       quiz.sample = false;
       persistQuizzes([...quizzes, quiz]);
+      backupQuiz(quiz);
       return quiz.title || t("builder.untitledQuiz");
     } catch {
       return null;
