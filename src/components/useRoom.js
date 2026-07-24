@@ -18,6 +18,9 @@ import { PLAYER_COLORS, PLAYER_SPRITES } from "./ui.jsx";
 const safeSprite = (e) => (typeof e === "string" && PLAYER_SPRITES.includes(e) ? e : null);
 const safeColor = (c) => (typeof c === "string" && PLAYER_COLORS.includes(c) ? c : null);
 
+/** Phone phases that accept a submitted `answer` (used to drop post-reveal/idle taps). */
+const ANSWER_PHASES = ["choice", "number", "text", "slider"];
+
 const joinLink = (code) => `${window.location.origin}${window.location.pathname}#/join/${code}`;
 
 /** Persisted per-device id so a phone keeps its identity across reloads. */
@@ -31,6 +34,24 @@ function deviceId() {
     return id;
   } catch {
     return uid();
+  }
+}
+
+/** The last host room code (so a host reload can re-open the SAME room). */
+export function loadSavedRoomCode() {
+  try {
+    const c = localStorage.getItem("quiznight.roomCode");
+    return typeof c === "string" && /^[A-Za-z0-9]{3,12}$/.test(c) ? c : null;
+  } catch {
+    return null;
+  }
+}
+function saveRoomCode(code) {
+  try {
+    if (code) localStorage.setItem("quiznight.roomCode", code);
+    else localStorage.removeItem("quiznight.roomCode");
+  } catch {
+    /* storage unavailable — reopen just won't be possible */
   }
 }
 
@@ -57,6 +78,7 @@ export function useHostRoom() {
   const rejectedRef = useRef(new Set()); // deviceIds that sent a wrong passphrase
   const createdRef = useRef({}); // deviceId -> { reqId, id } | { reqId, id:null, failed:true } — RESOLVED relayed creates
   const inFlightCreatesRef = useRef({}); // deviceId -> reqId currently mid-create (NOT broadcast, idempotency only)
+  const knownDevicesRef = useRef(null); // Set of deviceIds linked to a scoring entity (null = not in a game / no gating)
   const participantsRef = useRef({});
   participantsRef.current = participants;
 
@@ -107,6 +129,9 @@ export function useHostRoom() {
   // admitted/rejected so everyone (re)enters against the new value.
   const setRoomPass = useCallback((pass) => {
     const p = (pass || "").trim();
+    // Idempotent: re-applying the SAME passphrase (e.g. the host blurs the field
+    // without editing it) must NOT wipe the already-joined roster.
+    if (p === (roomPassRef.current || "")) return;
     roomPassRef.current = p || null;
     admittedRef.current = new Set();
     rejectedRef.current = new Set();
@@ -136,9 +161,11 @@ export function useHostRoom() {
     if (conn) conn.publish(conn.topics.host, payload, { retain: true });
   }, []);
 
-  const enable = useCallback(() => {
+  const enable = useCallback((reuseCode) => {
     if (connRef.current) return;
-    const c = newRoomCode();
+    // Reuse a prior code (a host-reload reopen) so connected phones reconnect; else mint one.
+    const c = typeof reuseCode === "string" && /^[A-Za-z0-9]{3,12}$/.test(reuseCode) ? reuseCode : newRoomCode();
+    saveRoomCode(c);
     setCode(c);
     setEnabled(true);
     setStatus("connecting");
@@ -151,6 +178,7 @@ export function useHostRoom() {
     rejectedRef.current = new Set();
     createdRef.current = {};
     inFlightCreatesRef.current = {};
+    knownDevicesRef.current = null;
     setParticipants({});
     setBuzz(null);
     setPins({});
@@ -172,6 +200,17 @@ export function useHostRoom() {
         if (
           roomPassRef.current &&
           !admittedRef.current.has(msg.deviceId) &&
+          (msg.type === "buzz" || msg.type === "pin" || msg.type === "answer")
+        )
+          return;
+        // Once a game is under way, only devices linked to a scoring entity (set at
+        // Start, mirrored via setKnownDevices) may buzz/pin/answer. A phone that joins
+        // after Start — or a member on a swapped/wiped phone with a fresh deviceId — is
+        // not in any team's deviceIds, so ignore its input rather than let it hijack the
+        // buzzer or spam answers it can never be scored for. null = lobby, no gating.
+        if (
+          knownDevicesRef.current &&
+          !knownDevicesRef.current.has(msg.deviceId) &&
           (msg.type === "buzz" || msg.type === "pin" || msg.type === "answer")
         )
           return;
@@ -240,9 +279,28 @@ export function useHostRoom() {
           Number.isFinite(msg.lat) &&
           Number.isFinite(msg.lng)
         ) {
-          setPins((p) => ({ ...p, [msg.deviceId]: { lat: msg.lat, lng: msg.lng } }));
+          // Re-insert at the end so a team's LAST-to-act pin wins (mapByEntity keeps the
+          // last-inserted device per entity). A plain overwrite would keep the earlier
+          // teammate's slot position, making an older teammate's pin win a revision.
+          setPins((p) => {
+            const n = { ...p };
+            delete n[msg.deviceId];
+            n[msg.deviceId] = { lat: msg.lat, lng: msg.lng };
+            return n;
+          });
         } else if (msg.type === "answer" && typeof msg.value !== "undefined") {
-          setAnswers((a) => ({ ...a, [msg.deviceId]: msg.value }));
+          // Drop answers that aren't for the question currently collecting: a stale
+          // redelivery, or a late team tap arriving after reveal (which would otherwise
+          // mutate a Crowd Says tally post-reveal or bleed into the next question).
+          if (!ANSWER_PHASES.includes(phaseRef.current.phase)) return;
+          if (msg.qKey != null && phaseRef.current.qKey != null && str(msg.qKey) !== phaseRef.current.qKey) return;
+          // Re-insert at the end so a team's LAST-to-act answer wins (see the pin note).
+          setAnswers((a) => {
+            const n = { ...a };
+            delete n[msg.deviceId];
+            n[msg.deviceId] = msg.value;
+            return n;
+          });
         } else if (msg.type === "ctrl" && typeof msg.action === "string") {
           // A host-remote phone is driving the game; APPEND to a FIFO (bumped id so
           // repeated identical actions still re-fire). A queue — not a single slot —
@@ -313,6 +371,7 @@ export function useHostRoom() {
       conn.clearRetained(conn.topics.host);
       conn.close();
     }
+    saveRoomCode(null);
     connRef.current = null;
     phaseRef.current = { phase: "idle", qKey: null };
     lockedRef.current = null;
@@ -323,6 +382,7 @@ export function useHostRoom() {
     rejectedRef.current = new Set();
     createdRef.current = {};
     inFlightCreatesRef.current = {};
+    knownDevicesRef.current = null;
     Object.values(leaveTimersRef.current).forEach(clearTimeout);
     leaveTimersRef.current = {};
     setEnabled(false);
@@ -354,7 +414,9 @@ export function useHostRoom() {
 
   const arm = useCallback(
     (qKey) => {
-      phaseRef.current = { phase: "buzz", qKey };
+      // Carry the team list forward (like idle) so a phone joining mid-game in a teams
+      // game still gets the picker and joined phones keep their team identity/avatar.
+      phaseRef.current = { phase: "buzz", qKey, teams: phaseRef.current.teams || null };
       lockedRef.current = null;
       setBuzz(null);
       pushState();
@@ -369,7 +431,12 @@ export function useHostRoom() {
   const collectPins = useCallback(
     (qKey, opts = {}) => {
       // mapTile = which base layer the players' phone pin map should show.
-      phaseRef.current = { phase: "map", qKey, mapTile: opts.mapTile === "satellite" ? "satellite" : "map" };
+      phaseRef.current = {
+        phase: "map",
+        qKey,
+        mapTile: opts.mapTile === "satellite" ? "satellite" : "map",
+        teams: phaseRef.current.teams || null,
+      };
       setPins({});
       pushState();
     },
@@ -380,7 +447,12 @@ export function useHostRoom() {
   // phase ("choice"|"number") and the option labels phones should render.
   const collectAnswers = useCallback(
     (qKey, opts = {}) => {
-      phaseRef.current = { phase: opts.phase || "choice", qKey, options: opts.options || null };
+      phaseRef.current = {
+        phase: opts.phase || "choice",
+        qKey,
+        options: opts.options || null,
+        teams: phaseRef.current.teams || null,
+      };
       setAnswers({});
       pushState();
     },
@@ -400,6 +472,12 @@ export function useHostRoom() {
     setBuzz(null);
     pushState();
   }, [pushState]);
+  // Register the deviceIds linked to a scoring entity (called by PlayView once a game
+  // is running). buzz/pin/answer from any other device are then ignored. Pass null to
+  // stop gating (back in the lobby / no game).
+  const setKnownDevices = useCallback((ids) => {
+    knownDevicesRef.current = Array.isArray(ids) ? new Set(ids.filter(Boolean)) : null;
+  }, []);
 
   return {
     enabled,
@@ -426,6 +504,7 @@ export function useHostRoom() {
     pushScores,
     setEnded,
     setRoomPass,
+    setKnownDevices,
   };
 }
 
@@ -487,6 +566,8 @@ export function usePresenterRoom(code, opts = {}) {
 export function usePlayerRoom(code) {
   const [status, setStatus] = useState("connecting");
   const [state, setState] = useState(null); // { phase, qKey, lockedBy }
+  const stateRef = useRef(null);
+  stateRef.current = state;
   const [name, setName] = useState("");
   const [created, setCreated] = useState(null); // relayed player-creation result { reqId, id } | null
   const pendingCreateRef = useRef(null); // reqId we're awaiting back from the host
@@ -572,7 +653,12 @@ export function usePlayerRoom(code) {
   );
   const buzz = useCallback(() => send({ type: "buzz", name }), [send, name]);
   const sendPin = useCallback((lat, lng) => send({ type: "pin", lat, lng }), [send]);
-  const sendAnswer = useCallback((value) => send({ type: "answer", value }), [send]);
+  // Stamp the answer with the question it's for, so the host can drop a stale
+  // redelivery or a late tap that lands after the question already moved on.
+  const sendAnswer = useCallback(
+    (value) => send({ type: "answer", value, qKey: stateRef.current?.qKey ?? null }),
+    [send],
+  );
   const leave = useCallback(() => send({ type: "leave" }), [send]);
 
   // Ask the (admin-authed) host to create a player on our behalf — the only path

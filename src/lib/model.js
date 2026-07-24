@@ -1670,8 +1670,11 @@ export function recapStory(entities) {
  */
 function buildAnyLive(game, anyQuote) {
   const round = game.quiz?.rounds?.[game.ri];
-  if (round?.type !== "anythingle" || !game.anythingle) return null;
-  const a = game.anythingle;
+  if (round?.type !== "anythingle") return null;
+  // Synthesize a starter board (turn order, no guesses) when the per-round state
+  // hasn't seeded yet — the seed runs in a PlayView effect a tick after the question
+  // first renders, and without this the TV/host-remote flash no "whose turn" banner.
+  const a = game.anythingle || { order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null };
   const players = Array.isArray(game.players) ? game.players : [];
   const info = (id) => {
     const p = players.find((x) => x.id === id);

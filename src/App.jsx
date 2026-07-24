@@ -56,7 +56,7 @@ import {
   emojiAt,
 } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
-import { useHostRoom } from "./components/useRoom.js";
+import { useHostRoom, loadSavedRoomCode } from "./components/useRoom.js";
 import { useAdmin } from "./components/useAdmin.js";
 
 // Lazy-loaded so the heavy libraries they pull in (Leaflet, the YouTube/canvas
@@ -471,6 +471,17 @@ function App() {
   gameRef.current = game;
   quizzesRef.current = quizzes;
   viewRef.current = view;
+
+  // After a host reload mid-game, re-open the SAME room code so phones that cached it
+  // reconnect (their scoring is re-linked by the persisted deviceId) instead of being
+  // stranded on a dead room. Only when a game is still in progress and a room was open.
+  useEffect(() => {
+    if (!loaded || room.enabled) return;
+    const g = gameRef.current;
+    const saved = loadSavedRoomCode();
+    if (g && g.stage !== "end" && saved) room.enable(saved);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded]);
 
   /* navigate: update view state and mirror it to the hash */
   const go = (v) => {

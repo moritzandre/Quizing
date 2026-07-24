@@ -1805,6 +1805,19 @@ describe("Anythingle", () => {
     expect(revealed.anythingle.target.name).toBe("Luke Skywalker");
   });
 
+  it("streams a starter board (turn order, no guesses) before the per-round state seeds", () => {
+    // game.anythingle isn't seeded until a PlayView effect runs a tick after the
+    // question first renders — buildAnyLive must synthesize a board so the TV/host
+    // remote show "whose turn" from the first frame instead of a null banner.
+    const g = anyGame({ anythingle: null });
+    expect(g.anythingle).toBeNull();
+    const live = buildLive(g);
+    expect(live.anythingle).not.toBeNull();
+    expect(live.anythingle.active?.name).toBe("Ann"); // the only player is up first
+    expect(live.anythingle.guesses).toEqual([]);
+    expect(live.anythingle.target).toBeNull(); // still no secret leak
+  });
+
   it("the secret quote is a hint: withheld from live until ANY_QUOTE_AFTER wrong guesses", () => {
     const cells = gradeAnythingle(LUKE, LUFFY);
     const withGuesses = (n) =>

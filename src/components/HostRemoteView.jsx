@@ -48,7 +48,11 @@ export default function HostRemoteView({ code }) {
   const online = status === "connected";
   const stage = live?.stage || present?.stage || "idle";
   const type = present?.roundType;
-  const revealed = !!live?.revealed;
+  // Only treat `live` as current when its qKey matches the present question (same guard
+  // the TV uses) — otherwise a just-changed question briefly shows the previous reveal.
+  const presentQKey = present ? `${present.ri ?? 0}-${present.qi ?? 0}` : "";
+  const liveCurrent = !live?.qKey || live.qKey === presentQKey;
+  const revealed = liveCurrent && !!live?.revealed;
   const value = live?.value || 0;
   const morphRunning = !!live?.morphRunning; // mirrored auto-demorph clock (for the start/pause label below)
   const morphProgress = live?.morphProgress || 0;

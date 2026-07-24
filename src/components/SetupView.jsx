@@ -25,7 +25,6 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
     Object.entries(roster)
       .filter(([, p]) => p.teamId === teamId)
       .map(([deviceId, p]) => ({ deviceId, name: p.name }));
-  const unassigned = Object.entries(roster).filter(([, p]) => !p.teamId);
 
   const phonePlayers = room?.enabled
     ? Object.entries(roster).map(([deviceId, p]) => ({
@@ -43,6 +42,11 @@ export default function SetupView({ quiz, defaults, room, onStart, onBack }) {
   const soloPlayers = [...phonePlayers, ...manualPlayers];
 
   const namedTeams = teams.filter((tm) => tm.name.trim());
+  // A phone is unassigned if it picked no team OR a team that no longer exists / was
+  // blank-named (a stale teamId). Both are silently excluded from teamEntities, so the
+  // host must be warned — not just the teamId===null case.
+  const namedTeamIds = new Set(namedTeams.map((tm) => tm.id));
+  const unassigned = Object.entries(roster).filter(([, p]) => !namedTeamIds.has(p.teamId));
   const teamEntities = namedTeams.map((tm) => {
     const m = membersOf(tm.id);
     return {

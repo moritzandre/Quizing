@@ -162,6 +162,12 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* "Who Knows More" live play state (UI-only): auction → answering → done */
   const WK_INIT = { phase: "auction", winnerId: null, claimed: 1, picked: [], result: "", showAll: false };
   const [wk, setWk] = useState(WK_INIT);
+  // Synchronous mirror of `wk`: the host-remote command drain applies a coalesced
+  // burst of taps in one tick, before React re-renders, so each wk handler reads/writes
+  // wkRef (not the stale render closure) — otherwise a delivered claim could be flipped
+  // into a bust that erases the winner's points.
+  const wkRef = useRef(wk);
+  wkRef.current = wk;
   const [wkLeft, setWkLeft] = useState(0); // per-answer countdown (seconds)
   const wkSecs = round?.timer || 20; // seconds per answer for this round
 
@@ -310,6 +316,19 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.arm(qKey);
     }
   }, [buzzerOn, game.stage, game.revealed, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Tell the room which devices belong to a scoring entity, so it ignores buzz/pin/
+  // answer from any phone that joined AFTER Start (or a member on a swapped/wiped
+  // phone with a fresh deviceId) — which would otherwise hijack the buzzer or spam
+  // answers it can never be scored for. deviceIds are frozen at Start, so this is
+  // effectively one-shot; cleared when the buzzer is off / this view unmounts.
+  const deviceSig = game.players.map((p) => (p.deviceIds || []).join(".")).join("|");
+  useEffect(() => {
+    if (!buzzerOn) return;
+    room.setKnownDevices(game.players.flatMap((p) => p.deviceIds || []));
+    return () => room.setKnownDevices(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buzzerOn, deviceSig]);
 
   // Stream the heavy, per-question presenter payload (media + text) to any TV,
   // plus the host-only aux (whoknows answer list) for the host remote.
@@ -643,10 +662,14 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const anyCommit = (char) => {
     const q = round.questions[game.qi];
     if (!q || game.revealed) return;
+    const maxG = q.maxGuesses > 0 ? q.maxGuesses : 0;
     anyCacheRef.current[normText(char.name)] = char;
     let solved = false;
     setGame((prev) => {
       const a = prev.anythingle || { qKey, order: anyTurnOrder(prev.players), turn: 0, guesses: [], solvedBy: null };
+      // Stop at the guess cap (unlimited when maxGuesses is 0/unset) — belt-and-suspenders
+      // alongside the anySubmit guard, so a burst of remote guesses can't overrun it.
+      if (maxG && a.guesses.length >= maxG) return prev;
       const order = a.order.length ? a.order : anyTurnOrder(prev.players);
       const byId = order[a.turn % (order.length || 1)] || null;
       const cells = gradeAnythingle(q.target, char).map((c) => ({ ...c, val: anyCellValue(char, c.key) }));
@@ -674,6 +697,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const anySubmit = (name, { fromRemote = false } = {}) => {
     const n = (name ?? anyInput).trim();
     if (!n || game.revealed || round?.type !== "anythingle") return;
+    const q0 = round.questions[game.qi];
+    const maxG = q0?.maxGuesses > 0 ? q0.maxGuesses : 0;
+    if (maxG && (game.anythingle?.guesses?.length || 0) >= maxG) return; // out of guesses
     const found = anyResolve(n);
     if (found) anyCommit(found);
     else if (fromRemote) anyCommit({ ...makeAnyChar(), name: n, powers: [] });
@@ -695,36 +721,44 @@ export default function PlayView({ game, setGame, onExit, room }) {
   /* ---- "Who Knows More" handlers ---- */
   // Award the category to the auction winner and start their per-answer clock.
   const wkAward = () => {
-    if (wk.winnerId == null || wk.claimed < 1) return;
-    setWk({ ...wk, phase: "answering", picked: [], result: "" });
+    const cur = wkRef.current;
+    if (cur.winnerId == null || cur.claimed < 1 || cur.phase !== "auction") return;
+    const next = { ...cur, phase: "answering", picked: [], result: "" };
+    wkRef.current = next;
+    setWk(next);
     setWkLeft(wkSecs);
   };
   // Host clicks a correct answer the player gave: fill a square, reset the clock,
   // and deliver once they've reached their claim.
   const wkPick = (ai) => {
-    if (wk.phase !== "answering" || wk.picked.includes(ai)) return;
-    const picked = [...wk.picked, ai];
+    const cur = wkRef.current;
+    if (cur.phase !== "answering" || cur.picked.includes(ai)) return;
+    const picked = [...cur.picked, ai];
     setWkLeft(wkSecs);
-    if (picked.length >= wk.claimed) {
+    if (picked.length >= cur.claimed) {
       playSound("correct");
       const per = ptsOr(wkQ?.points, 1); // points per correct answer
-      upd({
-        players: game.players.map((p) => (p.id === wk.winnerId ? { ...p, score: p.score + wk.claimed * per } : p)),
-      });
       // Auto-reveal the full list at the end (got vs missed), no extra tap needed.
-      setWk({ ...wk, picked, phase: "done", result: "deliver", showAll: true });
+      wkRef.current = { ...cur, picked, phase: "done", result: "deliver", showAll: true };
+      setWk(wkRef.current);
+      upd({
+        players: game.players.map((p) => (p.id === cur.winnerId ? { ...p, score: p.score + cur.claimed * per } : p)),
+      });
     } else {
-      setWk({ ...wk, picked });
+      wkRef.current = { ...cur, picked };
+      setWk(wkRef.current);
     }
   };
   // Bust: the winner gets nothing; every other player banks the points gained so far.
   const wkBustNow = () => {
-    if (wk.phase !== "answering") return;
+    const cur = wkRef.current;
+    if (cur.phase !== "answering") return;
     playSound("wrong");
-    const gained = wk.picked.length * ptsOr(wkQ?.points, 1);
+    const gained = cur.picked.length * ptsOr(wkQ?.points, 1);
+    wkRef.current = { ...cur, phase: "done", result: "bust", showAll: true };
+    setWk(wkRef.current);
     if (gained > 0)
-      upd({ players: game.players.map((p) => (p.id !== wk.winnerId ? { ...p, score: p.score + gained } : p)) });
-    setWk({ ...wk, phase: "done", result: "bust", showAll: true });
+      upd({ players: game.players.map((p) => (p.id !== cur.winnerId ? { ...p, score: p.score + gained } : p)) });
     setWkLeft(0);
   };
 
@@ -2415,6 +2449,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   if (round.type === "anythingle") {
     const a = game.anythingle || { order: [], turn: 0, guesses: [], solvedBy: null };
+    const maxG = q.maxGuesses > 0 ? q.maxGuesses : 0;
+    const guessesLeft = maxG ? Math.max(0, maxG - a.guesses.length) : null;
+    const outOfGuesses = maxG > 0 && a.guesses.length >= maxG && !a.solvedBy;
     const order = a.order.length ? a.order : anyTurnOrder(game.players);
     const activeId = order[a.turn % (order.length || 1)];
     const active = game.players.find((p) => p.id === activeId) || null;
@@ -2442,6 +2479,15 @@ export default function PlayView({ game, setGame, onExit, room }) {
             <p className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-pink-600 dark:text-pink-400">
               <Avatar color={active.color} emoji={active.emoji} name={active.name} size={20} />
               {t("play.anyTurn", { name: active.name })}
+            </p>
+          )}
+          {!game.revealed && guessesLeft != null && (
+            <p
+              className={`mt-1 text-xs font-medium ${
+                guessesLeft <= 2 ? "text-amber-600 dark:text-amber-400" : "text-stone-400 dark:text-stone-500"
+              }`}
+            >
+              {t("play.anyGuessesLeft", { n: guessesLeft })}
             </p>
           )}
         </div>
@@ -2476,8 +2522,16 @@ export default function PlayView({ game, setGame, onExit, room }) {
           )}
         </div>
 
+        {/* out of guesses: nobody solved it in the allotted guesses — reveal to end */}
+        {outOfGuesses && (
+          <p className="mt-3 shrink-0 text-sm font-semibold text-amber-600 dark:text-amber-400">
+            {t("play.anyOutOfGuesses")}
+          </p>
+        )}
+
         {/* host controls: guess input, or the inline add-form for an unknown character */}
         {!game.revealed &&
+          !outOfGuesses &&
           (anyAdd ? (
             <div className="mx-auto mt-3 w-full max-w-2xl shrink-0 rounded-2xl border border-pink-200 bg-pink-50/60 p-3 text-left dark:border-pink-500/30 dark:bg-pink-500/10">
               <p className="mb-1 text-sm font-semibold">{t("play.anyAddTitle", { name: anyAdd.name })}</p>
@@ -2518,9 +2572,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         <div className="mt-3 flex shrink-0 flex-wrap justify-center gap-2">
           {!game.revealed && !anyAdd && (
             <>
-              <Button variant="outline" className="px-4 py-2.5" onClick={anyAdvance}>
-                <ArrowRight size={16} /> {t("play.anyAdvance")}
-              </Button>
+              {!outOfGuesses && (
+                <Button variant="outline" className="px-4 py-2.5" onClick={anyAdvance}>
+                  <ArrowRight size={16} /> {t("play.anyAdvance")}
+                </Button>
+              )}
               <Button variant="outline" className="px-4 py-2.5" onClick={revealAnythingle}>
                 <Eye size={16} /> {t("play.anyReveal")}
               </Button>
