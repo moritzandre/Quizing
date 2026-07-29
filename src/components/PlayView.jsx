@@ -1665,7 +1665,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
     <p className="mt-8 hidden text-center text-xs text-stone-300 dark:text-stone-600 md:block">
       {t("play.shortcuts", {
         keys: [
-          t("play.scReveal"),
+          // During a pub-quiz collect pass R does nothing — N locks the answers instead.
+          batched && !reviewing ? t("play.scLock") : t("play.scReveal"),
           round.type === "hints" ? t("play.scHint") : null,
           round.type === "connect" ? t("play.scClue") : null,
           round.type === "morph" ? t("play.scDemorph") : null,
