@@ -34,6 +34,7 @@ import {
   questionsFromImport,
   MORPH_EFFECTS,
   HINT_TYPES,
+  BATCHABLE_TYPES,
   makeAnyChar,
   anyCellValue,
   ANYTHINGLE_TRAITS,
@@ -685,6 +686,68 @@ function TrimInputs({ start, end, onChange, t }) {
 }
 
 /**
+ * Optional media attachment for a jeopardy clue: none, or ONE typed media hint
+ * (image/audio/video/map) shown beside — or instead of — the text clue.
+ * Mirrors the hint-ladder editors; text isn't offered (the clue field is text).
+ */
+function ClueMediaField({ value, onChange, t }) {
+  const type = value ? hintTypeOf(value) : "none";
+  return (
+    <div className="w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-stone-400 dark:text-stone-500">{t("builder.clueMedia")}</span>
+        <select
+          value={type}
+          onChange={(e) => onChange(e.target.value === "none" ? null : makeHint(e.target.value))}
+          aria-label={t("builder.clueMedia")}
+          className={`${inputCls} w-32 py-1`}
+        >
+          <option value="none">{t("builder.clueMediaNone")}</option>
+          {HINT_TYPES.filter((ty) => ty !== "text").map((ty) => (
+            <option key={ty} value={ty}>
+              {t(HINT_TYPE_KEY[ty])}
+            </option>
+          ))}
+        </select>
+      </div>
+      {value && type === "image" && (
+        <div className="mt-2">
+          <ImageField value={value.url || ""} onChange={(url) => onChange({ type: "image", url })} />
+        </div>
+      )}
+      {value && (type === "audio" || type === "video") && (
+        <div className="mt-2">
+          <input
+            className={inputCls}
+            placeholder={t(type === "audio" ? "builder.audioUrl" : "builder.videoUrl")}
+            value={value.url || ""}
+            onChange={(e) => onChange({ ...value, type, url: e.target.value })}
+          />
+          <TrimInputs start={value.start} end={value.end} onChange={(p) => onChange({ ...value, type, ...p })} t={t} />
+        </div>
+      )}
+      {value && type === "map" && (
+        <div className="mt-2">
+          <input
+            className={`${inputCls} mb-2`}
+            placeholder={t("builder.locationLabel")}
+            value={value.name || ""}
+            onChange={(e) =>
+              onChange({ type: "map", lat: value.lat ?? null, lng: value.lng ?? null, name: e.target.value })
+            }
+          />
+          <LeafletMap
+            answer={value.lat != null ? { lat: value.lat, lng: value.lng, label: value.name } : undefined}
+            onPick={(lat, lng) => onChange({ type: "map", lat, lng, name: value.name || "" })}
+            className="h-56"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * Ladder scoring control: the value when only the first clue is shown (`points`)
  * decaying down to the value when everything is revealed (`minPoints`). Used by
  * the hint/connect editors (which otherwise had no points control).
@@ -1213,6 +1276,21 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       <button type="button" onClick={() => setQImport(r.id)} className={addBtnCls}>
                         <FileJson size={14} /> {t("builder.importQuestions")}
                       </button>
+                      {BATCHABLE_TYPES.includes(r.type) && (
+                        <>
+                          <span className="text-stone-300 dark:text-stone-600">·</span>
+                          <span>{t("builder.revealMode")}</span>
+                          <select
+                            className={`${inputCls} w-auto py-1`}
+                            value={r.reveal === "end" ? "end" : "each"}
+                            onChange={(e) => setRound(r.id, { reveal: e.target.value === "end" ? "end" : "each" })}
+                            title={t(r.reveal === "end" ? "builder.revealEndHint" : "builder.revealEachHint")}
+                          >
+                            <option value="each">{t("builder.revealEach")}</option>
+                            <option value="end">{t("builder.revealEnd")}</option>
+                          </select>
+                        </>
+                      )}
                     </div>
                   )}
                   {/* classic */}
@@ -1295,32 +1373,44 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                             </div>
                             <div className="space-y-2">
                               {c.questions.map((item) => (
-                                <div key={item.id} className="flex flex-wrap items-center gap-2">
-                                  <input
-                                    type="number"
-                                    aria-label={t("builder.points")}
-                                    className={`${inputCls} w-20`}
-                                    value={item.points}
-                                    onChange={(e) => setCatQ(r, c, item, { points: +e.target.value || 0 })}
-                                  />
-                                  <input
-                                    className={`${inputCls} min-w-32 flex-1`}
-                                    placeholder={t("builder.clue")}
-                                    value={item.clue}
-                                    onChange={(e) => setCatQ(r, c, item, { clue: e.target.value })}
-                                  />
-                                  <input
-                                    className={`${inputCls} min-w-28 flex-1`}
-                                    placeholder={t("builder.answer")}
-                                    value={item.answer}
-                                    onChange={(e) => setCatQ(r, c, item, { answer: e.target.value })}
-                                  />
-                                  <ConfirmDelete
-                                    label={t("builder.deleteClue")}
-                                    onConfirm={() =>
-                                      setCat(r, c.id, { questions: c.questions.filter((y) => y.id !== item.id) })
-                                    }
-                                  />
+                                <div
+                                  key={item.id}
+                                  className="rounded-lg border border-stone-100 p-2 dark:border-stone-800/60"
+                                >
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <input
+                                      type="number"
+                                      aria-label={t("builder.points")}
+                                      className={`${inputCls} w-20`}
+                                      value={item.points}
+                                      onChange={(e) => setCatQ(r, c, item, { points: +e.target.value || 0 })}
+                                    />
+                                    <input
+                                      className={`${inputCls} min-w-32 flex-1`}
+                                      placeholder={t("builder.clue")}
+                                      value={item.clue}
+                                      onChange={(e) => setCatQ(r, c, item, { clue: e.target.value })}
+                                    />
+                                    <input
+                                      className={`${inputCls} min-w-28 flex-1`}
+                                      placeholder={t("builder.answer")}
+                                      value={item.answer}
+                                      onChange={(e) => setCatQ(r, c, item, { answer: e.target.value })}
+                                    />
+                                    <ConfirmDelete
+                                      label={t("builder.deleteClue")}
+                                      onConfirm={() =>
+                                        setCat(r, c.id, { questions: c.questions.filter((y) => y.id !== item.id) })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="mt-1.5">
+                                    <ClueMediaField
+                                      value={item.media || null}
+                                      onChange={(media) => setCatQ(r, c, item, { media })}
+                                      t={t}
+                                    />
+                                  </div>
                                 </div>
                               ))}
                               <button

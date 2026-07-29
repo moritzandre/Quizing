@@ -14,6 +14,8 @@ import {
   crowdWinners,
   matchTyped,
   spectrumScore,
+  batchAnswerText,
+  BATCHABLE_TYPES,
   clipLadderActive,
   clipEnd,
   summarizeGame,
@@ -143,19 +145,29 @@ describe("normalizeQuiz", () => {
     title: "Test Quiz",
     sample: false,
     rounds: [
-      { id: "r1", type: "classic", title: "C", timer: null, questions: [{ id: "q1", q: "Q?", a: "A", points: 10 }] },
+      {
+        id: "r1",
+        type: "classic",
+        title: "C",
+        timer: null,
+        reveal: "each",
+        questions: [{ id: "q1", q: "Q?", a: "A", points: 10 }],
+      },
       {
         id: "r2",
         type: "jeopardy",
         title: "J",
         timer: 30,
-        categories: [{ id: "c1", name: "Cat", questions: [{ id: "j1", clue: "Clue", answer: "Ans", points: 100 }] }],
+        categories: [
+          { id: "c1", name: "Cat", questions: [{ id: "j1", clue: "Clue", media: null, answer: "Ans", points: 100 }] },
+        ],
       },
       {
         id: "r3",
         type: "hints",
         title: "H",
         timer: null,
+        reveal: "each",
         questions: [
           {
             id: "h1",
@@ -175,6 +187,7 @@ describe("normalizeQuiz", () => {
         type: "video",
         title: "V",
         timer: null,
+        reveal: "each",
         questions: [
           {
             id: "v1",
@@ -194,6 +207,7 @@ describe("normalizeQuiz", () => {
         type: "image",
         title: "I",
         timer: null,
+        reveal: "each",
         questions: [{ id: "i1", url: "https://example.com/cat.jpg", q: "Q", a: "A", points: 10 }],
       },
       {
@@ -201,6 +215,7 @@ describe("normalizeQuiz", () => {
         type: "morph",
         title: "Mo",
         timer: null,
+        reveal: "each",
         questions: [
           {
             id: "mo1",
@@ -218,6 +233,7 @@ describe("normalizeQuiz", () => {
         type: "fusion",
         title: "Fu",
         timer: null,
+        reveal: "each",
         questions: [
           {
             id: "fu1",
@@ -235,6 +251,7 @@ describe("normalizeQuiz", () => {
         type: "choice",
         title: "MC",
         timer: null,
+        reveal: "each",
         questions: [{ id: "mc1", q: "Q?", options: ["A", "B", "C", "D"], correct: 2, points: 10 }],
       },
       {
@@ -242,6 +259,7 @@ describe("normalizeQuiz", () => {
         type: "number",
         title: "Num",
         timer: null,
+        reveal: "each",
         questions: [{ id: "nu1", q: "How many?", answer: 42, unit: "kg", points: 10 }],
       },
       {
@@ -249,6 +267,7 @@ describe("normalizeQuiz", () => {
         type: "map",
         title: "M",
         timer: null,
+        reveal: "each",
         questions: [
           {
             id: "m1",
@@ -430,6 +449,85 @@ describe("normalizeQuiz", () => {
     expect(q.rounds[0].questions[1]).toMatchObject({ correct: 0, points: 10, note: "" }); // non-0/1 -> 0
     expect(q.rounds[1].questions[0]).toMatchObject({ q: "Higher?", correct: 0, points: 10 });
     expect(q.rounds[1].questions[1]).toMatchObject({ correct: 0, points: 10 });
+  });
+
+  it("normalizes jeopardy clue media: typed attachments kept, text/junk dropped", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        {
+          type: "jeopardy",
+          categories: [
+            {
+              name: "Cat",
+              questions: [
+                { clue: "C1", answer: "A1", points: 100, media: { type: "image", url: "https://e.com/p.jpg" } },
+                {
+                  clue: "C2",
+                  answer: "A2",
+                  points: 200,
+                  media: { type: "audio", url: "https://e.com/a.mp3", start: 5, end: 20 },
+                },
+                { clue: "C3", answer: "A3", points: 300, media: { type: "text", text: "not media" } },
+                { clue: "C4", answer: "A4", points: 400, media: "junk" },
+                { clue: "C5", answer: "A5", points: 500 },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    const qs = q.rounds[0].categories[0].questions;
+    expect(qs[0].media).toEqual({ type: "image", url: "https://e.com/p.jpg" });
+    expect(qs[1].media).toEqual({ type: "audio", url: "https://e.com/a.mp3", start: 5, end: 20 });
+    expect(qs[2].media).toBe(null); // text is not clue media — the clue field IS the text
+    expect(qs[3].media).toBe(null);
+    expect(qs[4].media).toBe(null);
+  });
+
+  it("jeopardy present carries the clue media but never the answer", () => {
+    const game = normalizeGame({
+      quiz: {
+        rounds: [
+          {
+            type: "jeopardy",
+            categories: [
+              {
+                name: "Cat",
+                questions: [
+                  { clue: "C", answer: "SecretAns", points: 100, media: { type: "image", url: "https://e.com/p.jpg" } },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      players: [{ id: "p1", name: "A", score: 0 }],
+      stage: "question",
+      ri: 0,
+      qi: 0,
+      tile: { ci: 0, qi: 0 },
+    });
+    const present = buildPresentQ(game);
+    expect(present.q.media).toEqual({ type: "image", url: "https://e.com/p.jpg" });
+    expect(JSON.stringify(present)).not.toContain("SecretAns");
+  });
+
+  it("normalizes the round reveal mode: 'end' kept for batchable types, forced 'each' otherwise", () => {
+    const q = normalizeQuiz({
+      rounds: [
+        { type: "classic", reveal: "end", questions: [{ q: "Q", a: "A" }] },
+        { type: "choice", questions: [{ q: "Q", options: ["a", "b"], correct: 0 }] },
+        { type: "whoknows", reveal: "end", questions: [{ q: "Q", answers: ["x"] }] },
+        { type: "classic", reveal: "bogus", questions: [{ q: "Q", a: "A" }] },
+      ],
+    });
+    expect(q.rounds[0].reveal).toBe("end");
+    expect(q.rounds[1].reveal).toBe("each"); // default
+    expect(q.rounds[2].reveal).toBe("each"); // whoknows can't batch
+    expect(q.rounds[3].reveal).toBe("each"); // junk coerced
+    expect(BATCHABLE_TYPES).not.toContain("jeopardy");
+    expect(BATCHABLE_TYPES).not.toContain("whoknows");
+    expect(BATCHABLE_TYPES).not.toContain("anythingle");
   });
 
   it("normalizes crowdsays rounds: coerces options, defaults mode/points, caps at 6", () => {
@@ -919,6 +1017,72 @@ describe("spectrumScore (Spectrum bands)", () => {
   it("clamps a junk band to at least 1", () => {
     expect(spectrumScore(50, 50, 10, 0)).toBe(10); // dead-on always full
     expect(spectrumScore(54, 50, 10, 0)).toBe(0); // band→1, so 54 is 4 away → beyond 3×1
+  });
+});
+
+describe("pub-quiz batch state (normalizeGame + buildLive)", () => {
+  const batchedQuiz = {
+    rounds: [{ type: "choice", reveal: "end", questions: [{ q: "Q1", options: ["a", "b"], correct: 0 }] }],
+  };
+  const players = [{ id: "p1", name: "A", score: 0 }];
+
+  it("round-trips batch answers/pins and the reviewing flag", () => {
+    const g = normalizeGame({
+      quiz: batchedQuiz,
+      players,
+      stage: "question",
+      ri: 0,
+      qi: 0,
+      reviewing: true,
+      batch: { 0: { answers: { p1: 1 }, pins: { p1: { lat: 1, lng: 2 } } } },
+    });
+    expect(g.reviewing).toBe(true);
+    expect(g.batch["0"].answers).toEqual({ p1: 1 });
+    expect(g.batch["0"].pins).toEqual({ p1: { lat: 1, lng: 2 } });
+  });
+
+  it("drops junk batch entries and forces reviewing off on a non-batched round", () => {
+    const g = normalizeGame({
+      quiz: { rounds: [{ type: "choice", questions: [{ q: "Q", options: ["a", "b"], correct: 0 }] }] },
+      players,
+      stage: "question",
+      reviewing: true, // but the round is reveal:"each"
+      batch: {
+        "not-an-index": { answers: { p1: 1 } },
+        0: "junk",
+        1: { answers: { p1: true }, pins: { p1: { lat: "x" } } },
+      },
+    });
+    expect(g.reviewing).toBe(false);
+    expect(g.batch["not-an-index"]).toBeUndefined();
+    expect(g.batch["0"]).toBeUndefined();
+    expect(g.batch["1"]).toEqual({ answers: {}, pins: {} }); // boolean + bad pin dropped
+  });
+
+  it("old saves default to no batch state", () => {
+    const g = normalizeGame({ quiz: batchedQuiz, players });
+    expect(g.batch).toEqual({});
+    expect(g.reviewing).toBe(false);
+  });
+
+  it("buildLive carries the review flag (validated by normalizeLive)", () => {
+    const g = normalizeGame({ quiz: batchedQuiz, players, stage: "question", reviewing: true });
+    const live = buildLive(g, { review: true });
+    expect(live.review).toBe(true);
+    expect(normalizeLive(live).review).toBe(true);
+    expect(normalizeLive(buildLive(g, {})).review).toBe(false);
+  });
+});
+
+describe("batchAnswerText (pub-quiz free-text grading target)", () => {
+  it("uses `answer` for the ladder types and `a` for the rest", () => {
+    expect(batchAnswerText("hints", { answer: "X", a: "wrong" })).toBe("X");
+    expect(batchAnswerText("connect", { answer: "Link" })).toBe("Link");
+    expect(batchAnswerText("classic", { a: "A" })).toBe("A");
+    expect(batchAnswerText("image", { a: "Cat" })).toBe("Cat");
+    expect(batchAnswerText("video", { a: "Song" })).toBe("Song");
+    expect(batchAnswerText("classic", {})).toBe("");
+    expect(batchAnswerText("classic", null)).toBe("");
   });
 });
 

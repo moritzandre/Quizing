@@ -34,6 +34,59 @@ export const ROUND_TYPES = [
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
 export const BINARY_TYPES = ["choice", "truefalse", "higherlower"];
 
+/**
+ * Round types that can defer all reveals to an end-of-round review (pub-quiz
+ * style, round `reveal: "end"`). The host-run interactive formats are excluded —
+ * jeopardy's tile economy, the whoknows auction and anythingle's iterative
+ * deduction only work with immediate resolution.
+ */
+export const BATCHABLE_TYPES = [
+  "classic",
+  "hints",
+  "connect",
+  "video",
+  "clip",
+  "image",
+  "morph",
+  "fusion",
+  "map",
+  "choice",
+  "truefalse",
+  "higherlower",
+  "number",
+  "crowdsays",
+  "typeit",
+  "spectrum",
+];
+
+/**
+ * Batchable types with a NATIVE phone input (tap/number/text/slider/pin/vote).
+ * The rest — the buzz-style types — collect a typed free-text answer during a
+ * pub-quiz round, auto-graded against batchAnswerText at review.
+ */
+export const BATCH_NATIVE_INPUT = [
+  "choice",
+  "truefalse",
+  "higherlower",
+  "number",
+  "typeit",
+  "spectrum",
+  "crowdsays",
+  "map",
+];
+
+/**
+ * The canonical text answer a free-text pub-quiz submission is graded against
+ * (via matchTyped) for buzz-style types played in a batched round.
+ * @param {string} type The round type.
+ * @param {object} q The question.
+ * @returns {string}
+ */
+export function batchAnswerText(type, q) {
+  if (type === "hints" || type === "connect") return str(q?.answer);
+  return str(q?.a);
+}
+
 /** Crowd Says scoring modes: reward the plurality, the brave minority, or score nothing. */
 export const CROWD_MODES = ["majority", "minority", "poll"];
 
@@ -250,6 +303,17 @@ export function hintHasContent(h) {
   if (!h || typeof h !== "object") return false;
   if (h.type === "map") return h.lat != null && h.lng != null;
   return str(h.url).trim() !== "";
+}
+
+/**
+ * Coerce an optional media attachment on a jeopardy clue: one typed media hint
+ * (image/audio/video/map — text is not a media type here, the `clue` field IS the
+ * text) or null. A mid-edit attachment with an empty url is kept (like hints), so
+ * a half-edited quiz survives a save/reload; display gates on hintHasContent.
+ */
+function normalizeClueMedia(m) {
+  if (!m || typeof m !== "object" || !HINT_TYPES.includes(m.type) || m.type === "text") return null;
+  return normalizeHint(m);
 }
 
 /** Generate a short random id. */
@@ -764,7 +828,7 @@ export function makeCategory() {
 export function makeRound(type) {
   return type === "jeopardy"
     ? { id: uid(), type, title: "", timer: null, categories: [makeCategory()] }
-    : { id: uid(), type, title: "", timer: null, questions: [makeQuestion(type)] };
+    : { id: uid(), type, title: "", timer: null, reveal: "each", questions: [makeQuestion(type)] };
 }
 
 /* ---- normalization ---- */
@@ -780,6 +844,8 @@ export function normalizeQuiz(raw) {
     .map((r) => {
       if (!r || !ROUND_TYPES.includes(r.type)) return null;
       const base = { id: str(r.id) || uid(), type: r.type, title: str(r.title), timer: numOrNull(r.timer) };
+      // Pub-quiz mode: a batchable round may defer all reveals to an end-of-round review.
+      if (r.type !== "jeopardy") base.reveal = BATCHABLE_TYPES.includes(r.type) && r.reveal === "end" ? "end" : "each";
       if (r.type === "jeopardy") {
         base.categories = (Array.isArray(r.categories) ? r.categories : []).map((c) => ({
           id: str(c?.id) || uid(),
@@ -787,6 +853,7 @@ export function normalizeQuiz(raw) {
           questions: (Array.isArray(c?.questions) ? c.questions : []).map((q) => ({
             id: str(q?.id) || uid(),
             clue: str(q?.clue),
+            media: normalizeClueMedia(q?.media), // optional image/audio/video/map beside (or instead of) the text clue
             answer: str(q?.answer),
             points: num(q?.points, 100),
           })),
@@ -1003,11 +1070,38 @@ export function normalizeGame(raw) {
   // Anythingle round state (turn order + shared guess board). Additive/optional:
   // null on old saves so they load byte-for-byte.
   g.anythingle = normalizeAnyState(raw.anythingle, g.players);
+  // Pub-quiz round state (additive; {} / false on old saves): `batch` holds the
+  // locked-in answers of the current batched round, keyed by question index —
+  // { qi: { answers: {entityId: value}, pins: {entityId: {lat,lng}} } } — and
+  // `reviewing` marks the end-of-round review pass (qi re-iterates the questions).
+  g.batch = normalizeBatch(raw.batch);
+  g.reviewing = !!raw.reviewing;
+  // Coherence guard: reviewing only makes sense on a batched (reveal:"end") round.
+  if (g.reviewing && g.quiz.rounds[g.ri]?.reveal !== "end") g.reviewing = false;
   // Coherence guard: a jeopardy question needs an open tile. A corrupted/edited
   // save with stage "question" but no tile would crash the question render, so
   // fall back to the board.
   if (g.quiz.rounds[g.ri]?.type === "jeopardy" && g.stage === "question" && !g.tile) g.stage = "board";
   return g;
+}
+
+/** Validate the persisted pub-quiz batch (locked answers/pins per question index). */
+function normalizeBatch(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const out = {};
+  for (const [k, v] of Object.entries(raw)) {
+    if (!/^\d+$/.test(k) || !v || typeof v !== "object" || Array.isArray(v)) continue;
+    const answers = {};
+    if (v.answers && typeof v.answers === "object" && !Array.isArray(v.answers))
+      for (const [pid, val] of Object.entries(v.answers))
+        if (typeof val === "string" || typeof val === "number") answers[str(pid)] = val;
+    const pins = {};
+    if (v.pins && typeof v.pins === "object" && !Array.isArray(v.pins))
+      for (const [pid, p] of Object.entries(v.pins))
+        if (p && numOrNull(p.lat) != null && numOrNull(p.lng) != null) pins[str(pid)] = { lat: +p.lat, lng: +p.lng };
+    out[k] = { answers, pins };
+  }
+  return out;
 }
 
 /**
@@ -1413,7 +1507,8 @@ function presentQ(type, q) {
     case "classic":
       return { q: str(q.q), points: num(q.points, 10) };
     case "jeopardy":
-      return { clue: str(q.clue), points: num(q.points, 100) };
+      // media is part of the CLUE (shown pre-reveal by design); the answer stays in revealData.
+      return { clue: str(q.clue), points: num(q.points, 100), media: normalizeClueMedia(q.media) };
     case "hints":
       return { hints: (Array.isArray(q.hints) ? q.hints : []).map(normalizeHint) };
     case "connect":
@@ -1613,6 +1708,8 @@ export function buildPresentQ(game) {
     quizTitle: str(quiz?.title),
     roundType: round ? str(round.type) : null,
     roundTitle: round ? str(round.title) : "",
+    // Pub-quiz flag so the host remote can label its primary button ("lock" vs "reveal").
+    roundReveal: round?.reveal === "end" ? "end" : "each",
   };
   if (game.stage === "question" && round) {
     const q = currentQuestion(game);
@@ -1760,6 +1857,8 @@ export function buildLive(game, opts = {}) {
     // Crowd Says live vote counts per option (safe — there's no secret key). The
     // TV shows the bars and, on reveal, computes the winner via crowdWinners.
     tally: Array.isArray(opts.tally) ? opts.tally.map((n) => Math.max(0, Math.round(num(n, 0)))) : null,
+    // Pub-quiz end-of-round review pass (so the TV/host remote can badge it).
+    review: !!opts.review,
     standings,
   };
   if (game.revealed && game.stage === "question" && round) {
@@ -1805,6 +1904,7 @@ export function normalizePresent(raw) {
     quizTitle: str(raw.quizTitle),
     roundType: ROUND_TYPES.includes(raw.roundType) ? raw.roundType : null,
     roundTitle: str(raw.roundTitle),
+    roundReveal: raw.roundReveal === "end" ? "end" : "each",
   };
   if (raw.q && typeof raw.q === "object" && !Array.isArray(raw.q)) {
     const q = raw.q;
@@ -1820,6 +1920,7 @@ export function normalizePresent(raw) {
     if (Array.isArray(q.options)) o.options = q.options.map(str).slice(0, 8);
     if (Array.isArray(q.hints)) o.hints = q.hints.map(normalizeHint);
     if (Array.isArray(q.clues)) o.clues = q.clues.map(normalizeHint);
+    if (q.media != null) o.media = normalizeClueMedia(q.media); // jeopardy clue-media attachment
     out.q = o;
   }
   return out;
@@ -1890,6 +1991,7 @@ export function normalizeLive(raw) {
     whoknows: raw.whoknows ? normalizeWhoknows(raw.whoknows) : null,
     anythingle: normalizeAnyLive(raw.anythingle),
     tally: Array.isArray(raw.tally) ? raw.tally.slice(0, 8).map((n) => Math.max(0, Math.round(num(n, 0)))) : null,
+    review: !!raw.review,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
       id: str(p?.id) || str(p?.name) || "p",
       name: str(p?.name) || "Player",

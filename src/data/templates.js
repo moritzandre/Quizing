@@ -456,7 +456,8 @@ export const QUIZ_TEMPLATES = [
 /** Per-round-type question/category JSON shape (AI-facing; used by the round Creator Room). */
 const ROUND_SHAPES = {
   classic: 'questions: [{ "q": string, "a": string, "points": number }]',
-  jeopardy: 'categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]',
+  jeopardy:
+    'categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number, "media": null | {"type":"image","url":string} | {"type":"audio"|"video","url":string,"start":number|null,"end":number|null} | {"type":"map","lat":number,"lng":number,"name":string} }] }]   // media is optional — an image/audio/video/map shown WITH (or instead of) the text clue',
   hints:
     'questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder',
   connect:
@@ -500,7 +501,7 @@ export function roundCreatorPrompt(type) {
   return [
     `Generate ONE Quiz Night "${type}" round as JSON. Reply with ONLY the JSON object, no prose.`,
     "",
-    `Shape: { "type": "${type}", "title": string, "timer": number|null, ${shape} }`,
+    `Shape: { "type": "${type}", "title": string, "timer": number|null, "reveal": "each"|"end" (optional; "end" = pub-quiz style — collect every answer first, reveal & score the whole round at the end), ${shape} }`,
     example ? `\nExample:\n${JSON.stringify(example, null, 2)}` : "",
     "",
     'Rules: omit "id" fields (they are generated). 3-6 questions. Unambiguous answers. Use real reachable media URLs, or leave url empty for the host to fill in.',
@@ -511,11 +512,11 @@ export function roundCreatorPrompt(type) {
 export const AI_SCHEMA_HELP = `Generate a Quiz Night quiz as JSON. Reply with ONLY a JSON object, no prose.
 
 Top level: { "title": string, "rounds": [ ...rounds ] }
-Every round: { "type": <one of the types below>, "title": string, "timer": number|null, and a questions or categories array }
+Every round: { "type": <one of the types below>, "title": string, "timer": number|null, "reveal": "each"|"end" (optional; "end" = pub-quiz style — collect every answer first, then reveal & score the whole round at the end; not for jeopardy/whoknows/anythingle), and a questions or categories array }
 
 Round types and their question shapes:
 - "classic":  questions: [{ "q": string, "a": string, "points": number }]
-- "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number }] }]
+- "jeopardy": categories: [{ "name": string, "questions": [{ "clue": string, "answer": string, "points": number, "media": null | {"type":"image","url":string} | {"type":"audio"|"video","url":string,"start":number|null,"end":number|null} | {"type":"map","lat":number,"lng":number,"name":string} }] }]   // media optional: shown WITH (or instead of) the text clue
 - "hints":    questions: [{ "answer": string, "hints": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // earlier hints are harder
 - "connect":  questions: [{ "answer": string (the common link), "clues": [ string | {"type":"image"|"audio"|"video","url":string} | {"type":"map","lat":number,"lng":number,"name":string} ] }]   // players guess what ALL the clues have in common
 - "video":    questions: [{ "url": "https://youtu.be/ID", "q": string, "a": string, "points": number, "audioOnly": false, "start": null, "end": null }]   // url: YouTube, Spotify track, or direct .mp3/.mp4; start/end (seconds) optionally trim the clip

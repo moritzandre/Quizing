@@ -27,6 +27,7 @@ import {
   Minimize,
   SlidersHorizontal,
   ListOrdered,
+  ListChecks,
   Plus,
   Minus,
   X,
@@ -51,6 +52,9 @@ import {
   buildLive,
   buildHostAux,
   BINARY_TYPES,
+  BATCHABLE_TYPES,
+  BATCH_NATIVE_INPUT,
+  batchAnswerText,
   RECAP_VARIANTS,
   mapillaryEmbedUrl,
   anyTurnOrder,
@@ -129,6 +133,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
   };
 
   const isJeop = round?.type === "jeopardy";
+  // Pub-quiz round: collect every answer first (no reveals), then a review pass
+  // re-iterates the questions revealing + scoring from the locked-in batch.
+  const batched = !isJeop && round?.reveal === "end" && BATCHABLE_TYPES.includes(round?.type);
+  const reviewing = batched && !!game.reviewing;
   const timerSecs = round?.timer || 0;
   const qKey = isJeop ? `${game.ri}-${game.tile?.ci}-${game.tile?.qi}` : `${game.ri}-${game.qi}`;
 
@@ -235,6 +243,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
     }
     const q = round.questions[game.qi];
     if (!q) return 0;
+    // Pub-quiz rounds award flat base points at review — the buzz-race ladders
+    // (hints/morph/clip decay) don't apply when everyone answers in parallel.
+    if (batched) return ptsOr(q.points, 10);
     if (round.type === "hints") return hintValue(q.points, q.minPoints, game.hintsShown, realHints(q.hints).length);
     if (round.type === "connect") return hintValue(q.points, q.minPoints, game.hintsShown, realHints(q.clues).length);
     if (round.type === "morph") return morphValueAt(q.points, morphP, q.minPoints);
@@ -292,7 +303,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
   // Buzzer/pin orchestration: tell phones what to show for the current question.
   useEffect(() => {
     if (!buzzerOn) return;
-    if (game.stage !== "question" || game.revealed) {
+    if (game.stage !== "question" || game.revealed || reviewing) {
+      // Idle also covers the pub-quiz review pass: answers are locked, phones rest.
       room.idle();
     } else if (round?.type === "map") {
       room.collectPins(qKey, { mapTile: round.questions[game.qi]?.phoneTileLayer });
@@ -312,10 +324,15 @@ export default function PlayView({ game, setGame, onExit, room }) {
       room.collectAnswers(qKey, { phase: "slider", options: [sq?.left || "", sq?.right || ""] });
     } else if (round?.type === "whoknows" || round?.type === "anythingle") {
       room.idle(); // host-driven rounds — phones aren't used for input
+    } else if (batched) {
+      // Pub-quiz collect pass for the buzz-style types (classic/hints/connect/
+      // video/clip/image/morph/fusion): no buzzer race — phones type an answer,
+      // auto-graded against batchAnswerText at the review.
+      room.collectAnswers(qKey, { phase: "text" });
     } else {
       room.arm(qKey);
     }
-  }, [buzzerOn, game.stage, game.revealed, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [buzzerOn, game.stage, game.revealed, reviewing, qKey, round?.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Tell the room which devices belong to a scoring entity, so it ignores buzz/pin/
   // answer from any phone that joined AFTER Start (or a member on a swapped/wiped
@@ -374,22 +391,36 @@ export default function PlayView({ game, setGame, onExit, room }) {
     return hit?.quote || null;
   })();
   // Crowd Says: stream the live vote tally (counts per option) so the TV shows the
-  // bars fill in real time. No correct answer rides this — the winner is derived at reveal.
-  const crowdTally =
-    round?.type === "crowdsays" && buzzerOn
-      ? (round.questions[game.qi]?.options || []).map(
-          (_, oi) => Object.values(mapByEntity(room.answers)).filter((v) => v === oi).length,
-        )
+  // bars fill in real time. No correct answer rides this — the winner is derived at
+  // reveal. During a pub-quiz review the tally comes from the locked batch instead.
+  const crowdAns =
+    round?.type === "crowdsays"
+      ? reviewing
+        ? game.batch?.[game.qi]?.answers || {}
+        : buzzerOn
+          ? mapByEntity(room.answers)
+          : null
       : null;
+  const crowdTally = crowdAns
+    ? (round.questions[game.qi]?.options || []).map((_, oi) => Object.values(crowdAns).filter((v) => v === oi).length)
+    : null;
   const crowdSig = crowdTally ? crowdTally.join(",") : "";
   // Spectrum: on reveal, hand the TV each entity's 0–100 mark so it can scatter the
-  // guesses along the bar. Only computed once revealed (a one-shot, not per-move).
-  const spectrumGuesses =
-    round?.type === "spectrum" && buzzerOn && game.revealed
-      ? game.players
-          .map((p, i) => ({ value: +mapByEntity(room.answers)[p.id], color: colorFor(p, i), label: p.name }))
-          .filter((m) => Number.isFinite(m.value))
+  // guesses along the bar. Only computed once revealed (a one-shot, not per-move);
+  // in a pub-quiz review the marks come from the locked batch.
+  const spectrumAns =
+    round?.type === "spectrum" && game.revealed
+      ? reviewing
+        ? game.batch?.[game.qi]?.answers || {}
+        : buzzerOn
+          ? mapByEntity(room.answers)
+          : null
       : null;
+  const spectrumGuesses = spectrumAns
+    ? game.players
+        .map((p, i) => ({ value: +spectrumAns[p.id], color: colorFor(p, i), label: p.name }))
+        .filter((m) => Number.isFinite(m.value))
+    : null;
   // quantize the morph demorph for the TV (smooth via CSS transition; ~50 updates max)
   const morphStreamP = Math.round(morphP * 50) / 50;
   useEffect(() => {
@@ -414,10 +445,11 @@ export default function PlayView({ game, setGame, onExit, room }) {
         anyQuote,
         tally: crowdTally,
         spectrumGuesses,
+        review: reviewing,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft, crowdSig]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft, crowdSig, reviewing]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -531,9 +563,20 @@ export default function PlayView({ game, setGame, onExit, room }) {
     upd({ revealed: true });
   };
 
+  // Entity-keyed answers for the CURRENT question: live from the room, or — during
+  // a pub-quiz review pass — the batch locked in when the question was collected.
+  const collectedAnswers = () =>
+    reviewing ? game.batch?.[game.qi]?.answers || {} : mapByEntity(buzzerOn ? room.answers : {});
+  // Same for map pins (host-placed guesses + phone pins, or the locked batch —
+  // where a host-placed pin still overrides, so a paper answer can be added late).
+  const collectedPins = () =>
+    reviewing
+      ? { ...(game.batch?.[game.qi]?.pins || {}), ...(game.guesses || {}) }
+      : { ...(game.guesses || {}), ...(buzzerOn ? mapByEntity(room.pins) : {}) };
+
   // Multiple-choice reveal: auto-award everyone who picked the correct option.
   const revealChoice = (q) => {
-    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const ans = collectedAnswers();
     const awarded = {};
     const players = game.players.map((p) => {
       if (ans[p.id] === q.correct) {
@@ -549,7 +592,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   // Crowd Says reveal: tally the votes and award the crowd-matching entities
   // (majority/minority; poll scores nobody).
   const revealCrowd = (q) => {
-    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const ans = collectedAnswers();
     const counts = (q.options || []).map((_, oi) => Object.values(ans).filter((v) => v === oi).length);
     const winners = q.mode === "poll" ? [] : crowdWinners(counts, q.mode);
     const awarded = {};
@@ -569,7 +612,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     let awarded = {};
     let players = game.players;
     if (q.answer != null) {
-      const ans = mapByEntity(buzzerOn ? room.answers : {});
+      const ans = collectedAnswers();
       const ranked = game.players
         .map((p) => ({ p, g: +ans[p.id] }))
         .filter((x) => Number.isFinite(x.g))
@@ -586,7 +629,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   // Type-It reveal: auto-award EVERY entity whose typed answer matches (normalized).
   const revealTypeit = (q) => {
-    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const ans = collectedAnswers();
     const awarded = {};
     const players = game.players.map((p) => {
       if (matchTyped(ans[p.id], q.answer, q.accept)) {
@@ -602,7 +645,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   // Spectrum reveal: graduated banded scoring — every entity close enough to the
   // hidden target earns tiered points (spectrumScore); no single winner.
   const revealSpectrum = (q) => {
-    const ans = mapByEntity(buzzerOn ? room.answers : {});
+    const ans = collectedAnswers();
     const awarded = {};
     const players = game.players.map((p) => {
       const pts = spectrumScore(ans[p.id], q.target, q.points, q.band);
@@ -622,7 +665,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
     let players = game.players;
     // Lock in every pin (host-placed + phone-submitted) so the closest wins and
     // the persisted guesses can be mirrored to the TV on reveal.
-    const combined = { ...(game.guesses || {}), ...(buzzerOn ? mapByEntity(room.pins) : {}) };
+    const combined = collectedPins();
     if (q.lat != null && q.lng != null) {
       const ranked = game.players
         .map((p) => ({ p, g: combined[p.id] }))
@@ -637,6 +680,42 @@ export default function PlayView({ game, setGame, onExit, room }) {
     }
     playSound(Object.keys(awarded).length ? "correct" : "reveal");
     upd({ revealed: true, players, awarded, guesses: combined });
+  };
+
+  // Pub-quiz review reveal for the buzz-style types (classic/hints/connect/video/
+  // clip/image/morph/fusion): grade the typed free-text submissions against the
+  // question's answer, awarding flat points; the host adjusts via the ScoreBar.
+  const revealBatchText = (q) => {
+    const ans = collectedAnswers();
+    const target = batchAnswerText(round.type, q);
+    const pts = ptsOr(q.points, 10);
+    const awarded = {};
+    const players = game.players.map((p) => {
+      if (target && matchTyped(ans[p.id], target)) {
+        awarded[p.id] = pts;
+        return { ...p, score: p.score + pts };
+      }
+      return p;
+    });
+    playSound(Object.keys(awarded).length ? "correct" : "reveal");
+    upd({ revealed: true, players, awarded });
+  };
+
+  // The one reveal dispatcher (host button, keyboard, host remote). During a
+  // pub-quiz COLLECT pass revealing is blocked — answers lock first, the review
+  // pass reveals. In review, buzz-style types grade the typed batch instead.
+  const revealCurrent = (q) => {
+    if (!q || game.revealed || game.stage !== "question") return;
+    if (batched && !reviewing) return; // pub-quiz collect: no reveals until the review
+    if (BINARY_TYPES.includes(round.type)) revealChoice(q);
+    else if (round.type === "crowdsays") revealCrowd(q);
+    else if (round.type === "number") revealNumber(q);
+    else if (round.type === "typeit") revealTypeit(q);
+    else if (round.type === "spectrum") revealSpectrum(q);
+    else if (round.type === "map") revealMap(q);
+    else if (round.type === "anythingle") revealAnythingle();
+    else if (reviewing) revealBatchText(q);
+    else reveal();
   };
 
   const adjustScore = (pid, delta) =>
@@ -776,7 +855,18 @@ export default function PlayView({ game, setGame, onExit, room }) {
     setMorphStep(0);
     setMorphP(0);
     setMorphRunning(false);
-    upd({ ri, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
+    upd({
+      ri,
+      stage: "intro",
+      qi: 0,
+      revealed: false,
+      hintsShown: 1,
+      awarded: {},
+      tile: null,
+      guesses: {},
+      batch: {},
+      reviewing: false,
+    });
     setNav(false);
   };
 
@@ -824,7 +914,19 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const goNextRound = () => {
     const j = nextNonEmpty(quiz, game.ri + 1);
     if (j === -1) upd({ stage: "end" });
-    else upd({ ri: j, stage: "intro", qi: 0, revealed: false, hintsShown: 1, awarded: {}, tile: null, guesses: {} });
+    else
+      upd({
+        ri: j,
+        stage: "intro",
+        qi: 0,
+        revealed: false,
+        hintsShown: 1,
+        awarded: {},
+        tile: null,
+        guesses: {},
+        batch: {},
+        reviewing: false,
+      });
   };
 
   // Show the between-rounds recap (with a little flourish); host confirms to advance.
@@ -848,12 +950,42 @@ export default function PlayView({ game, setGame, onExit, room }) {
     } else endRound();
   };
 
+  // Pub-quiz collect pass: freeze the current question's phone answers/pins into
+  // the batch (nothing is revealed), then move on — into the review pass after
+  // the last question.
+  const lockAndNext = () => {
+    const entry = {
+      answers: mapByEntity(buzzerOn ? room.answers : {}),
+      pins: { ...(game.guesses || {}), ...(buzzerOn ? mapByEntity(room.pins) : {}) },
+    };
+    const batch = { ...(game.batch || {}), [game.qi]: entry };
+    playSound("select");
+    setMorphStep(0);
+    setMorphP(0);
+    setMorphRunning(false);
+    if (game.qi + 1 < round.questions.length) {
+      upd({ batch, qi: game.qi + 1, revealed: false, hintsShown: 1, awarded: {}, guesses: {} });
+    } else {
+      // All questions collected → replay them as the review pass (reveal + score).
+      upd({ batch, reviewing: true, qi: 0, revealed: false, hintsShown: 1, awarded: {}, guesses: {} });
+    }
+  };
+
+  // Pub-quiz review pass: step through the same questions revealing each; after
+  // the last one the round ends into the usual recap. `guesses` resets so a
+  // host-placed review pin can't leak into the next question's map.
+  const nextReview = () => {
+    if (game.qi + 1 < round.questions.length) {
+      upd({ qi: game.qi + 1, revealed: false, hintsShown: 1, awarded: {}, guesses: {} });
+    } else endRound();
+  };
+
   const backToBoard = () => {
     const key = `${game.ri}-${game.tile?.ci}-${game.tile?.qi}`;
     upd({ used: { ...game.used, [key]: true }, tile: null, stage: "board", revealed: false, awarded: {} });
   };
 
-  const advance = isJeop ? backToBoard : nextQuestion;
+  const advance = isJeop ? backToBoard : batched ? (reviewing ? nextReview : lockAndNext) : nextQuestion;
   const scoreActive = game.stage === "question" && game.revealed;
 
   /* Apply a command sent from a host-remote phone (#/host/<code>). Re-derive the
@@ -880,14 +1012,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
       switch (cmd.action) {
         case "reveal":
           if (game.stage === "question" && !game.revealed && cq) {
-            if (BINARY_TYPES.includes(round.type)) revealChoice(cq);
-            else if (round.type === "crowdsays") revealCrowd(cq);
-            else if (round.type === "number") revealNumber(cq);
-            else if (round.type === "typeit") revealTypeit(cq);
-            else if (round.type === "spectrum") revealSpectrum(cq);
-            else if (round.type === "map") revealMap(cq);
-            else if (round.type === "anythingle") revealAnythingle();
-            else reveal();
+            if (batched && !reviewing)
+              advance(); // pub-quiz collect: "reveal" locks & moves on instead
+            else revealCurrent(cq);
           }
           break;
         case "advance":
@@ -991,15 +1118,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
       const q = isJeop ? round.categories[game.tile?.ci]?.questions[game.tile?.qi] : round.questions[game.qi];
       if (!q) return;
       if (k === "r" && !game.revealed) {
-        if (BINARY_TYPES.includes(round.type)) revealChoice(q);
-        else if (round.type === "crowdsays") revealCrowd(q);
-        else if (round.type === "number") revealNumber(q);
-        else if (round.type === "typeit") revealTypeit(q);
-        else if (round.type === "spectrum") revealSpectrum(q);
-        else if (round.type === "map") revealMap(q);
-        else if (round.type === "anythingle") revealAnythingle();
-        else reveal();
-      } else if ((k === "n" || k === "arrowright") && game.revealed) advance();
+        revealCurrent(q); // no-op during a pub-quiz collect pass (nothing to reveal yet)
+      } else if ((k === "n" || k === "arrowright") && (game.revealed || (batched && !reviewing))) advance();
       else if (k === "h" && !game.revealed && round.type === "hints" && game.hintsShown < realHints(q.hints).length)
         upd({ hintsShown: game.hintsShown + 1 });
       else if (k === "h" && !game.revealed && round.type === "connect" && game.hintsShown < realHints(q.clues).length)
@@ -1473,24 +1593,42 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const q = isJeop ? round.categories?.[game.tile?.ci]?.questions?.[game.tile?.qi] : round.questions[game.qi];
   if (!q) return null; // defensive: a jeopardy question without a valid open tile (e.g. corrupt save)
 
-  const RevealBtn = (
-    <Button className="px-6 py-3.5 text-base" onClick={reveal}>
-      <Eye size={18} /> {t("play.revealAnswer")}
-    </Button>
-  );
+  // The one pre-reveal action button. In a pub-quiz COLLECT pass it locks the
+  // answers and moves on (nothing may be revealed yet); otherwise it reveals.
+  const isLastQ = !isJeop && game.qi + 1 >= round.questions.length;
+  const RevealBtn =
+    batched && !reviewing ? (
+      <Button variant="accent" className="px-6 py-3.5 text-base" onClick={advance}>
+        <Check size={18} /> {isLastQ ? t("play.lockReview") : t("play.lockNext")}
+      </Button>
+    ) : (
+      <Button className="px-6 py-3.5 text-base" onClick={() => revealCurrent(q)}>
+        <Eye size={18} /> {t("play.revealAnswer")}
+      </Button>
+    );
   const NextBtn = (
     <Button className="px-6 py-3.5 text-base" onClick={advance}>
       {isJeop ? t("play.backToBoard") : t("common.next")} <ArrowRight size={18} />
     </Button>
   );
   const Progress = !isJeop && (
-    <p className="mb-3 text-center text-sm text-stone-400">
-      {t("play.questionProgress", { n: game.qi + 1, total: round.questions.length })}
-    </p>
+    <div className="mb-3 text-center">
+      <p className="text-sm text-stone-400">
+        {reviewing
+          ? t("play.reviewProgress", { n: game.qi + 1, total: round.questions.length })
+          : t("play.questionProgress", { n: game.qi + 1, total: round.questions.length })}
+      </p>
+      {batched && !reviewing && (
+        <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+          <ListChecks size={12} /> {t("play.batchBadge")}
+        </p>
+      )}
+    </div>
   );
 
-  /* countdown pill (only before reveal, when the round sets a timer) */
-  const TimerPill = timerSecs > 0 && !game.revealed && (
+  /* countdown pill (only before reveal, when the round sets a timer; the review
+     pass has no timer — the answers are already locked) */
+  const TimerPill = timerSecs > 0 && !game.revealed && !reviewing && (
     <div className="mb-5 flex items-center justify-center gap-2">
       <span
         className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold tabular-nums transition-colors ${
@@ -1543,11 +1681,15 @@ export default function PlayView({ game, setGame, onExit, room }) {
     </p>
   );
 
-  /* buzzer banner: who buzzed first, with re-arm/reset (only for buzz rounds) */
+  /* buzzer banner: who buzzed first, with re-arm/reset (only for buzz rounds —
+     never in a pub-quiz round, where phones type/tap instead of racing) */
   const buzzName = room?.buzz ? entityForDevice(room.buzz.deviceId)?.name || room.buzz.name : "";
   const BuzzerBar = buzzerOn &&
     !game.revealed &&
-    !["map", "number", "whoknows", "anythingle", ...BINARY_TYPES].includes(round.type) && (
+    !batched &&
+    !["map", "number", "whoknows", "anythingle", "crowdsays", "typeit", "spectrum", ...BINARY_TYPES].includes(
+      round.type,
+    ) && (
       <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
         {room.buzz ? (
           <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">
@@ -1567,9 +1709,66 @@ export default function PlayView({ game, setGame, onExit, room }) {
       </div>
     );
 
+  /* Pub-quiz extras for the buzz-style (free-text fallback) types, whose branch
+     UIs have no phone-answer affordances of their own: an answered-count pill
+     during the collect pass, and the per-entity typed answers at review —
+     neutral before the reveal, graded (got it / missed) after, so the host can
+     adjudicate near-misses by tapping the ScoreBar. */
+  const batchText = batched && !BATCH_NATIVE_INPUT.includes(round.type);
+  const BatchExtras = (() => {
+    if (!batchText || game.stage !== "question") return null;
+    if (!reviewing) {
+      if (!buzzerOn || game.revealed) return null;
+      const n = Object.keys(mapByEntity(room.answers)).length;
+      return (
+        <p className="mt-4 text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-sm text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+            <Radio size={14} /> {t("play.answersIn", { n, total: game.players.length })}
+          </span>
+        </p>
+      );
+    }
+    const ans = collectedAnswers();
+    const target = batchAnswerText(round.type, q);
+    const rows = game.players
+      .map((p, i) => ({ p, i, g: String(ans[p.id] ?? "") }))
+      .filter((x) => x.g.trim() !== "")
+      .map((x) => ({ ...x, ok: game.revealed && !!target && matchTyped(x.g, target) }));
+    if (!rows.length) return null;
+    return (
+      <div className="mx-auto mb-6 mt-4 w-full max-w-md space-y-1.5 text-left">
+        {rows.map((x) => (
+          <div
+            key={x.p.id}
+            className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-sm ${
+              x.ok
+                ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10"
+                : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+            }`}
+          >
+            <span className="flex min-w-0 items-center gap-2 font-medium">
+              <Avatar color={colorFor(x.p, x.i)} emoji={x.p.emoji} name={x.p.name} size={22} />
+              <span className="shrink-0">{x.p.name}</span>
+              <span className="min-w-0 truncate text-stone-400">“{x.g}”</span>
+            </span>
+            {game.revealed &&
+              (x.ok ? (
+                <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <Check size={14} /> {t("play.typeGotIt")}
+                </span>
+              ) : (
+                <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">{t("play.typeMissed")}</span>
+              ))}
+          </div>
+        ))}
+      </div>
+    );
+  })();
+
   let body = null;
 
   if (round.type === "classic" || isJeop) {
+    const clueMedia = isJeop && q.media && hintHasContent(q.media) ? q.media : null;
     body = (
       <div className="text-center">
         {Progress}
@@ -1579,10 +1778,17 @@ export default function PlayView({ game, setGame, onExit, room }) {
             {round.categories[game.tile?.ci]?.name || t("play.category")} · {q.points}
           </p>
         )}
-        <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-snug tracking-tight md:text-5xl">
-          {isJeop ? q.clue : q.q}
-        </h2>
-        <div className="mt-10" style={{ minHeight: 80 }}>
+        {(!isJeop || q.clue) && (
+          <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-snug tracking-tight md:text-5xl">
+            {isJeop ? q.clue : q.q}
+          </h2>
+        )}
+        {clueMedia && (
+          <div className="mx-auto mt-6 w-full max-w-2xl">
+            <HintMedia hint={clueMedia} />
+          </div>
+        )}
+        <div className={clueMedia ? "mt-6" : "mt-10"} style={{ minHeight: 80 }}>
           {game.revealed ? (
             <p className="qn-pop qn-answer text-2xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
               {isJeop ? q.answer : q.a}
@@ -1598,7 +1804,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   if (round.type === "hints") {
     const hints = realHints(q.hints);
-    const shown = hints.slice(0, game.hintsShown);
+    // Review pass shows the full ladder — the guessing already happened at collect.
+    const shown = reviewing ? hints : hints.slice(0, game.hintsShown);
     body = (
       <div className="text-center">
         {Progress}
@@ -1648,7 +1855,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   if (round.type === "connect") {
     const clues = realHints(q.clues);
-    const shown = clues.slice(0, game.hintsShown);
+    // Review pass shows every clue — the guessing already happened at collect.
+    const shown = reviewing ? clues : clues.slice(0, game.hintsShown);
     body = (
       <div className="text-center">
         {Progress}
@@ -1845,7 +2053,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         </div>
         <div className="flex min-h-0 flex-1 items-center justify-center">
           <div className="w-full max-w-3xl">
-            <MorphImage url={q.url} effect={q.effect} progress={morphP} revealed={game.revealed} />
+            <MorphImage url={q.url} effect={q.effect} progress={reviewing ? 1 : morphP} revealed={game.revealed} />
           </div>
         </div>
         <div className="shrink-0">
@@ -1927,7 +2135,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   if (round.type === "crowdsays") {
-    const ans = buzzerOn ? mapByEntity(room.answers) : {};
+    const ans = collectedAnswers();
     const counts = (q.options || []).map((_, oi) => Object.values(ans).filter((v) => v === oi).length);
     const total = counts.reduce((a, b) => a + b, 0);
     const answered = Object.keys(ans).length;
@@ -1940,7 +2148,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
-        {buzzerOn && !game.revealed && (
+        {(buzzerOn || reviewing) && !game.revealed && (
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-3 py-1 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
             <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
           </p>
@@ -1966,7 +2174,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   </span>
                   <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
                   {won && <Check size={18} className="text-rose-600 dark:text-rose-400" />}
-                  {buzzerOn && <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>}
+                  {(buzzerOn || reviewing) && (
+                    <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>
+                  )}
                 </div>
               </div>
             );
@@ -1975,15 +2185,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {game.revealed && (
           <p className="qn-pop mt-4 text-lg font-semibold text-rose-600 dark:text-rose-400">{t(capKey)}</p>
         )}
-        <div className="mt-6">
-          {game.revealed ? (
-            NextBtn
-          ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => revealCrowd(q)}>
-              <Eye size={18} /> {t("play.revealAnswer")}
-            </Button>
-          )}
-        </div>
+        <div className="mt-6">{game.revealed ? NextBtn : RevealBtn}</div>
       </div>
     );
   }
@@ -1991,7 +2193,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   if (BINARY_TYPES.includes(round.type)) {
     const options = optionsFor(round.type, q, t);
     const binary = round.type !== "choice"; // true/false & higher/lower have fixed 2 options
-    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answersByEntity = collectedAnswers();
     const counts = options.map((_, oi) => Object.values(answersByEntity).filter((v) => v === oi).length);
     const answered = Object.keys(answersByEntity).length;
     const letters = ["A", "B", "C", "D", "E", "F"];
@@ -2000,7 +2202,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
-        {buzzerOn && !game.revealed && (
+        {(buzzerOn || reviewing) && !game.revealed && (
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-sm text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">
             <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
           </p>
@@ -2029,7 +2231,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
                   </span>
                 )}
                 <span className="min-w-0 flex-1 font-medium md:text-lg">{opt}</span>
-                {buzzerOn && <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>}
+                {(buzzerOn || reviewing) && (
+                  <span className="text-sm font-bold tabular-nums text-stone-400">{counts[oi]}</span>
+                )}
                 {isCorrect && <Check size={18} className="text-emerald-600 dark:text-emerald-400" />}
               </div>
             );
@@ -2038,21 +2242,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {game.revealed && binary && q.note && (
           <p className="mx-auto mt-4 max-w-xl text-sm text-stone-500 dark:text-stone-400">{q.note}</p>
         )}
-        <div className="mt-6">
-          {game.revealed ? (
-            NextBtn
-          ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => revealChoice(q)}>
-              <Eye size={18} /> {t("play.revealAnswer")}
-            </Button>
-          )}
-        </div>
+        <div className="mt-6">{game.revealed ? NextBtn : RevealBtn}</div>
       </div>
     );
   }
 
   if (round.type === "number") {
-    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answersByEntity = collectedAnswers();
     const answered = Object.values(answersByEntity).filter((v) => Number.isFinite(+v)).length;
     const ranked =
       q.answer != null
@@ -2067,7 +2263,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
-        {buzzerOn && !game.revealed && (
+        {(buzzerOn || reviewing) && !game.revealed && (
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1 text-sm text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">
             <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
           </p>
@@ -2078,9 +2274,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               {q.answer != null ? `${q.answer}${q.unit ? ` ${q.unit}` : ""}` : "—"}
             </p>
           ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => revealNumber(q)}>
-              <Eye size={18} /> {t("play.revealAnswer")}
-            </Button>
+            RevealBtn
           )}
         </div>
         {game.revealed && ranked.length > 0 && (
@@ -2120,7 +2314,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   if (round.type === "typeit") {
-    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answersByEntity = collectedAnswers();
     const answered = Object.values(answersByEntity).filter((v) => String(v ?? "").trim() !== "").length;
     const graded = game.players
       .map((p, i) => ({ p, i, g: String(answersByEntity[p.id] ?? "") }))
@@ -2132,7 +2326,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
-        {buzzerOn && !game.revealed && (
+        {(buzzerOn || reviewing) && !game.revealed && (
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-3 py-1 text-sm text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300">
             <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
           </p>
@@ -2143,9 +2337,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               {q.answer || "—"}
             </p>
           ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => revealTypeit(q)}>
-              <Eye size={18} /> {t("play.revealAnswer")}
-            </Button>
+            RevealBtn
           )}
         </div>
         {game.revealed && q.accept?.length > 0 && (
@@ -2191,7 +2383,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
   }
 
   if (round.type === "spectrum") {
-    const answersByEntity = buzzerOn ? mapByEntity(room.answers) : {};
+    const answersByEntity = collectedAnswers();
     const answered = Object.values(answersByEntity).filter((v) => Number.isFinite(+v)).length;
     const scored = game.players
       .map((p, i) => ({ p, i, g: +answersByEntity[p.id] }))
@@ -2205,7 +2397,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         {Progress}
         {TimerPill}
         <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
-        {buzzerOn && !game.revealed && (
+        {(buzzerOn || reviewing) && !game.revealed && (
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-sm text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">
             <Radio size={14} /> {t("play.answersIn", { n: answered, total: game.players.length })}
           </p>
@@ -2256,9 +2448,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
               <div className="mt-6">{NextBtn}</div>
             </>
           ) : (
-            <Button className="px-6 py-3.5 text-base" onClick={() => revealSpectrum(q)}>
-              <Eye size={18} /> {t("play.revealAnswer")}
-            </Button>
+            RevealBtn
           )}
         </div>
       </div>
@@ -2590,9 +2780,10 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
   if (round.type === "map") {
     const hasAnswer = q.lat != null && q.lng != null;
-    // Merge host-placed guesses with phone-submitted pins (re-keyed by entity).
-    const phonePins = buzzerOn ? mapByEntity(room.pins) : {};
-    const combined = { ...(game.guesses || {}), ...phonePins };
+    // Merge host-placed guesses with phone-submitted pins (re-keyed by entity);
+    // during a pub-quiz review both come from the locked batch instead.
+    const phonePins = reviewing ? {} : buzzerOn ? mapByEntity(room.pins) : {};
+    const combined = collectedPins();
     const markers = game.players
       .map((p, i) => {
         const g = combined[p.id];
@@ -2616,10 +2807,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
 
           {!game.revealed && (
             <div className="mx-auto mt-3 max-w-2xl">
-              {buzzerOn && (
+              {(buzzerOn || reviewing) && (
                 <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
                   <Radio size={14} />{" "}
-                  {t("play.pinsIn", { n: Object.keys(phonePins).length, total: game.players.length })}
+                  {t("play.pinsIn", {
+                    n: Object.keys(reviewing ? combined : phonePins).length,
+                    total: game.players.length,
+                  })}
                 </p>
               )}
               <p className="mb-2 text-sm text-stone-500 dark:text-stone-400">
@@ -2725,6 +2919,8 @@ export default function PlayView({ game, setGame, onExit, room }) {
           <div className="mt-4">
             {game.revealed ? (
               NextBtn
+            ) : batched && !reviewing ? (
+              RevealBtn
             ) : (
               <Button className="px-6 py-3.5 text-base" onClick={() => revealMap(q)}>
                 <MapPin size={18} /> {t("play.revealLocation")}
@@ -2750,6 +2946,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
         className={`qn-fade-up mx-auto flex w-full min-h-0 flex-1 flex-col overflow-y-auto px-4 ${stageW}`}
       >
         {body}
+        {BatchExtras}
       </div>
       {!pres && <div className={`mx-auto w-full shrink-0 px-4 pb-1 ${stageW}`}>{Shortcuts}</div>}
       <ScoreBar

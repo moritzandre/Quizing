@@ -53,6 +53,9 @@ export default function HostRemoteView({ code }) {
   const presentQKey = present ? `${present.ri ?? 0}-${present.qi ?? 0}` : "";
   const liveCurrent = !live?.qKey || live.qKey === presentQKey;
   const revealed = liveCurrent && !!live?.revealed;
+  // Pub-quiz round phases: collect (lock answers, no reveals) vs the review pass.
+  const reviewPass = liveCurrent && !!live?.review;
+  const batchCollect = present?.roundReveal === "end" && !reviewPass;
   const value = live?.value || 0;
   const morphRunning = !!live?.morphRunning; // mirrored auto-demorph clock (for the start/pause label below)
   const morphProgress = live?.morphProgress || 0;
@@ -121,6 +124,11 @@ export default function HostRemoteView({ code }) {
         <div className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
           {TypeIcon && <TypeIcon size={15} />}
           <span className="font-medium text-stone-700 dark:text-stone-200">{roundLabel || t("host.title")}</span>
+          {stage === "question" && reviewPass && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+              {t("play.reviewBadge")}
+            </span>
+          )}
           <span className="ml-auto">
             {t("play.roundProgress", { n: (present.ri || 0) + 1, total: present.total || 1 })}
           </span>
@@ -147,6 +155,7 @@ export default function HostRemoteView({ code }) {
               whoknows={live?.whoknows || null}
               anythingle={live?.anythingle || null}
               tally={live?.tally || null}
+              review={!!live?.review}
             />
           </div>
         </div>
@@ -325,9 +334,17 @@ export default function HostRemoteView({ code }) {
             {!revealed && (
               <button
                 onClick={() => sendCtrl("reveal")}
-                className={`col-span-2 bg-indigo-600 text-white ${btn} ${FOCUS}`}
+                className={`col-span-2 ${batchCollect ? "bg-amber-600" : "bg-indigo-600"} text-white ${btn} ${FOCUS}`}
               >
-                <Eye size={18} /> {t("play.revealAnswer")}
+                {batchCollect ? (
+                  <>
+                    <Check size={18} /> {t("play.lockNext")}
+                  </>
+                ) : (
+                  <>
+                    <Eye size={18} /> {t("play.revealAnswer")}
+                  </>
+                )}
               </button>
             )}
             {!revealed && (type === "video" || type === "clip") && (

@@ -59,20 +59,29 @@ export default function RoundBody({
   whoknows = null,
   anythingle = null,
   tally = null,
+  review = false,
 }) {
   const { t } = useI18n();
 
   if (type === "classic" || type === "jeopardy") {
+    const clueMedia = type === "jeopardy" && q.media && hintHasContent(q.media) ? q.media : null;
     return (
       <div className="flex h-full min-h-0 flex-col items-center justify-center text-center">
-        <Q>{type === "jeopardy" ? q.clue : q.q}</Q>
+        {(type !== "jeopardy" || q.clue) && <Q>{type === "jeopardy" ? q.clue : q.q}</Q>}
+        {clueMedia && (
+          <div className={`mx-auto w-full max-w-2xl ${q.clue ? "mt-6" : ""}`}>
+            <HintMedia hint={clueMedia} />
+          </div>
+        )}
         {revealed && reveal?.answer != null && <p className={answerCls}>{reveal.answer}</p>}
       </div>
     );
   }
 
   if (type === "hints") {
-    const shown = (Array.isArray(q.hints) ? q.hints : []).filter(hintHasContent).slice(0, Math.max(1, hintsShown));
+    const all = (Array.isArray(q.hints) ? q.hints : []).filter(hintHasContent);
+    // A pub-quiz review shows the full ladder — the guessing already happened.
+    const shown = review ? all : all.slice(0, Math.max(1, hintsShown));
     return (
       <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col justify-center overflow-y-auto">
         <div className="space-y-3">
@@ -91,7 +100,8 @@ export default function RoundBody({
   }
 
   if (type === "connect") {
-    const shown = (Array.isArray(q.clues) ? q.clues : []).filter(hintHasContent).slice(0, Math.max(1, hintsShown));
+    const all = (Array.isArray(q.clues) ? q.clues : []).filter(hintHasContent);
+    const shown = review ? all : all.slice(0, Math.max(1, hintsShown));
     return (
       <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col justify-center overflow-y-auto">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -173,7 +183,7 @@ export default function RoundBody({
   if (type === "morph") {
     return (
       <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col items-center justify-center text-center">
-        <MorphImage url={q.url} effect={q.effect} progress={morphProgress} revealed={revealed} />
+        <MorphImage url={q.url} effect={q.effect} progress={review ? 1 : morphProgress} revealed={revealed} />
         {revealed && reveal?.answer != null && <p className={`${answerCls} shrink-0`}>{reveal.answer}</p>}
       </div>
     );

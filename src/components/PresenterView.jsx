@@ -186,21 +186,33 @@ export default function PresenterView({ code }) {
   const liveCurrent = !live?.qKey || live.qKey === presentQKey;
   const revealed = liveCurrent && !!live?.revealed;
   return shell(
-    <RoundBody
-      type={present.roundType}
-      q={present.q || {}}
-      revealed={revealed}
-      hintsShown={live?.hintsShown || 1}
-      step={live?.step || 0}
-      morphProgress={live?.morphProgress || 0}
-      reveal={revealed ? live?.reveal || null : null}
-      transport={live?.transport || null}
-      stage={!!live?.soundOnTv && soundOn}
-      qKey={presentQKey}
-      volume={live?.volume ?? 100}
-      whoknows={live?.whoknows || null}
-      anythingle={live?.anythingle || null}
-      tally={live?.tally || null}
-    />,
+    <div className="flex h-full min-h-0 flex-col">
+      {liveCurrent && live?.review && (
+        <p className="mb-3 shrink-0 text-center">
+          <span className="inline-flex items-center rounded-full bg-amber-100 px-4 py-1 text-sm font-bold uppercase tracking-wide text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+            {t("play.reviewBadge")}
+          </span>
+        </p>
+      )}
+      <div className="min-h-0 flex-1">
+        <RoundBody
+          type={present.roundType}
+          q={present.q || {}}
+          revealed={revealed}
+          hintsShown={live?.hintsShown || 1}
+          step={live?.step || 0}
+          morphProgress={live?.morphProgress || 0}
+          reveal={revealed ? live?.reveal || null : null}
+          transport={live?.transport || null}
+          stage={!!live?.soundOnTv && soundOn}
+          qKey={presentQKey}
+          volume={live?.volume ?? 100}
+          whoknows={live?.whoknows || null}
+          anythingle={live?.anythingle || null}
+          tally={live?.tally || null}
+          review={liveCurrent && !!live?.review}
+        />
+      </div>
+    </div>,
   );
 }
