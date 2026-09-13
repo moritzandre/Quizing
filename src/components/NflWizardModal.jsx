@@ -12,16 +12,39 @@
    ==================================================================== */
 
 import { useEffect, useMemo, useState } from "react";
-import { X, ListOrdered, Keyboard, ListChecks, Image as ImageIcon, Search, Plus, Check } from "lucide-react";
+import {
+  X,
+  ListOrdered,
+  Keyboard,
+  ListChecks,
+  Image as ImageIcon,
+  Search,
+  Plus,
+  Check,
+  ArrowUpDown,
+  Hash,
+  ToggleLeft,
+  Gavel,
+  LayoutGrid,
+} from "lucide-react";
 import { FOCUS, inputCls, Button } from "./ui.jsx";
 
 const KINDS = [
   { key: "toplist", icon: ListOrdered, label: "nfl.kind.toplist" },
   { key: "typeit", icon: Keyboard, label: "nfl.kind.typeit" },
   { key: "choice", icon: ListChecks, label: "nfl.kind.choice" },
+  { key: "number", icon: Hash, label: "nfl.kind.number" },
+  { key: "higherlower", icon: ArrowUpDown, label: "nfl.kind.higherlower" },
+  { key: "truefalse", icon: ToggleLeft, label: "nfl.kind.truefalse" },
   { key: "faces", icon: ImageIcon, label: "nfl.kind.faces" },
+  { key: "whoknows", icon: Gavel, label: "nfl.kind.whoknows" },
+  { key: "jeopardy", icon: LayoutGrid, label: "nfl.kind.jeopardy" },
 ];
 const DEFAULT_RANKS = [1, 3, 5, 8];
+/** Kinds whose question list is driven by the rank checkboxes. */
+const RANK_KINDS = ["typeit", "choice", "number"];
+/** Kinds that take a "how many entries" count. */
+const COUNT_KINDS = ["toplist", "faces", "whoknows"];
 
 /**
  * @param {object} props
@@ -65,7 +88,8 @@ export default function NflWizardModal({ onClose, onAdd, t }) {
   const finds = useMemo(() => (nfl && playerId ? nfl.nflPlayerFinds(playerId) : []), [nfl, playerId]);
 
   const add = (round) => {
-    if (!round || !(round.questions || []).length) return;
+    // jeopardy boards carry `categories`, every other kind `questions`
+    if (!round || !((round.questions || []).length || (round.categories || []).length)) return;
     onAdd(round);
     setAdded(true);
   };
@@ -75,7 +99,12 @@ export default function NflWizardModal({ onClose, onAdd, t }) {
     if (kind === "toplist") add(nfl.nflToplistRound(t, { ...opts, n: topN }));
     else if (kind === "typeit") add(nfl.nflRankTypeitRound(t, { ...opts, ranks: usableRanks }));
     else if (kind === "choice") add(nfl.nflChoiceRound(t, { ...opts, ranks: usableRanks }));
+    else if (kind === "number") add(nfl.nflNumberRound(t, { ...opts, ranks: usableRanks }));
+    else if (kind === "higherlower") add(nfl.nflHigherLowerRound(t, opts));
+    else if (kind === "truefalse") add(nfl.nflTrueFalseRound(t, opts));
     else if (kind === "faces") add(nfl.nflFacesRound(t, { ...opts, n: topN }));
+    else if (kind === "whoknows") add(nfl.nflWhoknowsRound(t, { ...opts, n: topN }));
+    else if (kind === "jeopardy") add(nfl.nflJeopardyRound(t, { season, facesCat: cat }));
   };
   const usableRanks = useMemo(
     () => ranks.filter((r) => nfl && nfl.nflRankUnambiguous(board, r)).sort((a, b) => a - b),
@@ -159,18 +188,18 @@ export default function NflWizardModal({ onClose, onAdd, t }) {
                         ))}
                       </select>
                     </label>
-                    {(kind === "toplist" || kind === "faces") && (
+                    {COUNT_KINDS.includes(kind) && (
                       <label className="text-xs font-medium text-stone-500 dark:text-stone-400">
                         {t("nfl.topN")}
                         <input
                           type="number"
                           min="3"
-                          max={kind === "toplist" ? 15 : 12}
+                          max={kind === "faces" ? 12 : 15}
                           className={`${inputCls} mt-1 block w-20`}
                           value={topN}
                           onChange={(e) =>
                             setTopN(
-                              Math.max(3, Math.min(kind === "toplist" ? 15 : 12, Math.round(+e.target.value) || 10)),
+                              Math.max(3, Math.min(kind === "faces" ? 12 : 15, Math.round(+e.target.value) || 10)),
                             )
                           }
                         />
@@ -196,7 +225,7 @@ export default function NflWizardModal({ onClose, onAdd, t }) {
                     ))}
                   </div>
 
-                  {(kind === "typeit" || kind === "choice") && (
+                  {RANK_KINDS.includes(kind) && (
                     <div className="mt-3">
                       <p className="mb-1.5 text-xs font-medium text-stone-500 dark:text-stone-400">
                         {t("nfl.ranksLabel")}
@@ -230,34 +259,37 @@ export default function NflWizardModal({ onClose, onAdd, t }) {
                     <div className="space-y-1">
                       {(kind === "faces"
                         ? board.filter((r) => r.face).slice(0, topN)
-                        : kind === "toplist"
+                        : COUNT_KINDS.includes(kind)
                           ? board.slice(0, topN)
-                          : usableRanks.map((r) => board[r - 1]).filter(Boolean)
-                      ).map((row) => (
-                        <div
-                          key={row.rank}
-                          className="flex items-center gap-2.5 rounded-lg border border-stone-200 px-2.5 py-1.5 text-sm dark:border-stone-800"
-                        >
-                          <span className="w-6 shrink-0 text-center font-pixel text-[10px] text-stone-400">
-                            {row.rank}
-                          </span>
-                          {kind === "faces" && row.face && (
-                            <img
-                              src={row.face}
-                              alt=""
-                              className="h-8 w-8 shrink-0 rounded-full bg-stone-100 object-cover dark:bg-stone-700"
-                            />
-                          )}
-                          <span className="min-w-0 flex-1 truncate font-medium">{row.name}</span>
-                          <span className="shrink-0 text-xs text-stone-400">
-                            {row.team}
-                            {row.pos ? ` · ${row.pos}` : ""}
-                          </span>
-                          <span className="shrink-0 text-xs tabular-nums text-stone-500 dark:text-stone-400">
-                            {row.valueLabel}
-                          </span>
-                        </div>
-                      ))}
+                          : RANK_KINDS.includes(kind)
+                            ? usableRanks.map((r) => board[r - 1]).filter(Boolean)
+                            : board.slice(0, 9)
+                      ) // higher/lower, true/false, jeopardy draw on the top of the board
+                        .map((row) => (
+                          <div
+                            key={row.rank}
+                            className="flex items-center gap-2.5 rounded-lg border border-stone-200 px-2.5 py-1.5 text-sm dark:border-stone-800"
+                          >
+                            <span className="w-6 shrink-0 text-center font-pixel text-[10px] text-stone-400">
+                              {row.rank}
+                            </span>
+                            {(kind === "faces" || kind === "jeopardy") && row.face && (
+                              <img
+                                src={row.face}
+                                alt=""
+                                className="h-8 w-8 shrink-0 rounded-full bg-stone-100 object-cover dark:bg-stone-700"
+                              />
+                            )}
+                            <span className="min-w-0 flex-1 truncate font-medium">{row.name}</span>
+                            <span className="shrink-0 text-xs text-stone-400">
+                              {row.team}
+                              {row.pos ? ` · ${row.pos}` : ""}
+                            </span>
+                            <span className="shrink-0 text-xs tabular-nums text-stone-500 dark:text-stone-400">
+                              {row.valueLabel}
+                            </span>
+                          </div>
+                        ))}
                     </div>
                   )}
                 </>

@@ -22,6 +22,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CACHE = join(ROOT, "scripts", ".nflcache");
 const OUT = join(ROOT, "src", "data", "nfl.stats.json");
+const OUT_QUIZ = join(ROOT, "src", "data", "nflQuiz.json");
 
 const FIRST_SEASON = 1999; // nflverse player-stats coverage starts here
 const TOP_N = 40; // deep enough for top-10 boards, "Nth most" up to ~25, and distractors
@@ -208,6 +209,19 @@ async function main() {
   const json = JSON.stringify(out);
   await writeFile(OUT, json, "utf8");
   console.log(`wrote ${OUT} (${(json.length / 1e6).toFixed(2)} MB, ${used.size} players)`);
+
+  // The built-in "NFL Night" showcase quiz: one round per NFL-capable format,
+  // baked with the SAME generators the Builder wizard uses (English text via
+  // the real i18n catalog), normalized so it round-trips byte-for-byte.
+  const { showcaseQuiz } = await import("../src/data/nflGen.js");
+  const { translate } = await import("../src/i18n/strings.js");
+  const { normalizeQuiz } = await import("../src/lib/model.js");
+  const t = (key, vars) => translate("en", key, vars);
+  const quiz = normalizeQuiz(showcaseQuiz(out, t));
+  if (!quiz) throw new Error("showcase quiz failed to normalize");
+  const qjson = JSON.stringify(quiz, null, 2);
+  await writeFile(OUT_QUIZ, qjson + "\n", "utf8");
+  console.log(`wrote ${OUT_QUIZ} (${quiz.rounds.length} rounds: ${quiz.rounds.map((r) => r.type).join(", ")})`);
 }
 
 main().catch((e) => {

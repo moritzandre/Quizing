@@ -1,0 +1,509 @@
+{
+  "id": "nfl",
+  "title": "NFL Night — Stats & Faces",
+  "sample": true,
+  "rounds": [
+    {
+      "id": "nfl-r1",
+      "type": "toplist",
+      "title": "NFL Top List — passing yards, 2025",
+      "timer": null,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r1q1",
+          "q": "The top 10: passing yards, 2025 season",
+          "entries": [
+            {
+              "name": "Matthew Stafford",
+              "aliases": ["Stafford"],
+              "value": "4,707 yds"
+            },
+            {
+              "name": "Jared Goff",
+              "aliases": ["Goff"],
+              "value": "4,564 yds"
+            },
+            {
+              "name": "Dak Prescott",
+              "aliases": ["Prescott"],
+              "value": "4,552 yds"
+            },
+            {
+              "name": "Drake Maye",
+              "aliases": ["Maye"],
+              "value": "4,394 yds"
+            },
+            {
+              "name": "Sam Darnold",
+              "aliases": ["Darnold"],
+              "value": "4,048 yds"
+            },
+            {
+              "name": "Trevor Lawrence",
+              "aliases": ["Lawrence"],
+              "value": "4,007 yds"
+            },
+            {
+              "name": "Caleb Williams",
+              "aliases": ["Williams"],
+              "value": "3,942 yds"
+            },
+            {
+              "name": "Bo Nix",
+              "aliases": ["Nix"],
+              "value": "3,931 yds"
+            },
+            {
+              "name": "Justin Herbert",
+              "aliases": ["Herbert"],
+              "value": "3,727 yds"
+            },
+            {
+              "name": "Baker Mayfield",
+              "aliases": ["Mayfield"],
+              "value": "3,693 yds"
+            }
+          ],
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "nfl-r2",
+      "type": "typeit",
+      "title": "NFL — passing yards, 2021",
+      "timer": null,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r2q1",
+          "q": "Who led the NFL in passing yards in the 2021 season?",
+          "answer": "Tom Brady",
+          "accept": ["Brady"],
+          "points": 10
+        },
+        {
+          "id": "nfl-r2q2",
+          "q": "Who had the 2nd-most passing yards in the 2021 season?",
+          "answer": "Justin Herbert",
+          "accept": ["Herbert"],
+          "points": 10
+        },
+        {
+          "id": "nfl-r2q3",
+          "q": "Who had the 3rd-most passing yards in the 2021 season?",
+          "answer": "Matthew Stafford",
+          "accept": ["Stafford"],
+          "points": 10
+        },
+        {
+          "id": "nfl-r2q4",
+          "q": "Who had the 5th-most passing yards in the 2021 season?",
+          "answer": "Derek Carr",
+          "accept": ["Carr"],
+          "points": 10
+        },
+        {
+          "id": "nfl-r2q5",
+          "q": "Who had the 8th-most passing yards in the 2021 season?",
+          "answer": "Josh Allen",
+          "accept": ["Allen"],
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "nfl-r3",
+      "type": "higherlower",
+      "title": "NFL Higher / Lower — rushing yards, 2025",
+      "timer": null,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r3q1",
+          "q": "In the 2025 season, Jonathan Taylor had 1,585 yds in rushing yards. Did James Cook have higher or lower?",
+          "correct": 0,
+          "points": 10,
+          "note": "James Cook: 1,621 yds (#1 that season)"
+        },
+        {
+          "id": "nfl-r3q2",
+          "q": "In the 2025 season, Derrick Henry had 1,595 yds in rushing yards. Did De'Von Achane have higher or lower?",
+          "correct": 1,
+          "points": 10,
+          "note": "De'Von Achane: 1,350 yds (#5 that season)"
+        },
+        {
+          "id": "nfl-r3q3",
+          "q": "In the 2025 season, Kyren Williams had 1,252 yds in rushing yards. Did Bijan Robinson have higher or lower?",
+          "correct": 0,
+          "points": 10,
+          "note": "Bijan Robinson: 1,478 yds (#4 that season)"
+        },
+        {
+          "id": "nfl-r3q4",
+          "q": "In the 2025 season, Christian McCaffrey had 1,202 yds in rushing yards. Did Derrick Henry have higher or lower?",
+          "correct": 0,
+          "points": 10,
+          "note": "Derrick Henry: 1,595 yds (#2 that season)"
+        },
+        {
+          "id": "nfl-r3q5",
+          "q": "In the 2025 season, De'Von Achane had 1,350 yds in rushing yards. Did Javonte Williams have higher or lower?",
+          "correct": 1,
+          "points": 10,
+          "note": "Javonte Williams: 1,201 yds (#9 that season)"
+        }
+      ]
+    },
+    {
+      "id": "nfl-r4",
+      "type": "number",
+      "title": "NFL Closest Guess — receiving yards, 2025",
+      "timer": null,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r4q1",
+          "q": "How many receiving yards did Jaxon Smith-Njigba have in the 2025 season?",
+          "answer": 1793,
+          "unit": "yds",
+          "points": 10
+        },
+        {
+          "id": "nfl-r4q2",
+          "q": "How many receiving yards did Puka Nacua have in the 2025 season?",
+          "answer": 1715,
+          "unit": "yds",
+          "points": 10
+        },
+        {
+          "id": "nfl-r4q3",
+          "q": "How many receiving yards did Ja'Marr Chase have in the 2025 season?",
+          "answer": 1412,
+          "unit": "yds",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "nfl-r5",
+      "type": "truefalse",
+      "title": "NFL True / False — sacks, 2023",
+      "timer": null,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r5q1",
+          "q": "T.J. Watt led the NFL in sacks in the 2023 season.",
+          "correct": 0,
+          "points": 10,
+          "note": "True — 19 sacks."
+        },
+        {
+          "id": "nfl-r5q2",
+          "q": "Trey Hendrickson led the NFL in sacks in the 2023 season.",
+          "correct": 1,
+          "points": 10,
+          "note": "False — T.J. Watt led with 19 sacks; Trey Hendrickson had 17.5 sacks (#3)."
+        },
+        {
+          "id": "nfl-r5q3",
+          "q": "Josh Hines-Allen led the NFL in sacks in the 2023 season.",
+          "correct": 1,
+          "points": 10,
+          "note": "False — T.J. Watt led with 19 sacks; Josh Hines-Allen had 17.5 sacks (#2)."
+        },
+        {
+          "id": "nfl-r5q4",
+          "q": "Maxx Crosby led the NFL in sacks in the 2023 season.",
+          "correct": 1,
+          "points": 10,
+          "note": "False — T.J. Watt led with 19 sacks; Maxx Crosby had 14.5 sacks (#6)."
+        }
+      ]
+    },
+    {
+      "id": "nfl-r6",
+      "type": "choice",
+      "title": "NFL — receiving touchdowns, 2022",
+      "timer": null,
+      "reveal": "end",
+      "questions": [
+        {
+          "id": "nfl-r6q1",
+          "q": "Who led the NFL in receiving touchdowns in the 2022 season?",
+          "options": ["Davante Adams", "Travis Kelce", "A.J. Brown", "George Kittle"],
+          "correct": 0,
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "nfl-r7",
+      "type": "image",
+      "title": "NFL Faces — rushing yards, 2025",
+      "timer": null,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r7q1",
+          "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4379399.png",
+          "q": "Who is this? (a 2025 rushing yards leader)",
+          "a": "James Cook (BUF · RB)",
+          "points": 10
+        },
+        {
+          "id": "nfl-r7q2",
+          "url": "https://a.espncdn.com/i/headshots/nfl/players/full/3043078.png",
+          "q": "Who is this? (a 2025 rushing yards leader)",
+          "a": "Derrick Henry (BAL · RB)",
+          "points": 10
+        },
+        {
+          "id": "nfl-r7q3",
+          "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4242335.png",
+          "q": "Who is this? (a 2025 rushing yards leader)",
+          "a": "Jonathan Taylor (IND · RB)",
+          "points": 10
+        },
+        {
+          "id": "nfl-r7q4",
+          "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4430807.png",
+          "q": "Who is this? (a 2025 rushing yards leader)",
+          "a": "Bijan Robinson (ATL · RB)",
+          "points": 10
+        },
+        {
+          "id": "nfl-r7q5",
+          "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4429160.png",
+          "q": "Who is this? (a 2025 rushing yards leader)",
+          "a": "De'Von Achane (MIA · RB)",
+          "points": 10
+        },
+        {
+          "id": "nfl-r7q6",
+          "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4430737.png",
+          "q": "Who is this? (a 2025 rushing yards leader)",
+          "a": "Kyren Williams (LA · RB)",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "nfl-r8",
+      "type": "jeopardy",
+      "title": "NFL Jeopardy — 2025 leaders",
+      "timer": null,
+      "categories": [
+        {
+          "id": "nfl-r8c1",
+          "name": "passing yards 2025",
+          "questions": [
+            {
+              "id": "nfl-r8c1q1",
+              "clue": "The NFL's 1st-ranked player in passing yards in 2025, with 4,707 yds.",
+              "media": null,
+              "answer": "Matthew Stafford",
+              "points": 100
+            },
+            {
+              "id": "nfl-r8c1q2",
+              "clue": "The NFL's 2nd-ranked player in passing yards in 2025, with 4,564 yds.",
+              "media": null,
+              "answer": "Jared Goff",
+              "points": 200
+            },
+            {
+              "id": "nfl-r8c1q3",
+              "clue": "The NFL's 3rd-ranked player in passing yards in 2025, with 4,552 yds.",
+              "media": null,
+              "answer": "Dak Prescott",
+              "points": 300
+            },
+            {
+              "id": "nfl-r8c1q4",
+              "clue": "The NFL's 4th-ranked player in passing yards in 2025, with 4,394 yds.",
+              "media": null,
+              "answer": "Drake Maye",
+              "points": 400
+            },
+            {
+              "id": "nfl-r8c1q5",
+              "clue": "The NFL's 5th-ranked player in passing yards in 2025, with 4,048 yds.",
+              "media": null,
+              "answer": "Sam Darnold",
+              "points": 500
+            }
+          ]
+        },
+        {
+          "id": "nfl-r8c2",
+          "name": "rushing yards 2025",
+          "questions": [
+            {
+              "id": "nfl-r8c2q1",
+              "clue": "The NFL's 1st-ranked player in rushing yards in 2025, with 1,621 yds.",
+              "media": null,
+              "answer": "James Cook",
+              "points": 100
+            },
+            {
+              "id": "nfl-r8c2q2",
+              "clue": "The NFL's 2nd-ranked player in rushing yards in 2025, with 1,595 yds.",
+              "media": null,
+              "answer": "Derrick Henry",
+              "points": 200
+            },
+            {
+              "id": "nfl-r8c2q3",
+              "clue": "The NFL's 3rd-ranked player in rushing yards in 2025, with 1,585 yds.",
+              "media": null,
+              "answer": "Jonathan Taylor",
+              "points": 300
+            },
+            {
+              "id": "nfl-r8c2q4",
+              "clue": "The NFL's 4th-ranked player in rushing yards in 2025, with 1,478 yds.",
+              "media": null,
+              "answer": "Bijan Robinson",
+              "points": 400
+            },
+            {
+              "id": "nfl-r8c2q5",
+              "clue": "The NFL's 5th-ranked player in rushing yards in 2025, with 1,350 yds.",
+              "media": null,
+              "answer": "De'Von Achane",
+              "points": 500
+            }
+          ]
+        },
+        {
+          "id": "nfl-r8c3",
+          "name": "receiving yards 2025",
+          "questions": [
+            {
+              "id": "nfl-r8c3q1",
+              "clue": "The NFL's 1st-ranked player in receiving yards in 2025, with 1,793 yds.",
+              "media": null,
+              "answer": "Jaxon Smith-Njigba",
+              "points": 100
+            },
+            {
+              "id": "nfl-r8c3q2",
+              "clue": "The NFL's 2nd-ranked player in receiving yards in 2025, with 1,715 yds.",
+              "media": null,
+              "answer": "Puka Nacua",
+              "points": 200
+            },
+            {
+              "id": "nfl-r8c3q3",
+              "clue": "The NFL's 3rd-ranked player in receiving yards in 2025, with 1,429 yds.",
+              "media": null,
+              "answer": "George Pickens",
+              "points": 300
+            },
+            {
+              "id": "nfl-r8c3q4",
+              "clue": "The NFL's 4th-ranked player in receiving yards in 2025, with 1,412 yds.",
+              "media": null,
+              "answer": "Ja'Marr Chase",
+              "points": 400
+            },
+            {
+              "id": "nfl-r8c3q5",
+              "clue": "The NFL's 5th-ranked player in receiving yards in 2025, with 1,401 yds.",
+              "media": null,
+              "answer": "Amon-Ra St. Brown",
+              "points": 500
+            }
+          ]
+        },
+        {
+          "id": "nfl-r8c4",
+          "name": "Faces 2025",
+          "questions": [
+            {
+              "id": "nfl-r8c4q1",
+              "clue": "Who is this NFL player?",
+              "media": {
+                "type": "image",
+                "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4430878.png"
+              },
+              "answer": "Jaxon Smith-Njigba (SEA · WR)",
+              "points": 100
+            },
+            {
+              "id": "nfl-r8c4q2",
+              "clue": "Who is this NFL player?",
+              "media": {
+                "type": "image",
+                "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4426515.png"
+              },
+              "answer": "Puka Nacua (LA · WR)",
+              "points": 200
+            },
+            {
+              "id": "nfl-r8c4q3",
+              "clue": "Who is this NFL player?",
+              "media": {
+                "type": "image",
+                "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4426354.png"
+              },
+              "answer": "George Pickens (DAL · WR)",
+              "points": 300
+            },
+            {
+              "id": "nfl-r8c4q4",
+              "clue": "Who is this NFL player?",
+              "media": {
+                "type": "image",
+                "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4362628.png"
+              },
+              "answer": "Ja'Marr Chase (CIN · WR)",
+              "points": 400
+            },
+            {
+              "id": "nfl-r8c4q5",
+              "clue": "Who is this NFL player?",
+              "media": {
+                "type": "image",
+                "url": "https://a.espncdn.com/i/headshots/nfl/players/full/4374302.png"
+              },
+              "answer": "Amon-Ra St. Brown (DET · WR)",
+              "points": 500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nfl-r9",
+      "type": "whoknows",
+      "title": "NFL Who Knows More — receptions, 2024",
+      "timer": 20,
+      "reveal": "each",
+      "questions": [
+        {
+          "id": "nfl-r9q1",
+          "q": "Name players in the top 10 for receptions in the 2024 season",
+          "answers": [
+            "Ja'Marr Chase (127 rec)",
+            "Amon-Ra St. Brown (115 rec)",
+            "Brock Bowers (112 rec)",
+            "Trey McBride (111 rec)",
+            "Malik Nabers (109 rec)",
+            "Justin Jefferson (103 rec)",
+            "CeeDee Lamb (101 rec)",
+            "Garrett Wilson (101 rec)",
+            "Drake London (100 rec)",
+            "Jaxon Smith-Njigba (100 rec)"
+          ],
+          "ordered": true,
+          "points": 2
+        }
+      ]
+    }
+  ]
+}

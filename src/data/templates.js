@@ -10,6 +10,8 @@
    shows each template's own title and round type.
    ==================================================================== */
 
+import { NFL_QUIZ } from "./nflQuiz.js";
+
 /** One starter round per format. Pickers show `round.title` + the type icon. */
 export const ROUND_TEMPLATES = [
   {
@@ -471,6 +473,13 @@ export const QUIZ_TEMPLATES = [
         roundTpl("jeopardy-board"),
       ],
     },
+  },
+  {
+    // An editable copy of the built-in NFL showcase (baked by `npm run nfl:refresh`
+    // from the real nflverse snapshot with the Builder wizard's own generators).
+    key: "nfl-night",
+    title: "NFL Night — Stats & Faces (real data)",
+    quiz: { title: NFL_QUIZ.title, rounds: NFL_QUIZ.rounds },
   },
 ];
 

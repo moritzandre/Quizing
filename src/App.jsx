@@ -42,6 +42,7 @@ import {
 } from "./lib/model.js";
 import { SAMPLE } from "./data/sampleQuiz.js";
 import { NERD_QUIZ } from "./data/nerdQuiz.js";
+import { NFL_QUIZ } from "./data/nflQuiz.js";
 import { QUIZ_TEMPLATES, AI_SCHEMA_HELP } from "./data/templates.js";
 import {
   FOCUS,
@@ -462,7 +463,7 @@ function App() {
     })();
   }, []);
 
-  const allQuizzes = [SAMPLE, NERD_QUIZ, ...quizzes];
+  const allQuizzes = [SAMPLE, NERD_QUIZ, NFL_QUIZ, ...quizzes];
 
   /* refs so the hash resolver reads the latest data without re-subscribing */
   const gameRef = useRef(game);
@@ -508,7 +509,7 @@ function App() {
         // longer "in progress" — match the home screen's resume gating.
         setView(gameRef.current && gameRef.current.stage !== "end" ? { name: "play" } : { name: "home" });
       } else if (seg === "setup") {
-        const quiz = [SAMPLE, NERD_QUIZ, ...quizzesRef.current].find((q) => q.id === arg);
+        const quiz = [SAMPLE, NERD_QUIZ, NFL_QUIZ, ...quizzesRef.current].find((q) => q.id === arg);
         setView(quiz ? { name: "setup", quiz } : { name: "home" });
       } else if (seg === "leaderboard") {
         setView({ name: "leaderboard" });
