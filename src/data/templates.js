@@ -291,6 +291,27 @@ export const ROUND_TEMPLATES = [
     },
   },
   {
+    key: "top-list",
+    type: "toplist",
+    round: {
+      type: "toplist",
+      title: "Top List",
+      questions: [
+        {
+          q: "The 5 most populous countries",
+          points: 10,
+          entries: [
+            { name: "India", aliases: [], value: "≈1.44 bn" },
+            { name: "China", aliases: [], value: "≈1.41 bn" },
+            { name: "United States", aliases: ["USA", "US", "America"], value: "≈0.34 bn" },
+            { name: "Indonesia", aliases: [], value: "≈0.28 bn" },
+            { name: "Pakistan", aliases: [], value: "≈0.25 bn" },
+          ],
+        },
+      ],
+    },
+  },
+  {
     key: "number-guess",
     type: "number",
     round: {
@@ -487,6 +508,8 @@ const ROUND_SHAPES = {
     'questions: [{ "q": string, "answer": string (the canonical answer), "accept": [string,...] (alternative spellings/synonyms that also score — case & accents are ignored, so no need to list case variants), "points": number }]   // players type on their phones; EVERY correct speller scores (no buzzer race)',
   spectrum:
     'questions: [{ "q": string (the prompt/clue), "left": string (left-pole label), "right": string (right-pole label), "target": number 0-100 (the HIDDEN correct spot on the scale), "band": number 1-50 (half-width of the full-points zone), "points": number }]   // players slide 0-100 to guess the hidden target; graduated banded scoring (closer = more), several can score',
+  toplist:
+    'questions: [{ "q": string (the list title, e.g. "The 10 most populous countries"), "entries": [{ "name": string, "aliases": [string,...] (alt spellings/short forms), "value": string (shown on reveal, e.g. "1.44 bn") }, ...] (2-15, RANK #1 FIRST), "points": number (per found entry) }]   // Tenable-style hidden board: players take turns naming entries; a hit flips its slot and keeps the streak, a miss passes the turn',
 };
 
 /**
@@ -534,5 +557,6 @@ Round types and their question shapes:
 - "number":   questions: [{ "q": string, "answer": number, "unit": string, "points": number }]
 - "typeit":   questions: [{ "q": string, "answer": string, "accept": [string,...] (alt spellings/synonyms that also score; case & accents ignored), "points": number }]   // players type on their phones; every correct speller scores
 - "spectrum": questions: [{ "q": string, "left": string (left pole), "right": string (right pole), "target": number 0-100 (hidden spot), "band": number 1-50 (full-points half-width), "points": number }]   // players slide 0-100 to find the hidden target; closer scores more, several can score
+- "toplist":  questions: [{ "q": string (the list title), "entries": [{ "name": string, "aliases": [string,...], "value": string (shown on reveal) }, ...] (2-15, rank #1 first), "points": number (per found entry) }]   // Tenable-style hidden top board: turns, streaks, a miss passes the turn
 
 Rules: omit "id" fields (they are generated). Use real, publicly reachable image/video URLs, or leave url empty for the host to fill in. Keep 3-6 questions per round. Make answers unambiguous.`;

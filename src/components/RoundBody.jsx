@@ -58,6 +58,7 @@ export default function RoundBody({
   volume = 100,
   whoknows = null,
   anythingle = null,
+  toplist = null,
   tally = null,
   review = false,
 }) {
@@ -360,6 +361,66 @@ export default function RoundBody({
         {revealed && reveal?.target != null && (
           <p className={`${answerCls} md:text-3xl`}>{t("play.spectrumTargetAt", { n: reveal.target })}</p>
         )}
+      </div>
+    );
+  }
+
+  if (type === "toplist") {
+    const tll = toplist || {};
+    const foundMap = new Map((Array.isArray(tll.found) ? tll.found : []).map((f) => [f.i, f]));
+    const full = revealed && Array.isArray(reveal?.entries) ? reveal.entries : null;
+    const n = full ? full.length : Math.max(q.count || 0, foundMap.size);
+    return (
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <Q>{q.q}</Q>
+        {!revealed && tll.active && (
+          <p className="mt-2 inline-flex items-center justify-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+            <Avatar color={tll.active.color} emoji={tll.active.emoji} name={tll.active.name} size={20} />
+            {t("play.anyTurn", { name: tll.active.name })}
+          </p>
+        )}
+        <div className="qn-scroll mx-auto mt-5 min-h-0 w-full max-w-3xl flex-1 overflow-y-auto">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {Array.from({ length: n }, (_, i) => {
+              const f = foundMap.get(i);
+              const entry = f || (full ? full[i] : null);
+              const missed = revealed && !f;
+              return (
+                <div
+                  key={i}
+                  className={`flex items-center gap-3 rounded-2xl border px-4 py-2.5 text-left ${
+                    f
+                      ? "qn-fade-up border-yellow-400 bg-yellow-50 dark:border-yellow-500/50 dark:bg-yellow-500/10"
+                      : missed
+                        ? "border-stone-200 bg-white opacity-70 dark:border-stone-800 dark:bg-stone-900"
+                        : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+                  }`}
+                >
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-pixel text-[10px] ${
+                      f
+                        ? "bg-yellow-500 text-white"
+                        : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  {entry ? (
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium md:text-lg">{entry.name}</span>
+                      {entry.value && <span className="block truncate text-xs text-stone-400">{entry.value}</span>}
+                    </span>
+                  ) : (
+                    <span className="min-w-0 flex-1 text-left tracking-widest text-stone-300 dark:text-stone-600">
+                      · · ·
+                    </span>
+                  )}
+                  {f?.by && <Avatar color={f.by.color} emoji={f.by.emoji} name={f.by.name} size={24} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   }

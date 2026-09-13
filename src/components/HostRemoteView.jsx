@@ -154,6 +154,7 @@ export default function HostRemoteView({ code }) {
               qKey={`${present.ri ?? 0}-${present.qi ?? 0}`}
               whoknows={live?.whoknows || null}
               anythingle={live?.anythingle || null}
+              toplist={live?.toplist || null}
               tally={live?.tally || null}
               review={!!live?.review}
             />
@@ -327,6 +328,39 @@ export default function HostRemoteView({ code }) {
               <ArrowRight size={18} /> {t("play.anyAdvance")}
             </button>
             <p className="text-center text-[11px] text-stone-400 dark:text-stone-500">{t("play.anyRemoteHint")}</p>
+          </div>
+        )}
+        {stage === "question" && type === "toplist" && !revealed && (
+          <div className="col-span-2 space-y-2">
+            {/* the full hidden board rides the host-only topic — tap what was named */}
+            <div className="grid grid-cols-1 gap-1.5">
+              {(hostAux?.toplist?.entries || []).map((e, i) => {
+                const isFound = (liveCurrent ? live?.toplist?.found || [] : []).some((f) => f.i === i);
+                return (
+                  <button
+                    key={i}
+                    disabled={isFound}
+                    onClick={() => sendCtrl("topHit", { i })}
+                    className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm transition active:scale-[.98] ${FOCUS} ${
+                      isFound
+                        ? "border-yellow-400 bg-yellow-50 opacity-70 dark:border-yellow-500/50 dark:bg-yellow-500/10"
+                        : "border-stone-200 bg-white dark:border-stone-700 dark:bg-stone-900"
+                    }`}
+                  >
+                    <span className="w-6 shrink-0 text-center font-pixel text-[10px] text-stone-400">{i + 1}</span>
+                    <span className="min-w-0 flex-1 truncate font-medium">{e.name}</span>
+                    {e.value && <span className="shrink-0 text-xs text-stone-400">{e.value}</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => sendCtrl("topMiss")}
+              className={`w-full border border-stone-300 dark:border-stone-700 ${btn} ${FOCUS}`}
+            >
+              <ArrowRight size={18} /> {t("play.topMiss")}
+            </button>
+            <p className="text-center text-[11px] text-stone-400 dark:text-stone-500">{t("play.topTapHint")}</p>
           </div>
         )}
         {stage === "question" && type !== "whoknows" && (

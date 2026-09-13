@@ -276,14 +276,22 @@ export default function PlayView({ game, setGame, onExit, room }) {
     anyCacheRef.current = {};
     // Seed a fresh board only for a genuinely NEW question — keyed by qKey so a
     // reload/remount of the SAME question keeps the persisted board (guesses,
-    // turn, solve) instead of wiping it. `qKey` rides game.anythingle (and
-    // survives normalizeGame), so the restored board matches on remount.
+    // turn, solve) instead of wiping it. `qKey` rides game.anythingle/game.toplist
+    // (and survives normalizeGame), so the restored board matches on remount.
+    // ONE combined patch — two upd() calls in the same tick would clobber.
+    const patch = {};
     if (round?.type === "anythingle" && game.stage === "question") {
       if (game.anythingle?.qKey !== qKey)
-        upd({ anythingle: { qKey, order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null } });
+        patch.anythingle = { qKey, order: anyTurnOrder(game.players), turn: 0, guesses: [], solvedBy: null };
     } else if (game.anythingle) {
-      upd({ anythingle: null });
+      patch.anythingle = null;
     }
+    if (round?.type === "toplist" && game.stage === "question") {
+      if (game.toplist?.qKey !== qKey) patch.toplist = { qKey, order: anyTurnOrder(game.players), turn: 0, found: [] };
+    } else if (game.toplist) {
+      patch.toplist = null;
+    }
+    if (Object.keys(patch).length) upd(patch);
   }, [qKey, timerSecs]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A buzz auto-pauses the clip on whichever screen is the stage (host or TV).
@@ -322,7 +330,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       // Slider phase — the poles ride in `options` so the phone can label the ends.
       const sq = round.questions[game.qi];
       room.collectAnswers(qKey, { phase: "slider", options: [sq?.left || "", sq?.right || ""] });
-    } else if (round?.type === "whoknows" || round?.type === "anythingle") {
+    } else if (round?.type === "whoknows" || round?.type === "anythingle" || round?.type === "toplist") {
       room.idle(); // host-driven rounds — phones aren't used for input
     } else if (batched) {
       // Pub-quiz collect pass for the buzz-style types (classic/hints/connect/
@@ -381,6 +389,9 @@ export default function PlayView({ game, setGame, onExit, room }) {
   const anySig = game.anythingle
     ? `${game.anythingle.turn}:${game.anythingle.guesses.length}:${game.anythingle.solvedBy}`
     : "";
+  // Top-List board signature: a found slot / passed turn changes neither the score
+  // nor `revealed`, so without this the TV + host-remote would freeze on a stale board.
+  const topSig = game.toplist ? `${game.toplist.turn}:${game.toplist.found.length}` : "";
   // The secret's quote hint: its own (authored) quote, else a DB lookup by name —
   // so a target saved before quotes existed (or a custom one) still gets a hint.
   const anyQuote = (() => {
@@ -449,7 +460,7 @@ export default function PlayView({ game, setGame, onExit, room }) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft, crowdSig, reviewing]); // prettier-ignore
+  }, [buzzerOn, game.stage, game.revealed, game.hintsShown, morphStep, morphStreamP, morphRunning, showStandings, recap, recapVariant, value, qKey, scoreSig, anySig, topSig, anyDbReady, transport.n, soundOnTv, volume, wk, wkLeft, crowdSig, reviewing]); // prettier-ignore
 
   // Mirror the standings onto phones so each player sees their own live score +
   // rank. deviceIds let a phone find its entity; pushed whenever scores change.
@@ -797,6 +808,46 @@ export default function PlayView({ game, setGame, onExit, room }) {
     upd({ revealed: true });
   };
 
+  /* ---- Top-List handlers (host-driven Tenable board) ---- */
+  // The active player named entry `i`: flip its slot, award them the per-hit
+  // points, and KEEP their turn (the streak). Functional setGame so a coalesced
+  // burst of host-remote taps composes instead of clobbering; when the last slot
+  // falls the board auto-reveals (nothing is left hidden).
+  const topHit = (i) => {
+    const q = round?.questions?.[game.qi];
+    if (!q || game.revealed || round?.type !== "toplist") return;
+    if (!Number.isInteger(i) || i < 0 || i >= (q.entries || []).length) return;
+    const pts = ptsOr(q.points, 10);
+    let sound = null;
+    setGame((prev) => {
+      const tl = prev.toplist || { qKey, order: anyTurnOrder(prev.players), turn: 0, found: [] };
+      if (tl.found.some((f) => f.i === i)) return prev; // slot already flipped
+      const order = tl.order.length ? tl.order : anyTurnOrder(prev.players);
+      const byId = order[tl.turn % (order.length || 1)] || null;
+      const awarded = { ...(prev.awarded || {}) };
+      if (byId) awarded[byId] = (awarded[byId] || 0) + pts;
+      const players = byId
+        ? prev.players.map((p) => (p.id === byId ? { ...p, score: p.score + pts } : p))
+        : prev.players;
+      const complete = tl.found.length + 1 >= (q.entries || []).length;
+      sound = complete ? "reveal" : "correct";
+      return {
+        ...prev,
+        toplist: { ...tl, order, found: [...tl.found, { i, by: byId }] },
+        awarded,
+        players,
+        revealed: complete ? true : prev.revealed,
+      };
+    });
+    if (sound) playSound(sound);
+  };
+  // Miss / pass: the named entry wasn't on the board — the turn moves on.
+  const topMiss = () => {
+    if (game.revealed || round?.type !== "toplist") return;
+    playSound("wrong");
+    setGame((prev) => (prev.toplist ? { ...prev, toplist: { ...prev.toplist, turn: prev.toplist.turn + 1 } } : prev));
+  };
+
   /* ---- "Who Knows More" handlers ---- */
   // Award the category to the auction winner and start their per-answer clock.
   const wkAward = () => {
@@ -1096,6 +1147,13 @@ export default function PlayView({ game, setGame, onExit, room }) {
           break;
         case "anyAdvance":
           if (round?.type === "anythingle") anyAdvance();
+          break;
+        // ---- Top-List (host remote taps the named entry / passes the turn) ----
+        case "topHit":
+          if (round?.type === "toplist" && game.stage === "question" && Number.isInteger(a.i)) topHit(a.i);
+          break;
+        case "topMiss":
+          if (round?.type === "toplist" && game.stage === "question") topMiss();
           break;
         default:
           break;
@@ -2770,6 +2828,91 @@ export default function PlayView({ game, setGame, onExit, room }) {
               )}
               <Button variant="outline" className="px-4 py-2.5" onClick={revealAnythingle}>
                 <Eye size={16} /> {t("play.anyReveal")}
+              </Button>
+            </>
+          )}
+          {game.revealed && NextBtn}
+        </div>
+      </div>
+    );
+  }
+
+  if (round.type === "toplist") {
+    const tl = game.toplist || { order: [], turn: 0, found: [] };
+    const order = tl.order.length ? tl.order : anyTurnOrder(game.players);
+    const activeId = order[tl.turn % (order.length || 1)];
+    const active = !game.revealed ? game.players.find((p) => p.id === activeId) || null : null;
+    const foundBy = new Map(tl.found.map((f) => [f.i, f.by]));
+    const entries = q.entries || [];
+    body = (
+      <div className="flex h-full min-h-0 flex-col text-center">
+        <div className="shrink-0">
+          {Progress}
+          {TimerPill}
+          <h2 className="mx-auto max-w-2xl text-2xl font-bold leading-snug tracking-tight md:text-4xl">{q.q}</h2>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+            {active && (
+              <p className="inline-flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+                <Avatar color={active.color} emoji={active.emoji} name={active.name} size={20} />
+                {t("play.anyTurn", { name: active.name })}
+              </p>
+            )}
+            <span className="rounded-full bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-300">
+              {t("play.topFound", { n: tl.found.length, total: entries.length })}
+            </span>
+          </div>
+          {!game.revealed && <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{t("play.topTapHint")}</p>}
+        </div>
+
+        {/* the board — the HOST sees every entry (same trust model as whoknows);
+            tap = the active player named it; found slots show the finder */}
+        <div className="qn-scroll mx-auto mt-4 w-full max-w-2xl min-h-0 flex-1 overflow-y-auto">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {entries.map((e, i) => {
+              const isFound = foundBy.has(i);
+              const finder = isFound ? game.players.find((p) => p.id === foundBy.get(i)) : null;
+              const missed = game.revealed && !isFound;
+              return (
+                <button
+                  key={i}
+                  disabled={isFound || game.revealed}
+                  onClick={() => topHit(i)}
+                  className={`flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-sm transition ${FOCUS} ${
+                    isFound
+                      ? "border-yellow-400 bg-yellow-50 dark:border-yellow-500/50 dark:bg-yellow-500/10"
+                      : missed
+                        ? "border-stone-200 bg-white opacity-60 dark:border-stone-800 dark:bg-stone-900"
+                        : "border-stone-200 bg-white hover:border-yellow-400 active:scale-[0.99] dark:border-stone-800 dark:bg-stone-900 dark:hover:border-yellow-500/60"
+                  }`}
+                >
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-pixel text-[10px] ${
+                      isFound
+                        ? "bg-yellow-500 text-white"
+                        : "bg-stone-100 text-stone-500 dark:bg-stone-700 dark:text-stone-200"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">{e.name || "—"}</span>
+                    {e.value && <span className="block truncate text-xs text-stone-400">{e.value}</span>}
+                  </span>
+                  {finder && <Avatar color={finder.color} emoji={finder.emoji} name={finder.name} size={22} />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-4 flex shrink-0 flex-wrap justify-center gap-2">
+          {!game.revealed && (
+            <>
+              <Button variant="outline" className="px-4 py-2.5" onClick={topMiss}>
+                <X size={16} /> {t("play.topMiss")}
+              </Button>
+              <Button variant="outline" className="px-4 py-2.5" onClick={() => revealCurrent(q)}>
+                <Eye size={16} /> {t("play.topRevealRest")}
               </Button>
             </>
           )}

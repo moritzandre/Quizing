@@ -998,6 +998,100 @@ describe("matchTyped (Type It grading)", () => {
   });
 });
 
+describe("toplist (Tenable board)", () => {
+  const tlQuiz = {
+    rounds: [
+      {
+        type: "toplist",
+        questions: [
+          {
+            q: "Top 3 longest rivers",
+            points: 15,
+            entries: [
+              { name: "Nile", aliases: ["The Nile", "", "  "], value: 6650 },
+              { name: "Amazon", aliases: [], value: "6400 km" },
+              { name: "Yangtze", aliases: [], value: "6300 km" },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const players = [
+    { id: "p1", name: "Ann", score: 0 },
+    { id: "p2", name: "Bob", score: 0 },
+  ];
+  const tlGame = (over = {}) =>
+    normalizeGame({
+      quiz: tlQuiz,
+      players,
+      stage: "question",
+      ri: 0,
+      qi: 0,
+      toplist: { qKey: "0-0", order: ["p1", "p2"], turn: 1, found: [{ i: 0, by: "p1" }, { i: 0, by: "p2" }, { i: 2 }] },
+      ...over,
+    });
+
+  it("normalizes entries: caps at 15, cleans aliases, coerces numeric values", () => {
+    const q = normalizeQuiz(tlQuiz).rounds[0].questions[0];
+    expect(q.entries).toHaveLength(3);
+    expect(q.entries[0]).toEqual({ name: "Nile", aliases: ["The Nile"], value: "6650" });
+    expect(q.points).toBe(15);
+    const many = normalizeQuiz({
+      rounds: [
+        {
+          type: "toplist",
+          questions: [{ q: "Q", entries: Array.from({ length: 20 }, (_, i) => ({ name: `E${i}` })) }],
+        },
+      ],
+    });
+    expect(many.rounds[0].questions[0].entries).toHaveLength(15);
+  });
+
+  it("normalizeGame round-trips the board state, dedupes found slots, drops unknown ids", () => {
+    const g = tlGame();
+    expect(g.toplist.order).toEqual(["p1", "p2"]);
+    expect(g.toplist.turn).toBe(1);
+    expect(g.toplist.found).toEqual([
+      { i: 0, by: "p1" },
+      { i: 2, by: null },
+    ]); // duplicate slot 0 dropped; missing `by` → null
+    expect(normalizeGame({ quiz: tlQuiz, players }).toplist).toBe(null); // old saves
+  });
+
+  it("present carries only the prompt + slot count — never the entries", () => {
+    const present = buildPresentQ(tlGame());
+    expect(present.q).toMatchObject({ q: "Top 3 longest rivers", count: 3, points: 15 });
+    expect(JSON.stringify(present)).not.toContain("Nile");
+    expect(JSON.stringify(present)).not.toContain("Amazon");
+    const p = normalizePresent(present);
+    expect(p.q.count).toBe(3); // survives the untrusted-payload validator
+  });
+
+  it("live carries only FOUND slots (+ whose turn); reveal carries the full list", () => {
+    const live = buildLive(tlGame());
+    expect(live.toplist.active?.name).toBe("Bob"); // turn 1 of [p1, p2]
+    expect(live.toplist.found).toEqual([
+      { i: 0, name: "Nile", value: "6650", by: { name: "Ann", color: null, emoji: null } },
+      { i: 2, name: "Yangtze", value: "6300 km", by: null },
+    ]);
+    expect(JSON.stringify(live)).not.toContain("Amazon"); // unfound entry never leaks
+    const nl = normalizeLive(live);
+    expect(nl.toplist.found).toHaveLength(2);
+    expect(nl.toplist.found[0].name).toBe("Nile");
+    // reveal: the full ranked list arrives only once the host ends the board
+    const revealed = buildLive(tlGame({ revealed: true }));
+    expect(revealed.reveal.entries.map((e) => e.name)).toEqual(["Nile", "Amazon", "Yangtze"]);
+    expect(normalizeLive(revealed).reveal.entries).toHaveLength(3);
+  });
+
+  it("hostAux carries the full board for the host remote (never the TV)", () => {
+    const aux = buildHostAux(tlGame());
+    expect(aux.toplist.entries.map((e) => e.name)).toEqual(["Nile", "Amazon", "Yangtze"]);
+    expect(normalizeHostAux(aux).toplist.entries).toHaveLength(3);
+  });
+});
+
 describe("spectrumScore (Spectrum bands)", () => {
   it("full points inside the bullseye band, tapering outward, zero far away", () => {
     expect(spectrumScore(50, 50, 10, 15)).toBe(10); // dead-on

@@ -209,6 +209,7 @@ export default function PresenterView({ code }) {
           volume={live?.volume ?? 100}
           whoknows={live?.whoknows || null}
           anythingle={live?.anythingle || null}
+          toplist={liveCurrent ? live?.toplist || null : null}
           tally={live?.tally || null}
           review={liveCurrent && !!live?.review}
         />

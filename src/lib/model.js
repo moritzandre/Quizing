@@ -29,6 +29,7 @@ export const ROUND_TYPES = [
   "crowdsays",
   "typeit",
   "spectrum",
+  "toplist",
 ];
 
 /** Round types that reuse the phone "choice" machinery (auto-scored fixed options). */
@@ -807,6 +808,16 @@ export function makeQuestion(type) {
       // Estimate-on-a-spectrum: a hidden 0–100 target between two labelled poles;
       // players slide to guess and score by graduated bands (spectrumScore).
       return { id: uid(), q: "", left: "", right: "", target: 50, band: 15, points: 10 };
+    case "toplist":
+      // Tenable-style hidden top-N board: entries[0] is rank #1. Host-run turns
+      // (trailing-first): a correct call flips its slot and keeps the streak, a
+      // miss passes the turn; every hit is worth `points`.
+      return {
+        id: uid(),
+        q: "",
+        entries: Array.from({ length: 5 }, () => ({ name: "", aliases: [], value: "" })),
+        points: 10,
+      };
     default:
       return { id: uid() };
   }
@@ -980,6 +991,20 @@ export function normalizeQuiz(raw) {
               band: Math.max(1, Math.min(50, Math.round(num(q?.band, 15)))),
               points: num(q?.points, 10),
             });
+          if (r.type === "toplist")
+            Object.assign(it, {
+              q: str(q?.q),
+              // entries[0] = rank #1; 2..15 slots, each with alt spellings like typeit's accept.
+              entries: (Array.isArray(q?.entries) ? q.entries : []).slice(0, 15).map((e) => ({
+                name: str(e?.name),
+                aliases: (Array.isArray(e?.aliases) ? e.aliases : [])
+                  .map((a) => (typeof a === "number" ? String(a) : str(a)))
+                  .filter((a) => a.trim() !== "")
+                  .slice(0, 8),
+                value: typeof e?.value === "number" ? String(e.value) : str(e?.value),
+              })),
+              points: num(q?.points, 10),
+            });
           if (r.type === "whoknows")
             Object.assign(it, {
               q: str(q?.q),
@@ -1070,6 +1095,8 @@ export function normalizeGame(raw) {
   // Anythingle round state (turn order + shared guess board). Additive/optional:
   // null on old saves so they load byte-for-byte.
   g.anythingle = normalizeAnyState(raw.anythingle, g.players);
+  // Top-List round state (turn order + which slots are found, by whom). Additive.
+  g.toplist = normalizeTopState(raw.toplist, g.players);
   // Pub-quiz round state (additive; {} / false on old saves): `batch` holds the
   // locked-in answers of the current batched round, keyed by question index —
   // { qi: { answers: {entityId: value}, pins: {entityId: {lat,lng}} } } — and
@@ -1131,6 +1158,29 @@ function normalizeAnyState(raw, players) {
       }))
       .filter((gss) => gss.name),
     solvedBy: ids.has(str(raw.solvedBy)) ? str(raw.solvedBy) : null,
+  };
+}
+
+/**
+ * Validate the persisted Top-List round state: the frozen trailing-first turn
+ * order, whose turn it is, and which board slots have been found (entry index +
+ * the player who named it; `by` null = surfaced by the host). Null on old saves.
+ */
+function normalizeTopState(raw, players) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const ids = new Set((Array.isArray(players) ? players : []).map((p) => p.id));
+  const seen = new Set();
+  return {
+    qKey: str(raw.qKey), // which question this board belongs to (so a reload keeps it)
+    order: (Array.isArray(raw.order) ? raw.order : []).map(str).filter((id) => ids.has(id)),
+    turn: Math.max(0, num(raw.turn, 0)),
+    found: (Array.isArray(raw.found) ? raw.found : [])
+      .slice(0, 30)
+      .map((f) => ({
+        i: Math.max(0, Math.min(14, Math.round(num(f?.i, 0)))),
+        by: ids.has(str(f?.by)) ? str(f?.by) : null,
+      }))
+      .filter((f) => (seen.has(f.i) ? false : (seen.add(f.i), true))), // one hit per slot
   };
 }
 
@@ -1561,6 +1611,10 @@ function presentQ(type, q) {
     case "spectrum":
       // Poles are safe to show; the hidden target/band stay in revealData (reveal-safety).
       return { q: str(q.q), left: str(q.left), right: str(q.right) };
+    case "toplist":
+      // REVEAL-SAFE: only the prompt + slot count + per-hit points. The entries
+      // themselves ride live.toplist as they're found, and revealData at the end.
+      return { q: str(q.q), count: (Array.isArray(q.entries) ? q.entries : []).length, points: num(q.points, 10) };
     case "whoknows":
       // The full answer list is NEVER sent here (it would leak); the picked /
       // showcased answers travel in the live payload (whoknows) instead.
@@ -1649,6 +1703,29 @@ function normalizeAnyLive(raw) {
   };
 }
 
+/** Validate the live Top-List sub-payload (found slots only — never the hidden rest). */
+function normalizeTopLive(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const info = (x) =>
+    x && typeof x === "object" && !Array.isArray(x)
+      ? {
+          name: str(x.name),
+          color: typeof x.color === "string" ? x.color : null,
+          emoji: typeof x.emoji === "string" ? x.emoji : null,
+        }
+      : null;
+  return {
+    turn: Math.max(0, num(raw.turn, 0)),
+    active: info(raw.active),
+    found: (Array.isArray(raw.found) ? raw.found : []).slice(0, 30).map((f) => ({
+      i: Math.max(0, Math.min(14, Math.round(num(f?.i, 0)))),
+      name: str(f?.name).slice(0, 80),
+      value: str(f?.value).slice(0, 40),
+      by: info(f?.by),
+    })),
+  };
+}
+
 /** The answer/reveal fields for the TV (only emitted once the host reveals). */
 function revealData(type, q) {
   switch (type) {
@@ -1676,6 +1753,11 @@ function revealData(type, q) {
       return { answer: str(q.answer) };
     case "spectrum":
       return { target: Math.max(0, Math.min(100, num(q.target, 50))), band: Math.max(1, num(q.band, 15)) };
+    case "toplist":
+      // The full ranked list, exposed only once the host ends the board.
+      return {
+        entries: (Array.isArray(q.entries) ? q.entries : []).map((e) => ({ name: str(e?.name), value: str(e?.value) })),
+      };
     case "anythingle":
       return { answer: str(q.target?.name) };
     default:
@@ -1816,6 +1898,38 @@ function buildAnyLive(game, anyQuote) {
   };
 }
 
+/**
+ * Top-List live payload for the TV/host-remote: whose turn it is plus the FOUND
+ * slots (rank index + entry name/value + finder) — public once named. Unfound
+ * entries never ride this; the full list arrives via revealData at the end.
+ */
+function buildTopLive(game) {
+  const round = game.quiz?.rounds?.[game.ri];
+  if (round?.type !== "toplist") return null;
+  const tl = game.toplist || { order: anyTurnOrder(game.players), turn: 0, found: [] };
+  const players = Array.isArray(game.players) ? game.players : [];
+  const info = (id) => {
+    const p = players.find((x) => x.id === id);
+    return p
+      ? {
+          name: str(p.name),
+          color: typeof p.color === "string" ? p.color : null,
+          emoji: typeof p.emoji === "string" ? p.emoji : null,
+        }
+      : null;
+  };
+  const order = Array.isArray(tl.order) ? tl.order : [];
+  const q = currentQuestion(game);
+  const entries = Array.isArray(q?.entries) ? q.entries : [];
+  return {
+    turn: num(tl.turn, 0),
+    active: order.length ? info(order[num(tl.turn, 0) % order.length]) : null,
+    found: (Array.isArray(tl.found) ? tl.found : [])
+      .filter((f) => entries[f.i])
+      .map((f) => ({ i: num(f.i, 0), name: str(entries[f.i]?.name), value: str(entries[f.i]?.value), by: info(f.by) })),
+  };
+}
+
 export function buildLive(game, opts = {}) {
   const round = game.quiz?.rounds?.[game.ri];
   const standings = (Array.isArray(game.players) ? game.players : []).map((p) => ({
@@ -1854,6 +1968,7 @@ export function buildLive(game, opts = {}) {
     volume: Math.max(0, Math.min(100, num(opts.volume, 100))),
     whoknows: opts.whoknows ? normalizeWhoknows(opts.whoknows) : null,
     anythingle: buildAnyLive(game, opts.anyQuote),
+    toplist: buildTopLive(game),
     // Crowd Says live vote counts per option (safe — there's no secret key). The
     // TV shows the bars and, on reveal, computes the winner via crowdWinners.
     tally: Array.isArray(opts.tally) ? opts.tally.map((n) => Math.max(0, Math.round(num(n, 0)))) : null,
@@ -1915,6 +2030,7 @@ export function normalizePresent(raw) {
     if (typeof q.tileLayer === "string") o.tileLayer = q.tileLayer === "satellite" ? "satellite" : "map";
     if (q.steps != null) o.steps = num(q.steps, 4);
     if (q.points != null) o.points = num(q.points, 10);
+    if (q.count != null) o.count = Math.max(0, Math.min(15, Math.round(num(q.count, 0)))); // top-list slot count
     if (q.start != null) o.start = numOrNull(q.start);
     if (q.end != null) o.end = numOrNull(q.end);
     if (Array.isArray(q.options)) o.options = q.options.map(str).slice(0, 8);
@@ -1962,6 +2078,11 @@ export function normalizeLive(raw) {
           label: str(m.label),
         }))
         .slice(0, 64); // the spectrum round's revealed guess marks
+    if (Array.isArray(r.entries))
+      reveal.entries = r.entries
+        .filter((e) => e && typeof e === "object")
+        .map((e) => ({ name: str(e.name).slice(0, 80), value: str(e.value).slice(0, 40) }))
+        .slice(0, 15); // the top-list round's full ranked list
   }
   return {
     qKey: str(raw.qKey),
@@ -1990,6 +2111,7 @@ export function normalizeLive(raw) {
     volume: Math.max(0, Math.min(100, num(raw.volume, 100))),
     whoknows: raw.whoknows ? normalizeWhoknows(raw.whoknows) : null,
     anythingle: normalizeAnyLive(raw.anythingle),
+    toplist: normalizeTopLive(raw.toplist),
     tally: Array.isArray(raw.tally) ? raw.tally.slice(0, 8).map((n) => Math.max(0, Math.round(num(n, 0)))) : null,
     review: !!raw.review,
     standings: (Array.isArray(raw.standings) ? raw.standings : []).slice(0, 50).map((p) => ({
@@ -2013,7 +2135,7 @@ export function normalizeLive(raw) {
  */
 export function buildHostAux(game) {
   const round = game.quiz?.rounds?.[game.ri];
-  const out = { v: 1, whoknows: null, anythingle: null };
+  const out = { v: 1, whoknows: null, anythingle: null, toplist: null };
   if (game.stage === "question" && round?.type === "whoknows") {
     const q = currentQuestion(game);
     if (q)
@@ -2030,6 +2152,17 @@ export function buildHostAux(game) {
       out.anythingle = {
         target: normalizeAnyChar(q.target),
         pool: (Array.isArray(q.pool) ? q.pool : []).map(normalizeAnyChar).filter(Boolean),
+      };
+  }
+  // Top-List: the FULL hidden board rides the host-only topic so the host remote
+  // can tap the entry a player just named; the TV never subscribes to it.
+  if (game.stage === "question" && round?.type === "toplist") {
+    const q = currentQuestion(game);
+    if (q)
+      out.toplist = {
+        entries: (Array.isArray(q.entries) ? q.entries : [])
+          .slice(0, 15)
+          .map((e) => ({ name: str(e?.name), value: str(e?.value) })),
       };
   }
   return out;
@@ -2079,6 +2212,15 @@ export function normalizeHostAux(raw) {
         ? {
             target: normalizeAnyChar(an.target),
             pool: (Array.isArray(an.pool) ? an.pool : []).map(normalizeAnyChar).filter(Boolean),
+          }
+        : null,
+    toplist:
+      raw.toplist && typeof raw.toplist === "object" && !Array.isArray(raw.toplist)
+        ? {
+            entries: (Array.isArray(raw.toplist.entries) ? raw.toplist.entries : [])
+              .filter((e) => e && typeof e === "object")
+              .map((e) => ({ name: str(e.name).slice(0, 80), value: str(e.value).slice(0, 40) }))
+              .slice(0, 15),
           }
         : null,
   };

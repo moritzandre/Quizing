@@ -28,6 +28,7 @@ import {
   Users,
   Keyboard,
   SlidersHorizontal,
+  ListOrdered,
   Trash2,
   Sun,
   Moon,
@@ -158,6 +159,12 @@ export const TYPES = {
     dot: "bg-violet-500",
     desc: "A hidden point on a scale between two poles (Cold ↔ Hot, Overrated ↔ Underrated). Players slide to guess where it lands — the closer, the more points.",
   },
+  toplist: {
+    label: "Top List",
+    icon: ListOrdered,
+    dot: "bg-yellow-500",
+    desc: "A hidden top-10 board (Tenable-style). Players take turns naming entries — a hit flips its rank and keeps their streak, a miss passes the turn.",
+  },
 };
 
 /** Per-round accent classes (full literals so Tailwind keeps them). */
@@ -195,6 +202,10 @@ const ACCENT = {
   spectrum: {
     soft: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
     solid: "bg-violet-500",
+  },
+  toplist: {
+    soft: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300",
+    solid: "bg-yellow-500",
   },
 };
 /** Accent class set for a round type (soft chip bg/text + solid dot). */

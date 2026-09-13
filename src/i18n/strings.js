@@ -572,6 +572,20 @@ const en = {
   "join.slideValue": "Your guess: {n}",
   "play.spectrumTargetAt": "Target: {n}",
   "play.spectrumScorers": "{n} scored",
+  "round.toplist.label": "Top List",
+  "round.toplist.desc":
+    "A hidden ranked top list (Tenable-style). Players take turns naming entries — a hit flips its slot and keeps their streak going, a miss passes the turn. Every hit scores.",
+  // top list (Tenable board) — builder + play
+  "builder.topEntries": "Entries — rank #1 first (drag to reorder)",
+  "builder.topEntryN": "Rank {n}",
+  "builder.topValue": "Value (shown on reveal, e.g. 5,316 yds)",
+  "builder.topAliases": "Also accept (comma-separated)",
+  "builder.addTopEntry": "Add entry",
+  "play.topFound": "{n} / {total} found",
+  "play.topTapHint": "Tap the entry the player just named — or pass the turn on a miss.",
+  "play.topMiss": "Miss · next player",
+  "play.topRevealRest": "End board · reveal the rest",
+  "play.topStreak": "{name} is on a streak — keep naming!",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name}'s turn",
   "play.anyGuessPlaceholder": "Type any character…",
@@ -1224,6 +1238,20 @@ const de = {
   "join.slideValue": "Dein Tipp: {n}",
   "play.spectrumTargetAt": "Ziel: {n}",
   "play.spectrumScorers": "{n} haben gepunktet",
+  "round.toplist.label": "Top-Liste",
+  "round.toplist.desc":
+    "Eine versteckte Top-Liste (Tenable-Stil). Reihum werden Einträge genannt — ein Treffer deckt seinen Platz auf und die Serie läuft weiter, ein Fehler gibt den Zug ab. Jeder Treffer punktet.",
+  // top list (Tenable-Board) — builder + play
+  "builder.topEntries": "Einträge — Platz 1 zuerst (zum Sortieren ziehen)",
+  "builder.topEntryN": "Platz {n}",
+  "builder.topValue": "Wert (bei Auflösung gezeigt, z. B. 5.316 Yards)",
+  "builder.topAliases": "Auch akzeptieren (kommagetrennt)",
+  "builder.addTopEntry": "Eintrag hinzufügen",
+  "play.topFound": "{n} / {total} gefunden",
+  "play.topTapHint": "Tippe den eben genannten Eintrag an — oder gib den Zug bei einem Fehler weiter.",
+  "play.topMiss": "Daneben · nächster Spieler",
+  "play.topRevealRest": "Board beenden · Rest aufdecken",
+  "play.topStreak": "{name} hat einen Lauf — weiter raten!",
   // anythingle (Wordle x Guess-Who) — play + builder
   "play.anyTurn": "{name} ist dran",
   "play.anyGuessPlaceholder": "Beliebige Figur eingeben…",

@@ -68,6 +68,7 @@ const POINTS_TYPES = [
   "crowdsays",
   "typeit",
   "spectrum",
+  "toplist",
 ];
 
 const addBtnCls = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS}`;
@@ -2332,6 +2333,127 @@ export default function Builder({ initial, note, onSave, onCancel }) {
                       </SortableList>
                       <button
                         onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("spectrum")] })}
+                        className={`mt-3 ${addBtnCls}`}
+                      >
+                        <Plus size={15} /> {t("builder.addQuestion")}
+                      </button>
+                    </>
+                  )}
+
+                  {/* top list (Tenable board) */}
+                  {r.type === "toplist" && (
+                    <>
+                      <SortableList
+                        items={r.questions}
+                        getKey={(x) => x.id}
+                        onReorder={(f, to) => reorderQuestions(r, f, to)}
+                        onDuplicate={(f) => dupQuestion(r, f)}
+                      >
+                        {(item, i, hp) => {
+                          const entries = item.entries || [];
+                          return (
+                            <div className={panelCls}>
+                              <div className={rowLabelCls}>
+                                <span className="flex items-center gap-1">
+                                  <DragHandle {...hp} /> {t("builder.questionN", { n: i + 1 })}
+                                </span>
+                                <ConfirmDelete label={t("builder.deleteQuestion")} onConfirm={() => qDel(r, item)} />
+                              </div>
+                              <div className="flex flex-wrap items-end gap-2">
+                                <input
+                                  className={`${inputCls} min-w-40 flex-1`}
+                                  placeholder={t("builder.question")}
+                                  value={item.q}
+                                  onChange={(e) => qRow(r, item, { q: e.target.value })}
+                                />
+                                <label className="w-20 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                  {t("builder.points")}
+                                  <input
+                                    type="number"
+                                    className={`${inputCls} mt-1`}
+                                    value={item.points}
+                                    onChange={(e) => qRow(r, item, { points: +e.target.value || 0 })}
+                                  />
+                                </label>
+                              </div>
+                              <p className="mb-1.5 mt-3 text-xs font-medium text-stone-500 dark:text-stone-400">
+                                {t("builder.topEntries")}
+                              </p>
+                              <SortableList
+                                items={entries}
+                                getKey={(_, ei) => ei}
+                                onReorder={(f, to) => qRow(r, item, { entries: moveItem(entries, f, to) })}
+                                gap="space-y-1.5"
+                              >
+                                {(en, ei, ehp) => (
+                                  <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-stone-200 p-1.5 dark:border-stone-700">
+                                    <DragHandle {...ehp} />
+                                    <span className="w-6 shrink-0 text-center font-pixel text-[10px] text-stone-400">
+                                      {ei + 1}
+                                    </span>
+                                    <input
+                                      className={`${inputCls} min-w-28 flex-1`}
+                                      placeholder={t("builder.topEntryN", { n: ei + 1 })}
+                                      value={en.name}
+                                      onChange={(e) =>
+                                        qRow(r, item, {
+                                          entries: entries.map((x, j) =>
+                                            j === ei ? { ...x, name: e.target.value } : x,
+                                          ),
+                                        })
+                                      }
+                                    />
+                                    <input
+                                      className={`${inputCls} w-28`}
+                                      placeholder={t("builder.topValue")}
+                                      title={t("builder.topValue")}
+                                      value={en.value}
+                                      onChange={(e) =>
+                                        qRow(r, item, {
+                                          entries: entries.map((x, j) =>
+                                            j === ei ? { ...x, value: e.target.value } : x,
+                                          ),
+                                        })
+                                      }
+                                    />
+                                    <input
+                                      className={`${inputCls} w-36`}
+                                      placeholder={t("builder.topAliases")}
+                                      title={t("builder.topAliases")}
+                                      value={(en.aliases || []).join(",")}
+                                      onChange={(e) =>
+                                        qRow(r, item, {
+                                          entries: entries.map((x, j) =>
+                                            j === ei ? { ...x, aliases: e.target.value.split(",") } : x,
+                                          ),
+                                        })
+                                      }
+                                    />
+                                    {entries.length > 2 && (
+                                      <ConfirmDelete
+                                        label={t("builder.deleteOption")}
+                                        onConfirm={() => qRow(r, item, { entries: entries.filter((_, j) => j !== ei) })}
+                                      />
+                                    )}
+                                  </div>
+                                )}
+                              </SortableList>
+                              {entries.length < 15 && (
+                                <button
+                                  onClick={() =>
+                                    qRow(r, item, { entries: [...entries, { name: "", aliases: [], value: "" }] })
+                                  }
+                                  className={`mt-2 rounded-lg px-2 py-1 text-xs font-medium text-stone-500 transition hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 ${FOCUS} inline-flex items-center gap-1`}
+                                >
+                                  <Plus size={13} /> {t("builder.addTopEntry")}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        }}
+                      </SortableList>
+                      <button
+                        onClick={() => setRound(r.id, { questions: [...r.questions, makeQuestion("toplist")] })}
                         className={`mt-3 ${addBtnCls}`}
                       >
                         <Plus size={15} /> {t("builder.addQuestion")}
