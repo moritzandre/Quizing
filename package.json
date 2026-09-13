@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "nfl:refresh": "node scripts/nfl-refresh.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

@@ -46,6 +46,7 @@ import { useI18n } from "../i18n/I18nProvider.jsx";
 import { ROUND_TEMPLATES, roundCreatorPrompt } from "../data/templates.js";
 import LeafletMap from "./LeafletMap.jsx";
 import MapillaryEmbed from "./MapillaryEmbed.jsx";
+import NflWizardModal from "./NflWizardModal.jsx";
 
 // Round types whose questions each carry a per-question `points` field (so the
 // round-level "set all points" bulk control applies).
@@ -1065,6 +1066,7 @@ export default function Builder({ initial, note, onSave, onCancel }) {
   const [picker, setPicker] = useState(false);
   const [importing, setImporting] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [nflOpen, setNflOpen] = useState(false);
   const [collapsed, setCollapsed] = useState({}); // round id -> collapsed?
   const toggleCollapsed = (rid) => setCollapsed((c) => ({ ...c, [rid]: !c[rid] }));
   const [bulkPts, setBulkPts] = useState({}); // round id -> pending "set all points" value
@@ -2780,6 +2782,12 @@ export default function Builder({ initial, note, onSave, onCancel }) {
               >
                 <Sparkles size={16} className="text-indigo-500" /> {t("builder.creatorRound")}
               </button>
+              <button
+                onClick={() => setNflOpen(true)}
+                className={`inline-flex items-center gap-2 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium transition hover:border-emerald-400 hover:bg-emerald-50 dark:border-stone-700 dark:hover:border-emerald-500/50 dark:hover:bg-emerald-500/10 ${FOCUS}`}
+              >
+                <span aria-hidden>🏈</span> {t("builder.nflWizard")}
+              </button>
             </div>
           </div>
         ) : (
@@ -2794,6 +2802,17 @@ export default function Builder({ initial, note, onSave, onCancel }) {
 
       {importing && <RoundImportModal onClose={() => setImporting(false)} onAdd={addImportedRounds} t={t} />}
       {creating && <RoundCreatorModal onClose={() => setCreating(false)} onAdd={addImportedRounds} t={t} />}
+      {nflOpen && (
+        <NflWizardModal
+          onClose={() => setNflOpen(false)}
+          onAdd={(round) => {
+            // Generated rounds are raw data — normalize (fresh ids) like a template insert.
+            const norm = normalizeQuiz({ rounds: [round] })?.rounds?.[0];
+            if (norm) setQuiz((prev) => ({ ...prev, rounds: [...prev.rounds, norm] }));
+          }}
+          t={t}
+        />
+      )}
       {qImport != null &&
         (() => {
           const r = quiz.rounds.find((x) => x.id === qImport);
